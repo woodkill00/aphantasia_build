@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Imagery Field · Static exploration</title>
+<style>:root{color-scheme:dark;--bg:#171c1a;--card:#202724;--edge:#505e55;--ink:#f0f0e6;--muted:#b9c4ba;--accent:#d3ddb4;--accent-ink:#222c1b;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none;line-height:1.5;background:var(--bg);color:var(--ink)}
+*{box-sizing:border-box}body{margin:0;padding-bottom:180px}button,input,select,textarea{font:inherit}button,input,select,textarea,.file-label{border-radius:8px}button{cursor:pointer;min-height:46px;padding:10px 16px;border:1px solid #78877a;background:#29332c;color:var(--ink);font-weight:600}button:disabled{cursor:default;opacity:.48}button:hover:not(:disabled){background:#3b493e}button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}button.primary:hover{background:#e0e8c6}button.hide-button{border-color:#dcc99c;color:#f4e4bd;background:#3b3529}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,pre:focus-visible{outline:3px solid #e6d6ab;outline-offset:4px}h1,h2,h3,p{margin-top:0}h2{font-size:1.3rem;letter-spacing:-.02em;line-height:1.3;margin-bottom:12px}h3{font-size:1rem}p{margin-bottom:14px}.masthead{max-width:1184px;margin:auto;padding:24px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #38413b;gap:12px}.wordmark{font-size:.85rem;font-weight:750;letter-spacing:.13em;display:flex;align-items:center;gap:9px}.brand-mark{font-size:2rem;font-weight:400;line-height:.5;color:var(--accent)}.edition{font-size:.65rem;letter-spacing:.12em;color:var(--muted)}main{max-width:1120px;margin:auto;padding:0 20px}.intro{padding:40px 0 24px;max-width:740px}.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}h1{font-size:clamp(2.7rem,6vw,4.6rem);font-weight:500;line-height:1.08;letter-spacing:-.055em;margin-bottom:22px}h1 span{color:var(--accent)}.lede{font-size:1.05rem;color:#d2d9d2;max-width:580px}.scope{max-width:660px;font-size:.86rem;color:var(--muted)}.guidance{border:1px solid #5c634b;background:#272d23;border-radius:12px;padding:20px;margin-bottom:24px}.guidance h2{font-size:1rem}.guidance p,.guidance summary{font-size:.88rem}.guidance p:last-child{margin-bottom:0}details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:10px;color:#e0e5ce;font-weight:600}details[open] summary{margin-bottom:12px}.guidance summary:before{content:'+';font-size:1.15rem;width:15px;display:inline-block}.guidance details[open] summary:before{content:'−'}.studio{display:grid;grid-template-columns:1fr;gap:20px}.field-card,.controls-card,.portable-card,.notes-card{background:var(--card);border:1px solid #455149;border-radius:14px;padding:20px}.section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.section-heading h2{margin-bottom:0}.pill{border:1px solid #69776b;color:#d7e0d8;border-radius:999px;padding:5px 10px;font-size:.75rem}.draft-label{font-size:.75rem;color:#d5dbbf}.canvas-wrap{position:relative;width:100%;max-width:360px;aspect-ratio:1;margin:0 auto 18px;background:#000;border:1px solid #455149;border-radius:10px;overflow:hidden}canvas{display:block;width:100%;height:100%;background:#000}.hidden-label{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;color:#b0bab1;font-size:.85rem;pointer-events:none}.hidden-label[hidden]{display:none}.quiet-mark{font-size:1.8rem;color:#77847b;line-height:1;margin-bottom:6px}.hidden-label small{color:#a4afa5;font-size:.72rem}.scene-description{font-size:.9rem;color:#d3ddd5;max-width:380px;margin:0 auto 12px;overflow-wrap:anywhere}.field-note{font-size:.8rem;color:var(--muted);max-width:380px;margin:auto}.controls-card>label{margin-top:0}label{display:block;font-size:.81rem;font-weight:650;margin-bottom:6px}input[type=text],input[type=number],select,textarea{display:block;min-height:46px;width:100%;padding:10px 11px;border:1px solid #7c8b7f;background:#171f1a;color:var(--ink)}input:disabled{opacity:.5}select{padding-right:24px}#preset{margin-bottom:22px}.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px 14px}.wide{grid-column:1/-1}.hint{font-size:.74rem;font-weight:400;color:var(--muted);margin:6px 0 0}.control-grid>.hint{margin:-9px 0 0}.apply-row,.history-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:20px}.apply-row>button{flex:1}.history-row{padding-top:17px;border-top:1px solid #455149;margin-bottom:16px}.history-row .hint{flex:1;min-width:100px;margin:0}.portable-card{margin-top:20px;display:grid;grid-template-columns:1fr;gap:18px}.portable-card p{color:var(--muted);font-size:.88rem;margin-bottom:0}.file-actions{display:grid;gap:12px;align-content:center}.file-label{display:block;border:1px solid #7c8b7f;background:#171f1a;padding:12px;margin:0}input[type=file]{font-size:.77rem;margin-top:9px;max-width:100%;color:var(--muted)}input[type=file]::file-selector-button{font:inherit;border:1px solid #78877a;color:var(--ink);background:#29332c;padding:8px 10px;border-radius:5px;margin-right:9px;cursor:pointer}.notes-card{margin-top:20px}.notes-card summary{justify-content:space-between}.notes-card summary .eyebrow{display:block;margin-bottom:7px}.summary-title{display:block;font-size:1.15rem;letter-spacing:-.02em}.notes-content{max-width:720px}.notes-content p{font-size:.87rem;color:var(--muted)}.notes-content label{margin-top:20px}.notes-content #preview-notes{margin:10px 0 20px}textarea{resize:vertical;min-height:120px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#151c18;padding:18px;border:1px solid #5b6b5e;border-radius:8px;max-height:280px;overflow:auto;font-size:.8rem}.check-label{display:flex;align-items:center;gap:10px;padding:6px 0;min-height:44px}input[type=checkbox]{width:22px;height:22px;accent-color:var(--accent)}footer{padding:30px 2px 20px;display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.72rem}footer span:nth-child(2){margin-left:auto}footer p{font-size:.72rem;flex-basis:100%;max-width:750px}.viewing-bar{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#1c241f;border-top:1px solid #7c8b7f;padding:12px 16px max(12px,env(safe-area-inset-bottom))}.viewing-inner{max-width:1080px;margin:auto}.view-actions{display:flex;gap:8px}.view-actions>button{flex:1;padding:10px 8px;font-size:.84rem}.viewing-bar p{font-size:.77rem;color:#d4dfd2;margin:9px 0 0;min-height:1.5em;overflow-wrap:anywhere}.skip-link{position:fixed;top:8px;left:8px;z-index:100;background:var(--accent);color:var(--accent-ink);padding:12px;transform:translateY(-180%)}.skip-link:focus{transform:none}.noscript{position:fixed;inset:0 0 auto;background:#352e22;padding:20px;z-index:100}body.app-failed .studio{pointer-events:none}#status.error{color:#f4d2b5}@media(min-width:760px){body{padding-bottom:140px}.intro{padding-top:48px}.studio{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start}.field-card{position:sticky;top:20px;padding:26px}.controls-card{padding:26px}.portable-card{grid-template-columns:1.15fr 1fr;padding:26px;gap:50px}.notes-card{padding:24px 26px}.viewing-inner{display:flex;align-items:center;gap:26px}.view-actions{flex:0 0 410px}.viewing-bar p{margin:0;flex:1}}@media(max-width:359px){main{padding:0 12px}.masthead{padding:20px 12px}.edition{display:none}.field-card,.controls-card,.portable-card,.notes-card{padding:16px}.view-actions>button{font-size:.75rem}.viewing-bar{padding-left:8px;padding-right:8px}.apply-row>button{flex-basis:100%}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+#status{max-height:6em;overflow:auto}
+.control-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.control-grid>*{min-width:0}
+input,select,textarea{min-width:0}
+@media(max-width:319px){.control-grid{grid-template-columns:minmax(0,1fr)}.control-grid .wide{grid-column:auto}.view-actions{flex-wrap:wrap}.view-actions>button{min-width:80px}}
+
+html{scroll-padding-bottom:180px}button,input,select,textarea,summary{scroll-margin-bottom:180px}#status{max-height:min(6em,20vh)}#status:focus-visible{outline:3px solid #e6d6ab;outline-offset:3px}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#controls">Skip to scene controls</a>
+<header class="masthead">
+  <div class="wordmark"><span class="brand-mark" aria-hidden="true">◦</span> IMAGERY FIELD</div>
+  <span class="edition">LOCAL PROTOTYPE / 0.1</span>
+</header>
+<main>
+  <section class="intro" aria-labelledby="title">
+    <p class="eyebrow">A small space to explore</p>
+    <h1 id="title">Simple forms.<br><span>Room to notice.</span></h1>
+    <p class="lede">Choose a static design, make a small change, and decide when to show it. Nothing moves or advances on its own.</p>
+    <p class="scope">Exploratory software. This is not a treatment or test for aphantasia, and it does not establish that afterimages develop voluntary imagery.</p>
+  </section>
+  <section class="guidance" aria-labelledby="guidance-title">
+    <h2 id="guidance-title">Before you show a scene</h2>
+    <p>Use comfortable screen brightness and ordinary room lighting. Don’t increase brightness or keep staring to make an image persist. Static patterns can still cause symptoms.</p>
+    <details><summary>Read the viewing guidance</summary>
+      <p>If you have photosensitive epilepsy, or visual patterns trigger seizures, migraine, or other symptoms, get advice from your clinician before using this activity.</p>
+      <p>Stop if you experience headache, dizziness, nausea, eye pain, or a visual disturbance. Seek medical advice for new, persistent, or recurring visual symptoms. Sudden vision loss or severe eye pain needs urgent medical care.</p>
+      <p>These design limits are engineering choices, not medically established exposure limits. This prototype has not received clinical clearance.</p>
+    </details>
+  </section>
+  <div class="studio">
+    <section class="field-card" aria-labelledby="field-title">
+      <div class="section-heading"><div><p class="eyebrow">01 / The field</p><h2 id="field-title">Your scene</h2></div><span id="visibility-label" class="pill">Hidden</span></div>
+      <div class="canvas-wrap"><canvas id="scene-canvas" width="360" height="360" role="img" aria-label="Scene hidden. No design is displayed.">The visual scene has an equivalent text description below. All controls are outside the canvas.</canvas><div id="hidden-label" class="hidden-label" aria-hidden="true"><span class="quiet-mark">○</span><span>The field is hidden</span><small>Show it when you choose.</small></div></div>
+      <p id="scene-description" class="scene-description"></p>
+      <p class="field-note">Changes are applied while hidden. Showing a scene is always a separate action.</p>
+    </section>
+    <section id="controls" class="controls-card" aria-labelledby="controls-title" tabindex="-1">
+      <div class="section-heading"><div><p class="eyebrow">02 / Shape &amp; setting</p><h2 id="controls-title">Make it yours</h2></div><span id="draft-label" class="draft-label">Applied</span></div>
+      <label for="preset">Start with a preset</label>
+      <select id="preset"><option value="">Choose a design…</option><option value="0">A small constellation</option><option value="1">A single point</option><option value="2">Circle contour</option><option value="3">Square contour</option><option value="4">Triangle contour</option></select>
+      <form id="scene-form" novalidate>
+        <div class="control-grid">
+          <div class="wide"><label for="scene-name">Scene name</label><input id="scene-name" name="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation"></div>
+          <div><label for="shape">Form</label><select id="shape"><option value="dots">Sparse dots</option><option value="circle">Circle contour</option><option value="square">Square contour</option><option value="triangle">Triangle contour</option></select></div>
+          <div><label for="palette">Palette</label><select id="palette"><option value="slate">Slate</option><option value="sage">Sage</option><option value="sand">Sand</option></select></div>
+          <div><label for="position-x">Horizontal position</label><input id="position-x" type="number" min="25" max="75" step="1" inputmode="numeric" value="50" aria-describedby="position-hint"></div>
+          <div><label for="position-y">Vertical position</label><input id="position-y" type="number" min="25" max="75" step="1" inputmode="numeric" value="50" aria-describedby="position-hint"></div>
+          <p id="position-hint" class="hint wide">25–75. The center of the field is 50, 50.</p>
+          <div class="wide"><label for="size">Arrangement / contour size</label><input id="size" type="number" min="14" max="28" step="1" inputmode="numeric" value="22" aria-describedby="size-hint"><p id="size-hint" class="hint">14–28 on a 100-unit field. A single dot uses the dot radius below.</p></div>
+          <div><label for="dot-count">Number of dots</label><input id="dot-count" type="number" min="1" max="5" step="1" inputmode="numeric" value="3" aria-describedby="dots-hint"></div>
+          <div><label for="dot-radius">Dot radius</label><input id="dot-radius" type="number" min="1" max="2" step="1" inputmode="numeric" value="1" aria-describedby="dots-hint"></div>
+          <p id="dots-hint" class="hint wide">1–5 dots, radius 1–2. Dot controls apply only to sparse dots.</p>
+        </div>
+        <div class="apply-row"><button id="apply-changes" class="primary" type="submit">Apply changes</button><button id="discard" type="button">Discard changes</button></div>
+      </form>
+      <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">Up to 40 changes this session</span></div>
+      <p class="hint">No dragging, sequences, brightness escalation, or arbitrary compositions. These bounds are not medical safety limits.</p>
+    </section>
+  </div>
+  <section class="portable-card" aria-labelledby="portable-title">
+    <div><p class="eyebrow">03 / Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p>Scenes and notes live in this open page only. Download anything you want to keep before closing or reloading. Browser storage is not used.</p></div>
+    <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label><p class="hint">Opens a single version-1 scene, up to 1 MiB. Import stays hidden; scene downloads never include notes.</p></div>
+  </section>
+  <section class="notes-card" aria-labelledby="notes-title">
+    <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
+      <div class="notes-content"><p>No score, interpretation, or expected outcome. “None” and “unsure” are valid. You can leave this empty. Avoid names, medical histories, or information about other people.</p>
+      <label for="note-category">What are you describing?</label><select id="note-category"><option value="unsure">Unsure</option><option value="none">Nothing visual / none</option><option value="external-perception">Looking at the displayed design</option><option value="residual-aftereffect">A residual visual aftereffect</option><option value="voluntary-imagery">An attempt at voluntary imagery</option><option value="conceptual-knowledge">Conceptual knowledge without a visual experience</option><option value="mixed">Mixed experience</option></select>
+      <label for="notes">Observation</label><textarea id="notes" rows="4" maxlength="4000" placeholder="Describe only what you noticed, if anything."></textarea><p class="hint">Up to 4,000 characters. Unsaved notes disappear when this page closes. A residual effect does not establish voluntary imagery.</p>
+      <button id="preview-notes" type="button">Preview note export</button><div id="notes-export-area" hidden><h3>Exactly what will be downloaded</h3><pre id="notes-preview" tabindex="0"></pre><label class="check-label"><input id="include-note" type="checkbox">Include this note in the download</label><button id="export-notes" type="button" disabled>Download note JSON</button></div>
+      </div>
+    </details>
+  </section>
+  <footer><span>Imagery Field · 0.1.0</span><span>Static. Local. Deliberate.</span><p>Research prototype with a narrow editing scope. No diagnosis, treatment, or demonstrated-improvement claim. Real mobile browsers and clinical suitability require separate review.</p></footer>
+</main>
+<div class="viewing-bar" role="region" aria-label="Viewing controls"><div class="viewing-inner"><div class="view-actions"><button id="show-scene" class="primary" type="button">Show scene</button><button id="hide-scene" class="hide-button" type="button">Hide <span aria-hidden="true">· Esc</span></button><button id="end-viewing" type="button">End viewing</button></div><p id="status" tabindex="0" role="status" aria-live="polite" aria-atomic="true">Scene hidden. Show it when you choose.</p></div></div>
+<noscript><div class="noscript">JavaScript is required for scene editing. No scene is displayed.</div></noscript>
+<script>/* Imagery Field 0.1.0. Pure bounded model and interaction controller.
+   Engineering exclusions, not calibrated luminance or medical exposure limits. */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ImageryModel = factory();
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const FORMAT = 'imagery-static-scene';
+  const VERSION = 1;
+  const SAMPLER = 'sparse-fixed-1';
+  const MAX_IMPORT_BYTES = 1048576;
+  const REVEAL_GAP_MS = 3000;
+  const HISTORY_LIMIT = 40;
+  const PALETTES = Object.freeze({slate: '#6e7c88', sage: '#738675', sand: '#8b806a'});
+  const SHAPES = Object.freeze(['dots', 'circle', 'square', 'triangle']);
+  const OFFSETS = Object.freeze([[0, 0], [-0.48, -0.35], [0.5, -0.3], [-0.25, 0.5], [0.45, 0.5]].map(Object.freeze));
+  const clone = value => JSON.parse(JSON.stringify(value));
+  function object(value, keys, label) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) || ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw new Error(label + ' must be an ordinary object.');
+    const own = Reflect.ownKeys(value);
+    if (own.length !== keys.length || own.some(k => typeof k !== 'string' || !keys.includes(k))) throw new Error(label + ' has missing or unsupported fields.');
+    if (own.some(k => !Object.getOwnPropertyDescriptor(value, k).hasOwnProperty('value'))) throw new Error(label + ' cannot contain accessors.');
+  }
+  function integer(value, min, max, label) {
+    if (!Number.isInteger(value) || value < min || value > max) throw new Error(label + ' must be a whole number from ' + min + ' to ' + max + '.');
+  }
+  function rawGeometry(scene) {
+    const s = scene.scene, r = s.size / 2;
+    if (s.shape === 'dots') return OFFSETS.slice(0, s.dotCount).map((p, i) => ({kind: 'dot', id: 'dot-' + (i + 1), x: s.x + p[0] * s.size, y: s.y + p[1] * s.size, radius: s.dotRadius}));
+    if (s.shape === 'circle') return [{kind: 'circle', x: s.x, y: s.y, radius: r, lineWidth: 1}];
+    if (s.shape === 'square') return [{kind: 'polygon', points: [[s.x-r,s.y-r],[s.x+r,s.y-r],[s.x+r,s.y+r],[s.x-r,s.y+r]], lineWidth: 1}];
+    return [{kind: 'polygon', points: [[s.x,s.y-r],[s.x+r,s.y+r],[s.x-r,s.y+r]], lineWidth: 1}];
+  }
+  function canonicalScene(value) {
+    object(value, ['format', 'version', 'sampler', 'scene'], 'Scene file');
+    if (value.format !== FORMAT || value.version !== VERSION || value.sampler !== SAMPLER) throw new Error('Unsupported scene format, version, or sampler. Only version 1 is supported.');
+    const s = value.scene;
+    object(s, ['name', 'shape', 'x', 'y', 'size', 'dotCount', 'dotRadius', 'palette'], 'Scene');
+    if (typeof s.name !== 'string' || s.name.length < 1 || s.name.length > 64 || !s.name.trim() || /[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(s.name)) throw new Error('Name must be 1–64 characters without control characters.');
+    if (!SHAPES.includes(s.shape)) throw new Error('Choose dots, circle, square, or triangle.');
+    integer(s.x,25,75,'Horizontal position'); integer(s.y,25,75,'Vertical position');
+    integer(s.size,14,28,'Size'); integer(s.dotCount,1,5,'Dot count'); integer(s.dotRadius,1,2,'Dot radius');
+    if (typeof s.palette !== 'string' || !Object.prototype.hasOwnProperty.call(PALETTES,s.palette)) throw new Error('Unsupported palette.');
+    const canonical = {format: FORMAT, version: VERSION, sampler: SAMPLER, scene: {name:s.name,shape:s.shape,x:s.x,y:s.y,size:s.size,dotCount:s.dotCount,dotRadius:s.dotRadius,palette:s.palette}};
+    const g = rawGeometry(canonical);
+    if (s.shape === 'dots') {
+      g.forEach((a, i) => {
+        if (a.x-a.radius < 8 || a.x+a.radius > 92 || a.y-a.radius < 8 || a.y+a.radius > 92) throw new Error('Dots exceed the inset geometry bounds.');
+        g.slice(i+1).forEach(b => {if (Math.hypot(a.x-b.x,a.y-b.y) < a.radius+b.radius+3) throw new Error('Dots need more separation. Increase size or reduce dot radius.');});
+      });
+      if (g.length * Math.PI * s.dotRadius * s.dotRadius > 100) throw new Error('Dot coverage exceeds this prototype’s engineering bound.');
+    } else if (s.x-s.size/2-0.5 < 8 || s.x+s.size/2+0.5 > 92 || s.y-s.size/2-0.5 < 8 || s.y+s.size/2+0.5 > 92) throw new Error('Contour exceeds the inset geometry bounds.');
+    return canonical;
+  }
+  function validateScene(value) { try { return {ok:true,scene:canonicalScene(value)}; } catch(e) { return {ok:false,error:e.message}; } }
+  function rejectDuplicateKeys(text) {
+    // JSON.parse establishes valid JSON syntax first. This second token pass
+    // catches decoded duplicate keys, including differently escaped spellings.
+    const stack=[];
+    for(let i=0;i<text.length;i++) {
+      const c=text[i];
+      if(c==='[') throw new Error('Array-based scenes are not supported.');
+      if(c==='{') {stack.push({keys:new Set(),expectKey:true});if(stack.length>2)throw new Error('Nested scene capabilities are not supported.');}
+      else if(c==='}')stack.pop();
+      else if(c===',') {if(stack.length)stack[stack.length-1].expectKey=true;}
+      else if(c==='"') {
+        const start=i;
+        for(i++;i<text.length;i++){if(text[i]==='\\'){i++;continue;}if(text[i]==='"')break;}
+        const frame=stack[stack.length-1];
+        if(frame && frame.expectKey) {const key=JSON.parse(text.slice(start,i+1));if(frame.keys.has(key))throw new Error('Duplicate JSON fields are not supported.');frame.keys.add(key);frame.expectKey=false;}
+      }
+    }
+  }
+  function parseScene(text) {
+    if (typeof text !== 'string') throw new Error('Scene data must be JSON text.');
+    if (text.length > MAX_IMPORT_BYTES || (typeof TextEncoder !== 'undefined' && new TextEncoder().encode(text).length > MAX_IMPORT_BYTES)) throw new Error('Scene file must be no larger than 1 MiB.');
+    let value; try { value = JSON.parse(text); } catch (e) { throw new Error('This is not a valid JSON scene file.'); }
+    rejectDuplicateKeys(text);
+    return canonicalScene(value);
+  }
+  function presets() {
+    return [
+      ['A small constellation','dots',3,'slate'], ['A single point','dots',1,'sage'],
+      ['Circle contour','circle',1,'sage'], ['Square contour','square',1,'sand'], ['Triangle contour','triangle',1,'slate']
+    ].map(p => canonicalScene({format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:p[0],shape:p[1],x:50,y:50,size:22,dotCount:p[2],dotRadius:1,palette:p[3]}}));
+  }
+  function geometry(value) {return rawGeometry(canonicalScene(value));}
+  function describe(value) {
+    const s=canonicalScene(value).scene;
+    return s.name + ': ' + (s.shape==='dots' ? s.dotCount+' sparse dot'+(s.dotCount===1?'':'s')+', radius '+s.dotRadius : 'one '+s.shape+' contour') + ', '+s.palette+' palette, size '+s.size+', centered at '+s.x+', '+s.y+' on a 100 by 100 black field.';
+  }
+  function createController(nowFn, initialScene) {
+    const clock = nowFn || (() => (typeof performance !== 'undefined' ? performance.now() : Date.now()));
+    let current=canonicalScene(initialScene || presets()[0]), draft=clone(current), visible=false, undoStack=[], redoStack=[], epoch=0, revision=0, revealAt=-Infinity, pending=null;
+    let lastNow=-Infinity;
+    function now() { const n=clock(); if (!Number.isFinite(n)) throw new Error('Invalid interaction clock.'); lastNow=Math.max(lastNow,n); return lastNow; }
+    function invalid() {epoch++;pending=null;}
+    function conceal(forceLock) { if (visible || forceLock) revealAt=Math.max(revealAt,now()+REVEAL_GAP_MS); visible=false; invalid(); }
+    function getState() {return {current:clone(current),draft:clone(draft),visible,dirty:JSON.stringify(current)!==JSON.stringify(draft),undoCount:undoStack.length,redoCount:redoStack.length,revision,epoch,pendingImport:pending!==null,revealInMs:Math.max(0,revealAt-now())};}
+    function result(ok,error) {return {ok,error:error||null,state:getState()};}
+    function commit(value, history) {
+      const checked=validateScene(value); if(!checked.ok)return result(false,checked.error);
+      conceal(false);
+      if(JSON.stringify(current)!==JSON.stringify(checked.scene)) {
+        if(history!==false){undoStack.push(clone(current));if(undoStack.length>HISTORY_LIMIT)undoStack.shift();redoStack=[];}
+        current=checked.scene;revision++;
+      }
+      draft=clone(current);return result(true);
+    }
+    return Object.freeze({
+      getState,
+      stage(value) { const checked=validateScene(value); conceal(false); if(!checked.ok)return result(false,checked.error);draft=checked.scene;return result(true); },
+      invalidateImport() {invalid();return result(true);},
+      show() {
+        invalid();
+        if(visible)return result(true);
+        if(JSON.stringify(draft)!==JSON.stringify(current))return result(false,'Apply or discard staged changes before showing the scene.');
+        if(now()<revealAt)return result(false,'Scene stays hidden. Pause briefly, then press Show again. Nothing is queued.');
+        visible=true;return result(true);
+      },
+      hide() {conceal(true);return result(true);},
+      end() {conceal(true);return result(true);},
+      apply(value) {return commit(value === undefined ? draft : value);},
+      discard() {invalid();draft=clone(current);return result(true);},
+      undo() { if(!undoStack.length)return result(false,'Nothing to undo.');const previous=undoStack[undoStack.length-1];const checked=validateScene(previous);if(!checked.ok)return result(false,checked.error);redoStack.push(clone(current));undoStack.pop();return commit(checked.scene,false);},
+      redo() {if(!redoStack.length)return result(false,'Nothing to redo.');const next=redoStack[redoStack.length-1];const checked=validateScene(next);if(!checked.ok)return result(false,checked.error);undoStack.push(clone(current));redoStack.pop();return commit(checked.scene,false);},
+      beginImport() {conceal(false);pending=epoch;return pending;},
+      finishImport(token,text) {if(pending===null || token!==pending || token!==epoch)return result(false,'That file read was canceled by a newer action.');pending=null;let checked;try{checked=parseScene(text);}catch(e){return result(false,e.message);}return commit(checked);}
+    });
+  }
+  return Object.freeze({FORMAT,VERSION,SAMPLER,MAX_IMPORT_BYTES,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
+}));
+</script>
+<script>/* Browser shell: synchronous rendering, explicit hidden commits, no persistence. */
+(function () {
+  'use strict';
+  const M=window.ImageryModel;
+  const $=id=>document.getElementById(id);
+  const controller=M.createController(()=>performance.now());
+  const canvas=$('scene-canvas');
+  let context=null;
+  try {context=canvas.getContext('2d',{alpha:false});} catch(e) { /* Keep data controls available. */ }
+  let formDirty=false, notePreview=null;
+  const objectURLs=new Set();
+  const fieldIDs=['scene-name','shape','position-x','position-y','size','dot-count','dot-radius','palette'];
+  const categories=Object.freeze(['unsure','none','external-perception','residual-aftereffect','voluntary-imagery','conceptual-knowledge','mixed']);
+  function say(message,error) {$('status').textContent=String(message).slice(0,300);$('status').className=error?'error':'';}
+  function describeCurrent(state) {$('scene-description').textContent=M.describe(state.current);}
+  function draw(state) {
+    const rect=canvas.getBoundingClientRect();
+    const cssSize=Math.min(360,Math.max(1,rect.width||360));
+    const dpr=Math.min(2,Math.max(1,Number(window.devicePixelRatio)||1));
+    const size=Math.min(720,Math.max(1,Math.round(cssSize*dpr)));
+    if(canvas.width!==size || canvas.height!==size){canvas.width=size;canvas.height=size;}
+    if(!context)return;
+    context.setTransform(1,0,0,1,0,0);context.fillStyle='#000';context.fillRect(0,0,size,size);
+    if(!state.visible)return;
+    const accepted=M.canonicalScene(state.current);
+    const scale=size/100;
+    context.setTransform(scale,0,0,scale,0,0);
+    context.fillStyle=M.PALETTES[accepted.scene.palette];context.strokeStyle=context.fillStyle;context.lineJoin='round';
+    M.geometry(accepted).forEach(item=>{
+      context.beginPath();
+      if(item.kind==='dot'){context.arc(item.x,item.y,item.radius,0,Math.PI*2);context.fill();}
+      else if(item.kind==='circle'){context.lineWidth=item.lineWidth;context.arc(item.x,item.y,item.radius,0,Math.PI*2);context.stroke();}
+      else {context.lineWidth=item.lineWidth;item.points.forEach((p,i)=>i?context.lineTo(p[0],p[1]):context.moveTo(p[0],p[1]));context.closePath();context.stroke();}
+    });
+  }
+  function render() {
+    const state=controller.getState();
+    draw(state);
+    $('hidden-label').hidden=state.visible;
+    $('visibility-label').textContent=state.visible?'Visible':'Hidden';
+    $('show-scene').setAttribute('aria-pressed',String(state.visible));
+    canvas.setAttribute('aria-label',state.visible?M.describe(state.current):'Scene hidden. No design is displayed.');
+    $('undo').disabled=state.undoCount===0;$('redo').disabled=state.redoCount===0;
+    $('draft-label').textContent=formDirty?'Changes staged':'Applied';
+    describeCurrent(state);
+  }
+  function fillFields(scene) {
+    const s=M.canonicalScene(scene).scene;
+    $('scene-name').value=s.name;$('shape').value=s.shape;$('position-x').value=String(s.x);$('position-y').value=String(s.y);$('size').value=String(s.size);$('dot-count').value=String(s.dotCount);$('dot-radius').value=String(s.dotRadius);$('palette').value=s.palette;
+    updateDotControls();
+  }
+  function updateDotControls() {const disabled=$('shape').value!=='dots';$('dot-count').disabled=disabled;$('dot-radius').disabled=disabled;}
+  function readFields() {return {format:M.FORMAT,version:M.VERSION,sampler:M.SAMPLER,scene:{name:$('scene-name').value,shape:$('shape').value,x:Number($('position-x').value),y:Number($('position-y').value),size:Number($('size').value),dotCount:Number($('dot-count').value),dotRadius:Number($('dot-radius').value),palette:$('palette').value}};}
+  function hide(message) {controller.hide();render();say(message||'Scene hidden. Pause briefly before choosing Show again.');}
+  function edited() {
+    controller.hide();formDirty=true;updateDotControls();
+    controller.stage(readFields());
+    render();say('Changes staged. Apply them before showing the scene.');
+  }
+  fieldIDs.forEach(id=>$(id).addEventListener('input',edited));
+  $('preset').addEventListener('change',()=>{
+    const index=Number($('preset').value);if($('preset').value==='' || !Number.isInteger(index) || !M.presets()[index])return;
+    const next=M.presets()[index];controller.stage(next);fillFields(next);formDirty=true;render();say('Preset staged. Choose Apply changes, then Show scene when you choose.');
+  });
+  $('scene-form').addEventListener('submit',event=>{
+    event.preventDefault();
+    const result=controller.apply(readFields());
+    if(!result.ok){render();say(result.error,true);return;}
+    formDirty=false;fillFields(result.state.current);render();say('Changes applied. The scene is hidden; choose Show scene to display it.');
+  });
+  $('discard').addEventListener('click',()=>{
+    controller.hide();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
+  });
+  $('show-scene').addEventListener('click',()=>{
+    if(!context){say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads are still available.',true);return;}
+    if(formDirty){controller.invalidateImport();say('Apply or discard staged changes before showing the scene.',true);return;}
+    const result=controller.show();render();say(result.ok?'Scene visible. Hide or press Escape at any time.':result.error,!result.ok);
+  });
+  $('hide-scene').addEventListener('click',()=>hide());
+  $('end-viewing').addEventListener('click',()=>{
+    controller.end();render();say('Viewing ended. Your scene and optional note remain in this open page.');
+    $('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();
+  });
+  ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
+    const result=controller[action]();
+    if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
+    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Show scene when you choose.':result.error,!result.ok);
+  }));
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();hide('Scene hidden with Escape. Pending file reads were canceled.');}
+    if(event.repeat && (event.key==='Enter' || event.key===' ') && event.target && event.target.closest && event.target.closest('button'))event.preventDefault();
+  });
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.');});
+  window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.'));
+  window.addEventListener('pagehide',()=>{controller.hide();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
+  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Show scene when you choose.'));
+  window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Show scene to resume.');});
+  window.addEventListener('resize',()=>hide('Scene hidden after the window size changed. Choose Show scene when you choose.'));
+  function download(value,filename) {
+    const serialized=JSON.stringify(value,null,2)+'\n';
+    let url;
+    try {
+      const blob=new Blob([serialized],{type:'application/json;charset=utf-8'});
+      url=URL.createObjectURL(blob);objectURLs.add(url);
+      const link=document.createElement('a');link.href=url;link.download=filename;link.hidden=true;document.body.appendChild(link);link.click();link.remove();
+      // Resource cleanup only: never calls the renderer or changes visibility.
+      setTimeout(()=>{URL.revokeObjectURL(url);objectURLs.delete(url);},60000);
+      say('Download requested. Check your browser’s Downloads to confirm the file was kept.');
+    } catch(e) {if(url){URL.revokeObjectURL(url);objectURLs.delete(url);}say('The download could not be started. Your data is still in this page. Try another browser or keep this page open.',true);}
+  }
+  $('export-scene').addEventListener('click',()=>{
+    if(formDirty){say('Apply or discard staged changes before downloading the scene.',true);return;}
+    hide('Scene hidden for download.');
+    try {download(M.canonicalScene(controller.getState().current),'imagery-field-scene-v1.json');}catch(e){say(e.message,true);}
+  });
+  $('scene-import').addEventListener('change',async()=>{
+    const file=$('scene-import').files && $('scene-import').files[0];$('scene-import').value='';
+    if(!file)return;
+    const token=controller.beginImport();render();
+    if(file.size>M.MAX_IMPORT_BYTES){controller.invalidateImport();say('Scene file must be no larger than 1 MiB. Your applied scene is unchanged.',true);return;}
+    say('Reading the local scene file. The field stays hidden.');
+    try {
+      const text=await file.text();
+      const state=controller.getState();
+      if(token!==state.epoch || !state.pendingImport)return;
+      const result=controller.finishImport(token,text);
+      if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
+      render();say(result.ok?'Scene opened and hidden. Choose Show scene when you choose.':result.error+' Your applied scene is unchanged.',!result.ok);
+    } catch(e) {
+      const state=controller.getState();if(token!==state.epoch || !state.pendingImport)return;
+      controller.invalidateImport();render();say('The file could not be read. Your applied scene is unchanged.',true);
+    }
+  });
+  function clearPreview() {notePreview=null;$('include-note').checked=false;$('export-notes').disabled=true;$('notes-export-area').hidden=true;$('notes-preview').textContent='';}
+  function readNote() {
+    const category=$('note-category').value,text=$('notes').value;
+    if(!categories.includes(category))throw new Error('Choose one of the listed observation categories.');
+    if(typeof text!=='string' || text.length>4000 || /[\u0000]/.test(text))throw new Error('The note must be at most 4,000 characters and cannot contain null characters.');
+    return {format:'imagery-field-note',version:1,category,text};
+  }
+  $('notes').addEventListener('input',clearPreview);$('note-category').addEventListener('change',clearPreview);
+  $('preview-notes').addEventListener('click',()=>{
+    hide('Scene hidden while you review your note.');
+    try {notePreview=readNote();$('notes-preview').textContent=JSON.stringify(notePreview,null,2);$('notes-export-area').hidden=false;$('include-note').checked=false;$('export-notes').disabled=true;say('Review the note below, then explicitly include it to enable its separate download.');}catch(e){clearPreview();say(e.message,true);}
+  });
+  $('include-note').addEventListener('change',()=>{$('export-notes').disabled=!notePreview || !$('include-note').checked;});
+  $('export-notes').addEventListener('click',()=>{
+    if(!notePreview || !$('include-note').checked){say('Preview and explicitly include the note before downloading it.',true);return;}
+    try {
+      if(JSON.stringify(readNote())!==JSON.stringify(notePreview)){clearPreview();say('The note changed. Preview it again before downloading.',true);return;}
+      hide('Scene hidden for note download.');download(notePreview,'imagery-field-note-v1.json');
+    }catch(e){say(e.message,true);}
+  });
+  fillFields(controller.getState().current);render();
+  if(!context)say('Canvas is unavailable in this browser. No scene is displayed. JSON editing and downloads remain available.',true);
+}());
+</script>
+</body>
+</html>

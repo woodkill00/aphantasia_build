@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "status": "engineering preview; browser/device verification remains open",
+  "algorithm": "SHA-256",
+  "scope": "All committed app files except this manifest; paths relative to imagery-app.",
+  "files": {
+    "README.md": "1b82ead8c7cba4740fc42cd995e15229dc0c806f6150f40e8f97dafd669c6597",
+    "index.html": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+    "review.md": "8e0b161dea054410595e660b83375efaab2055ef84b1e606f86d711ec5f969ee",
+    "src/app.js": "1c6740237c1acb49f84a90cfe821e94f02e8396b1597e9810da5a8513fd3575d",
+    "src/assemble.cjs": "e4a7901543aaa8e67c86877fca25fa4a7984edd486711d25df8eaf0b0055fb94",
+    "src/model.js": "5a4ffdcd505364a6803ea70cfc29b2b809dcc1aa3a55ce74ac6b496206fe7e29",
+    "src/shell.html": "ae651f429fe2af4b871afc380282c53a0d5bb3cf2f3902dccb697e69d5ead254",
+    "src/style.css": "82c3afbb273beb543d5f7d29f82f1da98f57730832a9982bdedb92fd8d912d0c",
+    "test-results/TEST-REPORT.md": "984d9558ec9ba43e7055d02e9e7df7a9a41417d5a9fc79af715593d70c3907d4",
+    "test-results/summary.json": "96e71fb49cffc093827bd4e273fb36a4c4c2783794a3c2c5af40f40bc3e1338e",
+    "tests/BROWSER-TEST-PROCEDURE.md": "8a9743685f37ba09e00e31477aca616286d0bf1262781b22858ff28350cf3ebd",
+    "tests/browser-cdp.cjs": "e3776c22b9aac3e801f5074e8851bcc59960fef54b3977d34eeaebd9e7895794",
+    "tests/browser-cdp.test.cjs": "e79a027d7ed26991dc392c8167b0c720816b69ceb81f843a02c04d993835aa58",
+    "tests/browser.cjs": "299b47bb003d53ad131dd8c2a60e833582636085eb41c0fc4205a9f7a04099ce",
+    "tests/dom-harness.cjs": "7c58b6b2219ffc8e93396183c186b23669ad8f421d553b0e62e41c2c8c678316",
+    "tests/model.test.cjs": "1b77b350ff2225b28968e740cff3f9ea96d6d30daaeaaf35878f2640ad036824",
+    "tests/static.test.cjs": "61ea305aea8535c55cc51661978d3c2b6e21bf9abd28573d5954fe63921ca962",
+    "tests/ui.test.cjs": "46c052fe2b8826ff24fdb17affa039f1f47c12d2ffea3a535d3f25aa1b131eea"
+  }
+}

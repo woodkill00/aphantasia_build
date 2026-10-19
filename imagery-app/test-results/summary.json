@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-19",
+  "status": "NON_BROWSER_PASS_BROWSER_UNVERIFIED",
+  "artifact": {
+    "file": "imagery-app/index.html",
+    "bytes": 40075,
+    "sha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+  },
+  "executedEnvironment": {
+    "node": "v24.19.0",
+    "platform": "linux"
+  },
+  "executed": {
+    "modelTests": 85,
+    "domDoubleTests": 50,
+    "staticTests": 9,
+    "total": 150,
+    "passed": 150,
+    "failed": 0,
+    "geometryCombinations": 7200,
+    "seededModelCommands": 10000,
+    "rapidUiDoubleSequences": 300,
+    "sourceSyntax": "PASS",
+    "browserSuiteSyntax": "PASS",
+    "assembledArtifactMatches": "PASS",
+    "cdpTransportAndFixtureTests": 6,
+    "standaloneCdpFixtures": {
+      "valid": 2,
+      "rejected": 10,
+      "browserExecuted": false
+    }
+  },
+  "combinedJavaScriptCoverage": {
+    "model": {
+      "lines": 100,
+      "branches": 94.74,
+      "functions": 100
+    },
+    "appUnderTestDoubles": {
+      "lines": 100,
+      "branches": 98.37,
+      "functions": 100
+    },
+    "scope": "JavaScript execution only. Not rendered browser, CSS, accessibility, medical, or device coverage."
+  },
+  "browser": {
+    "status": "BLOCKED_BEFORE_NAVIGATION",
+    "scope": "Original sandbox-enabled browser launch failed due to environment restrictions. No actual browser pass is recorded. The public staging rerun executed only Node checks and syntax checks.",
+    "preparedSuites": [
+      "Playwright",
+      "Dependency-free Chrome DevTools Protocol"
+    ],
+    "ciStatus": "PREPARED_NOT_RUN",
+    "publicationStatus": "Reviewed source import pending on feature branch."
+  },
+  "notRun": [
+    "Direct-file real-browser workflows",
+    "Observed offline browser requests",
+    "Actual download/import round trips",
+    "Rendered layouts and manual accessibility",
+    "Physical mobile/desktop compatibility",
+    "Qualified sensory and clinical-content review"
+  ],
+  "resolvedDefects": [
+    "Duplicate-key overwrite in JSON imports",
+    "Unbounded duplicate-key error text"
+  ],
+  "privacy": "Synthetic fixtures only. No personal observations or raw process logs included."
+}

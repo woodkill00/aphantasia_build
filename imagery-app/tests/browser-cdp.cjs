@@ -1,0 +1,443 @@
+'use strict';
+/* Dependency-free real-Chrome checks. Run with Node >=22 and preinstalled Google Chrome.
+ * No package installation, web server, browser download, or sandbox/security bypass.
+ * Inputs are synthetic. Nothing is uploaded. Mobile means viewport/touch emulation only.
+ */
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const {spawn} = require('node:child_process');
+const {pathToFileURL} = require('node:url');
+const {setTimeout: sleep} = require('node:timers/promises');
+
+const root = path.resolve(process.env.IMAGERY_APP_ROOT || path.join(__dirname, '..'));
+const M = require(path.join(root, 'src/model.js'));
+const artifact = path.join(root, 'index.html');
+const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+const scene = changes => { const value = M.presets()[0]; Object.assign(value.scene, changes); return value; };
+function fixtures() {
+  const valid = scene({name:'Synthetic imported scene', shape:'square'});
+  return {
+    valid,
+    invalid: [
+      ['empty', ''], ['truncated', '{'], ['null', 'null'], ['array', '[]'],
+      ['future-version', JSON.stringify({...valid, version:999})],
+      ['unknown-animation', JSON.stringify({...valid, animation:true})],
+      ['unknown-url', JSON.stringify({...valid, url:'https://example.invalid'})],
+      ['embedded-note', JSON.stringify({...valid, notes:'Synthetic note'})],
+      ['duplicate-key', JSON.stringify(valid).replace('"version":1','"version":999,"version":1')],
+      ['oversize', ' '.repeat(M.MAX_IMPORT_BYTES + 1)],
+    ],
+  };
+}
+function checkFixtures() {
+  const f = fixtures();
+  assert.deepEqual(M.parseScene(JSON.stringify(f.valid)), f.valid);
+  for (const [name, value] of f.invalid) assert.throws(() => M.parseScene(value), undefined, name);
+  assert.equal(Buffer.byteLength(f.invalid.at(-1)[1]), M.MAX_IMPORT_BYTES + 1);
+  assert.deepEqual(M.parseScene(JSON.stringify(scene({name:'<img src=x onerror=alert(1)>'}))), scene({name:'<img src=x onerror=alert(1)>'}));
+  return {valid:2, rejected:f.invalid.length};
+}
+
+class CDP {
+  constructor(socket) {
+    this.socket = socket; this.id = 0; this.pending = new Map(); this.handlers = new Set();
+    socket.addEventListener('message', event => {
+      let message;
+      try { message = JSON.parse(String(event.data)); }
+      catch (error) { this.failPending(error); return; }
+      if (message.id) {
+        const item = this.pending.get(message.id);
+        if (!item) return;
+        this.pending.delete(message.id); clearTimeout(item.timer);
+        if (message.error) item.reject(new Error(`${item.method}: ${message.error.message}`));
+        else item.resolve(message.result || {});
+      } else for (const handler of this.handlers) handler(message);
+    });
+    socket.addEventListener('close', () => this.failPending(new Error('Chrome DevTools connection closed')));
+    socket.addEventListener('error', () => this.failPending(new Error('Chrome DevTools connection failed')));
+  }
+  static async connect(url) {
+    const socket = new WebSocket(url);
+    await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => { socket.close(); reject(new Error('DevTools connection timed out')); }, 10000);
+      socket.addEventListener('open', () => { clearTimeout(timer); resolve(); }, {once:true});
+      socket.addEventListener('error', () => { clearTimeout(timer); reject(new Error('DevTools connection failed')); }, {once:true});
+    });
+    return new CDP(socket);
+  }
+  failPending(error) {
+    for (const item of this.pending.values()) { clearTimeout(item.timer); item.reject(error); }
+    this.pending.clear();
+  }
+  send(method, params = {}, sessionId) {
+    const id = ++this.id;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => { this.pending.delete(id); reject(new Error(`CDP timeout: ${method}`)); }, 10000);
+      this.pending.set(id, {resolve, reject, timer, method});
+      try { this.socket.send(JSON.stringify({id, method, params, ...(sessionId ? {sessionId} : {})})); }
+      catch (error) { clearTimeout(timer); this.pending.delete(id); reject(error); }
+    });
+  }
+  on(handler) { this.handlers.add(handler); return () => this.handlers.delete(handler); }
+  close() { this.socket.close(); }
+}
+async function until(fn, label, timeout = 7000) {
+  const end = Date.now() + timeout;
+  do { if (await fn()) return; await sleep(25); } while (Date.now() < end);
+  throw new Error(`Timed out waiting for ${label}`);
+}
+async function startChrome(profile) {
+  assert.equal(typeof WebSocket, 'function', 'Node with built-in WebSocket is required (Node >=22)');
+  assert.ok(!process.getuid || process.getuid() !== 0, 'Run Chrome as a non-root user with its sandbox enabled');
+  const executable = process.env.CHROME_PATH || '/usr/bin/google-chrome';
+  fs.accessSync(executable, fs.constants.X_OK);
+  const args = ['--headless=new', '--remote-debugging-port=0', '--remote-debugging-address=127.0.0.1',
+    `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-background-networking', 'about:blank'];
+  let diagnostic = '', launchError;
+  const processHandle = spawn(executable, args, {stdio:['ignore','ignore','pipe']});
+  processHandle.stderr.on('data', chunk => { diagnostic = (diagnostic + chunk).slice(-16000); });
+  processHandle.on('error', error => { launchError = error; });
+  try {
+    const endpointFile = path.join(profile, 'DevToolsActivePort');
+    await until(() => {
+      if (launchError) throw launchError;
+      if (processHandle.exitCode !== null) throw new Error(`Chrome exited (${processHandle.exitCode}): ${diagnostic}`);
+      return fs.existsSync(endpointFile);
+    }, 'sandboxed Chrome startup', 20000);
+    const [port, socketPath] = fs.readFileSync(endpointFile,'utf8').trim().split('\n');
+    assert.match(port, /^\d+$/); assert.match(socketPath, /^\/devtools\/browser\//);
+    return {processHandle, cdp:await CDP.connect(`ws://127.0.0.1:${port}${socketPath}`), executable, args, diagnostic:() => diagnostic};
+  } catch (error) { processHandle.kill('SIGTERM'); throw error; }
+}
+
+class Page {
+  constructor(cdp, sessionId, targetId, device, downloads) {
+    Object.assign(this, {cdp, sessionId, targetId, device, downloads});
+    this.loadCount = 0; this.errors = []; this.remoteRequests = []; this.dialogs = []; this.downloadsStarted = new Map(); this.downloadsFinished = new Map();
+    this.unlisten = cdp.on(message => {
+      const p = message.params || {};
+      if (message.method === 'Browser.downloadWillBegin') this.downloadsStarted.set(p.guid, p);
+      if (message.method === 'Browser.downloadProgress') this.downloadsFinished.set(p.guid, p);
+      if (message.sessionId !== sessionId) return;
+      if (message.method === 'Page.loadEventFired') this.loadCount++;
+      if (message.method === 'Runtime.exceptionThrown') this.errors.push(p.exceptionDetails.exception?.description || p.exceptionDetails.text);
+      if (message.method === 'Runtime.consoleAPICalled' && p.type === 'error') this.errors.push(p.args.map(a => a.value ?? a.description).join(' '));
+      if (message.method === 'Network.requestWillBeSent' && /^(https?|wss?|ftp):/i.test(p.request.url)) this.remoteRequests.push(p.request.url);
+      if (message.method === 'Network.webSocketCreated') this.remoteRequests.push(p.url);
+      if (message.method === 'Page.javascriptDialogOpening') {
+        this.dialogs.push(p.type);
+        this.send('Page.handleJavaScriptDialog', {accept:false}).catch(error => this.errors.push(error.message));
+      }
+    });
+  }
+  send(method, params) { return this.cdp.send(method, params, this.sessionId); }
+  async evaluate(fn, ...args) {
+    const expression = `(${fn.toString()})(...${JSON.stringify(args)})`;
+    const result = await this.send('Runtime.evaluate', {expression, returnByValue:true, awaitPromise:true});
+    if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description || result.exceptionDetails.text);
+    return result.result.value;
+  }
+  async property(selector, key) {
+    return this.evaluate((s, k) => { const e = document.querySelector(s); if (!e) throw new Error(`Missing ${s}`); return e[k]; }, selector, key);
+  }
+  async fresh() {
+    const previousLoads = this.loadCount;
+    const result = await this.send('Page.navigate', {url:pathToFileURL(artifact).href});
+    assert.ok(!result.errorText, result.errorText);
+    await until(() => this.loadCount > previousLoads, 'page load event for local artifact');
+    await until(() => this.evaluate(() => document.readyState === 'complete' && !!window.ImageryModel && !!document.querySelector('#scene-canvas')), 'loaded local artifact');
+    await this.send('Page.bringToFront');
+    await sleep(100);
+    await this.hidden();
+  }
+  async hidden() {
+    assert.equal(await this.property('#visibility-label','textContent'), 'Hidden');
+    const raster = await this.canvas();
+    assert.equal(raster.coloredPixels, 0, 'hidden canvas must actually contain black pixels only');
+    assert.match(raster.label, /hidden/i);
+  }
+  async visible() {
+    assert.equal(await this.property('#visibility-label','textContent'), 'Visible');
+    assert.ok((await this.canvas()).coloredPixels > 0, 'visible canvas must actually paint a scene');
+  }
+  canvas() {
+    return this.evaluate(() => {
+      const c = document.querySelector('#scene-canvas'), ctx = c.getContext('2d');
+      if (!ctx) throw new Error('Real Canvas 2D context unavailable');
+      const bytes = ctx.getImageData(0, 0, c.width, c.height).data;
+      let coloredPixels = 0;
+      for (let i=0; i<bytes.length; i+=4) if (bytes[i] || bytes[i+1] || bytes[i+2]) coloredPixels++;
+      return {width:c.width,height:c.height,coloredPixels,label:c.getAttribute('aria-label')};
+    });
+  }
+  async click(selector) {
+    const point = await this.evaluate(s => {
+      const e = document.querySelector(s); if (!e) throw new Error(`Missing ${s}`);
+      if (e.disabled) throw new Error(`Disabled ${s}`);
+      e.scrollIntoView({block:'center',inline:'center',behavior:'instant'});
+      const r = e.getBoundingClientRect(), x = r.x+r.width/2, y = r.y+r.height/2;
+      const hit = document.elementFromPoint(x,y);
+      if (!hit || !(e === hit || e.contains(hit))) throw new Error(`Pointer target occluded: ${s}`);
+      return {x,y};
+    }, selector);
+    if (this.device.touch) {
+      await this.send('Input.dispatchTouchEvent', {type:'touchStart',touchPoints:[{...point,radiusX:1,radiusY:1,force:1,id:1}]});
+      await this.send('Input.dispatchTouchEvent', {type:'touchEnd',touchPoints:[]});
+    } else {
+      await this.send('Input.dispatchMouseEvent', {type:'mousePressed',...point,button:'left',clickCount:1});
+      await this.send('Input.dispatchMouseEvent', {type:'mouseReleased',...point,button:'left',clickCount:1});
+    }
+  }
+  async focus(selector) { await this.evaluate(s => document.querySelector(s).focus(), selector); }
+  async key(key, repeat = false) {
+    const codes = {Enter:['Enter',13],Escape:['Escape',27],Tab:['Tab',9],' ':['Space',32]};
+    const [code,virtual] = codes[key];
+    const fields = {key,code,windowsVirtualKeyCode:virtual,nativeVirtualKeyCode:virtual};
+    await this.send('Input.dispatchKeyEvent', {type:'keyDown',...fields,autoRepeat:repeat,...(key === 'Enter' ? {text:'\r',unmodifiedText:'\r'} : key === ' ' ? {text:' ',unmodifiedText:' '} : {})});
+    await this.send('Input.dispatchKeyEvent', {type:'keyUp',...fields});
+  }
+  async fill(selector, value) {
+    // Native editing for text/number controls; select helper below dispatches DOM events.
+    await this.focus(selector);
+    await this.send('Input.dispatchKeyEvent', {type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,modifiers:2});
+    await this.send('Input.dispatchKeyEvent', {type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,modifiers:2});
+    await this.send('Input.insertText', {text:String(value)});
+    assert.equal(await this.property(selector,'value'), String(value), `native input failed for ${selector}`);
+  }
+  async select(selector, value) {
+    await this.evaluate((s,v) => {
+      const e = document.querySelector(s); e.value=v;
+      if (e.value !== v) throw new Error(`Missing option ${v}`);
+      e.dispatchEvent(new Event('input',{bubbles:true})); e.dispatchEvent(new Event('change',{bubbles:true}));
+    }, selector, String(value));
+  }
+  async file(filename, value, waitForRead = true) {
+    const filePath = path.join(this.downloads, filename);
+    fs.writeFileSync(filePath, typeof value === 'string' ? value : JSON.stringify(value));
+    await this.importPath(filePath, waitForRead); return filePath;
+  }
+  async importPath(filePath, waitForRead = true) {
+    const {root:documentNode} = await this.send('DOM.getDocument');
+    const {nodeId} = await this.send('DOM.querySelector', {nodeId:documentNode.nodeId, selector:'#scene-import'});
+    assert.ok(nodeId, 'file input missing');
+    await this.send('DOM.setFileInputFiles', {nodeId,files:filePath ? [filePath] : []});
+    if (waitForRead) await until(async () => !/^Reading the local/.test(await this.property('#status','textContent')), 'native File.text completion');
+  }
+  async download(selector, expectedName) {
+    const previous = new Set(this.downloadsStarted.keys());
+    await this.click(selector);
+    let event;
+    await until(() => { event = [...this.downloadsStarted.values()].find(e => !previous.has(e.guid)); return !!event; }, `download event for ${selector}`);
+    assert.equal(event.suggestedFilename, expectedName);
+    await until(() => {
+      const state = this.downloadsFinished.get(event.guid)?.state;
+      assert.notEqual(state, 'canceled', 'download canceled'); return state === 'completed';
+    }, 'completed browser download');
+    // allowAndName stores the actual browser-written bytes using the GUID, avoiding overwrite races.
+    const filePath = path.join(this.downloads,event.guid);
+    await until(() => fs.existsSync(filePath), 'download on disk');
+    const bytes = fs.readFileSync(filePath);
+    assert.ok(bytes.length > 0); assert.equal(bytes.at(-1), 10, 'JSON export should end in a newline');
+    return {filePath, bytes, json:JSON.parse(bytes.toString('utf8')), sha256:digest(bytes)};
+  }
+  async viewport(width, height = this.device.height) {
+    await this.send('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:this.device.scale,mobile:this.device.touch,screenWidth:width,screenHeight:height});
+    await sleep(50);
+  }
+  async screenshot(name, out) {
+    if (process.env.BROWSER_SCREENSHOTS !== '1') return;
+    const {data} = await this.send('Page.captureScreenshot', {format:'png',captureBeyondViewport:true});
+    fs.writeFileSync(path.join(out,`${this.device.name}-${name}.png`), Buffer.from(data,'base64'));
+  }
+  async close() { this.unlisten(); await this.cdp.send('Target.closeTarget',{targetId:this.targetId}); }
+}
+
+async function run() {
+  checkFixtures();
+  const out = path.resolve(process.env.BROWSER_TEST_OUTPUT || fs.mkdtempSync(path.join(os.tmpdir(),'imagery-browser-results-')));
+  fs.mkdirSync(out,{recursive:true});
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(),'imagery-chrome-profile-'));
+  const report = {
+    started:new Date().toISOString(), status:'RUNNING', artifactSha256:digest(fs.readFileSync(artifact)),
+    platform:process.platform,node:process.version,results:[],
+    scope:'Real headless Google Chrome; local file URL; desktop and phone-sized viewport/touch emulation; synthetic data only.',
+    limitations:['Viewport/touch emulation does not establish physical-phone or Safari support.',
+      'No screen-reader audit, actual OS file-picker interaction, display calibration, medical/sensory clearance, or universal-browser compatibility is established.',
+      'Offline/request assertions cover the inspected page, not all background browser or runner traffic.',
+      'File selection uses native CDP DOM.setFileInputFiles; the operating-system chooser itself is not exercised.'],
+  };
+  const write = () => fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2)+'\n');
+  let browser;
+  async function runCase(page, name, fn) {
+    const start = Date.now();
+    try {
+      await page.viewport(page.device.width); await page.fresh(); await fn();
+      const result = {device:page.device.name,name,status:'PASS',durationMs:Date.now()-start}; report.results.push(result);
+      console.log(`PASS ${page.device.name}: ${name}`);
+    } catch (error) {
+      const result = {device:page.device.name,name,status:'FAIL',durationMs:Date.now()-start,error:error.stack}; report.results.push(result);
+      console.error(`FAIL ${page.device.name}: ${name}\n${error.stack}`);
+      try { await page.screenshot(name.replace(/[^a-z0-9]+/gi,'-')+'-failure',out); } catch { /* Optional evidence only. */ }
+    }
+    write();
+  }
+  try {
+    try { browser = await startChrome(profile); }
+    catch (error) { report.status='BLOCKED'; report.launchError=error.stack; process.exitCode=2; return; }
+    const {cdp} = browser;
+    report.browser = await cdp.send('Browser.getVersion');
+    report.chromeExecutable=browser.executable; report.chromeArguments=browser.args.map(a => a.startsWith('--user-data-dir=') ? '--user-data-dir=<temporary-profile>' : a);
+    report.sandbox='Default Chrome sandbox retained; no sandbox/security-disabling flags used.';
+    for (const device of [{name:'desktop',width:1366,height:900,scale:1,touch:false},{name:'mobile-emulation',width:390,height:844,scale:3,touch:true}]) {
+      const downloads = path.join(out,device.name); fs.mkdirSync(downloads,{recursive:true});
+      const {targetId} = await cdp.send('Target.createTarget',{url:'about:blank'});
+      const {sessionId} = await cdp.send('Target.attachToTarget',{targetId,flatten:true});
+      const page = new Page(cdp,sessionId,targetId,device,downloads);
+      try {
+        await page.send('Page.enable'); await page.send('Runtime.enable'); await page.send('Network.enable');
+        await page.send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
+        await page.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+        await page.send('Emulation.setTouchEmulationEnabled',{enabled:device.touch,...(device.touch?{maxTouchPoints:1}:{})});
+        await cdp.send('Browser.setDownloadBehavior',{behavior:'allowAndName',downloadPath:downloads,eventsEnabled:true});
+        await runCase(page,'startup pixels, offline mode, and layout',async () => {
+          assert.match(await page.evaluate(() => document.title),/Imagery Field/);
+          assert.equal(await page.evaluate(() => navigator.onLine),false);
+          assert.equal(await page.evaluate(() => location.protocol),'file:');
+          const canvas = await page.canvas(); assert.ok(canvas.width>0 && canvas.width<=720); assert.equal(canvas.height,canvas.width);
+          assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+1),'horizontal overflow');
+          await sleep(250); await page.hidden(); await page.screenshot('startup',out);
+        });
+        await runCase(page,'native Show, Escape, rapid lock, keyboard, and End',async () => {
+          await page.click('#show-scene'); await page.visible(); await page.key('Escape'); await page.hidden();
+          // Keep the whole repeated burst within the 3-second lock instead of relying on runner speed.
+          const start = await page.evaluate(() => performance.now());
+          for (let i=0;i<8;i++) { await page.click('#show-scene'); await page.hidden(); }
+          assert.ok((await page.evaluate(() => performance.now()))-start < M.REVEAL_GAP_MS,'runner too slow to validate rapid lock');
+          await sleep(M.REVEAL_GAP_MS+100); await page.hidden();
+          await page.focus('#show-scene'); await page.key('Enter',true); await page.hidden();
+          await page.key('Enter'); await page.visible(); await page.click('#end-viewing'); await page.hidden();
+          assert.equal(await page.evaluate(() => document.activeElement.id),'guidance-title');
+        });
+        await runCase(page,'presets, native edits, undo/redo, and numeric validation',async () => {
+          for (let i=0;i<M.presets().length;i++) { await page.select('#preset',i); await page.hidden(); assert.equal(await page.property('#shape','value'),M.presets()[i].scene.shape); }
+          await page.fill('#scene-name','Synthetic browser scene'); await page.select('#shape','circle'); await page.fill('#position-x','25');
+          await page.click('#apply-changes'); await page.hidden();
+          const got = await page.download('#export-scene','imagery-field-scene-v1.json');
+          assert.equal(got.json.scene.name,'Synthetic browser scene'); assert.equal(got.json.scene.x,25); assert.equal(got.json.scene.shape,'circle');
+          await page.click('#undo'); await page.hidden(); await page.click('#redo'); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'Synthetic browser scene');
+          await page.fill('#position-x','0'); await page.click('#apply-changes'); await page.hidden();
+          assert.match(await page.property('#status','textContent'),/25.*75|whole number|invalid/i);
+          await page.click('#discard'); assert.equal(await page.property('#position-x','value'),'25');
+        });
+        await runCase(page,'native disk download/reload/file-import byte roundtrip',async () => {
+          await page.fill('#scene-name','Portable roundtrip'); await page.click('#apply-changes');
+          const first = await page.download('#export-scene','imagery-field-scene-v1.json');
+          await page.fresh(); await page.importPath(first.filePath); await page.hidden();
+          assert.equal(await page.property('#scene-name','value'),'Portable roundtrip');
+          const second = await page.download('#export-scene','imagery-field-scene-v1.json');
+          assert.deepEqual(second.bytes,first.bytes,'actual browser-written JSON bytes differ after reload/import');
+          await page.importPath(first.filePath); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'Portable roundtrip');
+        });
+        await runCase(page,'native malformed, oversized, duplicate, and inert-markup imports',async () => {
+          const original = await page.property('#scene-name','value');
+          for (const [name,value] of fixtures().invalid) {
+            await page.file(`${name}.json`,value); await page.hidden();
+            assert.equal(await page.property('#scene-name','value'),original,name); assert.match(await page.property('#status','textContent'),/unchanged/i,name);
+          }
+          const inert = '<img src=x onerror=alert(1)>';
+          await page.file('inert.json',scene({name:inert})); await page.hidden();
+          assert.equal(await page.property('#scene-name','value'),inert); assert.equal(await page.evaluate(() => document.querySelectorAll('img').length),0);
+          await page.importPath(null); assert.equal(await page.property('#scene-name','value'),inert);
+        });
+        await runCase(page,'delayed File.text cannot override Hide or newer import',async () => {
+          await page.evaluate(() => {
+            window.__testReads={}; const original=File.prototype.text;
+            File.prototype.text=function() { if(this.name.startsWith('delay-')) return new Promise((resolve,reject) => { window.__testReads[this.name]={resolve,reject}; }); return original.call(this); };
+          });
+          const original = await page.property('#scene-name','value');
+          await page.file('delay-hide.json',scene({name:'stale'}),false);
+          await until(() => page.evaluate(() => !!window.__testReads['delay-hide.json']), 'delayed read to start');
+          await page.click('#hide-scene');
+          await page.evaluate(text => window.__testReads['delay-hide.json'].resolve(text),JSON.stringify(scene({name:'stale'})));
+          await sleep(25); await page.hidden(); assert.equal(await page.property('#scene-name','value'),original);
+          await page.file('delay-old.json',scene({name:'old'}),false);
+          await until(() => page.evaluate(() => !!window.__testReads['delay-old.json']), 'older read to start');
+          await page.file('new.json',scene({name:'new'}));
+          await page.evaluate(text => window.__testReads['delay-old.json'].resolve(text),JSON.stringify(scene({name:'old'})));
+          await sleep(25); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'new');
+        });
+        await runCase(page,'separate notes preview, consent, download, invalidation, and reload',async () => {
+          await page.click('#notes-details > summary'); await page.fill('#notes','Synthetic private note'); await page.select('#note-category','unsure');
+          const exported = await page.download('#export-scene','imagery-field-scene-v1.json'); assert.ok(!exported.bytes.toString().includes('Synthetic private note'));
+          await page.click('#preview-notes');
+          const preview = JSON.parse(await page.property('#notes-preview','textContent'));
+          assert.equal(await page.property('#export-notes','disabled'),true); assert.equal(await page.property('#include-note','checked'),false);
+          await page.click('#include-note');
+          const note = await page.download('#export-notes','imagery-field-note-v1.json'); assert.deepEqual(note.json,preview);
+          assert.deepEqual(note.bytes,Buffer.from(JSON.stringify(preview,null,2)+'\n'));
+          await page.fill('#notes','Changed synthetic note');
+          assert.equal(await page.property('#export-notes','disabled'),true); assert.equal(await page.property('#include-note','checked'),false); assert.equal(await page.property('#notes-export-area','hidden'),true);
+          await page.click('#preview-notes'); await page.click('#include-note'); await page.select('#note-category','none');
+          assert.equal(await page.property('#export-notes','disabled'),true); assert.equal(await page.property('#include-note','checked'),false);
+          await page.fresh(); assert.equal(await page.property('#notes','value'),'');
+        });
+        await runCase(page,'note validation rejects overlength, null, and unknown category',async () => {
+          await page.click('#notes-details > summary');
+          // Direct DOM mutations intentionally exercise validation beyond maxlength and listed options.
+          for (const text of ['x'.repeat(4001),'null\u0000character']) {
+            await page.evaluate(value => { const e=document.querySelector('#notes'); e.value=value; e.dispatchEvent(new Event('input',{bubbles:true})); },text);
+            await page.click('#preview-notes'); assert.equal(await page.property('#notes-export-area','hidden'),true); assert.match(await page.property('#status','textContent'),/4,000/);
+          }
+          await page.evaluate(() => { document.querySelector('#notes').value=''; document.querySelector('#note-category').value='not-listed'; });
+          await page.click('#preview-notes'); assert.equal(await page.property('#notes-export-area','hidden'),true); assert.match(await page.property('#status','textContent'),/listed observation/);
+        });
+        await runCase(page,'responsive widths, actual resize hide, targets, and focus',async () => {
+          await page.click('#show-scene'); await page.visible();
+          for (const width of [320,390,768,1366]) {
+            await page.viewport(width,844); await page.hidden();
+            assert.ok(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth+1),`horizontal overflow at ${width}`);
+            for (const id of ['show-scene','hide-scene','end-viewing','apply-changes']) {
+              const rect = await page.evaluate(id => { const r=document.getElementById(id).getBoundingClientRect(); return {width:r.width,height:r.height}; },id);
+              assert.ok(rect.width>=44 && rect.height>=44,`${id} touch target smaller than 44 CSS px at ${width}`);
+            }
+          }
+          await page.focus('#show-scene'); assert.equal(await page.evaluate(() => document.activeElement.id),'show-scene');
+          await page.key('Tab'); assert.equal(await page.evaluate(() => document.activeElement.id),'hide-scene');
+          await page.key('Tab'); assert.equal(await page.evaluate(() => document.activeElement.id),'end-viewing');
+          await page.key('Enter'); assert.equal(await page.evaluate(() => document.activeElement.id),'guidance-title'); await page.hidden();
+        });
+        await runCase(page,'repeated editing actions do not replay a reveal',async () => {
+          for (let i=0;i<20;i++) {
+            await page.select('#preset',i%5); await page.click('#apply-changes');
+            if (!await page.property('#undo','disabled')) await page.click('#undo');
+            if (!await page.property('#redo','disabled')) await page.click('#redo');
+            await page.click('#hide-scene'); await page.click('#show-scene'); await page.hidden();
+          }
+          await sleep(M.REVEAL_GAP_MS+100); await page.hidden();
+        });
+        report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});
+        console.log(`${report.results.at(-1).status} ${device.name}: page runtime, dialog, and remote-request log`);
+      } finally { await page.close(); }
+    }
+    report.status = report.results.some(result => result.status === 'FAIL') ? 'FAIL' : 'PASS';
+    if (report.status !== 'PASS') process.exitCode=1;
+  } catch (error) { report.status='ERROR'; report.error=error.stack; process.exitCode=1; }
+  finally {
+    if (browser) {
+      try { await browser.cdp.send('Browser.close'); } catch { /* Chrome may close the socket before acknowledgement. */ }
+      browser.cdp.close(); browser.processHandle.kill('SIGTERM');
+      await until(() => browser.processHandle.exitCode !== null || browser.processHandle.signalCode !== null,'Chrome exit',5000).catch(() => browser.processHandle.kill('SIGKILL'));
+    }
+    fs.rmSync(profile,{recursive:true,force:true});
+    report.finished=new Date().toISOString(); write(); console.log(JSON.stringify(report,null,2));
+    console.log(`Browser report: ${path.join(out,'results.json')}`);
+  }
+}
+if (require.main === module) {
+  if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
+  else run().catch(error => { console.error(error); process.exitCode=1; });
+}
+module.exports = {CDP,fixtures,checkFixtures};
