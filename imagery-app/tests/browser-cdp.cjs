@@ -41,7 +41,8 @@ function initialGuardRemaining(events, now) {
   return Math.max(0, Math.max(...guards.map(event=>event.time)) + M.REVEAL_GAP_MS + 100 - now);
 }
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
-const scene = changes => { const value = M.presets()[0]; Object.assign(value.scene, changes); return value; };
+const {scene: fixtureScene, legacy} = require('./fixtures.cjs');
+const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
   const valid = scene({name:'Synthetic imported scene', shape:'square'});
   return {
@@ -52,7 +53,11 @@ function fixtures() {
       ['unknown-animation', JSON.stringify({...valid, animation:true})],
       ['unknown-url', JSON.stringify({...valid, url:'https://example.invalid'})],
       ['embedded-note', JSON.stringify({...valid, notes:'Synthetic note'})],
-      ['duplicate-key', JSON.stringify(valid).replace('"version":1','"version":999,"version":1')],
+      ['duplicate-key', JSON.stringify(valid).replace('"version":2','"version":999,"version":2')],
+      ['nested-object-extra', JSON.stringify(scene({objects:[{...scene().scene.objects[0],url:'https://example.invalid'}]}))],
+      ['invalid-object-color', JSON.stringify(scene({objects:[{...scene().scene.objects[0],color:{h:360,s:20,l:40}}]}))],
+      ['duplicate-object-id', JSON.stringify(scene({objects:[scene().scene.objects[0],scene().scene.objects[0]]}))],
+      ['nested-duplicate-key', JSON.stringify(valid).replace('"h":200','"h":200,"\\u0068":200')],
       ['oversize', ' '.repeat(M.MAX_IMPORT_BYTES + 1)],
     ],
   };
@@ -63,7 +68,8 @@ function checkFixtures() {
   for (const [name, value] of f.invalid) assert.throws(() => M.parseScene(value), undefined, name);
   assert.equal(Buffer.byteLength(f.invalid.at(-1)[1]), M.MAX_IMPORT_BYTES + 1);
   assert.deepEqual(M.parseScene(JSON.stringify(scene({name:'<img src=x onerror=alert(1)>'}))), scene({name:'<img src=x onerror=alert(1)>'}));
-  return {valid:2, rejected:f.invalid.length};
+  assert.deepEqual(M.parseScene(JSON.stringify(legacy())),M.canonicalScene(legacy()));
+  return {valid:3, rejected:f.invalid.length};
 }
 
 class CDP {
@@ -264,7 +270,7 @@ class Page {
   }
   async focus(selector) { await this.evaluate(s => document.querySelector(s).focus(), selector); }
   async key(key, repeat = false) {
-    const codes = {Enter:['Enter',13],Escape:['Escape',27],Tab:['Tab',9],' ':['Space',32]};
+    const codes = {Enter:['Enter',13],Escape:['Escape',27],Tab:['Tab',9],' ':['Space',32],ArrowUp:['ArrowUp',38],ArrowDown:['ArrowDown',40],ArrowLeft:['ArrowLeft',37],ArrowRight:['ArrowRight',39],Home:['Home',36],End:['End',35]};
     const [code,virtual] = codes[key];
     const fields = {key,code,windowsVirtualKeyCode:virtual,nativeVirtualKeyCode:virtual};
     await this.send('Input.dispatchKeyEvent', {type:'keyDown',...fields,autoRepeat:repeat,...(key === 'Enter' ? {text:'\r',unmodifiedText:'\r'} : key === ' ' ? {text:' ',unmodifiedText:' '} : {})});
@@ -284,6 +290,19 @@ class Page {
       if (e.value !== v) throw new Error(`Missing option ${v}`);
       e.dispatchEvent(new Event('input',{bubbles:true})); e.dispatchEvent(new Event('change',{bubbles:true}));
     }, selector, String(value));
+  }
+  async nativeSelect(selector,value) {
+    const index=await this.evaluate((s,v)=>[...document.querySelector(s).options].findIndex(o=>o.value===v),selector,String(value));
+    assert.ok(index>=0,`Missing native select option ${value}`);await this.focus(selector);await this.key('Home');for(let i=0;i<index;i++)await this.key('ArrowDown');
+    assert.equal(await this.property(selector,'value'),String(value));
+  }
+  async rangeInput(selector) {
+    const point=await this.evaluate(s=>{const e=document.querySelector(s);e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect();window.__rangeEvents=[];for(const name of ['input','change'])e.addEventListener(name,event=>window.__rangeEvents.push({type:name,trusted:event.isTrusted}),{once:true});return {x:r.left+r.width*0.7,y:r.top+r.height/2}},selector);
+    await this.send('Input.dispatchMouseEvent',{type:'mousePressed',...point,button:'left',clickCount:1});
+    await until(()=>this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='input')),'native range input before pointer release');
+    assert.equal(await this.evaluate(()=>window.__rangeEvents.find(e=>e.type==='input').trusted),true);
+    assert.equal(await this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='change')),false,'range should conceal during input, before commit');
+    await this.hidden();await this.send('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});
   }
   async file(filename, value, waitForRead = true) {
     const filePath = path.join(this.downloads, filename);
@@ -384,7 +403,7 @@ async function run() {
           assert.match(await page.evaluate(() => document.title),/Imagery Field/);
           assert.equal(await page.evaluate(() => navigator.onLine),false);
           assert.equal(await page.evaluate(() => location.protocol),'file:');
-          const canvas = await page.canvas(); assert.ok(canvas.width>0 && canvas.width<=720); assert.equal(canvas.height,canvas.width);
+          const canvas = await page.canvas(); assert.ok(canvas.width>0 && canvas.width<=4096); assert.ok(canvas.height>0 && canvas.height<=4096); assert.ok(canvas.width*canvas.height<=8388608); const ratio=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();return {w:r.width,h:r.height}}); assert.ok(Math.abs(canvas.width/canvas.height-ratio.w/ratio.h)<0.01,'canvas backing and CSS aspect ratios differ');
           await page.noOverflow(device.width);
           await sleep(250); await page.hidden(); await page.screenshot('startup',out);
         });
@@ -400,22 +419,22 @@ async function run() {
           assert.equal(await page.evaluate(() => document.activeElement.id),'guidance-title');
         });
         await runCase(page,'presets, native edits, undo/redo, and numeric validation',async () => {
-          for (let i=0;i<M.presets().length;i++) { await page.select('#preset',i); await page.hidden(); assert.equal(await page.property('#shape','value'),M.presets()[i].scene.shape); }
+          for (let i=0;i<M.presets().length;i++) { await page.select('#preset',i); await page.hidden(); assert.equal(await page.property('#shape','value'),M.presets()[i].scene.objects[0]?.shape||''); }
           await page.fill('#scene-name','Synthetic browser scene'); await page.select('#shape','circle'); await page.fill('#position-x','25');
           await page.click('#apply-changes'); await page.hidden();
-          const got = await page.download('#export-scene','imagery-field-scene-v1.json');
-          assert.equal(got.json.scene.name,'Synthetic browser scene'); assert.equal(got.json.scene.x,25); assert.equal(got.json.scene.shape,'circle');
+          const got = await page.download('#export-scene','imagery-field-scene-v2.json');
+          assert.equal(got.json.scene.name,'Synthetic browser scene'); assert.equal(got.json.scene.objects[0].x,25); assert.equal(got.json.scene.objects[0].shape,'circle');
           await page.click('#undo'); await page.hidden(); await page.click('#redo'); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'Synthetic browser scene');
           await page.fill('#position-x','0'); await page.click('#apply-changes'); await page.hidden();
-          assert.match(await page.property('#status','textContent'),/25.*75|whole number|invalid/i);
+          assert.match(await page.property('#status','textContent'),/inset|position|whole number|invalid/i);
           await page.click('#discard'); assert.equal(await page.property('#position-x','value'),'25');
         });
         await runCase(page,'native disk download/reload/file-import byte roundtrip',async () => {
           await page.fill('#scene-name','Portable roundtrip'); await page.click('#apply-changes');
-          const first = await page.download('#export-scene','imagery-field-scene-v1.json');
+          const first = await page.download('#export-scene','imagery-field-scene-v2.json');
           await page.fresh(); await page.importPath(first.filePath); await page.hidden();
           assert.equal(await page.property('#scene-name','value'),'Portable roundtrip');
-          const second = await page.download('#export-scene','imagery-field-scene-v1.json');
+          const second = await page.download('#export-scene','imagery-field-scene-v2.json');
           assert.deepEqual(second.bytes,first.bytes,'actual browser-written JSON bytes differ after reload/import');
           await page.importPath(first.filePath); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'Portable roundtrip');
         });
@@ -449,7 +468,7 @@ async function run() {
         });
         await runCase(page,'separate notes preview, consent, download, invalidation, and reload',async () => {
           await page.click('#notes-details > summary'); await page.fill('#notes','Synthetic private note'); await page.select('#note-category','unsure');
-          const exported = await page.download('#export-scene','imagery-field-scene-v1.json'); assert.ok(!exported.bytes.toString().includes('Synthetic private note'));
+          const exported = await page.download('#export-scene','imagery-field-scene-v2.json'); assert.ok(!exported.bytes.toString().includes('Synthetic private note'));
           await page.click('#preview-notes');
           const preview = JSON.parse(await page.property('#notes-preview','textContent'));
           assert.equal(await page.property('#export-notes','disabled'),true); assert.equal(await page.property('#include-note','checked'),false);
@@ -495,6 +514,66 @@ async function run() {
             await page.click('#hide-scene'); await page.click('#show-scene'); await page.hidden();
           }
           await sleep(M.REVEAL_GAP_MS+100); await page.hidden();
+        });
+        await runCase(page,'v2 native add/select/delete, movement, sliders and exact export',async()=>{
+          await page.file('empty-v2.json',scene({objects:[]}));
+          await page.nativeSelect('#add-shape','pixel');await page.click('#add-object');await page.hidden();await page.click('#apply-changes');
+          const first=await page.download('#export-scene','imagery-field-scene-v2.json');assert.equal(first.json.scene.objects.length,1);assert.equal(first.json.scene.objects[0].shape,'pixel');const firstId=first.json.scene.objects[0].id;
+          await page.nativeSelect('#add-shape','circle');await page.click('#add-object');await page.click('#apply-changes');
+          const second=await page.download('#export-scene','imagery-field-scene-v2.json');assert.equal(second.json.scene.objects.length,2);const secondId=second.json.scene.objects.find(o=>o.id!==firstId).id;
+          await page.nativeSelect('#object-select',firstId);await page.fill('#position-x','35.25');await page.fill('#position-y','65');await page.fill('#size','6');await page.click('#apply-changes');
+          for(const slider of ['#object-hue','#object-saturation','#object-lightness']){await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.rangeInput(slider);await page.click('#apply-changes');}
+          const changed=await page.download('#export-scene','imagery-field-scene-v2.json');const pixel=changed.json.scene.objects.find(o=>o.id===firstId);assert.equal(pixel.x,35.25);assert.equal(pixel.y,65);assert.equal(pixel.size,6);assert.equal(changed.json.version,2);assert.equal(changed.json.sampler,'static-objects-2');assert.deepEqual(M.canonicalScene(changed.json),changed.json);
+          await page.click('#delete-object');await page.hidden();await page.click('#apply-changes');const removed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(removed.json.scene.objects.map(o=>o.id),[secondId]);await page.click('#undo');const restored=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(restored.json,changed.json);
+        });
+        await runCase(page,'v2 background input conceals and empty field Hide is black',async()=>{
+          await page.file('colored-empty.json',scene({objects:[],background:{h:200,s:30,l:20}}));await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
+          const raster=await page.canvas();assert.equal(raster.coloredPixels,raster.width*raster.height,'background must fill full canvas');
+          for(const slider of ['#background-hue','#background-saturation','#background-lightness']){if(slider!=='#background-hue'){await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();}await page.rangeInput(slider);await page.click('#apply-changes');await page.hidden();}const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.notEqual(got.json.scene.background.l,20);assert.deepEqual(got.json.scene.objects,[]);
+          await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.click('#hide-scene');await page.hidden();
+        });
+        await runCase(page,'v2 fullwindow square geometry and one-click placement',async()=>{
+          await page.file('single-square.json',scene({shape:'square',size:20}));
+          const layout=await page.evaluate(()=>{const c=document.querySelector('#scene-canvas'),r=c.getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height,innerWidth,innerHeight}});
+          assert.ok(Math.abs(layout.left)<=1&&Math.abs(layout.top)<=1);assert.ok(Math.abs(layout.width-layout.innerWidth)<=1&&Math.abs(layout.height-layout.innerHeight)<=1,'canvas must cover fullwindow');
+          await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
+          const bounds=await page.evaluate(()=>{const c=document.querySelector('#scene-canvas'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let minX=c.width,maxX=-1,minY=c.height,maxY=-1;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4;if(d[i]||d[i+1]||d[i+2]){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)}}return {width:maxX-minX+1,height:maxY-minY+1}});
+          assert.ok(Math.abs(bounds.width-bounds.height)<=2,'square contour is stretched');
+          await page.click('#place-object');await page.hidden();
+          const pt=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();const points=[[0.65,0.65],[0.8,0.6],[0.6,0.8],[0.5,0.75]];for(const [x,y]of points){const px=r.left+r.width*x,py=r.top+r.height*y;if(document.elementFromPoint(px,py)?.id==='scene-canvas')return {x:px,y:py,px:x*100,py:y*100}}throw Error('No reachable canvas placement point')});
+          await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.hidden();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
+        });
+        await runCase(page,'v2 native fullscreen contains reachable Hide End Exit and stays hidden',async()=>{
+          await page.settleInitialGuard();await page.click('#show-scene');await page.visible();await page.click('#fullscreen');
+          await until(()=>page.evaluate(()=>document.fullscreenElement?.id==='stage-root'),'native fullscreen entry');await page.hidden();await until(()=>page.evaluate(()=>document.activeElement?.id==='exit-fullscreen'),'focus on visible Exit fullscreen control');
+          assert.equal(await page.evaluate(()=>['show-scene','hide-scene','end-viewing','exit-fullscreen'].every(id=>document.fullscreenElement.contains(document.getElementById(id)))),true);
+          await sleep(M.REVEAL_GAP_MS+100);await page.hidden();await page.click('#show-scene');await page.visible();await page.click('#hide-scene');await page.hidden();
+          await page.click('#exit-fullscreen');await until(()=>page.evaluate(()=>document.fullscreenElement===null),'native fullscreen exit');await page.hidden();await until(()=>page.evaluate(()=>document.activeElement?.id==='fullscreen'),'focus restored to Enter fullscreen control');
+          await page.click('#fullscreen');await until(()=>page.evaluate(()=>!!document.fullscreenElement),'second native fullscreen entry');await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.key('Escape');await until(()=>page.evaluate(()=>document.fullscreenElement===null),'native Escape fullscreen exit');await page.hidden();
+          await page.click('#fullscreen');await until(()=>page.evaluate(()=>!!document.fullscreenElement),'third native fullscreen entry');await page.click('#end-viewing');await page.hidden();
+          if(await page.evaluate(()=>!!document.fullscreenElement))await page.click('#exit-fullscreen');
+        });
+        await runCase(page,'v2 rejected fullscreen promise keeps fullwindow fallback usable',async()=>{
+          await page.evaluate(()=>{document.querySelector('#stage-root').requestFullscreen=()=>Promise.reject(new Error('Synthetic fullscreen denial'))});
+          await page.settleInitialGuard();await page.click('#show-scene');await page.visible();await page.click('#fullscreen');await page.hidden();assert.equal(await page.evaluate(()=>document.fullscreenElement),null);
+          assert.match(await page.property('#status','textContent'),/full.?window|denied|unavailable|fullscreen/i);await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.key('Escape');await page.hidden();
+        });
+        await runCase(page,'v2 keyboard skip recovery and narrow short viewport focus',async()=>{
+          await page.click('#editor-toggle');assert.equal(await page.property('#editor-panel','hidden'),true);await page.focus('#skip-controls');await page.key('Enter');await page.hidden();assert.equal(await page.property('#editor-panel','hidden'),false);assert.equal(await page.evaluate(()=>document.activeElement.id),'controls');
+          for(const [width,height]of [[320,568],[844,390]]){await page.viewport(width,height);await page.noOverflow(width);
+            for(const selector of ['#scene-name','#object-select','#position-x','#object-hue','#background-lightness','#apply-changes','#export-scene']){
+              await page.focus(selector);const metric=await page.evaluate(s=>{const e=document.querySelector(s),r=e.getBoundingClientRect(),p=document.querySelector('#editor-panel').getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {focused:document.activeElement===e,visible:r.top>=p.top-1&&r.bottom<=p.bottom+1,hit:hit===e||e.contains(hit),height:r.height}},selector);
+              assert.ok(metric.focused&&metric.visible&&metric.hit&&metric.height>0,`focused control obscured at ${width}x${height}: ${selector} ${JSON.stringify(metric)}`);
+            }
+          }
+        });
+        await runCase(page,'v2 320 by 180 reflow keeps Hide and End directly reachable',async()=>{
+          await page.viewport(320,180);await page.hidden();await page.noOverflow(320);
+          for(const id of ['hide-scene','end-viewing']){const metric=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height,hit:hit===e||e.contains(hit),innerWidth,innerHeight}},id);assert.ok(metric.top>=0&&metric.bottom<=metric.innerHeight&&metric.left>=0&&metric.right<=metric.innerWidth&&metric.hit&&metric.width>=44&&metric.height>=44,`${id} unavailable in 320x180 viewport: ${JSON.stringify(metric)}`);}
+          await page.click('#hide-scene');await page.hidden();await page.click('#end-viewing');await page.hidden();
+        });
+        await runCase(page,'v1 native file input migrates to strict v2 scene export',async()=>{
+          const old=legacy({shape:'dots',dotCount:5,size:20});await page.file('legacy-v1.json',old);await page.hidden();const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(got.json,M.canonicalScene(old));assert.equal(got.json.scene.objects.length,5);
         });
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});
         console.log(`${report.results.at(-1).status} ${device.name}: page runtime, dialog, and remote-request log`);

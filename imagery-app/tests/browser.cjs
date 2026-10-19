@@ -13,7 +13,8 @@ const out=path.join(root,'test-results','browser');fs.mkdirSync(out,{recursive:t
 const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const report={started:new Date().toISOString(),artifactSha256:sha(path.join(root,'index.html')),platform:process.platform,node:process.version,status:'RUNNING',results:[],limitations:['Phone-sized viewport emulation is not a physical phone.','No screen-reader, actual OS chooser, display calibration, medical/sensory clearance, or universal browser support is established.']};
 const write=()=>fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2)+'\n');
-const fixture=changes=>{const v=m.presets()[0];Object.assign(v.scene,changes);return v};
+const {scene}=require('./fixtures.cjs');
+const fixture=changes=>{const v=scene();const {shape,x,y,size,...rest}=changes||{};Object.assign(v.scene,rest);for(const [key,value]of Object.entries({shape,x,y,size}))if(value!==undefined)v.scene.objects[0][key]=value;return v};
 const payload=(name,value)=>({name,mimeType:'application/json',buffer:Buffer.from(typeof value==='string'?value:JSON.stringify(value))});
 async function hidden(page){assert.equal((await page.locator('#visibility-label').textContent()).trim(),'Hidden');}
 async function visible(page){assert.equal((await page.locator('#visibility-label').textContent()).trim(),'Visible');}
@@ -29,7 +30,7 @@ async function runCase(page,device,name,fn){const started=Date.now();try{await f
   const {name,...settings}=cfg;const context=await browser.newContext({...settings,offline:true,acceptDownloads:true,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(7000);const errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:|^wss?:/.test(r.url()))external.push(r.url())});
   await runCase(page,name,'startup-static-hidden-and-no-overflow',async()=>{
-   await hidden(page);assert.match(await page.title(),/Imagery Field/);const canvas=await page.locator('#scene-canvas').evaluate(e=>({w:e.width,h:e.height,label:e.getAttribute('aria-label')}));assert.match(canvas.label,/hidden/i);assert.ok(canvas.w<=1024&&canvas.h<=1024);
+   await hidden(page);assert.match(await page.title(),/Imagery Field/);const canvas=await page.locator('#scene-canvas').evaluate(e=>({w:e.width,h:e.height,label:e.getAttribute('aria-label')}));assert.match(canvas.label,/hidden/i);assert.ok(canvas.w<=4096&&canvas.h<=4096&&canvas.w*canvas.h<=8388608);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal page overflow');await page.waitForTimeout(300);await hidden(page);
    await page.screenshot({path:path.join(out,`${name}-startup.png`),fullPage:true});
   });
@@ -38,18 +39,18 @@ async function runCase(page,device,name,fn){const started=Date.now();try{await f
    await page.waitForTimeout(m.REVEAL_GAP_MS+100);await hidden(page);await page.locator('#show-scene').focus();await page.keyboard.press('Enter');await visible(page);await page.locator('#end-viewing').click();await hidden(page);
   });
   await runCase(page,name,'presets-edits-undo-redo-and-invalid-input',async()=>{
-   for(let i=0;i<m.presets().length;i++){await page.locator('#preset').selectOption(String(i));await hidden(page);assert.equal(await page.locator('#shape').inputValue(),m.presets()[i].scene.shape);}
+   for(let i=0;i<m.presets().length;i++){await page.locator('#preset').selectOption(String(i));await hidden(page);assert.equal(await page.locator('#shape').inputValue(),m.presets()[i].scene.objects[0]?.shape||'');}
    await page.locator('#scene-name').fill('Synthetic browser scene');await page.locator('#shape').selectOption('circle');await page.locator('#position-x').fill('25');await page.locator('#apply-changes').click();await hidden(page);
-   const got=await download(page,'#export-scene',`${name}-scene.json`);assert.equal(got.scene.name,'Synthetic browser scene');assert.equal(got.scene.x,25);assert.equal(got.scene.shape,'circle');
+   const got=await download(page,'#export-scene',`${name}-scene.json`);assert.equal(got.scene.name,'Synthetic browser scene');assert.equal(got.scene.objects[0].x,25);assert.equal(got.scene.objects[0].shape,'circle');
    await page.locator('#undo').click();await hidden(page);await page.locator('#redo').click();assert.equal(await page.locator('#scene-name').inputValue(),'Synthetic browser scene');
-   await page.locator('#position-x').fill('0');await page.locator('#apply-changes').click();assert.match(await page.locator('#status').textContent(),/25.*75|whole number|invalid/i);await page.locator('#discard').click();assert.equal(await page.locator('#position-x').inputValue(),'25');
+   await page.locator('#position-x').fill('0');await page.locator('#apply-changes').click();assert.match(await page.locator('#status').textContent(),/inset|position|whole number|invalid/i);await page.locator('#discard').click();assert.equal(await page.locator('#position-x').inputValue(),'25');
   });
   await runCase(page,name,'actual-file-export-reload-import-roundtrip',async()=>{
    await page.locator('#scene-name').fill('Portable roundtrip');await page.locator('#apply-changes').click();const got=await download(page,'#export-scene',`${name}-roundtrip.json`);
    await page.reload();await hidden(page);await page.locator('#scene-import').setInputFiles(path.join(out,`${name}-roundtrip.json`));await hidden(page);assert.equal(await page.locator('#scene-name').inputValue(),'Portable roundtrip');const again=await download(page,'#export-scene',`${name}-roundtrip-reexport.json`);assert.deepEqual(again,got);
   });
   await runCase(page,name,'invalid-and-malicious-imports-preserve-current',async()=>{
-   const original=await page.locator('#scene-name').inputValue();const bad=['','{','null',JSON.stringify({...fixture({}),version:999}),JSON.stringify({...fixture({}),animation:true}),JSON.stringify(fixture({})).replace('"version":1','"version":99,"version":1'),' '.repeat(m.MAX_IMPORT_BYTES+1)];
+   const original=await page.locator('#scene-name').inputValue();const bad=['','{','null',JSON.stringify({...fixture({}),version:999}),JSON.stringify({...fixture({}),animation:true}),JSON.stringify(fixture({})).replace('"version":2','"version":99,"version":2'),' '.repeat(m.MAX_IMPORT_BYTES+1)];
    for(let i=0;i<bad.length;i++){await page.locator('#scene-import').setInputFiles(payload(`invalid-${i}.json`,bad[i]));await hidden(page);assert.equal(await page.locator('#scene-name').inputValue(),original);assert.ok((await page.locator('#status').textContent()).length>0);}
    const inert='<img src=x onerror=alert(1)>';await page.locator('#scene-import').setInputFiles(payload('inert.json',fixture({name:inert})));assert.equal(await page.locator('#scene-name').inputValue(),inert);assert.equal(await page.locator('img').count(),0);await hidden(page);
    await page.locator('#scene-import').setInputFiles([]);assert.equal(await page.locator('#scene-name').inputValue(),inert);
@@ -71,7 +72,7 @@ async function runCase(page,device,name,fn){const started=Date.now();try{await f
    await page.locator('#show-scene').focus();assert.equal(await page.evaluate(()=>document.activeElement.id),'show-scene');
   });
   await runCase(page,name,'repeated-actions-no-runtime-errors-or-network',async()=>{
-   for(let i=0;i<30;i++){await page.locator('#preset').selectOption(String(i%5));if(await page.locator('#undo').isEnabled())await page.locator('#undo').click();if(await page.locator('#redo').isEnabled())await page.locator('#redo').click();await page.locator('#hide-scene').click();await page.locator('#show-scene').click();await hidden(page);}
+   for(let i=0;i<30;i++){await page.locator('#preset').selectOption(String(i%m.presets().length));if(await page.locator('#undo').isEnabled())await page.locator('#undo').click();if(await page.locator('#redo').isEnabled())await page.locator('#redo').click();await page.locator('#hide-scene').click();await page.locator('#show-scene').click();await hidden(page);}
    assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   });
   report.results.push({device:name,name:'request-and-runtime-error-log',status:errors.length||external.length?'FAIL':'PASS',errors,externalRequests:external});await context.close();

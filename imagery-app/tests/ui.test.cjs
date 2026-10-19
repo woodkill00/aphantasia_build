@@ -2,24 +2,25 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {createHarness}=require('./dom-harness.cjs');
 const M=require('../src/model.js');
-const fixture=changes=>{const s=M.presets()[0];Object.assign(s.scene,changes);return s};
+const {scene,object,legacy}=require('./fixtures.cjs');
+const fixture=changes=>{const s=scene();const {shape,x,y,size,...rest}=changes||{};Object.assign(s.scene,rest);for(const [key,value]of Object.entries({shape,x,y,size}))if(value!==undefined)s.scene.objects[0][key]=value;return s};
 const clearDraws=h=>{h.paint.length=0};
 const hasSceneDraw=h=>h.paint.some(p=>['arc','stroke','fill','lineTo'].includes(p.method));
 
 test('UI DOUBLE: delivered scripts initialize hidden, with no timers/network/storage APIs needed',()=>{
- const h=createHarness();assert.equal(h.visible(),false);assert.equal(hasSceneDraw(h),false);assert.equal(h.timers.length,0);assert.equal(h.get('undo').disabled,true);assert.equal(h.get('redo').disabled,true);assert.match(h.get('scene-canvas').attrs['aria-label'],/hidden/i);assert.match(h.get('scene-description').textContent,/3 sparse dots/);
+ const h=createHarness();assert.equal(h.visible(),false);assert.equal(hasSceneDraw(h),false);assert.equal(h.timers.length,0);assert.equal(h.get('undo').disabled,true);assert.equal(h.get('redo').disabled,true);assert.match(h.get('scene-canvas').attrs['aria-label'],/hidden/i);assert.match(h.get('scene-description').textContent,/3.*(?:dot|object)/);
 });
 test('UI DOUBLE: Show paints bounded dots; Hide immediately clears; no delayed reveal',async()=>{
  const h=createHarness();await h.fire('show-scene','click');assert.equal(h.visible(),true);assert.equal(h.paint.filter(p=>p.method==='arc').length,3);clearDraws(h);await h.fire('hide-scene','click');assert.equal(h.visible(),false);assert.equal(hasSceneDraw(h),false);await h.fire('show-scene','click');assert.equal(h.visible(),false);h.advance();assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.equal(h.visible(),true);assert.equal(h.timers.length,0);
 });
 test('UI DOUBLE: edits hide immediately, require Apply, invalid values preserve accepted scene',async()=>{
- const h=createHarness();await h.fire('show-scene','click');await h.input('scene-name','Synthetic scene');assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.match(h.status(),/Apply or discard/);await h.submit();assert.equal(h.visible(),false);assert.equal((await h.exportScene()).scene.name,'Synthetic scene');await h.input('position-x','0');await h.submit();assert.match(h.status(),/25.*75/);assert.equal(await h.exportScene(),null);await h.fire('discard','click');assert.equal(h.get('position-x').value,'50');assert.equal((await h.exportScene()).scene.name,'Synthetic scene');
+ const h=createHarness();await h.fire('show-scene','click');await h.input('scene-name','Synthetic scene');assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.match(h.status(),/Apply or discard/);await h.submit();assert.equal(h.visible(),false);assert.equal((await h.exportScene()).scene.name,'Synthetic scene');await h.input('position-x','0');await h.submit();assert.match(h.status(),/inset|position/);assert.equal(await h.exportScene(),null);await h.fire('discard','click');assert.equal(h.get('position-x').value,'50');assert.equal((await h.exportScene()).scene.name,'Synthetic scene');
 });
-test('UI DOUBLE: all presets stage, apply, paint correct shape; disabled dot controls for contours',async()=>{
- for(let i=0;i<M.presets().length;i++){const h=createHarness();await h.select('preset',String(i));assert.equal(h.visible(),false);assert.equal(h.get('shape').value,M.presets()[i].scene.shape);assert.equal(await h.exportScene(),null);await h.submit();h.advance();clearDraws(h);await h.fire('show-scene','click');assert.equal(h.visible(),true);assert.equal(h.get('dot-count').disabled,M.presets()[i].scene.shape!=='dots');assert.ok(hasSceneDraw(h));assert.deepEqual(await h.exportScene(),M.presets()[i]);}
+test('UI DOUBLE V2: presets stage/apply, populate selected object and paint',async()=>{
+ for(let i=0;i<M.presets().length;i++){const h=createHarness(),preset=M.presets()[i];await h.select('preset',String(i));assert.equal(h.visible(),false);assert.equal(h.get('shape').value,preset.scene.objects[0]?.shape||'');assert.equal(await h.exportScene(),null);await h.submit();h.advance();clearDraws(h);await h.fire('show-scene','click');assert.equal(h.visible(),true);if(preset.scene.objects.length)assert.ok(hasSceneDraw(h));assert.deepEqual(await h.exportScene(),preset);}
 });
-test('UI DOUBLE: numeric, palette, size, count, radius changes accepted only via validation',async()=>{
- const h=createHarness();for(const [id,val]of [['position-x',75],['position-y',25],['size',28],['dot-count',5],['dot-radius',2],['palette','sand']])await h.input(id,val);await h.submit();const got=await h.exportScene();assert.deepEqual(got.scene,{name:'A small constellation',shape:'dots',x:75,y:25,size:28,dotCount:5,dotRadius:2,palette:'sand'});
+test('UI DOUBLE V2: numeric object/color/background controls stage canonical scene',async()=>{
+ const h=createHarness();await h.import(JSON.stringify(fixture({})));for(const [id,val]of [['position-x',75],['position-y',25],['size',28],['object-hue',120],['object-saturation',60],['object-lightness',50],['background-hue',220],['background-saturation',40],['background-lightness',20]])await h.input(id,val);await h.submit();const got=await h.exportScene();assert.deepEqual(got,scene({objects:[{id:'object-1',shape:'circle',x:75,y:25,size:28,color:{h:120,s:60,l:50}}],background:{h:220,s:40,l:20}}));
 });
 test('UI DOUBLE: undo/redo preserve exact applied scenes and clear staged fields',async()=>{
  const h=createHarness();await h.input('scene-name','A');await h.submit();await h.input('scene-name','B');await h.submit();await h.input('scene-name','unapplied');await h.fire('undo','click');assert.equal(h.get('scene-name').value,'A');assert.equal(h.visible(),false);await h.fire('redo','click');assert.equal(h.get('scene-name').value,'B');assert.equal((await h.exportScene()).scene.name,'B');await h.fire('redo','click');assert.match(h.status(),/Nothing to redo/);
@@ -28,7 +29,7 @@ test('UI DOUBLE: blank and invalid preset choices are inert',async()=>{
  const h=createHarness();for(const v of ['','-1','500','oops','0.2']){await h.select('preset',v);assert.equal(h.get('scene-name').value,'A small constellation');assert.equal(h.visible(),false);}
 });
 test('UI DOUBLE: Escape immediate; button keyboard repeats prevented; normal field repetition untouched',async()=>{
- const h=createHarness();await h.fire('show-scene','click');const esc=await h.globalEvent('document','keydown',{key:'Escape'});assert.ok(esc.defaultPrevented);assert.equal(h.visible(),false);
+ const h=createHarness();await h.fire('show-scene','click');const esc=await h.globalEvent('document','keydown',{key:'Escape'});assert.equal(esc.defaultPrevented,false,'Escape must remain available to native fullscreen exit');assert.equal(h.visible(),false);
  for(const key of ['Enter',' ']){const e=await h.globalEvent('document','keydown',{key,repeat:true,target:h.get('show-scene')});assert.ok(e.defaultPrevented)}
  for(const props of [{key:'Enter',repeat:false,target:h.get('show-scene')},{key:'ArrowUp',repeat:true,target:h.get('position-x')},{key:' ',repeat:true,target:h.get('scene-name')},{key:'Enter',repeat:true}])assert.equal((await h.globalEvent('document','keydown',props)).defaultPrevented,false);
 });
@@ -42,7 +43,7 @@ test('UI DOUBLE: End retains data and focuses guidance',async()=>{
  const h=createHarness();await h.input('notes','Synthetic note');await h.fire('show-scene','click');await h.fire('end-viewing','click');assert.equal(h.visible(),false);assert.equal(h.document.activeElement.id,'guidance-title');assert.equal(h.get('notes').value,'Synthetic note');assert.equal((await h.exportScene()).scene.name,'A small constellation');
 });
 for(const options of [{width:300,dpr:3},{width:100000,dpr:100},{width:0,dpr:0},{width:1,dpr:0.5},{width:350.2,dpr:1.2}])test(`UI DOUBLE: backing buffer bounded ${JSON.stringify(options)}`,()=>{
- const h=createHarness(options),c=h.get('scene-canvas');assert.ok(c.width>=1&&c.width<=720);assert.equal(c.width,c.height);assert.equal(hasSceneDraw(h),false);
+ const h=createHarness(options),c=h.get('scene-canvas');assert.ok(c.width>=1&&c.width<=4096);assert.ok(c.height>=1&&c.height<=4096);assert.ok(c.width*c.height<=8388608);assert.equal(hasSceneDraw(h),false);
 });
 for(const options of [{noCanvas:true},{canvasThrows:true}])test(`UI DOUBLE: unavailable Canvas preserves data controls ${JSON.stringify(options)}`,async()=>{
  const h=createHarness(options);assert.match(h.status(),/Canvas is unavailable/);await h.fire('show-scene','click');assert.equal(h.visible(),false);await h.input('scene-name','No Canvas');await h.submit();assert.equal((await h.exportScene()).scene.name,'No Canvas');
@@ -52,7 +53,7 @@ test('UI DOUBLE: imports accepted hidden, canonical download round trip, same fi
 });
 test('UI DOUBLE: malformed/empty/oversized/unknown/executable imports do not replace valid current',async()=>{
  const h=createHarness();const raw=JSON.stringify(fixture({name:'Accepted'}));await h.import(raw);
- for(const value of ['', '{','null','[]',JSON.stringify({...fixture({}),version:999}),JSON.stringify({...fixture({}),url:'https://example.invalid'}),JSON.stringify({...fixture({}),notes:'synthetic'}),JSON.stringify(fixture({})).replace('"version":1','"version":0,"version":1')]){await h.import(value);assert.equal(h.get('scene-name').value,'Accepted');assert.equal(h.visible(),false);assert.match(h.status(),/unchanged/);}
+ for(const value of ['', '{','null','[]',JSON.stringify({...fixture({}),version:999}),JSON.stringify({...fixture({}),url:'https://example.invalid'}),JSON.stringify({...fixture({}),notes:'synthetic'}),JSON.stringify(fixture({})).replace('"version":2','"version":0,"version":2')]){await h.import(value);assert.equal(h.get('scene-name').value,'Accepted');assert.equal(h.visible(),false);assert.match(h.status(),/unchanged/);}
  let read=false;h.get('scene-import').files=[{size:M.MAX_IMPORT_BYTES+1,text(){read=true;throw Error('must not read')}}];await h.fire('scene-import','change');assert.equal(read,false);assert.equal(h.get('scene-name').value,'Accepted');
 });
 test('UI DOUBLE: cancel and failed file reads preserve current; import errors bounded',async()=>{
@@ -68,7 +69,7 @@ test('UI DOUBLE RACE: stale failed read does not replace newer status or fields'
  const h=createHarness();let reject;h.get('scene-import').files=[{size:1,text:()=>new Promise((r,j)=>reject=j)}];const p=h.fire('scene-import','change');await h.import(JSON.stringify(fixture({name:'New'})));const status=h.status();reject(Error('late'));await p;assert.equal(h.status(),status);assert.equal(h.get('scene-name').value,'New');
 });
 test('UI DOUBLE: exports request Blob download honestly; cleanup is not a redraw/reveal',async()=>{
- const h=createHarness();const s=await h.exportScene();assert.equal(s.format,M.FORMAT);assert.match(h.status(),/Download requested/);assert.equal(h.downloads[0].filename,'imagery-field-scene-v1.json');assert.equal(h.urls.size,1);assert.equal(h.timers.length,1);assert.equal(h.timers[0].ms,60000);clearDraws(h);h.runTimers();assert.equal(h.urls.size,0);assert.equal(h.paint.length,0);assert.equal(h.visible(),false);
+ const h=createHarness();const s=await h.exportScene();assert.equal(s.format,M.FORMAT);assert.match(h.status(),/Download requested/);assert.equal(h.downloads[0].filename,'imagery-field-scene-v2.json');assert.equal(h.urls.size,1);assert.equal(h.timers.length,1);assert.equal(h.timers[0].ms,60000);clearDraws(h);h.runTimers();assert.equal(h.urls.size,0);assert.equal(h.paint.length,0);assert.equal(h.visible(),false);
 });
 for(const options of [{objectURLThrows:true},{downloadThrows:true},{noBlob:true}])test(`UI DOUBLE: failed export does not claim saved or destroy current ${JSON.stringify(options)}`,async()=>{
  const h=createHarness(options);await h.exportScene();assert.match(h.status(),/could not be started/);assert.equal(h.get('scene-name').value,'A small constellation');assert.equal(h.urls.size,0);assert.equal(h.visible(),false);
@@ -93,5 +94,59 @@ test('UI DOUBLE: imported markup is carried only as name/value and description t
  const h=createHarness(),name='<img src=x onerror=alert(1)>';await h.import(JSON.stringify(fixture({name})));assert.equal(h.get('scene-name').value,name);assert.match(h.get('scene-description').textContent,/<img/);assert.equal(h.downloads.length,0);
 });
 test('UI DOUBLE: 300 rapid combined operations never bypass locked reveal or retain a replay queue',async()=>{
- const h=createHarness();await h.fire('show-scene','click');for(let i=0;i<300;i++){await h.select('preset',String(i%5));await h.submit();await h.fire('undo','click');await h.fire('redo','click');await h.fire('hide-scene','click');await h.fire('show-scene','click');assert.equal(h.visible(),false);}assert.equal(h.timers.length,0);h.advance(100000);assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.equal(h.visible(),true);
+ const h=createHarness();await h.fire('show-scene','click');for(let i=0;i<300;i++){await h.select('preset',String(i%M.presets().length));await h.submit();await h.fire('undo','click');await h.fire('redo','click');await h.fire('hide-scene','click');await h.fire('show-scene','click');assert.equal(h.visible(),false);}assert.equal(h.timers.length,0);h.advance(100000);assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.equal(h.visible(),true);
+});
+
+for(const id of ['object-hue','object-saturation','object-lightness','background-hue','background-saturation','background-lightness'])test(`UI DOUBLE V2: ${id} input conceals before change or Apply`,async()=>{
+ const h=createHarness();await h.import(JSON.stringify(fixture({})));h.advance();await h.fire('show-scene','click');assert.equal(h.visible(),true);await h.input(id,id.includes('hue')?125:30);assert.equal(h.visible(),false);assert.equal(await h.exportScene(),null);assert.equal(h.get(id+'-value').textContent.includes(id.includes('hue')?'125':'30'),true);await h.fire('show-scene','click');assert.equal(h.visible(),false);await h.submit();h.advance();assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.equal(h.visible(),true);
+});
+test('UI DOUBLE V2: object add/select/delete/move round trip with stable identity',async()=>{
+ const h=createHarness();await h.import(JSON.stringify(scene({objects:[]})));await h.select('add-shape','pixel');await h.fire('add-object','click');assert.equal(h.visible(),false);assert.equal(await h.exportScene(),null);await h.submit();let got=await h.exportScene();assert.equal(got.scene.objects.length,1);assert.equal(got.scene.objects[0].shape,'pixel');const one=got.scene.objects[0].id;
+ await h.select('add-shape','triangle');await h.fire('add-object','click');await h.submit();got=await h.exportScene();assert.equal(got.scene.objects.length,2);const two=got.scene.objects.find(o=>o.id!==one).id;assert.notEqual(one,two);
+ await h.select('object-select',one);await h.input('position-x',35.25);await h.input('size',6);await h.submit();got=await h.exportScene();assert.equal(got.scene.objects.find(o=>o.id===one).x,35.25);assert.equal(got.scene.objects.find(o=>o.id===one).size,6);assert.equal(got.scene.objects.find(o=>o.id===two).shape,'triangle');
+ await h.fire('delete-object','click');assert.equal(h.visible(),false);assert.equal(await h.exportScene(),null);await h.submit();got=await h.exportScene();assert.deepEqual(got.scene.objects.map(o=>o.id),[two]);await h.fire('undo','click');assert.equal((await h.exportScene()).scene.objects.length,2);await h.fire('redo','click');assert.deepEqual((await h.exportScene()).scene.objects.map(o=>o.id),[two]);
+});
+test('UI DOUBLE V2: object count limit, empty scene controls and colored background',async()=>{
+ const h=createHarness();await h.import(JSON.stringify(scene({objects:[],background:{h:200,s:30,l:20}})));assert.equal(h.get('delete-object').disabled,true);assert.equal(h.get('place-object').disabled,true);h.advance();clearDraws(h);await h.fire('show-scene','click');assert.equal(h.visible(),true);assert.ok(h.paint.some(p=>p.method==='fillRect'&&p.fillStyle!=='#000'&&p.fillStyle!=='#000000'&&p.fillStyle!=='black'));assert.equal(hasSceneDraw(h),false);clearDraws(h);await h.fire('hide-scene','click');assert.equal(h.visible(),false);assert.ok(h.paint.some(p=>p.method==='fillRect'&&['#000','#000000','black'].includes(p.fillStyle)));assert.ok(h.paint.filter(p=>p.method==='fillRect').every(p=>['#000','#000000','black'].includes(p.fillStyle)));
+ for(let i=0;i<12;i++){await h.select('add-shape','dot');await h.fire('add-object','click')}assert.equal(h.get('add-object').disabled,true);await h.fire('add-object','click');await h.submit();assert.equal((await h.exportScene()).scene.objects.length,12);
+});
+test('UI DOUBLE V2: one-click placement stages fractional coordinates and leaves hidden',async()=>{
+ const h=createHarness({width:1000,height:500});await h.import(JSON.stringify(fixture({})));h.advance();await h.fire('show-scene','click');await h.fire('place-object','click');assert.equal(h.visible(),false);await h.fire('scene-canvas','pointerup',{clientX:300,clientY:300});assert.equal(h.visible(),false);assert.equal(await h.exportScene(),null);await h.submit();const got=await h.exportScene();assert.equal(got.scene.objects[0].x,30);assert.equal(got.scene.objects[0].y,60);await h.fire('scene-canvas','pointerup',{clientX:500,clientY:250});assert.deepEqual(await h.exportScene(),got);
+});
+for(const action of ['hide-scene','end-viewing','discard'])test(`UI DOUBLE V2: ${action} cancels placement rather than acting later`,async()=>{
+ const h=createHarness({width:1000,height:500});await h.import(JSON.stringify(fixture({})));await h.fire('place-object','click');await h.fire(action,'click');const before=await h.exportScene();await h.fire('scene-canvas','pointerup',{clientX:300,clientY:300});assert.deepEqual(await h.exportScene(),before);assert.equal(h.visible(),false);
+});
+test('UI DOUBLE V2: v1 file imports as v2 without losing legacy positions',async()=>{
+ const h=createHarness(),old=legacy({dotCount:5,size:20});await h.import(JSON.stringify(old));assert.equal(h.visible(),false);assert.deepEqual(await h.exportScene(),M.canonicalScene(old));assert.equal(h.downloads.at(-1).filename,'imagery-field-scene-v2.json');
+});
+test('UI DOUBLE V2: rectangular backing dimensions preserve displayed aspect and budget',()=>{
+ for(const [width,height,dpr]of [[1366,900,1],[390,844,3],[10000,2000,4],[2000,10000,4],[800,400,2]]){const h=createHarness({width,height,dpr}),c=h.get('scene-canvas');assert.ok(c.width<=4096&&c.height<=4096&&c.width*c.height<=8388608);assert.ok(Math.abs(c.width/c.height-width/height)<0.01);assert.equal(h.visible(),false);}
+});
+test('UI DOUBLE V2: fullscreen request/entry/exit stays hidden and keeps manual Show',async()=>{
+ const h=createHarness();await h.fire('show-scene','click');assert.equal(h.visible(),true);await h.fire('fullscreen','click');assert.equal(h.visible(),false);assert.equal(h.document.fullscreenElement,h.get('stage-root'));h.advance();assert.equal(h.visible(),false);await h.fire('show-scene','click');assert.equal(h.visible(),true);await h.fire('exit-fullscreen','click');assert.equal(h.visible(),false);assert.equal(h.document.fullscreenElement,null);h.advance();assert.equal(h.visible(),false);
+});
+test('UI DOUBLE V2: browser fullscreenchange hides even when Escape event is consumed',async()=>{
+ const h=createHarness();await h.fire('fullscreen','click');h.advance();await h.fire('show-scene','click');assert.equal(h.visible(),true);h.document.fullscreenElement=null;await h.globalEvent('document','fullscreenchange');assert.equal(h.visible(),false);h.advance();assert.equal(h.visible(),false);
+});
+for(const option of ['unsupported','rejected'])test(`UI DOUBLE V2: ${option} fullscreen request preserves hidden usable fallback`,async()=>{
+ const h=createHarness(option==='unsupported'?{fullscreenSupported:false}:{requestFullscreen:()=>Promise.reject(Error('Synthetic denied fullscreen'))});await h.fire('show-scene','click');await h.fire('fullscreen','click');assert.equal(h.visible(),false);assert.equal(h.document.fullscreenElement,null);assert.match(h.status(),/full.?window|not available|unavailable|denied|fullscreen/i);h.advance();await h.fire('show-scene','click');assert.equal(h.visible(),true);await h.fire('hide-scene','click');assert.equal(h.visible(),false);
+});
+for(const outcome of ['resolve','reject'])test(`UI DOUBLE V2: delayed fullscreen ${outcome} never restores visibility or stale import`,async()=>{
+ let resolve,reject;const h=createHarness({requestFullscreen:()=>new Promise((r,j)=>{resolve=r;reject=j})});let read;h.get('scene-import').files=[{size:100,text:()=>new Promise(r=>read=r)}];const importing=h.fire('scene-import','change'),entering=h.fire('fullscreen','click');await h.fire('hide-scene','click');const before=h.get('scene-name').value;if(outcome==='resolve')resolve();else reject(Error('Synthetic late denial'));await entering;read(JSON.stringify(fixture({name:'STALE'})));await importing;assert.equal(h.get('scene-name').value,before);assert.equal(h.visible(),false);h.advance();assert.equal(h.visible(),false);
+});
+for(const action of ['fullscreen','exit-fullscreen','add-object','delete-object','place-object'])test(`UI DOUBLE V2 RACE: ${action} invalidates pending import`,async()=>{
+ const h=createHarness();let resolve;h.get('scene-import').files=[{size:100,text:()=>new Promise(r=>resolve=r)}];const pending=h.fire('scene-import','change');await h.fire(action,'click');const before=h.get('scene-name').value;resolve(JSON.stringify(fixture({name:'STALE'})));await pending;assert.equal(h.get('scene-name').value,before);assert.equal(h.visible(),false);
+});
+
+test('UI DOUBLE V2: skip link reopens hidden editor, conceals and focuses scene controls',async()=>{
+ const h=createHarness();await h.fire('editor-toggle','click');assert.equal(h.get('editor-panel').hidden,true);h.advance();await h.fire('show-scene','click');assert.equal(h.visible(),true);const event=await h.fire('skip-controls','click');assert.equal(event.defaultPrevented,true);assert.equal(h.get('editor-panel').hidden,false);assert.equal(h.document.activeElement.id,'controls');assert.equal(h.visible(),false);h.advance();assert.equal(h.visible(),false);
+});
+test('UI DOUBLE V2: object selection preserves staged fields without showing or accepting',async()=>{
+ const h=createHarness();await h.input('scene-name','Edited name');const id=h.get('object-select').children[1].value;await h.select('object-select',id);assert.equal(h.get('scene-name').value,'Edited name');assert.equal(await h.exportScene(),null);await h.submit();assert.equal((await h.exportScene()).scene.name,'Edited name');assert.equal(h.visible(),false);
+});
+test('UI DOUBLE V2: guidance shortcut conceals, opens editor and focuses guidance',async()=>{
+ const h=createHarness();await h.fire('editor-toggle','click');h.advance();await h.fire('show-scene','click');assert.equal(h.visible(),true);await h.fire('viewing-guidance','click');assert.equal(h.visible(),false);assert.equal(h.get('editor-panel').hidden,false);assert.equal(h.document.activeElement.id,'guidance-title');
+});
+test('UI DOUBLE V2: fullscreen lifecycle restores focus to visible entry and exit controls',async()=>{
+ const h=createHarness();await h.fire('fullscreen','click');assert.equal(h.document.activeElement.id,'exit-fullscreen');assert.equal(h.get('exit-fullscreen').hidden,false);await h.fire('exit-fullscreen','click');assert.equal(h.document.activeElement.id,'fullscreen');assert.equal(h.get('fullscreen').hidden,false);assert.equal(h.visible(),false);
 });

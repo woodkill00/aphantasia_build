@@ -28,3 +28,11 @@ The independent delta review found no source-level blocker to rerunning CI. The 
 ## Remaining limits
 
 This supports the tested engineering preview only. Physical-device/ordinary OS workflows, other browser engines, manual screen-reader and complete accessibility checks, qualified pattern/content review, and clinical efficacy remain unestablished. See the [test report](test-results/TEST-REPORT.md) and [browser procedure](tests/BROWSER-TEST-PROCEDURE.md).
+
+## Version 0.2 source review — 2026-10-19
+
+Artifact: `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43` (57,177 bytes).
+
+Independent source review accepted this artifact for scoped browser testing. Full-window editing, background/object controls, explicit reveal, concealment, fullscreen fallback and local-data boundaries are preserved. Earlier skip-link, sticky Apply, focus-ring, native Escape, short-viewport and guidance-findability findings were repaired and checked in source. Generated HTML matches the source parts.
+
+Browser fullscreen, zoom/reflow, physical devices, assistive technology and qualified sensory/content acceptance remain separate gates. Static output and engineering limits do not establish medical safety or imagery gains. The earlier v0.1 results above are historical; they do not certify this changed artifact.

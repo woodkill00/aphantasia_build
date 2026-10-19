@@ -1,5 +1,27 @@
 # Browser and device verification
 
+## v0.2 candidate: browser execution pending
+
+The current v0.2 HTML is 57,177 bytes, SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. Its 214 non-browser checks pass locally. The prepared dependency-free CDP suite has 38 browser groups, but none has run against this artifact yet. The v0.1 pass below is historical evidence only. See the [current report](../test-results/TEST-REPORT.md).
+
+Run the existing sandbox-enabled browser workflow in a permitted environment with preinstalled Node 22+ and Chrome; install nothing and do not disable the sandbox or other browser security:
+
+```sh
+node --test imagery-app/tests/model.test.cjs imagery-app/tests/ui.test.cjs imagery-app/tests/static.test.cjs imagery-app/tests/browser-cdp.test.cjs
+node imagery-app/tests/browser-cdp.cjs --check-fixtures
+node imagery-app/tests/browser-cdp.cjs
+```
+
+The standalone fixture check now accepts 3 valid and rejects 14 invalid fixtures. The browser suite adds native object controls and all six HSL sliders, input-before-change hiding, fullwindow raster aspect, colored background-only scenes, native fullscreen entry/exit/Escape and focus, a separately labeled injected API rejection, skip recovery, 320×180 Hide/End reachability, and v1 migration to v2 downloads. Exact runtime assertion failures remain failures; an unavailable permitted browser is BLOCKED.
+
+The local baseline launch timed out before navigation. No further local security workaround is authorized. A successful future browser run must identify this exact artifact hash, Chrome version, source/checkout commit, command, all case results and cleanup. Read the actual errors before modifying tests; keep failed attempts and distinguish test defects from app regressions. Raw logs/screenshots must be reviewed before publication.
+
+Physical-device and manual acceptance additionally need real touch/keyboard use; actual browser fullscreen acceptance/exit and error behavior; every Hide/End path while the editor is collapsed or scrolled; all background colors becoming black on Hide; pixel/circle proportions across orientation changes; one-shot placement cancellation; actual 200%/400% zoom; screen readers; forced colors; and ordinary OS open/picker/download workflows. CSS-viewport emulation cannot close those gates.
+
+---
+
+# Historical v0.1 browser verification
+
 The dependency-free Chrome suite passed 22/22 scenario groups in [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) on 2026-10-19, against the 40,716-byte HTML with SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. The [test report](../test-results/TEST-REPORT.md) records the exact source/checkout, versions, first-run failures, repairs, and remaining limits. Instructions below support reproduction and the still-unrun manual/device checks.
 
 ## No-install Chrome suite and CI

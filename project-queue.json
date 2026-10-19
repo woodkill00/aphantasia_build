@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-19T22:19:40Z",
+  "updated": "2026-10-19T23:38:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -487,6 +487,256 @@
         "fail": "Keep sensitive reports out of public issues and record the setup blocker.",
         "missingInput": "Ask the repository owner to enable and verify private reporting; do not invent a contact address."
       }
+    },
+    {
+      "id": "IF-020",
+      "title": "Build full-window static scene editor",
+      "goal": "Build full-window static scene editor",
+      "priority": "P0",
+      "owner": "build_fullscreen_scene_editor",
+      "consumer": "independent tester and reviewer",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "imagery-app/src/**",
+        "imagery-app/index.html"
+      ],
+      "dependencies": [],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/index.html"
+      ],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "received_reviewed",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "imagery-app/index.html",
+        "SHA256 b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
+      ],
+      "nextAction": "Run independent native browser CI before delivery"
+    },
+    {
+      "id": "IF-021",
+      "title": "Independently test expanded editor",
+      "goal": "Independently test expanded editor",
+      "priority": "P0",
+      "owner": "test_fullscreen_scene_editor",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "dependencies": [
+        "IF-020"
+      ],
+      "writeBoundary": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "in_progress",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        },
+        {
+          "status": "in_progress",
+          "baseline": "156/156 pass, exact baseline HTML hash verified",
+          "localBrowser": "BLOCKED; timed out waiting DevToolsActivePort; no security workaround",
+          "workingV2": "206/206 synthetic checks reported; source not frozen, not accepted final"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "214/214 nonbrowser checks independently rerun by coordinator",
+        "3 valid and14 rejected fixture checks pass",
+        "38 native Chrome groups prepared; NOT RUN; local Chrome launch BLOCKED"
+      ]
+    },
+    {
+      "id": "IF-022",
+      "title": "Review expanded visual design",
+      "goal": "Review expanded visual design",
+      "priority": "P0",
+      "owner": "review_fullscreen_visual_design",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "Independent review findings"
+      ],
+      "dependencies": [
+        "IF-020"
+      ],
+      "writeBoundary": [],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "imagery-app/review.md"
+      ],
+      "nextAction": "Review any CI-discovered source changes"
+    },
+    {
+      "id": "IF-023",
+      "title": "Integrate reviewed downloadable preview",
+      "goal": "Integrate reviewed downloadable preview",
+      "priority": "P0",
+      "owner": "coordinator",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "project-queue.json",
+        "docs/**",
+        "README.md",
+        "imagery-app/README.md",
+        "imagery-app/review.md",
+        "imagery-app/SHA256-MANIFEST.json"
+      ],
+      "dependencies": [
+        "IF-021",
+        "IF-022",
+        "IF-024"
+      ],
+      "writeBoundary": [
+        "project-queue.json",
+        "imagery-app/review.md",
+        "imagery-app/SHA256-MANIFEST.json"
+      ],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "in_progress",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "root"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Publish reviewed candidate to existing draft branch for CI; no merge or deployment"
+    },
+    {
+      "id": "IF-024",
+      "title": "Document expanded scene editor",
+      "goal": "Reconcile instructions and schema to v0.2 without carrying forward unearned test claims",
+      "priority": "P1",
+      "owner": "document_expanded_scene_editor",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e plus IF-020 working source",
+      "expectedOutputs": [
+        "README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/editor-redesign.md",
+        "docs/portable-runtime.md",
+        "imagery-app/README.md"
+      ],
+      "dependencies": [
+        "IF-020"
+      ],
+      "writeBoundary": [
+        "README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/editor-redesign.md",
+        "docs/portable-runtime.md",
+        "imagery-app/README.md"
+      ],
+      "acceptanceChecks": [
+        "Accurate schema and controls",
+        "Historical tests explicitly scoped",
+        "No unsupported safety or efficacy claims"
+      ],
+      "authority": "Requested product redesign documentation",
+      "status": "in_progress",
+      "next": {
+        "pass": "Coordinator integrates after independent checks",
+        "fail": "Documentation owner repairs",
+        "missingInput": "Wait for source freeze while preparing known instructions"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      }
     }
   ],
   "sourceBase": {
@@ -582,5 +832,14 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Browser-tested engineering preview; final documentation integration and CI verification pending. Not clinical or physical-device clearance."
+  "currentStatus": "Browser-tested engineering preview; final documentation integration and CI verification pending. Not clinical or physical-device clearance.",
+  "currentIteration": {
+    "base": "ece81bf045afcd3045622fdad625271b717bde3e",
+    "concurrencySlots": 7,
+    "coordinatorCounts": true,
+    "activeWorkerLanes": 4,
+    "remainingLanes": "No additional independent bottleneck task yet; refill for review/integration as outputs arrive",
+    "remoteBranch": "feat/portable-imagery-preview",
+    "recovery": "Workspace source restored from exact GitHub commit; prior workers absent; no unfinished remote mutation found."
+  }
 }

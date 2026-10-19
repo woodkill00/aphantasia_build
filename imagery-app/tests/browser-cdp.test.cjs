@@ -10,7 +10,7 @@ class FakeSocket extends EventTarget {
   close() { this.dispatchEvent(new Event('close')); }
 }
 test('CDP fixture values are accepted or rejected by the actual scene parser', () => {
-  assert.deepEqual(checkFixtures(),{valid:2,rejected:10});
+  assert.deepEqual(checkFixtures(),{valid:3,rejected:14});
 });
 test('CDP matches out-of-order replies to commands and retains flattened sessions', async () => {
   const socket=new FakeSocket(), cdp=new CDP(socket);

@@ -1,127 +1,219 @@
 {
   "date": "2026-10-19",
-  "status": "SCOPED_CHROME_CI_PASS",
+  "status": "V02_NON_BROWSER_PASS_BROWSER_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
-    "bytes": 40716,
-    "sha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
+    "version": "0.2.0",
+    "bytes": 57177,
+    "sha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
   },
-  "ci": {
-    "runId": 39333956608,
-    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
-    "sourceHead": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
-    "testMergeCheckout": "e7a156d12d319bcad94ee17899b7bf582a4388d9",
-    "conclusion": "success",
-    "note": "The tested checkout is a GitHub PR test merge, not evidence of a merge into main."
-  },
+  "restoredRepositoryBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+  "candidateCommit": null,
   "executedEnvironment": {
-    "node": "v22.23.3",
-    "platform": "linux",
-    "os": "Ubuntu 24.04.5",
-    "browser": "Headless Chrome 155.0.8059.84",
-    "sandbox": "Default enabled"
+    "node": "v24.19.0",
+    "platform": "linux"
   },
   "nonBrowser": {
-    "modelTests": 85,
-    "domDoubleTests": 50,
-    "staticTests": 9,
+    "modelTests": 113,
+    "domDoubleTests": 79,
+    "staticTests": 10,
     "browserHarnessAndFixtureTests": 12,
-    "total": 156,
-    "passed": 156,
+    "total": 214,
+    "passed": 214,
     "failed": 0,
-    "geometryCombinations": 7200,
+    "legacyGeometryCombinations": 7200,
     "seededModelCommands": 10000,
     "rapidUiDoubleSequences": 300,
     "standaloneFixtures": {
-      "valid": 2,
-      "rejected": 10,
+      "valid": 3,
+      "rejected": 14,
       "browserExecuted": false
     }
-  },
-  "browser": {
-    "status": "PASS",
-    "desktopGroups": 11,
-    "mobileViewportTouchEmulationGroups": 11,
-    "total": 22,
-    "passed": 22,
-    "failed": 0,
-    "scope": "Actual headless Chrome; file URL; synthetic data; desktop and phone-sized viewport/touch emulation on Linux.",
-    "checked": [
-      "Hidden startup and black pixels",
-      "Native pointer/key display controls and rapid-action lock",
-      "Presets, edits, history and numeric validation",
-      "Actual disk download/reload/file-input byte roundtrip",
-      "Rejected and inert-markup imports",
-      "Delayed file-read races",
-      "Separate note preview/selection/download/invalidation/reload",
-      "Invalid note values",
-      "Selected responsive widths, resize hiding, target sizing and focus",
-      "Repeated actions without replayed reveal",
-      "Runtime/dialog/remote-request observations in offline mode"
-    ],
-    "runtimeErrors": 0,
-    "unexpectedDialogs": 0,
-    "remoteAppRequests": 0,
-    "cleanup": {
-      "browserClosed": true,
-      "profileRemoved": true
-    },
-    "osFilePickerTested": false,
-    "physicalDevicesTested": false
   },
   "isolatedModelCoverage": {
     "source": "imagery-app/src/model.js",
     "node": "v24.19.0",
-    "testsPassed": 85,
-    "lines": 99.25,
-    "branches": 93.29,
+    "testsPassed": 113,
+    "lines": 99.46,
+    "branches": 94.91,
     "functions": 100,
-    "scope": "Model-only JavaScript execution in a separate local rerun. Not whole-app, browser, CSS, accessibility, device, or medical coverage."
+    "scope": "Model-only; not whole-app/browser/layout/device/accessibility/medical coverage."
   },
-  "history": [
+  "browser": {
+    "status": "NOT_RUN_CURRENT_ARTIFACT",
+    "preparedGroups": 38,
+    "desktopGroups": 19,
+    "mobileViewportTouchEmulationGroups": 19,
+    "localEnvironmentStatus": "BLOCKED_BASELINE_LAUNCH",
+    "localLaunchReason": "Sandbox-enabled Chromium timed out waiting for DevToolsActivePort before navigation; no browser cases executed.",
+    "localObservedLaunchAttempts": 2,
+    "localCleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "securityBypassUsed": false,
+    "osFilePickerTested": false,
+    "physicalDevicesTested": false,
+    "note": "Current suite includes real fullscreen and native inputs plus a separately labeled injected rejection case. Prior v0.1 Chrome results do not apply to this artifact."
+  },
+  "attempts": [
     {
-      "phase": "Initial local baseline",
-      "htmlBytes": 40075,
-      "htmlSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
-      "originalNonBrowserPassed": 144,
-      "withInitialCdpChecksPassed": 150,
-      "browserStatus": "BLOCKED_BEFORE_NAVIGATION",
-      "reason": "Execution environment could not launch the sandbox-enabled browser."
+      "phase": "Restored v0.1 baseline",
+      "passed": 156,
+      "failed": 0,
+      "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
     },
     {
-      "phase": "First actual browser CI",
-      "runId": 39333164845,
-      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
-      "sourceHead": "3a995efb185bb48777745c495fdebef40ef11f24",
-      "browser": "Headless Chrome 155.0.8059.39",
-      "nonBrowserPassed": 150,
-      "browserPassed": 20,
-      "browserFailed": 2,
-      "failures": [
-        "Desktop horizontal overflow at 320 CSS pixels",
-        "Mobile-emulation first Show assertion remained Hidden; original cause not established"
-      ],
-      "cleanup": "Failed with ENOTEMPTY; run was not a pass."
+      "phase": "First v0.2 adapted tests",
+      "passed": 202,
+      "failed": 4,
+      "cause": "Four verified harness contract assumptions; assertions corrected, not removed."
     },
     {
-      "phase": "Reviewed repair and rerun",
-      "runtimeDelta": "CSS grid/file-input sizing and regenerated HTML only; model/UI JavaScript/shell unchanged.",
-      "harnessDelta": "Trusted-input observation, conditional lifecycle settling, and bounded process cleanup with additional synthetic regressions.",
-      "runId": 39333956608,
-      "nonBrowserPassed": 156,
-      "browserPassed": 22,
-      "browserFailed": 0,
-      "cleanup": "PASS"
+      "phase": "Corrected v0.2 tests",
+      "passed": 206,
+      "failed": 0
+    },
+    {
+      "phase": "Frozen candidate after accessibility repairs and added regressions",
+      "passed": 214,
+      "failed": 0
     }
   ],
+  "alternativePlaywrightSuite": "SYNTAX_CHECKED_NOT_RUN",
   "notEstablished": [
+    "Current v0.2 native browser behavior pending permitted Chrome CI",
     "Physical phones and ordinary OS opening/file-picker workflows",
-    "Other browser/platform combinations",
-    "Complete manual keyboard, screen-reader and accessibility assessment",
-    "Physical display/sleep-wake behavior and calibrated luminance/timing",
-    "Qualified sensory and clinical-content review",
-    "Clinical efficacy"
+    "Other browsers/platforms",
+    "Complete keyboard-only, screen-reader, actual zoom and assistive-technology evaluation",
+    "Physical display conditions, calibrated luminance, qualified sensory review or clinical efficacy"
   ],
-  "alternativePlaywrightSuite": "NOT_RUN",
-  "privacy": "Synthetic fixtures only; this public summary excludes observations, raw process logs, machine paths and private identifiers."
+  "previousVersionEvidence": {
+    "date": "2026-10-19",
+    "status": "SCOPED_CHROME_CI_PASS",
+    "artifact": {
+      "file": "imagery-app/index.html",
+      "bytes": 40716,
+      "sha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
+    },
+    "ci": {
+      "runId": 39333956608,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+      "sourceHead": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+      "testMergeCheckout": "e7a156d12d319bcad94ee17899b7bf582a4388d9",
+      "conclusion": "success",
+      "note": "The tested checkout is a GitHub PR test merge, not evidence of a merge into main."
+    },
+    "executedEnvironment": {
+      "node": "v22.23.3",
+      "platform": "linux",
+      "os": "Ubuntu 24.04.5",
+      "browser": "Headless Chrome 155.0.8059.84",
+      "sandbox": "Default enabled"
+    },
+    "nonBrowser": {
+      "modelTests": 85,
+      "domDoubleTests": 50,
+      "staticTests": 9,
+      "browserHarnessAndFixtureTests": 12,
+      "total": 156,
+      "passed": 156,
+      "failed": 0,
+      "geometryCombinations": 7200,
+      "seededModelCommands": 10000,
+      "rapidUiDoubleSequences": 300,
+      "standaloneFixtures": {
+        "valid": 2,
+        "rejected": 10,
+        "browserExecuted": false
+      }
+    },
+    "browser": {
+      "status": "PASS",
+      "desktopGroups": 11,
+      "mobileViewportTouchEmulationGroups": 11,
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "scope": "Actual headless Chrome; file URL; synthetic data; desktop and phone-sized viewport/touch emulation on Linux.",
+      "checked": [
+        "Hidden startup and black pixels",
+        "Native pointer/key display controls and rapid-action lock",
+        "Presets, edits, history and numeric validation",
+        "Actual disk download/reload/file-input byte roundtrip",
+        "Rejected and inert-markup imports",
+        "Delayed file-read races",
+        "Separate note preview/selection/download/invalidation/reload",
+        "Invalid note values",
+        "Selected responsive widths, resize hiding, target sizing and focus",
+        "Repeated actions without replayed reveal",
+        "Runtime/dialog/remote-request observations in offline mode"
+      ],
+      "runtimeErrors": 0,
+      "unexpectedDialogs": 0,
+      "remoteAppRequests": 0,
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      },
+      "osFilePickerTested": false,
+      "physicalDevicesTested": false
+    },
+    "isolatedModelCoverage": {
+      "source": "imagery-app/src/model.js",
+      "node": "v24.19.0",
+      "testsPassed": 85,
+      "lines": 99.25,
+      "branches": 93.29,
+      "functions": 100,
+      "scope": "Model-only JavaScript execution in a separate local rerun. Not whole-app, browser, CSS, accessibility, device, or medical coverage."
+    },
+    "history": [
+      {
+        "phase": "Initial local baseline",
+        "htmlBytes": 40075,
+        "htmlSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "originalNonBrowserPassed": 144,
+        "withInitialCdpChecksPassed": 150,
+        "browserStatus": "BLOCKED_BEFORE_NAVIGATION",
+        "reason": "Execution environment could not launch the sandbox-enabled browser."
+      },
+      {
+        "phase": "First actual browser CI",
+        "runId": 39333164845,
+        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+        "sourceHead": "3a995efb185bb48777745c495fdebef40ef11f24",
+        "browser": "Headless Chrome 155.0.8059.39",
+        "nonBrowserPassed": 150,
+        "browserPassed": 20,
+        "browserFailed": 2,
+        "failures": [
+          "Desktop horizontal overflow at 320 CSS pixels",
+          "Mobile-emulation first Show assertion remained Hidden; original cause not established"
+        ],
+        "cleanup": "Failed with ENOTEMPTY; run was not a pass."
+      },
+      {
+        "phase": "Reviewed repair and rerun",
+        "runtimeDelta": "CSS grid/file-input sizing and regenerated HTML only; model/UI JavaScript/shell unchanged.",
+        "harnessDelta": "Trusted-input observation, conditional lifecycle settling, and bounded process cleanup with additional synthetic regressions.",
+        "runId": 39333956608,
+        "nonBrowserPassed": 156,
+        "browserPassed": 22,
+        "browserFailed": 0,
+        "cleanup": "PASS"
+      }
+    ],
+    "notEstablished": [
+      "Physical phones and ordinary OS opening/file-picker workflows",
+      "Other browser/platform combinations",
+      "Complete manual keyboard, screen-reader and accessibility assessment",
+      "Physical display/sleep-wake behavior and calibrated luminance/timing",
+      "Qualified sensory and clinical-content review",
+      "Clinical efficacy"
+    ],
+    "alternativePlaywrightSuite": "NOT_RUN",
+    "privacy": "Synthetic fixtures only; this public summary excludes observations, raw process logs, machine paths and private identifiers."
+  },
+  "privacy": "Synthetic fixtures only. Raw TAP/process logs, screenshots and machine-specific reports excluded from public delivery."
 }
