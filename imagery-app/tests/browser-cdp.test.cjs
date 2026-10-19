@@ -2,7 +2,7 @@
 // Transport/fixture checks only. These never launch Chrome or establish browser compatibility.
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining} = require('./browser-cdp.cjs');
+const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot} = require('./browser-cdp.cjs');
 class FakeSocket extends EventTarget {
   sent=[];
   send(value) { this.sent.push(JSON.parse(value)); }
@@ -76,4 +76,14 @@ test('Failed-launch cleanup uses the same bounded child termination', async () =
   const closed=new Promise(resolve=>{close=resolve;});
   await stopChild({kill:signal=>{signals.push(signal);if(signal==='SIGKILL')close();}},closed,[0,1,10]);
   assert.deepEqual(signals,['SIGTERM','SIGKILL']);
+});
+
+
+test('Fullscreen delivery snapshot accepts only a synchronously concealed, focused transition',()=>{
+ assert.doesNotThrow(()=>assertFullscreenSnapshot({trusted:true,coloredPixels:0,element:'stage-root',visibility:'Hidden',canvasLabel:'Scene hidden.',focus:'exit-fullscreen'},'stage-root'));
+ assert.doesNotThrow(()=>assertFullscreenSnapshot({trusted:true,coloredPixels:0,element:null,visibility:'Hidden',canvasLabel:'Scene hidden.',focus:'fullscreen'},null));
+});
+test('Fullscreen delivery snapshot rejects missing event, visible scene or incorrect focus',()=>{
+ const valid={trusted:true,coloredPixels:0,element:null,visibility:'Hidden',canvasLabel:'Scene hidden.',focus:'fullscreen'};
+ for(const snapshot of [undefined,{...valid,trusted:false},{...valid,coloredPixels:1},{...valid,visibility:'Visible'},{...valid,canvasLabel:'Scene shown.'},{...valid,focus:'show-scene'},{...valid,element:'stage-root'}])assert.throws(()=>assertFullscreenSnapshot(snapshot,null));
 });

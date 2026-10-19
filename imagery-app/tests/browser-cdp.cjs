@@ -40,6 +40,15 @@ function initialGuardRemaining(events, now) {
   if (!guards.length) return 0;
   return Math.max(0, Math.max(...guards.map(event=>event.time)) + M.REVEAL_GAP_MS + 100 - now);
 }
+function assertFullscreenSnapshot(snapshot, expectedElement) {
+  assert.ok(snapshot, 'A native fullscreenchange event must be observed after the action');
+  assert.equal(snapshot.trusted,true,'fullscreenchange must be a native browser event');
+  assert.equal(snapshot.element,expectedElement,'fullscreenchange reported the wrong element');
+  assert.equal(snapshot.visibility,'Hidden','fullscreenchange handler must synchronously conceal');
+  assert.match(snapshot.canvasLabel,/hidden/i,'fullscreenchange handler must update the hidden description');
+  assert.equal(snapshot.coloredPixels,0,'fullscreenchange handler must synchronously clear every canvas pixel to black');
+  assert.equal(snapshot.focus,expectedElement?'exit-fullscreen':'fullscreen','fullscreenchange must focus the visible mode control');
+}
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const {scene: fixtureScene, legacy} = require('./fixtures.cjs');
 const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
@@ -185,8 +194,38 @@ class Page {
     assert.ok(!result.errorText, result.errorText);
     await until(() => this.loadCount > previousLoads, 'page load event for local artifact');
     await until(() => this.evaluate(() => document.readyState === 'complete' && !!window.ImageryModel && !!document.querySelector('#scene-canvas')), 'loaded local artifact');
+    // This observer is installed after the app, so its snapshot captures the
+    // state left by the app's synchronous fullscreenchange listener. Chrome can
+    // mutate fullscreenElement before delivering that queued event and can
+    // consume Escape without a DOM keydown. Wait for event delivery, never for
+    // the desired Hidden result, then assert concealment without retrying it.
+    await this.evaluate(() => {
+      window.__testFullscreenTransitions=[];window.__testKeys=[];
+      document.addEventListener('fullscreenchange',event=>{
+        const canvas=document.querySelector('#scene-canvas'),bytes=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+        let coloredPixels=0;for(let i=0;i<bytes.length;i+=4)if(bytes[i]||bytes[i+1]||bytes[i+2])coloredPixels++;
+        window.__testFullscreenTransitions.push({
+          time:performance.now(),trusted:event.isTrusted,element:document.fullscreenElement?.id||null,
+          visibility:document.querySelector('#visibility-label').textContent,coloredPixels,
+          canvasLabel:canvas.getAttribute('aria-label'),focus:document.activeElement?.id||null,
+        });
+      });
+      document.addEventListener('keydown',event=>{window.__testKeys.push({key:event.key,time:performance.now(),trusted:event.isTrusted,defaultPrevented:event.defaultPrevented,element:document.fullscreenElement?.id||null,visibility:document.querySelector('#visibility-label').textContent});if(window.__testKeys.length>20)window.__testKeys.shift();});
+    });
     await this.send('Page.bringToFront');
     await sleep(100);
+    await this.hidden();
+  }
+  async fullscreenAfter(action,expectedElement,label) {
+    const state=()=>this.evaluate(()=>({time:performance.now(),element:document.fullscreenElement?.id||null,visibility:document.querySelector('#visibility-label').textContent,events:window.__testFullscreenTransitions.length}));
+    const beforeAction=await state();
+    await action();
+    const afterAction=await state();
+    await until(()=>this.evaluate(index=>window.__testFullscreenTransitions.length>index,beforeAction.events),`native fullscreenchange delivery: ${label}`);
+    const observed=await this.evaluate(index=>window.__testFullscreenTransitions[index],beforeAction.events);
+    console.log(`Fullscreen event evidence (${this.device.name}, ${label}): ${JSON.stringify({beforeAction,afterAction,observed})}`);
+    assertFullscreenSnapshot(observed,expectedElement);
+    assert.equal(await this.evaluate(()=>document.fullscreenElement?.id||null),expectedElement);
     await this.hidden();
   }
   async settleInitialGuard() {
@@ -261,7 +300,7 @@ class Page {
       return {status:document.querySelector('#status')?.textContent,visibility:document.querySelector('#visibility-label')?.textContent,
         innerWidth,innerHeight,clientWidth:width,scrollWidth:document.documentElement.scrollWidth,devicePixelRatio,
         visualViewport:window.visualViewport?{width:visualViewport.width,height:visualViewport.height,scale:visualViewport.scale}:null,
-        lifecycle:window.__testLifecycle||[],overflowing};
+        lifecycle:window.__testLifecycle||[],fullscreenElement:document.fullscreenElement?.id||null,activeElement:document.activeElement?.id||null,fullscreenTransitions:window.__testFullscreenTransitions||[],keys:window.__testKeys||[],overflowing};
     });
   }
   async noOverflow(width) {
@@ -544,14 +583,16 @@ async function run() {
           await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.hidden();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
         });
         await runCase(page,'v2 native fullscreen contains reachable Hide End Exit and stays hidden',async()=>{
-          await page.settleInitialGuard();await page.click('#show-scene');await page.visible();await page.click('#fullscreen');
-          await until(()=>page.evaluate(()=>document.fullscreenElement?.id==='stage-root'),'native fullscreen entry');await page.hidden();await until(()=>page.evaluate(()=>document.activeElement?.id==='exit-fullscreen'),'focus on visible Exit fullscreen control');
+          await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','entry');
           assert.equal(await page.evaluate(()=>['show-scene','hide-scene','end-viewing','exit-fullscreen'].every(id=>document.fullscreenElement.contains(document.getElementById(id)))),true);
           await sleep(M.REVEAL_GAP_MS+100);await page.hidden();await page.click('#show-scene');await page.visible();await page.click('#hide-scene');await page.hidden();
-          await page.click('#exit-fullscreen');await until(()=>page.evaluate(()=>document.fullscreenElement===null),'native fullscreen exit');await page.hidden();await until(()=>page.evaluate(()=>document.activeElement?.id==='fullscreen'),'focus restored to Enter fullscreen control');
-          await page.click('#fullscreen');await until(()=>page.evaluate(()=>!!document.fullscreenElement),'second native fullscreen entry');await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.key('Escape');await until(()=>page.evaluate(()=>document.fullscreenElement===null),'native Escape fullscreen exit');await page.hidden();
-          await page.click('#fullscreen');await until(()=>page.evaluate(()=>!!document.fullscreenElement),'third native fullscreen entry');await page.click('#end-viewing');await page.hidden();
-          if(await page.evaluate(()=>!!document.fullscreenElement))await page.click('#exit-fullscreen');
+          await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'explicit Exit');
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','second entry');
+          await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();
+          await page.fullscreenAfter(()=>page.key('Escape'),null,'browser-native Escape');
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','third entry');await page.click('#end-viewing');await page.hidden();
+          if(await page.evaluate(()=>!!document.fullscreenElement))await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'final Exit');
         });
         await runCase(page,'v2 rejected fullscreen promise keeps fullwindow fallback usable',async()=>{
           await page.evaluate(()=>{document.querySelector('#stage-root').requestFullscreen=()=>Promise.reject(new Error('Synthetic fullscreen denial'))});
@@ -599,4 +640,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining};
+module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot};
