@@ -1,6 +1,6 @@
 # Full-window scene editor, version 0.2
 
-Implementation has passed current non-browser checks; real-browser and broader verification are pending. Version 0.1's passing results do not establish this iteration's readiness. Updated 2026-10-19.
+Implementation has passed current non-browser and scoped headless Chrome checks. Physical-device, Safari, manual accessibility, and qualified sensory/clinical acceptance remain unverified. Updated 2026-10-19.
 
 ## Product scope
 
@@ -25,8 +25,8 @@ Legacy version 1 files are validated against their original schema and geometry 
 
 Only explicitly exported local files persist by design. Optional notes remain independent and require their own exact preview and selection before export. Scene exports omit them. No network resources, accounts, telemetry, or browser storage are added. Browser/device retention or syncing is outside the app's control; closing is not secure deletion. Public tests use synthetic data.
 
-## Acceptance still required
+## Verification and remaining acceptance
 
-Independent checks must cover the closed validator, malformed nested/duplicate JSON keys, migration, history, import invalidation, explicit visibility, hidden backgrounds, object operations, fullscreen rejection/exit, aspect-correct geometry, semantic labels, narrow-screen/keyboard controls, file round trips, and offline operation.
+Recorded checks cover the closed validator, malformed nested/duplicate JSON keys, migration, history, import invalidation, explicit visibility, hidden backgrounds, object operations, fullscreen exit/injected denial fallback, aspect-correct geometry, semantic labels, selected narrow-screen/keyboard controls, file round trips, and offline operation.
 
-The current artifact passed 214 non-browser checks; its 38 prepared real-browser groups remain NOT RUN because local launch is blocked. No passing version 0.2 CI run is recorded. See the [root README](../README.md) for the exact artifact hash. Physical fullscreen behavior, phone file-launch/download routes, and manual accessibility require separate testing. Qualified sensory review and clinical efficacy remain unverified. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) for evidence and remaining gates.
+The current artifact passed 216 non-browser checks and all 38 headless Chrome groups in [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180). The first browser run passed 36/38; a harness-only fullscreen-event observation repair retained same-event hiding/black-pixel/focus assertions, and the app was unchanged for the successful rerun. See the [root README](../README.md) for the exact artifact hash. Physical fullscreen behavior, phone file-launch/download routes, Safari, and manual accessibility require separate testing. Qualified sensory review and clinical efficacy remain unverified. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) for evidence and remaining gates.

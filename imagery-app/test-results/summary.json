@@ -1,6 +1,6 @@
 {
   "date": "2026-10-19",
-  "status": "V02_NON_BROWSER_PASS_BROWSER_PENDING",
+  "status": "V02_SCOPED_CHROME_CI_PASS",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.2.0",
@@ -8,18 +8,21 @@
     "sha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
   },
   "restoredRepositoryBase": "ece81bf045afcd3045622fdad625271b717bde3e",
-  "candidateCommit": null,
+  "candidateCommit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
   "executedEnvironment": {
-    "node": "v24.19.0",
-    "platform": "linux"
+    "node": "v22.23.3",
+    "platform": "linux",
+    "os": "Ubuntu 24.04.5",
+    "browser": "Chrome 155.0.8059.39",
+    "sandbox": "Default enabled"
   },
   "nonBrowser": {
     "modelTests": 113,
     "domDoubleTests": 79,
     "staticTests": 10,
-    "browserHarnessAndFixtureTests": 12,
-    "total": 214,
-    "passed": 214,
+    "browserHarnessAndFixtureTests": 14,
+    "total": 216,
+    "passed": 216,
     "failed": 0,
     "legacyGeometryCombinations": 7200,
     "seededModelCommands": 10000,
@@ -40,7 +43,7 @@
     "scope": "Model-only; not whole-app/browser/layout/device/accessibility/medical coverage."
   },
   "browser": {
-    "status": "NOT_RUN_CURRENT_ARTIFACT",
+    "status": "PASS",
     "preparedGroups": 38,
     "desktopGroups": 19,
     "mobileViewportTouchEmulationGroups": 19,
@@ -54,7 +57,30 @@
     "securityBypassUsed": false,
     "osFilePickerTested": false,
     "physicalDevicesTested": false,
-    "note": "Current suite includes real fullscreen and native inputs plus a separately labeled injected rejection case. Prior v0.1 Chrome results do not apply to this artifact."
+    "note": "All 38 native browser groups pass on the exact recorded HTML. Fullscreen observations assert trusted event delivery plus synchronous Hidden, black canvas and correct focus. First-run failure remains historical; its exact cause is unproven.",
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "failures": [],
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "runtimeErrors": 0,
+    "unexpectedDialogs": 0,
+    "remoteAppRequests": 0,
+    "fullscreenEventEvidence": {
+      "trustedTransitions": 12,
+      "sameEventHidden": true,
+      "sameEventColoredPixels": 0,
+      "sameEventCorrectFocus": true,
+      "propertyBeforeEventObserved": [
+        "entry",
+        "explicit Exit"
+      ],
+      "escapeAfterActionState": "Event already delivered before post-action read in both configurations",
+      "limits": "Supports event-delivery synchronization; does not prove earlier Escape failure cause or pre-event compositor behavior."
+    }
   },
   "attempts": [
     {
@@ -78,11 +104,37 @@
       "phase": "Frozen candidate after accessibility repairs and added regressions",
       "passed": 214,
       "failed": 0
+    },
+    {
+      "phase": "First v0.2 Chrome CI",
+      "runId": 39343004081,
+      "nonBrowserPassed": 214,
+      "browserPassed": 36,
+      "browserFailed": 2,
+      "cleanup": "PASS"
+    },
+    {
+      "phase": "Fullscreen event-observation harness repair",
+      "nonBrowserPassed": 216,
+      "failed": 0,
+      "browserStatus": "RERUN_PENDING",
+      "runtimeChanged": false
+    },
+    {
+      "phase": "Successful v0.2 Chrome CI rerun",
+      "runId": 39343535180,
+      "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+      "browser": "Chrome 155.0.8059.39",
+      "nonBrowserPassed": 216,
+      "browserPassed": 38,
+      "browserFailed": 0,
+      "cleanup": "PASS",
+      "runtimeChanged": false
     }
   ],
   "alternativePlaywrightSuite": "SYNTAX_CHECKED_NOT_RUN",
   "notEstablished": [
-    "Current v0.2 native browser behavior pending permitted Chrome CI",
+    "Browser/platform/version combinations beyond the recorded scoped Chrome run",
     "Physical phones and ordinary OS opening/file-picker workflows",
     "Other browsers/platforms",
     "Complete keyboard-only, screen-reader, actual zoom and assistive-technology evaluation",
@@ -215,5 +267,52 @@
     "alternativePlaywrightSuite": "NOT_RUN",
     "privacy": "Synthetic fixtures only; this public summary excludes observations, raw process logs, machine paths and private identifiers."
   },
-  "privacy": "Synthetic fixtures only. Raw TAP/process logs, screenshots and machine-specific reports excluded from public delivery."
+  "privacy": "Synthetic fixtures only. Raw TAP/process logs, screenshots and machine-specific reports excluded from public delivery.",
+  "artifactSourceHead": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
+  "ci": {
+    "runId": 39343535180,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180",
+    "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+    "testMergeCheckout": "9175892d5a9872f810fa216962b3017507d96eb0",
+    "conclusion": "success",
+    "node": "v22.23.3",
+    "browser": "Chrome 155.0.8059.39",
+    "os": "Ubuntu 24.04.5",
+    "sandbox": "Default enabled",
+    "nonBrowserPassed": 216,
+    "browserPassed": 38,
+    "note": "PR test-merge checkout is not evidence of a merge to main."
+  },
+  "localEnvironment": {
+    "node": "v24.19.0",
+    "platform": "linux"
+  },
+  "ciHistory": [
+    {
+      "runId": 39343004081,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343004081",
+      "sourceHead": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
+      "testMergeCheckout": "533204ed06c83c6e548471fa30e939b3cfaf4141",
+      "conclusion": "failure",
+      "node": "v22.23.3",
+      "browser": "Chrome 155.0.8059.84",
+      "os": "Ubuntu 24.04.5",
+      "sandbox": "Default enabled",
+      "nonBrowserPassed": 214
+    },
+    {
+      "runId": 39343535180,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180",
+      "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+      "testMergeCheckout": "9175892d5a9872f810fa216962b3017507d96eb0",
+      "conclusion": "success",
+      "node": "v22.23.3",
+      "browser": "Chrome 155.0.8059.39",
+      "os": "Ubuntu 24.04.5",
+      "sandbox": "Default enabled",
+      "nonBrowserPassed": 216,
+      "browserPassed": 38,
+      "note": "PR test-merge checkout is not evidence of a merge to main."
+    }
+  ]
 }

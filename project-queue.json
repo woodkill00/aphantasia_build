@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-19T23:38:00Z",
+  "updated": "2026-10-19T23:49:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -511,7 +511,7 @@
         "Independent acceptance required for source changes"
       ],
       "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
-      "status": "received_reviewed",
+      "status": "accepted_used",
       "next": {
         "pass": "Consumer reviews and integrates",
         "fail": "Owner repairs own writable files and retests",
@@ -533,7 +533,7 @@
         "imagery-app/index.html",
         "SHA256 b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
       ],
-      "nextAction": "Run independent native browser CI before delivery"
+      "nextAction": "Preserve accepted source; repair only newly evidenced defects"
     },
     {
       "id": "IF-021",
@@ -560,7 +560,7 @@
         "Independent acceptance required for source changes"
       ],
       "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Consumer reviews and integrates",
         "fail": "Owner repairs own writable files and retests",
@@ -578,6 +578,25 @@
           "baseline": "156/156 pass, exact baseline HTML hash verified",
           "localBrowser": "BLOCKED; timed out waiting DevToolsActivePort; no security workaround",
           "workingV2": "206/206 synthetic checks reported; source not frozen, not accepted final"
+        },
+        {
+          "status": "failed",
+          "commit": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
+          "run": 39343004081,
+          "result": "214 nonbrowser pass;36/38 native groups pass; Escape exit Hidden check ran before observing fullscreenchange delivery",
+          "repair": "Event-boundary observer with same-event black-raster/label/focus assertions; no application source change; independent review accepted retry; initial cause remains provisional pending event traces"
+        },
+        {
+          "status": "queued",
+          "commit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+          "result": "216 nonbrowser pass locally; native retry pending"
+        },
+        {
+          "status": "passed",
+          "commit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+          "run": 39343535180,
+          "result": "216nonbrowser+38nativeChrome groups pass;trusted fullscreen-event snapshots Hidden and coloredPixels0 both profiles;source unchanged",
+          "limits": "Physical devices,other engines,screen readers,qualified sensory and clinical acceptance not established"
         }
       ],
       "usage": {
@@ -588,7 +607,8 @@
         "214/214 nonbrowser checks independently rerun by coordinator",
         "3 valid and14 rejected fixture checks pass",
         "38 native Chrome groups prepared; NOT RUN; local Chrome launch BLOCKED"
-      ]
+      ],
+      "nextAction": "Preserve accepted source; repair only newly evidenced defects"
     },
     {
       "id": "IF-022",
@@ -632,7 +652,7 @@
       "evidence": [
         "imagery-app/review.md"
       ],
-      "nextAction": "Review any CI-discovered source changes"
+      "nextAction": "Preserve accepted source; repair only newly evidenced defects"
     },
     {
       "id": "IF-023",
@@ -684,7 +704,7 @@
         "tokens": null,
         "cost": null
       },
-      "nextAction": "Publish reviewed candidate to existing draft branch for CI; no merge or deployment"
+      "nextAction": "Run final documentation-only CI, package explicit public files, deliver local test ZIP"
     },
     {
       "id": "IF-024",
@@ -719,7 +739,7 @@
         "No unsupported safety or efficacy claims"
       ],
       "authority": "Requested product redesign documentation",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Coordinator integrates after independent checks",
         "fail": "Documentation owner repairs",
@@ -736,7 +756,8 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "No open documentation repair; preserve exact test provenance"
     }
   ],
   "sourceBase": {
@@ -837,9 +858,12 @@
     "base": "ece81bf045afcd3045622fdad625271b717bde3e",
     "concurrencySlots": 7,
     "coordinatorCounts": true,
-    "activeWorkerLanes": 4,
+    "activeWorkerLanes": 0,
     "remainingLanes": "No additional independent bottleneck task yet; refill for review/integration as outputs arrive",
     "remoteBranch": "feat/portable-imagery-preview",
-    "recovery": "Workspace source restored from exact GitHub commit; prior workers absent; no unfinished remote mutation found."
+    "recovery": "All implementation/test/review/docs returns accepted. Final documentation-only commit and CI gate pending; packaging follows. No merge/deploy.",
+    "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+    "passingRun": 39343535180,
+    "htmlSha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
   }
 }

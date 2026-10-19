@@ -1,8 +1,8 @@
 # Browser and device verification
 
-## v0.2 candidate: browser execution pending
+## v0.2: scoped Chrome browser suite passed
 
-The current v0.2 HTML is 57,177 bytes, SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. Its 214 non-browser checks pass locally. The prepared dependency-free CDP suite has 38 browser groups, but none has run against this artifact yet. The v0.1 pass below is historical evidence only. See the [current report](../test-results/TEST-REPORT.md).
+The current v0.2 HTML is 57,177 bytes, SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. Its 216 non-browser checks and all 38 browser groups passed in [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), using Chrome 155.0.8059.39, Node 22.23.3 and the default sandbox. Tested source head: `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`; PR test-merge checkout: `9175892d5a9872f810fa216962b3017507d96eb0`. The first v0.2 run passed 36/38 groups and failed both native-Escape fullscreen groups before the event-observation harness repair. The [failed v0.2 run](https://github.com/woodkill00/aphantasia_build/actions/runs/39343004081) remains part of the evidence; the v0.1 pass below is historical only. See the [current report](../test-results/TEST-REPORT.md).
 
 Run the existing sandbox-enabled browser workflow in a permitted environment with preinstalled Node 22+ and Chrome; install nothing and do not disable the sandbox or other browser security:
 
@@ -14,7 +14,9 @@ node imagery-app/tests/browser-cdp.cjs
 
 The standalone fixture check now accepts 3 valid and rejects 14 invalid fixtures. The browser suite adds native object controls and all six HSL sliders, input-before-change hiding, fullwindow raster aspect, colored background-only scenes, native fullscreen entry/exit/Escape and focus, a separately labeled injected API rejection, skip recovery, 320×180 Hide/End reachability, and v1 migration to v2 downloads. Exact runtime assertion failures remain failures; an unavailable permitted browser is BLOCKED.
 
-The local baseline launch timed out before navigation. No further local security workaround is authorized. A successful future browser run must identify this exact artifact hash, Chrome version, source/checkout commit, command, all case results and cleanup. Read the actual errors before modifying tests; keep failed attempts and distinguish test defects from app regressions. Raw logs/screenshots must be reviewed before publication.
+The fullscreen harness now waits for native fullscreenchange delivery, then validates the synchronous post-app event snapshot (trusted event, Hidden, zero colored canvas pixels, correct label/focus). It logs before-action, after-action and event ordering and retains the live Hidden/pixel assertions. It never polls until the desired hidden state appears. The successful rerun observed property changes before event delivery for entry and explicit Exit, and same-event Hidden/black/focus snapshots for all fullscreen transitions. Native Escape had already delivered its event before the post-action read in this run. The first failure remains compatible with an observation race, but its exact cause is unproven; pre-event compositor behavior was not established.
+
+The local baseline launch timed out before navigation. No further local security workaround is authorized. Every future browser run must identify its exact artifact hash, Chrome version, source/checkout commit, command, all case results and cleanup. Read the actual errors before modifying tests; keep failed attempts and distinguish test defects from app regressions. Raw logs/screenshots must be reviewed before publication.
 
 Physical-device and manual acceptance additionally need real touch/keyboard use; actual browser fullscreen acceptance/exit and error behavior; every Hide/End path while the editor is collapsed or scrolled; all background colors becoming black on Hide; pixel/circle proportions across orientation changes; one-shot placement cancellation; actual 200%/400% zoom; screen readers; forced colors; and ordinary OS open/picker/download workflows. CSS-viewport emulation cannot close those gates.
 

@@ -1,14 +1,15 @@
 # Software verification report
 
-## Current v0.2 candidate: non-browser PASS, browser pending
+## Current v0.2 result: scoped Chrome CI PASS
 
-Date: 2026-10-19. **214/214 non-browser checks pass** against Imagery Field 0.2.0. The expanded real-browser suite is prepared but has **not run on this candidate**. Previous v0.1 browser passes below do not establish v0.2 compatibility. No physical-device, full accessibility, sensory-safety, or efficacy acceptance is implied.
+Date: 2026-10-19. **216/216 non-browser checks and 38/38 browser groups pass** in [Chrome CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), after an event-observation harness repair. The first v0.2 run passed 36/38 groups and failed both native-Escape fullscreen groups; that failure is preserved below. Production source and the app hash did not change between those runs. Previous v0.1 browser passes below do not establish v0.2 compatibility. No physical-device, full accessibility, sensory-safety, or efficacy acceptance is implied.
 
 ### Exact candidate
 
 - HTML: `imagery-app/index.html`, **57,177 bytes**.
 - SHA-256: `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`.
-- Restored repository base: `ece81bf045afcd3045622fdad625271b717bde3e`; current v0.2 changes were tested locally before a new branch/CI commit was created.
+- Restored repository base: `ece81bf045afcd3045622fdad625271b717bde3e`. Successful source head: `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`; PR test-merge checkout: `9175892d5a9872f810fa216962b3017507d96eb0`. This test checkout is not evidence of a merge to main.
+- Successful CI: Ubuntu 24.04.5, Node **22.23.3**, Chrome **155.0.8059.39**, default sandbox. The earlier failed v0.2 run used Chrome 155.0.8059.84; these versions must not be conflated.
 - Executed local environment: Linux, Node **v24.19.0**. All fixtures are synthetic.
 
 ### Executed results
@@ -18,9 +19,9 @@ Date: 2026-10-19. **214/214 non-browser checks pass** against Imagery Field 0.2.
 | Model/controller | 113 PASS | Strict v2 nested objects/arrays/colors/IDs/ranges; all 7,200 original v1 boundary combinations; v1 migration; parser limits/duplicate keys; aspect-correct deterministic geometry; 10,000 seeded controller commands; history, guards and import invalidation. |
 | DOM/Canvas doubles | 79 PASS | Delivered inline scripts; object edits/selection/add/remove/placement; all six HSL inputs hide before change; background-only scenes and black Hide; fullscreen entry/exit/unsupported/rejected/late completion; stage-owned hiding controls; lifecycle/import races; preview-only note export; focus recovery and guidance. These are synthetic doubles, not actual browser/layout evidence. |
 | Static artifact | 10 PASS | Source/artifact equality; classic inline scripts; static-only/network/storage prohibitions; semantic labels; full-stage control ancestry. Fullscreen is now explicitly allowed, replacing the obsolete v0.1 blanket prohibition. |
-| CDP transport/fixtures | 12 PASS | Transport, lifecycle settling, shutdown and independent parser fixtures. No Chrome launch in this layer. |
+| CDP transport/fixtures | 14 PASS | Transport, lifecycle settling, shutdown and independent parser fixtures. No Chrome launch in this layer. |
 | Standalone fixture check | 3 accepted / 14 rejected | Includes v1 migration, v2 scenes, nested duplicate keys, unsupported object fields, duplicate IDs and invalid colors. |
-| Native browser suite | NOT RUN on v0.2 | 38 prepared groups: 19 desktop plus 19 phone-sized viewport/touch emulation. |
+| Native browser suite | 38 PASS / 0 FAIL | Chrome 155.0.8059.39; 19 desktop plus 19 phone-sized viewport/touch emulation. Cleanup PASS; zero app runtime errors, unexpected dialogs or remote app requests observed. |
 
 The current model-only coverage rerun passes 113 tests with **99.46% lines, 94.91% branches, 100% functions**. This is not whole-app, CSS, browser, accessibility, physical-device, or clinical coverage.
 
@@ -36,19 +37,25 @@ node --test --experimental-test-coverage --test-coverage-include='**/src/model.j
 
 No installation, security relaxation, remote mutation, or real participant data was used by these checks.
 
-### Browser gate and prepared cases
+### Executed browser scope and remaining gates
 
 The existing sandbox-enabled local Chrome runner was attempted against the restored v0.1 baseline using `/usr/bin/chromium`. It timed out waiting for `DevToolsActivePort` after 20 seconds, before any browser case or app navigation. Both observed attempts recorded BLOCKED, zero cases, browser closure and profile removal. The second launch was a duplicate while the first background command's result was being collected, not a security workaround. No sandbox bypass or further local launch retry was made. This environment failure is neither a v0.2 app failure nor browser success.
 
-The current 38-group CDP suite retains actual file-URL operation, offline request/error observation, real disk download/file-input round trips, malformed/inert imports, import races, notes separation, native display controls, selected responsive/focus checks, and repeat-action guard checks. New groups cover trusted native object selection/add/remove/move, all six native HSL sliders with concealment before `change`, empty colored backgrounds with black Hide, fullwindow aspect-correct raster geometry, one-click placement, actual fullscreen entry/exit/Escape and in-stage Hide/End/focus, injected fullscreen denial fallback, skip-link recovery, 320×568 and 844×390 focused controls, 320×180 directly reachable Hide/End, and v1 import/v2 export.
+The successful 38-group CDP run covers actual file-URL operation, offline request/error observation, real disk download/file-input round trips, malformed/inert imports, import races, notes separation, native display controls, selected responsive/focus checks, and repeat-action guard checks. New groups cover trusted native object selection/add/remove/move, all six native HSL sliders with concealment before `change`, empty colored backgrounds with black Hide, fullwindow aspect-correct raster geometry, one-click placement, actual fullscreen entry/exit/Escape and in-stage Hide/End/focus, injected fullscreen denial fallback, skip-link recovery, 320×568 and 844×390 focused controls, 320×180 directly reachable Hide/End, and v1 import/v2 export.
 
-The injected denial case tests fallback handling, not a real browser permission denial. Viewport/touch emulation and a 320×180 CSS viewport are not a physical device or a complete actual-zoom/screen-reader assessment. Actual fullscreen behavior and browser layout remain acceptance gates until the suite runs successfully in a permitted browser. The alternative Playwright suite was schema-adapted and syntax-checked only; it remains NOT RUN.
+The injected denial case tests fallback handling, not a real browser permission denial. Viewport/touch emulation and a 320×180 CSS viewport are not a physical device or a complete actual-zoom/screen-reader assessment. The run establishes its recorded Chrome scope, including actual object/slider edits, background concealment, aspect/reflow and native fullscreen transitions. It does not establish behavior across other browser versions, operating systems, physical devices or compositor frames before delivery of the fullscreenchange event. The alternative Playwright suite was schema-adapted and syntax-checked only; it remains NOT RUN.
 
 ### v0.2 attempt and correction history
 
 1. Restored v0.1 baseline: **156/156** original non-browser checks passed at SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`.
 2. First adapted v0.2 run: **202/206**, with four harness assumptions exposed: geometry returns a canonical CSS color string; placement intentionally consumes `pointerup`; the fullscreen root is an outer `div`; and a particular original v1 size/radius combination is valid. The tests were corrected to these verified contracts; validation, placement state, ancestry and color assertions were retained. The rerun passed **206/206**. Brief simultaneous source changes to match the mistaken assumptions were reverted; a concurrent model-only diagnostic failure from that transient state is not candidate evidence.
 3. Accessibility review repairs: skip-link recovery, unclipped canvas focus, non-sticky Apply row, direct guidance access, fullscreen focus recovery, preserved native Escape default, and narrow/short reflow. Tests explicitly assert Escape remains unprevented and still conceals immediately. Added regressions passed **214/214** on the exact frozen candidate above.
+
+4. **[First v0.2 Chrome CI run 39343004081](https://github.com/woodkill00/aphantasia_build/actions/runs/39343004081):** source head `fdb05e0e368b75bd1b62808f299a73f31ea986e4`, PR test-merge checkout `533204ed06c83c6e548471fa30e939b3cfaf4141`, Ubuntu 24.04.5, Node 22.23.3, Chrome 155.0.8059.84 with default sandbox. Non-browser **214/214** passed; browser **36/38** passed; both native fullscreen groups failed immediately after native Escape with `Visible` where `Hidden` was expected. Other groups, runtime/request logs, browser closure and profile removal passed. This run was not a pass.
+5. **Event-observation repair:** the old test observed `fullscreenElement === null` and asserted Hidden before requiring delivery of the asynchronously queued `fullscreenchange` event. Native Escape can be consumed by the browser, so a DOM keydown is not guaranteed. The first run omitted event snapshots, so its exact cause cannot be proven retrospectively. The repaired harness registers its observer after the app and takes a synchronous immutable fullscreenchange snapshot: native trust, element, visibility, black-pixel count, canvas label and focus. It waits only for event receipt, then asserts immediate Hidden/black state and repeats the existing live pixel check. Before-action, after-action and event times are logged on success and failure. Two regression checks reject missing/untrusted/colored/visible/wrong-focus snapshots. **216/216** local checks passed; production source and HTML hash were unchanged before rerunning CI.
+
+6. **[Successful v0.2 rerun 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180):** exact source head `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`, test-merge checkout `9175892d5a9872f810fa216962b3017507d96eb0`, Chrome **155.0.8059.39**, Node 22.23.3. **216/216** non-browser checks and **38/38** native browser groups passed. All twelve recorded fullscreen transitions across the two configurations were trusted browser events whose same-event post-app snapshots were Hidden, contained zero colored canvas pixels, and focused the appropriate visible mode control. Browser closure and profile removal passed; runtime errors, unexpected dialogs and remote app requests were zero.
+7. **Event-order evidence and its limit:** successful traces show the fullscreen element property changing before the event observer ran for entry and explicit Exit. For example, desktop entry recorded the new element with event count 0 at 190.7 ms, then the event snapshot at 202.8 ms; desktop explicit Exit recorded no fullscreen element with event count 1 at 3378.2 ms, then the event snapshot at 3389 ms. In this successful run, native Escape's event was already processed before the post-action read in both configurations. These observations support event-delivery synchronization and are compatible with the suspected first-run race; they do **not** prove the earlier Escape failure's cause or establish pre-event compositor behavior. Strict synchronous event-state/raster/focus assertions remain in place.
 
 Raw TAP/process logs and machine-specific browser reports are kept locally and excluded from public delivery. The prior v0.1 launch failures, first CI failures and successful rerun remain recorded below.
 

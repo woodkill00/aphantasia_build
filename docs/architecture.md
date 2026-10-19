@@ -1,6 +1,6 @@
 # Architecture and data contract
 
-Version 0.2.0 implementation; non-browser checks passed, real-browser verification pending. Updated 2026-10-19. Historical version 0.1 results do not verify this redesign.
+Version 0.2.0 implementation; current non-browser and scoped headless Chrome checks passed. Updated 2026-10-19. Historical version 0.1 results are recorded separately.
 
 ## Components and rendering
 
@@ -64,6 +64,6 @@ End viewing preserves data in the open page. Neither End nor closing the page is
 
 ## Verification and boundaries
 
-The version 0.1 headless Chrome pass is historical only. Version 0.2 has 214 passing non-browser checks on the artifact identified in the [root README](../README.md); the 38 prepared real-browser groups remain NOT RUN because local browser launch is blocked. No passing version 0.2 CI run is recorded. Physical devices, ordinary OS dialogs, manual accessibility, and qualified sensory/content review remain separate gates. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
+Version 0.2 passed 216 non-browser checks and 38 sandbox-enabled headless Chrome groups in [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), on the artifact identified in the [root README](../README.md). The first browser attempt passed 36/38; a harness-only native-fullscreen-event observation repair preserved immediate event-state assertions and the unchanged app then passed all groups. The local launch blocker and historical version 0.1 result remain separate evidence. Physical devices, Safari, ordinary OS dialogs, manual accessibility, and qualified sensory/content review remain separate gates. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
 
 Version 0.2 supports a small flat collection of simple objects. Arbitrary groups, freeform paths, textures, shaders, animation, durable storage, timed protocols, diagnostics, participant systems, and efficacy measures remain outside scope.

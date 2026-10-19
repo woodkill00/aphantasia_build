@@ -17,7 +17,11 @@ See [app instructions](imagery-app/README.md) for ranges, saving/loading, option
 
 ## Verification: separate artifacts
 
-**Version 0.2:** 214 non-browser checks passed against the 57,177-byte HTML, SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. The separate synthetic fixture check accepted 3 valid inputs and rejected 14 invalid inputs. The 38 prepared real-browser scenario groups are **NOT RUN**: local browser launch is blocked in the current environment, and no passing v0.2 CI run is recorded. Consult the [test report](imagery-app/test-results/TEST-REPORT.md), [source/delta review](imagery-app/review.md), and [artifact manifest](imagery-app/SHA256-MANIFEST.json) for the exact artifact and evidence. Do not carry forward the old browser pass as a pass for this redesign.
+**Version 0.2:** [Chrome CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180) passed **216 non-browser checks and 38 real-browser scenario groups** on 2026-10-19, at source head `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`. The 57,177-byte HTML has SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. The separate synthetic fixture check accepted 3 valid inputs and rejected 14 invalid inputs.
+
+The successful browser suite used sandbox-enabled headless Chrome 155.0.8059.39 on Linux, with 19 desktop and 19 phone-sized viewport/touch-emulation groups. It covers direct-file/offline workflows, actual downloads/imports, object/slider edits, hidden backgrounds, aspect-correct geometry, fullscreen entry/exit/Escape, injected fullscreen-denial fallback, and selected responsive/focus checks. Physical devices, Safari, ordinary OS dialogs, complete manual accessibility, and qualified sensory/clinical acceptance remain unverified.
+
+The first v0.2 CI run passed 36/38 browser groups. A harness-only repair observed the native fullscreen event before asserting same-event Hidden state, black pixels, and focus; the complete rerun passed with the app unchanged. The failed run used Chrome 155.0.8059.84, so the successful rerun does not conclusively establish the original failure’s cause. The local browser-launch blocker and failed CI attempt remain recorded in the [test report](imagery-app/test-results/TEST-REPORT.md). See also the [source/delta review](imagery-app/review.md) and [artifact manifest](imagery-app/SHA256-MANIFEST.json).
 
 **Historical version 0.1 baseline:** [Chrome CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) passed on 2026-10-19:
 
@@ -36,7 +40,7 @@ node imagery-app/src/assemble.cjs
 node --test imagery-app/tests/model.test.cjs imagery-app/tests/ui.test.cjs imagery-app/tests/static.test.cjs imagery-app/tests/browser-cdp.test.cjs
 ```
 
-The dependency-free real-browser suite requires Node 22+ and an already installed permitted Chrome. The earlier CI used Node 22.23.3, preinstalled Chrome with normal sandboxing, read-only repository permission, and no deployment or package-install step. See the [browser procedure](imagery-app/tests/BROWSER-TEST-PROCEDURE.md) for current commands and outstanding checks. Never disable browser security to make a test pass.
+The dependency-free real-browser suite requires Node 22+ and an already installed permitted Chrome. CI uses preinstalled Node/Chrome with normal sandboxing, read-only repository permission, and no deployment or package-install step. See the [browser procedure](imagery-app/tests/BROWSER-TEST-PROCEDURE.md) for current commands and outstanding checks. Never disable browser security to make a test pass.
 
 ## Project map
 

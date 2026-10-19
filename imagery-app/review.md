@@ -36,3 +36,11 @@ Artifact: `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43` (57
 Independent source review accepted this artifact for scoped browser testing. Full-window editing, background/object controls, explicit reveal, concealment, fullscreen fallback and local-data boundaries are preserved. Earlier skip-link, sticky Apply, focus-ring, native Escape, short-viewport and guidance-findability findings were repaired and checked in source. Generated HTML matches the source parts.
 
 Browser fullscreen, zoom/reflow, physical devices, assistive technology and qualified sensory/content acceptance remain separate gates. Static output and engineering limits do not establish medical safety or imagery gains. The earlier v0.1 results above are historical; they do not certify this changed artifact.
+
+### Native-browser evidence accepted
+
+[CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), source head `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`, passed **216 non-browser checks and 38 scoped headless-Chrome groups**. The application artifact above is unchanged. An independent reviewer inspected the native logs: all 12 trusted fullscreen event snapshots had Hidden state, zero colored pixels, and focus on the visible fullscreen control. Tested narrow/short reflow, object edits, background colors, offline file workflows and concealment checks passed.
+
+The first v0.2 run passed 36/38 browser groups, with fullscreen Escape assertions failing before the harness observed native event delivery. The independently reviewed harness correction observes the event and asserts its immutable synchronous snapshot; it does not poll for eventual Hidden success. The first run used Chrome 155.0.8059.84, while the passing run used Chrome 155.0.8059.39, so the historical failure's exact cause is not conclusively isolated. Both results are retained in the test report.
+
+This supports a scoped engineering preview. Physical devices, other browser engines, OS dialogs, comprehensive accessibility, calibrated display/sensory review and clinical efficacy remain unestablished. Nothing has been merged or deployed.

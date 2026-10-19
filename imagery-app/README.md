@@ -36,7 +36,7 @@ Positions range from 0–100% with up to two decimal places, but the entire obje
 - Changing windows/tabs, resizing, and other handled page lifecycle events conceal the scene. It never resumes automatically.
 - **Show scene** has a temporary anti-repeat guard. If blocked, it stays hidden; press Show again later when you choose. No reveal is queued. This is an engineering restriction, not a medically safe interval or suggested schedule.
 
-There are no flashing/animation modes, timed exposures, afterimage-strength settings, or brightness-escalation exercises. Browser fullscreen and lifecycle behavior still need device-specific testing.
+There are no flashing/animation modes, timed exposures, afterimage-strength settings, or brightness-escalation exercises. Fullscreen and lifecycle behavior passed scoped headless Chrome checks; other browsers and physical devices still need their own testing.
 
 ## Keep your work
 
@@ -56,6 +56,8 @@ Avoid unnecessary identifying/medical details. The note export contains its form
 
 ## Testing and limits
 
-Version 0.2 passed 214 non-browser checks, plus a separate synthetic fixture check accepting 3 valid inputs and rejecting 14 invalid inputs. Its 38 prepared real-browser scenario groups remain NOT RUN: local browser launch is blocked in the current environment, and no passing v0.2 CI result is recorded. The [root README](../README.md) identifies the exact tested artifact. See the [test report](test-results/TEST-REPORT.md) for exact artifact hashes, commands, results, and remaining checks.
+Version 0.2 passed 216 non-browser checks and 38 real-browser scenario groups in [Chrome CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180). A separate synthetic fixture check accepted 3 valid inputs and rejected 14 invalid inputs. The browser run used sandbox-enabled headless Chrome on Linux with desktop and phone-sized viewport/touch emulation; it covers object/slider editing, file round trips, hidden backgrounds, fullscreen controls, and selected layout/focus behavior.
 
-The historical version 0.1 build passed 156 non-browser checks and 22 sandbox-enabled headless Chrome scenario groups. Those results apply to the older artifact, not this redesign. Physical phones, ordinary OS file-opening/chooser workflows, screen readers, and full accessibility remain unverified. Software checks provide no clinical clearance or evidence of safety or effectiveness.
+The first browser attempt passed 36/38 groups; a harness-only fullscreen-event observation repair was followed by a complete pass with the app unchanged. The [root README](../README.md) identifies the exact tested artifact. See the [test report](test-results/TEST-REPORT.md) for commands, failed attempts, results, and remaining checks.
+
+The historical version 0.1 build passed 156 non-browser checks and 22 sandbox-enabled headless Chrome scenario groups. Those results apply to the older artifact, not this redesign. Physical phones, Safari, ordinary OS file-opening/chooser workflows, screen readers, and full accessibility remain unverified. Software checks provide no clinical clearance or evidence of safety or effectiveness.
