@@ -65,5 +65,12 @@
     "Duplicate-key overwrite in JSON imports",
     "Unbounded duplicate-key error text"
   ],
-  "privacy": "Synthetic fixtures only. No personal observations or raw process logs included."
+  "privacy": "Synthetic fixtures only. No personal observations or raw process logs included.",
+  "currentCandidate": {
+    "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+    "bytes": 40716,
+    "nonBrowserPassed": 156,
+    "browserStatus": "rerun pending after initial20pass2fail",
+    "initialRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-19",
+  "updated": "2026-10-19T22:14:48Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -97,7 +97,7 @@
     {
       "id": "IF-003",
       "title": "Run real browser workflows",
-      "status": "pending",
+      "status": "repair_in_progress",
       "dependsOn": [
         "IF-002"
       ],
@@ -110,7 +110,7 @@
       "priority": "P0",
       "consumer": "reviewer",
       "sourceBase": {
-        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "repositoryBaseCommit": "3a995efb185bb48777745c495fdebef40ef11f24",
         "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
       },
       "expectedOutputs": [
@@ -126,7 +126,23 @@
         "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
       },
       "authority": "Use a permitted browser with normal sandbox/security and synthetic inputs; no workaround authorizes security changes.",
-      "attempts": [],
+      "attempts": [
+        {
+          "id": 1,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+          "head": "3a995efb185bb48777745c495fdebef40ef11f24",
+          "status": "failed",
+          "nonBrowser": "150 passed",
+          "browserCases": "20 passed,2 failed",
+          "findings": [
+            "320px horizontal overflow",
+            "Mobile initial Show remained hidden",
+            "Chrome profile cleanup race"
+          ],
+          "cost": null,
+          "tokens": null
+        }
+      ],
       "usage": {
         "status": "unknown",
         "inputTokens": null,
@@ -139,7 +155,8 @@
         "pass": "IF-004: perform physical-device/manual accessibility checks.",
         "fail": "Distinguish app defects, test defects, and environment blockers; fix within scope and rerun affected cases.",
         "missingInput": "Remain blocked until a permitted browser environment and required installed tools are available."
-      }
+      },
+      "nextStep": "Repair 320px layout overflow and diagnose mobile initial reveal state; repair harness cleanup; independently review then rerun full CI."
     },
     {
       "id": "IF-004",
@@ -232,7 +249,7 @@
     {
       "id": "IF-006",
       "title": "Run prepared browser CI",
-      "status": "prepared",
+      "status": "repair_in_progress",
       "scope": "No-install GitHub Actions workflow is prepared with preinstalled Node/Chrome, read-only contents permission, normal browser security, and no deployment.",
       "acceptance": "Maintainer approval and successful recorded run; no implied device or clinical approval.",
       "evidence": [
@@ -240,12 +257,12 @@
         "imagery-app/tests/browser-cdp.cjs",
         "imagery-app/tests/browser-cdp.test.cjs"
       ],
-      "nextStep": "Complete reviewed source import on feat/portable-imagery-preview, then record the actual CI result.",
+      "nextStep": "Repair 320px layout overflow and diagnose mobile initial reveal state; repair harness cleanup; independently review then rerun full CI.",
       "owner": "integrator",
       "priority": "P0",
       "consumer": "reviewer",
       "sourceBase": {
-        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "repositoryBaseCommit": "3a995efb185bb48777745c495fdebef40ef11f24",
         "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
       },
       "expectedOutputs": [
@@ -265,7 +282,23 @@
         "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
       },
       "authority": "Remote publication/branch actions require explicit authorization; the prepared workflow is test-only, read-only, and not a deployment.",
-      "attempts": [],
+      "attempts": [
+        {
+          "id": 1,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+          "head": "3a995efb185bb48777745c495fdebef40ef11f24",
+          "status": "failed",
+          "nonBrowser": "150 passed",
+          "browserCases": "20 passed,2 failed",
+          "findings": [
+            "320px horizontal overflow",
+            "Mobile initial Show remained hidden",
+            "Chrome profile cleanup race"
+          ],
+          "cost": null,
+          "tokens": null
+        }
+      ],
       "usage": {
         "status": "unknown",
         "inputTokens": null,
@@ -415,7 +448,7 @@
     "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
     "targetBranch": "feat/portable-imagery-preview",
     "appPath": "imagery-app/index.html",
-    "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+    "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
     "appBytes": 40075,
     "note": "The base commit is the repository bootstrap; the app hash identifies the exact prepared implementation. Refresh this base after an accepted source change."
   },
@@ -450,7 +483,8 @@
         "inputTokens": null,
         "outputTokens": null,
         "cost": null
-      }
+      },
+      "currentStatus": "active CI repair/review"
     },
     {
       "role": "tester",
@@ -466,7 +500,8 @@
         "inputTokens": null,
         "outputTokens": null,
         "cost": null
-      }
+      },
+      "currentStatus": "active CI repair/review"
     },
     {
       "role": "reviewer",
@@ -480,7 +515,8 @@
         "inputTokens": null,
         "outputTokens": null,
         "cost": null
-      }
+      },
+      "currentStatus": "active CI repair/review"
     },
     {
       "role": "integrator",
@@ -496,7 +532,36 @@
         "inputTokens": null,
         "outputTokens": null,
         "cost": null
-      }
+      },
+      "currentStatus": "active CI repair/review"
     }
-  ]
+  ],
+  "activeRepairs": {
+    "author": {
+      "paths": [
+        "imagery-app/src/",
+        "imagery-app/index.html"
+      ],
+      "goal": "Repair actual narrow viewport layout"
+    },
+    "tester": {
+      "paths": [
+        "imagery-app/tests/browser-cdp.cjs",
+        "imagery-app/tests/browser-cdp.test.cjs"
+      ],
+      "goal": "Diagnose initial reveal timing and fix browser process cleanup"
+    },
+    "reviewer": {
+      "paths": [],
+      "goal": "Independent repair review"
+    },
+    "integrator": {
+      "paths": [
+        "project-queue.json",
+        "imagery-app/SHA256-MANIFEST.json",
+        "imagery-app/test-results/"
+      ],
+      "goal": "Publish reviewed fixes and verify exact CI head"
+    }
+  }
 }

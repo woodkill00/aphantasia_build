@@ -2,7 +2,7 @@
 // Transport/fixture checks only. These never launch Chrome or establish browser compatibility.
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {CDP,checkFixtures} = require('./browser-cdp.cjs');
+const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining} = require('./browser-cdp.cjs');
 class FakeSocket extends EventTarget {
   sent=[];
   send(value) { this.sent.push(JSON.parse(value)); }
@@ -40,4 +40,40 @@ test('CDP malformed message rejects in-flight commands', async () => {
   const socket=new FakeSocket(),cdp=new CDP(socket),request=cdp.send('Test.pending');
   socket.dispatchEvent(new MessageEvent('message',{data:'{'}));
   await assert.rejects(request,SyntaxError); assert.equal(cdp.pending.size,0); cdp.close();
+});
+
+test('Initial-viewport settling responds only to observed hide lifecycle events', () => {
+  assert.equal(initialGuardRemaining([],0),0);
+  assert.equal(initialGuardRemaining([{type:'pageshow',time:50}],100),0);
+  assert.equal(initialGuardRemaining([{type:'visibilitychange',time:50,hidden:false}],100),0);
+  assert.equal(initialGuardRemaining([{type:'resize',time:50}],100),3050);
+  assert.equal(initialGuardRemaining([{type:'blur',time:50}],4000),0);
+  assert.equal(initialGuardRemaining([{type:'visibilitychange',time:50,hidden:true}],100),3050);
+});
+test('Shutdown wait distinguishes a real close from a timeout', async () => {
+  assert.equal(await settlesWithin(Promise.resolve(),10),true);
+  assert.equal(await settlesWithin(new Promise(()=>{}),1),false);
+});
+test('Chrome gets a graceful close without a premature termination signal', async () => {
+  const calls=[];
+  await stopChrome({cdp:{send:async method=>calls.push(method),close:()=>calls.push('socket.close')},closed:Promise.resolve(),processHandle:{kill:signal=>calls.push(signal)}},[1,1,1]);
+  assert.deepEqual(calls,['Browser.close','socket.close']);
+});
+test('Chrome shutdown escalation waits for its close event', async () => {
+  const calls=[]; let resolveClosed;
+  const closed=new Promise(resolve=>{resolveClosed=resolve;});
+  await stopChrome({cdp:{send:async()=>{},close:()=>{}},closed,processHandle:{kill:signal=>{calls.push(signal);resolveClosed();}}},[1,10,10]);
+  assert.deepEqual(calls,['SIGTERM']);
+});
+test('Chrome shutdown failure is surfaced after bounded escalation', async () => {
+  const calls=[];
+  await assert.rejects(stopChrome({cdp:{send:async()=>{},close:()=>{}},closed:new Promise(()=>{}),processHandle:{kill:signal=>calls.push(signal)}},[1,1,1]),/did not close/);
+  assert.deepEqual(calls,['SIGTERM','SIGKILL']);
+});
+
+test('Failed-launch cleanup uses the same bounded child termination', async () => {
+  const signals=[]; let close;
+  const closed=new Promise(resolve=>{close=resolve;});
+  await stopChild({kill:signal=>{signals.push(signal);if(signal==='SIGKILL')close();}},closed,[0,1,10]);
+  assert.deepEqual(signals,['SIGTERM','SIGKILL']);
 });

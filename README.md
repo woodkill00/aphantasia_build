@@ -1,5 +1,13 @@
 # Imagery Field
 
+## Current repair candidate
+
+The first actual sandboxed Chrome CI run passed 20 of 22 scenario groups but failed narrow-screen overflow and the initial mobile reveal assertion; browser profile cleanup also failed. The source and harness corrections below have passed 156 non-browser checks and independent delta review. The current HTML is 40,716 bytes, SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. Browser rerun is pending; no complete browser pass is claimed.
+
+First run: https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845
+
+## Initial import baseline (historical)
+
 A small, local-first visual-design prototype for manually controlled static dots and geometry. The repository contains the self-contained app, editable sources, synthetic software tests, and a focused technical/research plan.
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage does not establish an imagery gain. Static presentation and software bounds do not guarantee sensory safety.

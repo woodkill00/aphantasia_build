@@ -12,9 +12,34 @@ const {spawn} = require('node:child_process');
 const {pathToFileURL} = require('node:url');
 const {setTimeout: sleep} = require('node:timers/promises');
 
+function settlesWithin(promise, milliseconds) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => resolve(false), milliseconds);
+    promise.then(() => { clearTimeout(timer); resolve(true); }, error => { clearTimeout(timer); reject(error); });
+  });
+}
+async function stopChild(processHandle, closed, waits = [5000, 2000, 2000]) {
+  if (await settlesWithin(closed, waits[0])) return;
+  processHandle.kill('SIGTERM');
+  if (await settlesWithin(closed, waits[1])) return;
+  processHandle.kill('SIGKILL');
+  assert.ok(await settlesWithin(closed, waits[2]), 'Chrome child did not close after termination');
+}
+async function stopChrome(browser, waits) {
+  try { await browser.cdp.send('Browser.close'); } catch { /* Closing may disconnect DevTools before its acknowledgement. */ }
+  browser.cdp.close();
+  await stopChild(browser.processHandle,browser.closed,waits);
+}
+
+
 const root = path.resolve(process.env.IMAGERY_APP_ROOT || path.join(__dirname, '..'));
 const M = require(path.join(root, 'src/model.js'));
 const artifact = path.join(root, 'index.html');
+function initialGuardRemaining(events, now) {
+  const guards=events.filter(event => ['resize','blur','pagehide'].includes(event.type) || (event.type==='visibilitychange' && event.hidden));
+  if (!guards.length) return 0;
+  return Math.max(0, Math.max(...guards.map(event=>event.time)) + M.REVEAL_GAP_MS + 100 - now);
+}
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const scene = changes => { const value = M.presets()[0]; Object.assign(value.scene, changes); return value; };
 function fixtures() {
@@ -98,6 +123,7 @@ async function startChrome(profile) {
     `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-background-networking', 'about:blank'];
   let diagnostic = '', launchError;
   const processHandle = spawn(executable, args, {stdio:['ignore','ignore','pipe']});
+  const closed = new Promise(resolve => processHandle.once('close',resolve));
   processHandle.stderr.on('data', chunk => { diagnostic = (diagnostic + chunk).slice(-16000); });
   processHandle.on('error', error => { launchError = error; });
   try {
@@ -109,8 +135,12 @@ async function startChrome(profile) {
     }, 'sandboxed Chrome startup', 20000);
     const [port, socketPath] = fs.readFileSync(endpointFile,'utf8').trim().split('\n');
     assert.match(port, /^\d+$/); assert.match(socketPath, /^\/devtools\/browser\//);
-    return {processHandle, cdp:await CDP.connect(`ws://127.0.0.1:${port}${socketPath}`), executable, args, diagnostic:() => diagnostic};
-  } catch (error) { processHandle.kill('SIGTERM'); throw error; }
+    return {processHandle, closed, cdp:await CDP.connect(`ws://127.0.0.1:${port}${socketPath}`), executable, args, diagnostic:() => diagnostic};
+  } catch (error) {
+    try { await stopChild(processHandle,closed,[0,2000,2000]); }
+    catch (shutdownError) { error.chromeStillRunning=true; error.message+=`; ${shutdownError.message}`; }
+    throw error;
+  }
 }
 
 class Page {
@@ -153,6 +183,21 @@ class Page {
     await sleep(100);
     await this.hidden();
   }
+  async settleInitialGuard() {
+    // Emulation/navigation can deliver a real resize after load. Respect the same
+    // guard a person encounters; never retry Show, change the clock, or touch the controller.
+    const state=()=>this.evaluate(() => ({events:window.__testLifecycle||[],time:performance.now()}));
+    const initial=await state();
+    if (initialGuardRemaining(initial.events,initial.time)>0) {
+      console.log(`Initial lifecycle guard observed (${this.device.name}): ${JSON.stringify(initial.events)}`);
+      await until(async () => {
+        await this.hidden();
+        const current=await state();
+        return initialGuardRemaining(current.events,current.time)===0;
+      },'observed initial lifecycle guard to expire without automatic reveal',M.REVEAL_GAP_MS+4000);
+    }
+    await this.hidden();
+  }
   async hidden() {
     assert.equal(await this.property('#visibility-label','textContent'), 'Hidden');
     const raster = await this.canvas();
@@ -160,7 +205,8 @@ class Page {
     assert.match(raster.label, /hidden/i);
   }
   async visible() {
-    assert.equal(await this.property('#visibility-label','textContent'), 'Visible');
+    assert.equal(await this.property('#visibility-label','textContent'), 'Visible',
+      `Expected an explicit Show to display the scene: ${JSON.stringify(await this.diagnostics())}`);
     assert.ok((await this.canvas()).coloredPixels > 0, 'visible canvas must actually paint a scene');
   }
   canvas() {
@@ -181,15 +227,40 @@ class Page {
       const r = e.getBoundingClientRect(), x = r.x+r.width/2, y = r.y+r.height/2;
       const hit = document.elementFromPoint(x,y);
       if (!hit || !(e === hit || e.contains(hit))) throw new Error(`Pointer target occluded: ${s}`);
-      return {x,y};
+      const token = (window.__testClickSequence || 0) + 1; window.__testClickSequence=token;
+      e.addEventListener('click', event => { window.__testClickDelivered={token,trusted:event.isTrusted}; },{once:true});
+      return {x,y,token};
     }, selector);
+    const {token,...coordinates}=point;
     if (this.device.touch) {
-      await this.send('Input.dispatchTouchEvent', {type:'touchStart',touchPoints:[{...point,radiusX:1,radiusY:1,force:1,id:1}]});
+      await this.send('Input.dispatchTouchEvent', {type:'touchStart',touchPoints:[{...coordinates,radiusX:1,radiusY:1,force:1,id:1}]});
       await this.send('Input.dispatchTouchEvent', {type:'touchEnd',touchPoints:[]});
     } else {
-      await this.send('Input.dispatchMouseEvent', {type:'mousePressed',...point,button:'left',clickCount:1});
-      await this.send('Input.dispatchMouseEvent', {type:'mouseReleased',...point,button:'left',clickCount:1});
+      await this.send('Input.dispatchMouseEvent', {type:'mousePressed',...coordinates,button:'left',clickCount:1});
+      await this.send('Input.dispatchMouseEvent', {type:'mouseReleased',...coordinates,button:'left',clickCount:1});
     }
+    // touchEnd acknowledgement can precede Chrome's synthesized click. Wait for delivery,
+    // not for the expected application state, so a genuine failed Show still fails.
+    await until(() => this.evaluate(token => window.__testClickDelivered?.token === token,token),`trusted click delivery to ${selector}`);
+    assert.equal(await this.evaluate(() => window.__testClickDelivered.trusted),true,'interaction must be browser-trusted');
+  }
+  async diagnostics() {
+    return this.evaluate(() => {
+      const width=document.documentElement.clientWidth;
+      const overflowing=[...document.body.querySelectorAll('*')].map(e => {
+        const r=e.getBoundingClientRect(), style=getComputedStyle(e);
+        return {tag:e.tagName,id:e.id,class:e.className,left:r.left,right:r.right,width:r.width,
+          display:style.display,position:style.position,minWidth:style.minWidth,maxWidth:style.maxWidth,overflowX:style.overflowX};
+      }).filter(e => e.width>0 && (e.right>width+1 || e.left< -1) && e.position!=='fixed').slice(0,20);
+      return {status:document.querySelector('#status')?.textContent,visibility:document.querySelector('#visibility-label')?.textContent,
+        innerWidth,innerHeight,clientWidth:width,scrollWidth:document.documentElement.scrollWidth,devicePixelRatio,
+        visualViewport:window.visualViewport?{width:visualViewport.width,height:visualViewport.height,scale:visualViewport.scale}:null,
+        lifecycle:window.__testLifecycle||[],overflowing};
+    });
+  }
+  async noOverflow(width) {
+    const diagnostics=await this.diagnostics();
+    assert.ok(diagnostics.scrollWidth<=diagnostics.innerWidth+1,`horizontal overflow at ${width}: ${JSON.stringify(diagnostics)}`);
   }
   async focus(selector) { await this.evaluate(s => document.querySelector(s).focus(), selector); }
   async key(key, repeat = false) {
@@ -270,7 +341,7 @@ async function run() {
       'File selection uses native CDP DOM.setFileInputFiles; the operating-system chooser itself is not exercised.'],
   };
   const write = () => fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2)+'\n');
-  let browser;
+  let browser, profileCleanupSafe=true;
   async function runCase(page, name, fn) {
     const start = Date.now();
     try {
@@ -280,13 +351,14 @@ async function run() {
     } catch (error) {
       const result = {device:page.device.name,name,status:'FAIL',durationMs:Date.now()-start,error:error.stack}; report.results.push(result);
       console.error(`FAIL ${page.device.name}: ${name}\n${error.stack}`);
+      try { result.diagnostics=await page.diagnostics(); console.error(`Failure metrics: ${JSON.stringify(result.diagnostics)}`); } catch { /* Preserve original error if page is gone. */ }
       try { await page.screenshot(name.replace(/[^a-z0-9]+/gi,'-')+'-failure',out); } catch { /* Optional evidence only. */ }
     }
     write();
   }
   try {
     try { browser = await startChrome(profile); }
-    catch (error) { report.status='BLOCKED'; report.launchError=error.stack; process.exitCode=2; return; }
+    catch (error) { report.status='BLOCKED'; report.launchError=error.stack; profileCleanupSafe=!error.chromeStillRunning; process.exitCode=2; return; }
     const {cdp} = browser;
     report.browser = await cdp.send('Browser.getVersion');
     report.chromeExecutable=browser.executable; report.chromeArguments=browser.args.map(a => a.startsWith('--user-data-dir=') ? '--user-data-dir=<temporary-profile>' : a);
@@ -298,6 +370,12 @@ async function run() {
       const page = new Page(cdp,sessionId,targetId,device,downloads);
       try {
         await page.send('Page.enable'); await page.send('Runtime.enable'); await page.send('Network.enable');
+        await page.send('Page.addScriptToEvaluateOnNewDocument',{source:`
+          window.__testLifecycle=[];
+          const record=event=>{window.__testLifecycle.push({type:event.type,time:performance.now(),width:innerWidth,height:innerHeight,hidden:document.hidden});if(window.__testLifecycle.length>20)window.__testLifecycle.shift();};
+          for(const type of ['resize','blur','focus','pageshow','pagehide'])window.addEventListener(type,record);
+          document.addEventListener('visibilitychange',record);
+        `});
         await page.send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
         await page.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
         await page.send('Emulation.setTouchEmulationEnabled',{enabled:device.touch,...(device.touch?{maxTouchPoints:1}:{})});
@@ -307,11 +385,11 @@ async function run() {
           assert.equal(await page.evaluate(() => navigator.onLine),false);
           assert.equal(await page.evaluate(() => location.protocol),'file:');
           const canvas = await page.canvas(); assert.ok(canvas.width>0 && canvas.width<=720); assert.equal(canvas.height,canvas.width);
-          assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+1),'horizontal overflow');
+          await page.noOverflow(device.width);
           await sleep(250); await page.hidden(); await page.screenshot('startup',out);
         });
         await runCase(page,'native Show, Escape, rapid lock, keyboard, and End',async () => {
-          await page.click('#show-scene'); await page.visible(); await page.key('Escape'); await page.hidden();
+          await page.settleInitialGuard(); await page.click('#show-scene'); await page.visible(); await page.key('Escape'); await page.hidden();
           // Keep the whole repeated burst within the 3-second lock instead of relying on runner speed.
           const start = await page.evaluate(() => performance.now());
           for (let i=0;i<8;i++) { await page.click('#show-scene'); await page.hidden(); }
@@ -395,10 +473,10 @@ async function run() {
           await page.click('#preview-notes'); assert.equal(await page.property('#notes-export-area','hidden'),true); assert.match(await page.property('#status','textContent'),/listed observation/);
         });
         await runCase(page,'responsive widths, actual resize hide, targets, and focus',async () => {
-          await page.click('#show-scene'); await page.visible();
+          await page.settleInitialGuard(); await page.click('#show-scene'); await page.visible();
           for (const width of [320,390,768,1366]) {
             await page.viewport(width,844); await page.hidden();
-            assert.ok(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth+1),`horizontal overflow at ${width}`);
+            await page.noOverflow(width);
             for (const id of ['show-scene','hide-scene','end-viewing','apply-changes']) {
               const rect = await page.evaluate(id => { const r=document.getElementById(id).getBoundingClientRect(); return {width:r.width,height:r.height}; },id);
               assert.ok(rect.width>=44 && rect.height>=44,`${id} touch target smaller than 44 CSS px at ${width}`);
@@ -426,12 +504,14 @@ async function run() {
     if (report.status !== 'PASS') process.exitCode=1;
   } catch (error) { report.status='ERROR'; report.error=error.stack; process.exitCode=1; }
   finally {
-    if (browser) {
-      try { await browser.cdp.send('Browser.close'); } catch { /* Chrome may close the socket before acknowledgement. */ }
-      browser.cdp.close(); browser.processHandle.kill('SIGTERM');
-      await until(() => browser.processHandle.exitCode !== null || browser.processHandle.signalCode !== null,'Chrome exit',5000).catch(() => browser.processHandle.kill('SIGKILL'));
-    }
-    fs.rmSync(profile,{recursive:true,force:true});
+    try {
+      if (browser) await stopChrome(browser);
+      assert.ok(profileCleanupSafe,'Profile retained because failed-launch Chrome closure was not confirmed');
+      // Browser subprocesses may finish profile writes after the parent exits. These
+      // bounded filesystem retries clean resources; no failed test is ever retried.
+      await fs.promises.rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:100});
+      report.cleanup={browserClosed:true,profileRemoved:true};
+    } catch (error) { report.cleanup={error:error.message}; if (report.status==='PASS' || report.status==='RUNNING') report.status='ERROR'; process.exitCode=1; }
     report.finished=new Date().toISOString(); write(); console.log(JSON.stringify(report,null,2));
     console.log(`Browser report: ${path.join(out,'results.json')}`);
   }
@@ -440,4 +520,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,fixtures,checkFixtures};
+module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining};

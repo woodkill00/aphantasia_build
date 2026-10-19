@@ -1,5 +1,13 @@
 # Software verification report
 
+## Current repair candidate
+
+The first actual sandboxed Chrome CI run passed 20 of 22 scenario groups but failed narrow-screen overflow and the initial mobile reveal assertion; browser profile cleanup also failed. The source and harness corrections below have passed 156 non-browser checks and independent delta review. The current HTML is 40,716 bytes, SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. Browser rerun is pending; no complete browser pass is claimed.
+
+First run: https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845
+
+## Initial import baseline (historical)
+
 Date: 2026-10-19. Target: Imagery Field 0.1.0. Result: **150 non-browser checks passed, 0 failed**. The import-staging rerun passed the original 144 checks plus six new synthetic CDP transport/fixture checks. Real-browser execution remains **BLOCKED/NOT RUN**, as detailed below.
 
 ## Artifact and toolchain

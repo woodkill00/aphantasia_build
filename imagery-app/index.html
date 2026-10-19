@@ -16,6 +16,18 @@ input,select,textarea{min-width:0}
 @media(max-width:319px){.control-grid{grid-template-columns:minmax(0,1fr)}.control-grid .wide{grid-column:auto}.view-actions{flex-wrap:wrap}.view-actions>button{min-width:80px}}
 
 html{scroll-padding-bottom:180px}button,input,select,textarea,summary{scroll-margin-bottom:180px}#status{max-height:min(6em,20vh)}#status:focus-visible{outline:3px solid #e6d6ab;outline-offset:3px}
+
+/* Replaced canvas/file controls must fit their track at narrow desktop widths.
+   A plain 1fr track keeps an automatic min-content floor; these explicit zero
+   minima allow real reflow instead of hiding overflow or clipping controls. */
+.studio{grid-template-columns:minmax(0,1fr)}
+.studio>*,.portable-card>*,.file-actions>*,.viewing-inner>*{min-width:0}
+.portable-card,.file-actions{grid-template-columns:minmax(0,1fr)}
+input[type=file]{display:block;width:100%;min-width:0}
+@media(min-width:760px){
+  .studio{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+  .portable-card{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+}
 </style>
 </head>
 <body>
