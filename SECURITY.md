@@ -26,4 +26,4 @@ Use normal browser security and sandboxing. Do not disable security features to 
 
 ## Project status
 
-This is an engineering preview. Non-browser checks pass, while actual browser CI, physical-device compatibility, and full accessibility review remain unverified. Security testing does not establish medical safety or efficacy. No support response time or security guarantee is promised.
+This is an engineering preview. Synthetic checks and the scoped sandbox-enabled headless Chrome CI suite pass; physical-device compatibility, OS-dialog workflows, and full accessibility review remain unverified. See the [test report](imagery-app/test-results/TEST-REPORT.md) for exact evidence. Security testing does not establish medical safety or efficacy. No support response time or security guarantee is promised.

@@ -45,6 +45,6 @@ Free text may contain personal information. Avoid unnecessary identifying or med
 
 ## Testing and limits
 
-See the [software test report](test-results/TEST-REPORT.md) for executed software checks and outstanding tests. Real-browser execution was blocked before the app opened. Actual file opening, downloads, offline operation, rendered layouts, and physical mobile use remain unverified. Automated tests with simulated browser objects do not establish those capabilities.
+See the [software test report](test-results/TEST-REPORT.md) for exact versions, artifact hash, and remaining checks. The current build passed 156 non-browser checks and 22 sandbox-enabled headless Chrome scenario groups, including file-URL launch, offline request observation, actual downloads/file-input round trips, and selected responsive layouts. Desktop and phone-sized touch emulation were tested on Linux; physical phones, ordinary OS file-opening/chooser workflows, screen readers, and full accessibility remain unverified.
 
 This is an engineering test preview, with no clinical clearance. Software checks do not establish safety, effectiveness, or full accessibility.

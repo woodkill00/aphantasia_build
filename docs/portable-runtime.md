@@ -22,4 +22,4 @@ Phone-sized CSS and browser emulation cannot establish mobile file opening. Some
 
 Do not bypass a security warning, disable a sandbox, or change local-file security flags to meet a portability claim. A blocked platform is a documented limitation until tested through a permitted ordinary workflow.
 
-The current real-browser status and exact artifact hash are in the [software test report](../imagery-app/test-results/TEST-REPORT.md).
+The current sandbox-enabled headless Chrome run passed file-URL launch, offline request observation, actual downloads, and file-input round trips for the tested artifact. This is browser evidence for that environment, not verification of ordinary OS dialogs or physical phones. The exact artifact, versions, and remaining checks are in the [software test report](../imagery-app/test-results/TEST-REPORT.md).

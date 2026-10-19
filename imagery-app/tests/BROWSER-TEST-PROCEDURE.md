@@ -1,10 +1,10 @@
 # Browser and device verification
 
-These instructions describe work to run; they do not show a passed browser test. The original sandbox-enabled Chromium launch was blocked before app navigation by the execution environment. No browser security was relaxed.
+The dependency-free Chrome suite passed 22/22 scenario groups in [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) on 2026-10-19, against the 40,716-byte HTML with SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. The [test report](../test-results/TEST-REPORT.md) records the exact source/checkout, versions, first-run failures, repairs, and remaining limits. Instructions below support reproduction and the still-unrun manual/device checks.
 
 ## No-install Chrome suite and CI
 
-The prepared workflow in `.github/workflows/check.yml` uses preinstalled Node and Chrome on a standard hosted runner, read-only repository permission, a pinned checkout action, no saved checkout credentials, and no deployment or artifact upload. It has not run remotely. The actual browser suite uses the default Chrome sandbox.
+The workflow in `.github/workflows/check.yml` uses preinstalled Node and Chrome on a standard hosted runner, read-only repository permission, a pinned checkout action, no saved checkout credentials, and no deployment or artifact upload. The successful run used Node 22.23.3 and Chrome 155.0.8059.84 on Linux, with the default Chrome sandbox.
 
 From the repository root with Node 22+ (including its built-in WebSocket) and a permitted preinstalled Chrome:
 
@@ -15,7 +15,7 @@ node imagery-app/tests/browser-cdp.cjs
 
 `CHROME_PATH` selects an existing executable when needed. `BROWSER_TEST_OUTPUT` can select a local results folder; otherwise the script creates a temporary folder. Generated results may contain process paths and must be inspected before publication. Screenshots are opt-in with `BROWSER_SCREENSHOTS=1`. Never use real observations in fixtures.
 
-The fixture check validates two accepted and ten rejected inputs without launching a browser. The six `browser-cdp.test.cjs` checks exercise the synthetic transport and fixtures only. Neither establishes browser compatibility. The no-install suite covers the real-file workflow and selected browser controls/downloads through Chrome DevTools Protocol; its browser behavior remains unverified until a real run completes.
+The fixture check validates two accepted and ten rejected inputs without launching a browser. The 12 `browser-cdp.test.cjs` checks exercise synthetic transport, fixtures, initial lifecycle settling, and cleanup behavior without launching Chrome. These checks alone do not establish browser compatibility. The separate executed browser suite covers actual file-URL, control, download/file-input, selected layout, and offline-request behavior through Chrome DevTools Protocol. Desktop and phone-sized touch emulation passed; ordinary OS dialogs and physical phones were not tested.
 
 ## Alternative Playwright suite
 

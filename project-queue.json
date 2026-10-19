@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-19T22:14:48Z",
+  "updated": "2026-10-19T22:19:40Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -16,8 +16,12 @@
       "priority": "P1",
       "consumer": "tester",
       "sourceBase": {
-        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
       },
       "expectedOutputs": [
         "imagery-app/index.html",
@@ -54,7 +58,7 @@
       "id": "IF-002",
       "title": "Verify non-browser invariants",
       "status": "complete",
-      "scope": "Model, DOM/Canvas-double, static, CDP transport/fixture, syntax, and exact-assembly checks: 150 passed.",
+      "scope": "156 checks pass:85 model, 50 DOM/Canvas-double, 9 static, 12 CDP transport/fixture and cleanup tests.",
       "evidence": [
         "imagery-app/test-results/TEST-REPORT.md",
         "imagery-app/test-results/summary.json"
@@ -63,8 +67,12 @@
       "priority": "P0",
       "consumer": "reviewer",
       "sourceBase": {
-        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
       },
       "expectedOutputs": [
         "imagery-app/test-results/TEST-REPORT.md",
@@ -97,7 +105,7 @@
     {
       "id": "IF-003",
       "title": "Run real browser workflows",
-      "status": "repair_in_progress",
+      "status": "complete_for_headless_chrome_scope",
       "dependsOn": [
         "IF-002"
       ],
@@ -110,8 +118,12 @@
       "priority": "P0",
       "consumer": "reviewer",
       "sourceBase": {
-        "repositoryBaseCommit": "3a995efb185bb48777745c495fdebef40ef11f24",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
       },
       "expectedOutputs": [
         "imagery-app/test-results/TEST-REPORT.md",
@@ -133,12 +145,24 @@
           "head": "3a995efb185bb48777745c495fdebef40ef11f24",
           "status": "failed",
           "nonBrowser": "150 passed",
-          "browserCases": "20 passed,2 failed",
+          "browserCases": "20 passed, 2 failed",
           "findings": [
             "320px horizontal overflow",
             "Mobile initial Show remained hidden",
             "Chrome profile cleanup race"
           ],
+          "cost": null,
+          "tokens": null
+        },
+        {
+          "id": 2,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+          "head": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+          "status": "passed",
+          "nonBrowser": "156 passed",
+          "browserCases": "22 passed, 0 failed",
+          "browser": "Chrome 155.0.8059.84 Linux; desktop and mobile viewport/touch emulation",
+          "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
           "cost": null,
           "tokens": null
         }
@@ -156,7 +180,7 @@
         "fail": "Distinguish app defects, test defects, and environment blockers; fix within scope and rerun affected cases.",
         "missingInput": "Remain blocked until a permitted browser environment and required installed tools are available."
       },
-      "nextStep": "Repair 320px layout overflow and diagnose mobile initial reveal state; repair harness cleanup; independently review then rerun full CI."
+      "nextStep": "Preserve passing evidence; physical-device/manual accessibility work remains IF-004. Documentation-only final commit will rerun CI."
     },
     {
       "id": "IF-004",
@@ -173,7 +197,8 @@
       "consumer": "reviewer",
       "sourceBase": {
         "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
       },
       "expectedOutputs": [
         "imagery-app/test-results/TEST-REPORT.md",
@@ -217,7 +242,8 @@
       "consumer": "integrator",
       "sourceBase": {
         "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
       },
       "expectedOutputs": [
         "docs/scientific-limitations.md",
@@ -249,7 +275,7 @@
     {
       "id": "IF-006",
       "title": "Run prepared browser CI",
-      "status": "repair_in_progress",
+      "status": "complete_for_headless_chrome_scope",
       "scope": "No-install GitHub Actions workflow is prepared with preinstalled Node/Chrome, read-only contents permission, normal browser security, and no deployment.",
       "acceptance": "Maintainer approval and successful recorded run; no implied device or clinical approval.",
       "evidence": [
@@ -257,13 +283,17 @@
         "imagery-app/tests/browser-cdp.cjs",
         "imagery-app/tests/browser-cdp.test.cjs"
       ],
-      "nextStep": "Repair 320px layout overflow and diagnose mobile initial reveal state; repair harness cleanup; independently review then rerun full CI.",
+      "nextStep": "Preserve passing evidence; physical-device/manual accessibility work remains IF-004. Documentation-only final commit will rerun CI.",
       "owner": "integrator",
       "priority": "P0",
       "consumer": "reviewer",
       "sourceBase": {
-        "repositoryBaseCommit": "3a995efb185bb48777745c495fdebef40ef11f24",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
       },
       "expectedOutputs": [
         ".github/workflows/check.yml",
@@ -289,12 +319,24 @@
           "head": "3a995efb185bb48777745c495fdebef40ef11f24",
           "status": "failed",
           "nonBrowser": "150 passed",
-          "browserCases": "20 passed,2 failed",
+          "browserCases": "20 passed, 2 failed",
           "findings": [
             "320px horizontal overflow",
             "Mobile initial Show remained hidden",
             "Chrome profile cleanup race"
           ],
+          "cost": null,
+          "tokens": null
+        },
+        {
+          "id": 2,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+          "head": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+          "status": "passed",
+          "nonBrowser": "156 passed",
+          "browserCases": "22 passed, 0 failed",
+          "browser": "Chrome 155.0.8059.84 Linux; desktop and mobile viewport/touch emulation",
+          "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
           "cost": null,
           "tokens": null
         }
@@ -325,7 +367,8 @@
       "consumer": "author",
       "sourceBase": {
         "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
       },
       "expectedOutputs": [
         "README.md",
@@ -369,7 +412,8 @@
       "consumer": "reviewer",
       "sourceBase": {
         "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
       },
       "expectedOutputs": [
         "docs/plan.md",
@@ -414,7 +458,8 @@
       "consumer": "reviewer",
       "sourceBase": {
         "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
-        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
       },
       "expectedOutputs": [
         "SECURITY.md",
@@ -445,12 +490,12 @@
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+    "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
     "targetBranch": "feat/portable-imagery-preview",
     "appPath": "imagery-app/index.html",
     "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
-    "appBytes": 40075,
-    "note": "The base commit is the repository bootstrap; the app hash identifies the exact prepared implementation. Refresh this base after an accepted source change."
+    "appBytes": 40716,
+    "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
@@ -484,7 +529,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "active CI repair/review"
+      "currentStatus": "Current static implementation complete; future features deferred."
     },
     {
       "role": "tester",
@@ -501,7 +546,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "active CI repair/review"
+      "currentStatus": "156 non-browser and 22 headless Chrome scenario groups passed; physical-device and manual accessibility checks remain pending."
     },
     {
       "role": "reviewer",
@@ -516,7 +561,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "active CI repair/review"
+      "currentStatus": "Source, privacy and software evidence reviewed; qualified sensory/clinical review remains pending."
     },
     {
       "role": "integrator",
@@ -533,35 +578,9 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "active CI repair/review"
+      "currentStatus": "Documentation integration and final CI rerun active; no merge or deployment performed."
     }
   ],
-  "activeRepairs": {
-    "author": {
-      "paths": [
-        "imagery-app/src/",
-        "imagery-app/index.html"
-      ],
-      "goal": "Repair actual narrow viewport layout"
-    },
-    "tester": {
-      "paths": [
-        "imagery-app/tests/browser-cdp.cjs",
-        "imagery-app/tests/browser-cdp.test.cjs"
-      ],
-      "goal": "Diagnose initial reveal timing and fix browser process cleanup"
-    },
-    "reviewer": {
-      "paths": [],
-      "goal": "Independent repair review"
-    },
-    "integrator": {
-      "paths": [
-        "project-queue.json",
-        "imagery-app/SHA256-MANIFEST.json",
-        "imagery-app/test-results/"
-      ],
-      "goal": "Publish reviewed fixes and verify exact CI head"
-    }
-  }
+  "activeRepairs": {},
+  "currentStatus": "Browser-tested engineering preview; final documentation integration and CI verification pending. Not clinical or physical-device clearance."
 }

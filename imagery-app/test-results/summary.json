@@ -1,76 +1,127 @@
 {
   "date": "2026-10-19",
-  "status": "NON_BROWSER_PASS_BROWSER_UNVERIFIED",
+  "status": "SCOPED_CHROME_CI_PASS",
   "artifact": {
     "file": "imagery-app/index.html",
-    "bytes": 40075,
-    "sha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88"
+    "bytes": 40716,
+    "sha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
+  },
+  "ci": {
+    "runId": 39333956608,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+    "sourceHead": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+    "testMergeCheckout": "e7a156d12d319bcad94ee17899b7bf582a4388d9",
+    "conclusion": "success",
+    "note": "The tested checkout is a GitHub PR test merge, not evidence of a merge into main."
   },
   "executedEnvironment": {
-    "node": "v24.19.0",
-    "platform": "linux"
+    "node": "v22.23.3",
+    "platform": "linux",
+    "os": "Ubuntu 24.04.5",
+    "browser": "Headless Chrome 155.0.8059.84",
+    "sandbox": "Default enabled"
   },
-  "executed": {
+  "nonBrowser": {
     "modelTests": 85,
     "domDoubleTests": 50,
     "staticTests": 9,
-    "total": 150,
-    "passed": 150,
+    "browserHarnessAndFixtureTests": 12,
+    "total": 156,
+    "passed": 156,
     "failed": 0,
     "geometryCombinations": 7200,
     "seededModelCommands": 10000,
     "rapidUiDoubleSequences": 300,
-    "sourceSyntax": "PASS",
-    "browserSuiteSyntax": "PASS",
-    "assembledArtifactMatches": "PASS",
-    "cdpTransportAndFixtureTests": 6,
-    "standaloneCdpFixtures": {
+    "standaloneFixtures": {
       "valid": 2,
       "rejected": 10,
       "browserExecuted": false
     }
   },
-  "combinedJavaScriptCoverage": {
-    "model": {
-      "lines": 100,
-      "branches": 94.74,
-      "functions": 100
-    },
-    "appUnderTestDoubles": {
-      "lines": 100,
-      "branches": 98.37,
-      "functions": 100
-    },
-    "scope": "JavaScript execution only. Not rendered browser, CSS, accessibility, medical, or device coverage."
-  },
   "browser": {
-    "status": "BLOCKED_BEFORE_NAVIGATION",
-    "scope": "Original sandbox-enabled browser launch failed due to environment restrictions. No actual browser pass is recorded. The public staging rerun executed only Node checks and syntax checks.",
-    "preparedSuites": [
-      "Playwright",
-      "Dependency-free Chrome DevTools Protocol"
+    "status": "PASS",
+    "desktopGroups": 11,
+    "mobileViewportTouchEmulationGroups": 11,
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "scope": "Actual headless Chrome; file URL; synthetic data; desktop and phone-sized viewport/touch emulation on Linux.",
+    "checked": [
+      "Hidden startup and black pixels",
+      "Native pointer/key display controls and rapid-action lock",
+      "Presets, edits, history and numeric validation",
+      "Actual disk download/reload/file-input byte roundtrip",
+      "Rejected and inert-markup imports",
+      "Delayed file-read races",
+      "Separate note preview/selection/download/invalidation/reload",
+      "Invalid note values",
+      "Selected responsive widths, resize hiding, target sizing and focus",
+      "Repeated actions without replayed reveal",
+      "Runtime/dialog/remote-request observations in offline mode"
     ],
-    "ciStatus": "PREPARED_NOT_RUN",
-    "publicationStatus": "Reviewed source import pending on feature branch."
+    "runtimeErrors": 0,
+    "unexpectedDialogs": 0,
+    "remoteAppRequests": 0,
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "osFilePickerTested": false,
+    "physicalDevicesTested": false
   },
-  "notRun": [
-    "Direct-file real-browser workflows",
-    "Observed offline browser requests",
-    "Actual download/import round trips",
-    "Rendered layouts and manual accessibility",
-    "Physical mobile/desktop compatibility",
-    "Qualified sensory and clinical-content review"
+  "isolatedModelCoverage": {
+    "source": "imagery-app/src/model.js",
+    "node": "v24.19.0",
+    "testsPassed": 85,
+    "lines": 99.25,
+    "branches": 93.29,
+    "functions": 100,
+    "scope": "Model-only JavaScript execution in a separate local rerun. Not whole-app, browser, CSS, accessibility, device, or medical coverage."
+  },
+  "history": [
+    {
+      "phase": "Initial local baseline",
+      "htmlBytes": 40075,
+      "htmlSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+      "originalNonBrowserPassed": 144,
+      "withInitialCdpChecksPassed": 150,
+      "browserStatus": "BLOCKED_BEFORE_NAVIGATION",
+      "reason": "Execution environment could not launch the sandbox-enabled browser."
+    },
+    {
+      "phase": "First actual browser CI",
+      "runId": 39333164845,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+      "sourceHead": "3a995efb185bb48777745c495fdebef40ef11f24",
+      "browser": "Headless Chrome 155.0.8059.39",
+      "nonBrowserPassed": 150,
+      "browserPassed": 20,
+      "browserFailed": 2,
+      "failures": [
+        "Desktop horizontal overflow at 320 CSS pixels",
+        "Mobile-emulation first Show assertion remained Hidden; original cause not established"
+      ],
+      "cleanup": "Failed with ENOTEMPTY; run was not a pass."
+    },
+    {
+      "phase": "Reviewed repair and rerun",
+      "runtimeDelta": "CSS grid/file-input sizing and regenerated HTML only; model/UI JavaScript/shell unchanged.",
+      "harnessDelta": "Trusted-input observation, conditional lifecycle settling, and bounded process cleanup with additional synthetic regressions.",
+      "runId": 39333956608,
+      "nonBrowserPassed": 156,
+      "browserPassed": 22,
+      "browserFailed": 0,
+      "cleanup": "PASS"
+    }
   ],
-  "resolvedDefects": [
-    "Duplicate-key overwrite in JSON imports",
-    "Unbounded duplicate-key error text"
+  "notEstablished": [
+    "Physical phones and ordinary OS opening/file-picker workflows",
+    "Other browser/platform combinations",
+    "Complete manual keyboard, screen-reader and accessibility assessment",
+    "Physical display/sleep-wake behavior and calibrated luminance/timing",
+    "Qualified sensory and clinical-content review",
+    "Clinical efficacy"
   ],
-  "privacy": "Synthetic fixtures only. No personal observations or raw process logs included.",
-  "currentCandidate": {
-    "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
-    "bytes": 40716,
-    "nonBrowserPassed": 156,
-    "browserStatus": "rerun pending after initial20pass2fail",
-    "initialRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845"
-  }
+  "alternativePlaywrightSuite": "NOT_RUN",
+  "privacy": "Synthetic fixtures only; this public summary excludes observations, raw process logs, machine paths and private identifiers."
 }

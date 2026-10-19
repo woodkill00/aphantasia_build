@@ -43,4 +43,4 @@ Optional notes use a separate export schema and are never included in a scene ex
 
 The current model cannot represent arbitrary groups, dense pattern arrays, external textures, custom shaders, complex objects, or scenes. There is no timed research protocol, diagnostic classifier, efficacy endpoint, participant system, account, or service. Expanded capability requires separate specification and review.
 
-Real-browser, physical-device, accessibility, and qualified sensory/content checks remain distinct from source-level correctness. See the [verification plan](plan.md).
+The current headless Chrome suite has exercised the direct-file implementation, including responsive reflow after a CSS grid/file-input repair. Its scoped results do not establish physical-device, OS-dialog, full accessibility, or qualified sensory/content acceptance. See the [verification plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
