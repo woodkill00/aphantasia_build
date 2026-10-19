@@ -1,0 +1,869 @@
+{
+  "schemaVersion": 2,
+  "updated": "2026-10-19T23:49:00Z",
+  "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
+  "items": [
+    {
+      "id": "IF-001",
+      "title": "Maintain static app baseline",
+      "status": "complete",
+      "scope": "Narrow static editor, explicit visibility, closed scene schema, portable scene files, separate optional note export.",
+      "evidence": [
+        "imagery-app/index.html",
+        "docs/architecture.md"
+      ],
+      "owner": "author",
+      "priority": "P1",
+      "consumer": "tester",
+      "sourceBase": {
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+      },
+      "expectedOutputs": [
+        "imagery-app/index.html",
+        "imagery-app/src/app.js",
+        "imagery-app/src/model.js",
+        "imagery-app/src/shell.html",
+        "imagery-app/src/style.css",
+        "imagery-app/src/assemble.cjs"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "imagery-app/src/**",
+          "imagery-app/index.html"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Preserve the existing static-only scope. Runtime capability changes require separate review.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "IF-002: run all affected synthetic regressions.",
+        "fail": "Keep the last verified artifact; fix the defect and repeat IF-002.",
+        "missingInput": "Pause the affected change and request the missing requirement."
+      }
+    },
+    {
+      "id": "IF-002",
+      "title": "Verify non-browser invariants",
+      "status": "complete",
+      "scope": "156 checks pass:85 model, 50 DOM/Canvas-double, 9 static, 12 CDP transport/fixture and cleanup tests.",
+      "evidence": [
+        "imagery-app/test-results/TEST-REPORT.md",
+        "imagery-app/test-results/summary.json"
+      ],
+      "owner": "tester",
+      "priority": "P0",
+      "consumer": "reviewer",
+      "sourceBase": {
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+      },
+      "expectedOutputs": [
+        "imagery-app/test-results/TEST-REPORT.md",
+        "imagery-app/test-results/summary.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "imagery-app/tests/**",
+          "imagery-app/test-results/TEST-REPORT.md",
+          "imagery-app/test-results/summary.json"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Run synthetic checks against the exact artifact; do not infer browser execution.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "IF-003: exercise actual browser workflows.",
+        "fail": "Record failing cases; return the smallest regression to IF-001 and rerun.",
+        "missingInput": "Mark blocked and name the missing source artifact or required installed tool."
+      }
+    },
+    {
+      "id": "IF-003",
+      "title": "Run real browser workflows",
+      "status": "complete_for_headless_chrome_scope",
+      "dependsOn": [
+        "IF-002"
+      ],
+      "scope": "Permitted sandbox-enabled direct-file workflow, real downloads/imports, offline request observation, layout and lifecycle checks.",
+      "acceptance": "Record PASS/FAIL/BLOCKED per case and exact browser version plus artifact hash. Existing launch blocker is not a pass.",
+      "evidence": [
+        "imagery-app/tests/BROWSER-TEST-PROCEDURE.md"
+      ],
+      "owner": "tester",
+      "priority": "P0",
+      "consumer": "reviewer",
+      "sourceBase": {
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+      },
+      "expectedOutputs": [
+        "imagery-app/test-results/TEST-REPORT.md",
+        "imagery-app/test-results/summary.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "imagery-app/tests/**",
+          "imagery-app/test-results/TEST-REPORT.md",
+          "imagery-app/test-results/summary.json"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Use a permitted browser with normal sandbox/security and synthetic inputs; no workaround authorizes security changes.",
+      "attempts": [
+        {
+          "id": 1,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+          "head": "3a995efb185bb48777745c495fdebef40ef11f24",
+          "status": "failed",
+          "nonBrowser": "150 passed",
+          "browserCases": "20 passed, 2 failed",
+          "findings": [
+            "320px horizontal overflow",
+            "Mobile initial Show remained hidden",
+            "Chrome profile cleanup race"
+          ],
+          "cost": null,
+          "tokens": null
+        },
+        {
+          "id": 2,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+          "head": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+          "status": "passed",
+          "nonBrowser": "156 passed",
+          "browserCases": "22 passed, 0 failed",
+          "browser": "Chrome 155.0.8059.84 Linux; desktop and mobile viewport/touch emulation",
+          "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+          "cost": null,
+          "tokens": null
+        }
+      ],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "IF-004: perform physical-device/manual accessibility checks.",
+        "fail": "Distinguish app defects, test defects, and environment blockers; fix within scope and rerun affected cases.",
+        "missingInput": "Remain blocked until a permitted browser environment and required installed tools are available."
+      },
+      "nextStep": "Preserve passing evidence; physical-device/manual accessibility work remains IF-004. Documentation-only final commit will rerun CI."
+    },
+    {
+      "id": "IF-004",
+      "title": "Verify devices and accessibility",
+      "status": "pending",
+      "dependsOn": [
+        "IF-003"
+      ],
+      "scope": "Physical launch/picker/download routes, native keyboard/touch, screen readers, zoom/reflow, forced colors.",
+      "acceptance": "Separate evidence for each device/browser and each manual accessibility check; emulation is insufficient.",
+      "evidence": [],
+      "owner": "tester",
+      "priority": "P1",
+      "consumer": "reviewer",
+      "sourceBase": {
+        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
+      },
+      "expectedOutputs": [
+        "imagery-app/test-results/TEST-REPORT.md",
+        "imagery-app/test-results/summary.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "imagery-app/test-results/TEST-REPORT.md",
+          "imagery-app/test-results/summary.json",
+          "imagery-app/tests/BROWSER-TEST-PROCEDURE.md"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Use only explicitly permitted devices and synthetic data; no emulation result substitutes for a physical check.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "Publish only the device/browser support that the recorded evidence establishes.",
+        "fail": "Record unsupported routes and accessibility defects; return fixes to IF-001.",
+        "missingInput": "Keep untested devices/checks marked NOT RUN and identify access or expertise needed."
+      }
+    },
+    {
+      "id": "IF-005",
+      "title": "Review patterns and guidance",
+      "status": "pending",
+      "scope": "Qualified assessment of actual rendered patterns, display conditions, and content before broader viewing/research claims.",
+      "acceptance": "Document review scope and unresolved risks without turning engineering limits into medical thresholds.",
+      "evidence": [
+        "docs/scientific-limitations.md"
+      ],
+      "owner": "reviewer",
+      "priority": "P0",
+      "consumer": "integrator",
+      "sourceBase": {
+        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
+      },
+      "expectedOutputs": [
+        "docs/scientific-limitations.md",
+        "imagery-app/review.md"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "docs/scientific-limitations.md",
+          "imagery-app/review.md"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Qualified pattern and clinical-content judgments require relevant expertise; ordinary code review cannot approve them.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "Record the precise reviewed scope and remaining limits; do not infer efficacy.",
+        "fail": "Retain the restrictive scope and escalate unresolved pattern/content concerns.",
+        "missingInput": "Mark this gate pending until a qualified reviewer and actual display evidence are available."
+      }
+    },
+    {
+      "id": "IF-006",
+      "title": "Run prepared browser CI",
+      "status": "complete_for_headless_chrome_scope",
+      "scope": "No-install GitHub Actions workflow is prepared with preinstalled Node/Chrome, read-only contents permission, normal browser security, and no deployment.",
+      "acceptance": "Maintainer approval and successful recorded run; no implied device or clinical approval.",
+      "evidence": [
+        ".github/workflows/check.yml",
+        "imagery-app/tests/browser-cdp.cjs",
+        "imagery-app/tests/browser-cdp.test.cjs"
+      ],
+      "nextStep": "Preserve passing evidence; physical-device/manual accessibility work remains IF-004. Documentation-only final commit will rerun CI.",
+      "owner": "integrator",
+      "priority": "P0",
+      "consumer": "reviewer",
+      "sourceBase": {
+        "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+        "targetBranch": "feat/portable-imagery-preview",
+        "appPath": "imagery-app/index.html",
+        "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+        "appBytes": 40716,
+        "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+      },
+      "expectedOutputs": [
+        ".github/workflows/check.yml",
+        "imagery-app/test-results/summary.json",
+        "project-queue.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          ".github/workflows/check.yml",
+          "README.md",
+          "project-queue.json",
+          "imagery-app/SHA256-MANIFEST.json",
+          "imagery-app/test-results/TEST-REPORT.md",
+          "imagery-app/test-results/summary.json"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Remote publication/branch actions require explicit authorization; the prepared workflow is test-only, read-only, and not a deployment.",
+      "attempts": [
+        {
+          "id": 1,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+          "head": "3a995efb185bb48777745c495fdebef40ef11f24",
+          "status": "failed",
+          "nonBrowser": "150 passed",
+          "browserCases": "20 passed, 2 failed",
+          "findings": [
+            "320px horizontal overflow",
+            "Mobile initial Show remained hidden",
+            "Chrome profile cleanup race"
+          ],
+          "cost": null,
+          "tokens": null
+        },
+        {
+          "id": 2,
+          "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+          "head": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+          "status": "passed",
+          "nonBrowser": "156 passed",
+          "browserCases": "22 passed, 0 failed",
+          "browser": "Chrome 155.0.8059.84 Linux; desktop and mobile viewport/touch emulation",
+          "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+          "cost": null,
+          "tokens": null
+        }
+      ],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "Record the exact remote run and artifact; reconcile IF-003 and plan IF-004.",
+        "fail": "Inspect the actual failure; repair only authorized workflow/test defects and rerun without weakening security.",
+        "missingInput": "Keep PREPARED/NOT RUN when repository access, runner, or installed-tool requirements are missing."
+      }
+    },
+    {
+      "id": "IF-007",
+      "title": "Select project license",
+      "status": "decision_needed",
+      "scope": "Maintainer chooses whether and how to license the project.",
+      "acceptance": "Explicit recorded decision before adding a license.",
+      "evidence": [],
+      "owner": "integrator",
+      "priority": "P2",
+      "consumer": "author",
+      "sourceBase": {
+        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
+      },
+      "expectedOutputs": [
+        "README.md",
+        "project-queue.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "README.md",
+          "project-queue.json",
+          "LICENSE"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "A maintainer must choose a license; do not invent a licensing decision.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "Add only the specifically approved license and reconcile documentation.",
+        "fail": "Resolve conflicting licensing/third-party terms before applying a license.",
+        "missingInput": "Keep the no-license-selected notice and request the maintainer decision."
+      }
+    },
+    {
+      "id": "IF-008",
+      "title": "Review future feature proposals",
+      "status": "deferred",
+      "scope": "Complex scenes, storage, hosted delivery, accounts, telemetry, timing protocols, studies, or efficacy measures.",
+      "acceptance": "Separate specification, authorization, and risk review before implementation.",
+      "evidence": [
+        "docs/plan.md"
+      ],
+      "owner": "author",
+      "priority": "P2",
+      "consumer": "reviewer",
+      "sourceBase": {
+        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
+      },
+      "expectedOutputs": [
+        "docs/plan.md",
+        "docs/architecture.md",
+        "project-queue.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "docs/plan.md",
+          "docs/architecture.md",
+          "project-queue.json"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "This deferred item authorizes no expanded implementation. New capabilities require a separate approved specification.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "Create a bounded approved task with review gates before implementation.",
+        "fail": "Revise or reject the proposal while preserving the current baseline.",
+        "missingInput": "Remain deferred until the concrete goal, limits, and authorization exist."
+      }
+    },
+    {
+      "id": "IF-009",
+      "title": "Enable private vulnerability reporting",
+      "status": "owner_action_required",
+      "scope": "Repository owner or administrator enables and verifies the GitHub private reporting route.",
+      "acceptance": "Confirm the private Report a vulnerability route is available; documentation alone does not activate it.",
+      "evidence": [
+        "SECURITY.md"
+      ],
+      "owner": "integrator",
+      "priority": "P1",
+      "consumer": "reviewer",
+      "sourceBase": {
+        "repositoryBaseCommit": "77c018c182d00e581cc265b3d7b57684043951d0",
+        "appSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+        "note": "Historical planning baseline; current verified app is identified by the top-level sourceBase."
+      },
+      "expectedOutputs": [
+        "SECURITY.md",
+        "project-queue.json"
+      ],
+      "writeBoundary": {
+        "allowedPublicPaths": [
+          "SECURITY.md",
+          "project-queue.json"
+        ],
+        "outsideScope": "Do not edit other task outputs, private data, repository settings, or remote state without an explicit handoff and required authorization."
+      },
+      "authority": "Only the owner/administrator or a specifically authorized action may change repository security settings. Documentation does not enable the service.",
+      "attempts": [],
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "elapsedSeconds": null,
+        "cost": null,
+        "currency": null
+      },
+      "next": {
+        "pass": "Verify the private reporting route exists, then update the security instructions accurately.",
+        "fail": "Keep sensitive reports out of public issues and record the setup blocker.",
+        "missingInput": "Ask the repository owner to enable and verify private reporting; do not invent a contact address."
+      }
+    },
+    {
+      "id": "IF-020",
+      "title": "Build full-window static scene editor",
+      "goal": "Build full-window static scene editor",
+      "priority": "P0",
+      "owner": "build_fullscreen_scene_editor",
+      "consumer": "independent tester and reviewer",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "imagery-app/src/**",
+        "imagery-app/index.html"
+      ],
+      "dependencies": [],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/index.html"
+      ],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "imagery-app/index.html",
+        "SHA256 b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
+      ],
+      "nextAction": "Preserve accepted source; repair only newly evidenced defects"
+    },
+    {
+      "id": "IF-021",
+      "title": "Independently test expanded editor",
+      "goal": "Independently test expanded editor",
+      "priority": "P0",
+      "owner": "test_fullscreen_scene_editor",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "dependencies": [
+        "IF-020"
+      ],
+      "writeBoundary": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        },
+        {
+          "status": "in_progress",
+          "baseline": "156/156 pass, exact baseline HTML hash verified",
+          "localBrowser": "BLOCKED; timed out waiting DevToolsActivePort; no security workaround",
+          "workingV2": "206/206 synthetic checks reported; source not frozen, not accepted final"
+        },
+        {
+          "status": "failed",
+          "commit": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
+          "run": 39343004081,
+          "result": "214 nonbrowser pass;36/38 native groups pass; Escape exit Hidden check ran before observing fullscreenchange delivery",
+          "repair": "Event-boundary observer with same-event black-raster/label/focus assertions; no application source change; independent review accepted retry; initial cause remains provisional pending event traces"
+        },
+        {
+          "status": "queued",
+          "commit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+          "result": "216 nonbrowser pass locally; native retry pending"
+        },
+        {
+          "status": "passed",
+          "commit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+          "run": 39343535180,
+          "result": "216nonbrowser+38nativeChrome groups pass;trusted fullscreen-event snapshots Hidden and coloredPixels0 both profiles;source unchanged",
+          "limits": "Physical devices,other engines,screen readers,qualified sensory and clinical acceptance not established"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "214/214 nonbrowser checks independently rerun by coordinator",
+        "3 valid and14 rejected fixture checks pass",
+        "38 native Chrome groups prepared; NOT RUN; local Chrome launch BLOCKED"
+      ],
+      "nextAction": "Preserve accepted source; repair only newly evidenced defects"
+    },
+    {
+      "id": "IF-022",
+      "title": "Review expanded visual design",
+      "goal": "Review expanded visual design",
+      "priority": "P0",
+      "owner": "review_fullscreen_visual_design",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "Independent review findings"
+      ],
+      "dependencies": [
+        "IF-020"
+      ],
+      "writeBoundary": [],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "imagery-app/review.md"
+      ],
+      "nextAction": "Preserve accepted source; repair only newly evidenced defects"
+    },
+    {
+      "id": "IF-023",
+      "title": "Integrate reviewed downloadable preview",
+      "goal": "Integrate reviewed downloadable preview",
+      "priority": "P0",
+      "owner": "coordinator",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+      "expectedOutputs": [
+        "project-queue.json",
+        "docs/**",
+        "README.md",
+        "imagery-app/README.md",
+        "imagery-app/review.md",
+        "imagery-app/SHA256-MANIFEST.json"
+      ],
+      "dependencies": [
+        "IF-021",
+        "IF-022",
+        "IF-024"
+      ],
+      "writeBoundary": [
+        "project-queue.json",
+        "imagery-app/review.md",
+        "imagery-app/SHA256-MANIFEST.json"
+      ],
+      "acceptanceChecks": [
+        "Preserve static explicit visibility and privacy boundaries",
+        "Evidence tied to actual artifact",
+        "Independent acceptance required for source changes"
+      ],
+      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
+      "status": "in_progress",
+      "next": {
+        "pass": "Consumer reviews and integrates",
+        "fail": "Owner repairs own writable files and retests",
+        "missingInput": "Report exact dependency; continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "root"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Run final documentation-only CI, package explicit public files, deliver local test ZIP"
+    },
+    {
+      "id": "IF-024",
+      "title": "Document expanded scene editor",
+      "goal": "Reconcile instructions and schema to v0.2 without carrying forward unearned test claims",
+      "priority": "P1",
+      "owner": "document_expanded_scene_editor",
+      "consumer": "coordinator",
+      "sourceBase": "ece81bf045afcd3045622fdad625271b717bde3e plus IF-020 working source",
+      "expectedOutputs": [
+        "README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/editor-redesign.md",
+        "docs/portable-runtime.md",
+        "imagery-app/README.md"
+      ],
+      "dependencies": [
+        "IF-020"
+      ],
+      "writeBoundary": [
+        "README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/editor-redesign.md",
+        "docs/portable-runtime.md",
+        "imagery-app/README.md"
+      ],
+      "acceptanceChecks": [
+        "Accurate schema and controls",
+        "Historical tests explicitly scoped",
+        "No unsupported safety or efficacy claims"
+      ],
+      "authority": "Requested product redesign documentation",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Coordinator integrates after independent checks",
+        "fail": "Documentation owner repairs",
+        "missingInput": "Wait for source freeze while preparing known instructions"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "No open documentation repair; preserve exact test provenance"
+    }
+  ],
+  "sourceBase": {
+    "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+    "targetBranch": "feat/portable-imagery-preview",
+    "appPath": "imagery-app/index.html",
+    "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
+    "appBytes": 40716,
+    "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+  },
+  "authority": {
+    "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
+    "limits": "Task entries do not authorize publication, deployment, data sharing, package installation, security changes, human-participant research, or features outside the documented static scope. Those actions require appropriate explicit authorization.",
+    "evidencePolicy": "Keep passed, failed, blocked, and not-run work distinct. Never infer browser, device, clinical, or accessibility acceptance from synthetic checks.",
+    "privacyPolicy": "Use synthetic fixtures only. Do not add personal observations, credentials, private identifiers, or unreviewed process output.",
+    "writePolicy": "Each task may change only its declared public paths. A single writer must own a shared path at a time; coordinate a handoff before overlap. Generated local browser output remains untracked pending review.",
+    "attemptPolicy": "Historical attempt logs are not imported. Empty attempts arrays mean no public per-attempt entries are recorded, not that no earlier work occurred. Append only observed attempts with exact inputs, outputs, status, and evidence."
+  },
+  "usage": {
+    "status": "unknown",
+    "inputTokens": null,
+    "outputTokens": null,
+    "elapsedSeconds": null,
+    "cost": null,
+    "currency": null,
+    "note": "No reliable per-task usage accounting is available; values are explicitly unknown."
+  },
+  "workerRegister": [
+    {
+      "role": "author",
+      "scope": "Implement the approved static app and documented future proposals.",
+      "taskIds": [
+        "IF-001",
+        "IF-008"
+      ],
+      "assignmentKind": "public responsibility role; not an individual identity or live worker status",
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cost": null
+      },
+      "currentStatus": "Current static implementation complete; future features deferred."
+    },
+    {
+      "role": "tester",
+      "scope": "Run synthetic and permitted browser/device verification; report limits without accepting reviewer-owned gates.",
+      "taskIds": [
+        "IF-002",
+        "IF-003",
+        "IF-004"
+      ],
+      "assignmentKind": "public responsibility role; not an individual identity or live worker status",
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cost": null
+      },
+      "currentStatus": "156 non-browser and 22 headless Chrome scenario groups passed; physical-device and manual accessibility checks remain pending."
+    },
+    {
+      "role": "reviewer",
+      "scope": "Independently review source, evidence, privacy, accessibility, and qualified-content gates within relevant expertise.",
+      "taskIds": [
+        "IF-005"
+      ],
+      "assignmentKind": "public responsibility role; not an individual identity or live worker status",
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cost": null
+      },
+      "currentStatus": "Source, privacy and software evidence reviewed; qualified sensory/clinical review remains pending."
+    },
+    {
+      "role": "integrator",
+      "scope": "Reconcile reviewed source and metadata, coordinate CI and maintainer decisions, and perform only explicitly authorized repository actions.",
+      "taskIds": [
+        "IF-006",
+        "IF-007",
+        "IF-009"
+      ],
+      "assignmentKind": "public responsibility role; not an individual identity or live worker status",
+      "usage": {
+        "status": "unknown",
+        "inputTokens": null,
+        "outputTokens": null,
+        "cost": null
+      },
+      "currentStatus": "Documentation integration and final CI rerun active; no merge or deployment performed."
+    }
+  ],
+  "activeRepairs": {},
+  "currentStatus": "Browser-tested engineering preview; final documentation integration and CI verification pending. Not clinical or physical-device clearance.",
+  "currentIteration": {
+    "base": "ece81bf045afcd3045622fdad625271b717bde3e",
+    "concurrencySlots": 7,
+    "coordinatorCounts": true,
+    "activeWorkerLanes": 0,
+    "remainingLanes": "No additional independent bottleneck task yet; refill for review/integration as outputs arrive",
+    "remoteBranch": "feat/portable-imagery-preview",
+    "recovery": "All implementation/test/review/docs returns accepted. Final documentation-only commit and CI gate pending; packaging follows. No merge/deploy.",
+    "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+    "passingRun": 39343535180,
+    "htmlSha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
+  }
+}

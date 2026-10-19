@@ -1,0 +1,32 @@
+# Dependencies and generated local tooling
+node_modules/
+coverage/
+.nyc_output/
+
+# Machine-local settings and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Generated test output is private until reviewed
+**/test-results/*
+!/imagery-app/test-results/TEST-REPORT.md
+!/imagery-app/test-results/summary.json
+playwright-report/
+*.tap
+
+# Local exports and unreviewed working files
+exports/
+local-notes/
+imagery-field-note*.json
+imagery-field-scene*.json
+*.zip
+*.log

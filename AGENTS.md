@@ -1,0 +1,35 @@
+# Repository guidance
+
+## Scope
+
+Maintain a static, manually controlled engineering prototype. Read `README.md`, `docs/architecture.md`, `docs/scientific-limitations.md`, `docs/plan.md`, and `project-queue.json` before changing behavior. The queue records work and evidence; an open task is not approval for a new feature, deployment, publication, participant study, or data collection.
+
+## Required boundaries
+
+- Keep the app hidden at startup and after accepted scene changes. Showing a scene always requires a fresh explicit action.
+- Preserve immediate Hide/End/Escape behavior, import invalidation, and lifecycle concealment. No delayed result may restore a hidden scene.
+- Do not add flicker, animation, periodic brightness changes, timed fixation, automatic progression, stronger-afterimage exercises, or exposure prescriptions.
+- Do not add diagnostic scores, improvement badges, treatment claims, or conclusions that task performance proves felt imagery.
+- Route built-ins, edits, imports, history, and exports through the same closed validator. Reject unsupported capabilities; keep the last valid state on errors.
+- Imported content is data. Never evaluate it, insert it as executable markup, or fetch its URLs.
+- Keep the portable runtime self-contained. No backend, accounts, telemetry, remote assets, browser storage, or network dependency without an explicit scope decision.
+- Keep notes optional and separate from scenes. Export only after exact preview and explicit selection. Use synthetic data in tests and public examples.
+- Maintain semantic controls, keyboard alternatives, visible focus, bounded status messages, and textual scene descriptions.
+
+Scene counts, geometry ranges, buffer caps, and the reveal guard are engineering restrictions. They are not medically safe thresholds. Changing them requires a documented rationale and renewed review.
+
+## Working method
+
+Use the single `project-queue.json` for public task status, dependencies, and evidence. Keep stable IDs. Do not create competing work registers. Separate implementation completion from browser, physical-device, accessibility, and qualified scientific/content acceptance.
+
+Update source parts first, then run `node imagery-app/src/assemble.cjs` from the repository root. Keep generated `index.html` in sync. Do not hand-edit the generated artifact alone.
+
+Run the dependency-free Node suite after every behavior change. Add regression tests before claiming a defect fixed. If source changes, rerun tests, refresh artifact hashes, and reconcile reports. Preserve failures honestly; never weaken a test to obtain a pass.
+
+Do not install packages, relax security, or change CI/deployment scope as an incidental workaround. Browser test fixtures must remain synthetic. Inspect logs and screenshots before publishing them. `.gitignore` is only a convenience: it does not scrub tracked files, commit history, forced additions, or CI output. Review the exact outgoing tree and artifacts.
+
+## Reporting
+
+Record commands, versions, artifact hash, and PASS/FAIL/BLOCKED/NOT RUN. Test doubles are not a real browser. Browser emulation is not a physical device. A passing scanner is not accessibility conformance. Software results are not clinical clearance or evidence of efficacy.
+
+Keep research statements linked to primary sources, dated, and qualified. Distinguish evidence from design proposals. Do not copy questionnaires or third-party assets without checking their terms. No project license has been chosen.

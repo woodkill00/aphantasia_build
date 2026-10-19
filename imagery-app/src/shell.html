@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Imagery Field · Static exploration</title>
+<style>/*__STYLE__*/</style>
+</head>
+<body>
+<div id="stage-root" class="stage-root">
+  <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
+  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span class="quiet-mark">○</span><span>The field is hidden</span><small>Compose, apply, then show when you choose.</small></div>
+  <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">STATIC STUDIO / 0.2</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button><button id="exit-fullscreen" type="button" hidden>Exit fullscreen</button></nav>
+  </header>
+  <main class="stage-body">
+    <aside id="editor-panel" class="editor-panel" aria-label="Scene editor">
+      <section id="controls" tabindex="-1" aria-labelledby="controls-title">
+        <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Make room<br>for your own design.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
+        <p class="lede">Place individual dots, pixels and outlines across the whole field. Adjust its background to describe what you want to represent.</p>
+        <p class="scope">Engineering preview. Not a treatment or diagnostic test; it does not establish imagery gains.</p>
+        <label for="preset">Start with a preset</label>
+        <select id="preset"><option value="">Choose a design…</option><option value="0">A small constellation</option><option value="1">A single point</option><option value="2">Circle contour</option><option value="3">Square contour</option><option value="4">Triangle contour</option></select>
+        <form id="scene-form" novalidate>
+          <label for="scene-name">Scene name</label><input id="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation">
+          <fieldset class="group"><legend>Objects <span id="object-count">3 / 12</span></legend>
+            <div class="add-row"><div><label for="add-shape">New object</label><select id="add-shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div><button id="add-object" type="button">Add object</button></div>
+            <label for="object-select">Selected object</label><select id="object-select" aria-describedby="object-hint"></select>
+            <p id="object-hint" class="hint">Select any object to edit it. Removing all objects leaves a background-only scene.</p>
+            <div class="control-grid">
+              <div><label for="shape">Shape</label><select id="shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div>
+              <div><label for="size">Size</label><input id="size" type="number" min="1" max="28" step="1" inputmode="numeric" value="2"></div>
+              <div><label for="position-x">Horizontal position</label><input id="position-x" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
+              <div><label for="position-y">Vertical position</label><input id="position-y" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
+            </div>
+            <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
+            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="delete-object" type="button">Remove object</button></div>
+            <p id="placement-hint" class="hint">Place on field lets you click or tap a new position while hidden. Position inputs work with a keyboard.</p>
+            <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" type="range" min="0" max="359" step="1" value="208">
+            <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" type="range" min="0" max="70" step="1" value="11">
+            <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" type="range" min="10" max="70" step="1" value="48">
+          </fieldset>
+          <fieldset class="group"><legend>Background field</legend>
+            <p class="hint">Choose a color to represent your subjective visual field. It is your description, not a measurement of internal vision.</p>
+            <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" type="range" min="0" max="359" step="1" value="0">
+            <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" type="range" min="0" max="60" step="1" value="0">
+            <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" type="range" min="0" max="40" step="1" value="0">
+            <p class="hint">At 0% lightness, the background is black. At 0% saturation, hue has no visible effect. Color lightness does not set your screen’s brightness.</p>
+          </fieldset>
+          <div class="apply-row"><button id="apply-changes" class="primary" type="submit">Apply changes</button><button id="discard" type="button">Discard</button></div>
+        </form>
+        <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step session history</span></div>
+        <p class="hint">Edits hide the field immediately. Apply them, then choose Show. Nothing moves or advances automatically.</p>
+        <details class="description"><summary>Applied scene description</summary><p id="scene-description"></p></details>
+      </section>
+      <section class="portable-card" aria-labelledby="portable-title">
+        <p class="eyebrow">Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p class="hint">No autosave, account, browser storage or network. Download work before closing or reloading this page.</p>
+        <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label></div>
+        <p class="hint">Opens version 1 or 2, up to 1 MiB. Downloads use version 2. Version 1 colors are approximated in HSL. Notes are never included.</p>
+      </section>
+  <section class="notes-card" aria-labelledby="notes-title">
+    <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
+      <div class="notes-content"><p>No score, interpretation, or expected outcome. “None” and “unsure” are valid. You can leave this empty. Avoid names, medical histories, or information about other people.</p>
+      <label for="note-category">What are you describing?</label><select id="note-category"><option value="unsure">Unsure</option><option value="none">Nothing visual / none</option><option value="external-perception">Looking at the displayed design</option><option value="residual-aftereffect">A residual visual aftereffect</option><option value="voluntary-imagery">An attempt at voluntary imagery</option><option value="conceptual-knowledge">Conceptual knowledge without a visual experience</option><option value="mixed">Mixed experience</option></select>
+      <label for="notes">Observation</label><textarea id="notes" rows="4" maxlength="4000" placeholder="Describe only what you noticed, if anything."></textarea><p class="hint">Up to 4,000 characters. Unsaved notes disappear when this page closes. A residual effect does not establish voluntary imagery.</p>
+      <button id="preview-notes" type="button">Preview note export</button><div id="notes-export-area" hidden><h3>Exactly what will be downloaded</h3><pre id="notes-preview" tabindex="0"></pre><label class="check-label"><input id="include-note" type="checkbox">Include this note in the download</label><button id="export-notes" type="button" disabled>Download note JSON</button></div>
+      </div>
+    </details>
+  </section>  <section class="guidance" aria-labelledby="guidance-title">
+    <h2 id="guidance-title">Before you show a scene</h2>
+    <p>Use comfortable screen brightness and ordinary room lighting. Don’t increase brightness or keep staring to make an image persist. Static patterns can still cause symptoms.</p>
+    <details><summary>Read the viewing guidance</summary>
+      <p>If you have photosensitive epilepsy, or visual patterns trigger seizures, migraine, or other symptoms, get advice from your clinician before using this activity.</p>
+      <p>Stop if you experience headache, dizziness, nausea, eye pain, or a visual disturbance. Seek medical advice for new, persistent, or recurring visual symptoms. Sudden vision loss or severe eye pain needs urgent medical care.</p>
+      <p>These design limits are engineering choices, not medically established exposure limits. This prototype has not received clinical clearance.</p>
+    </details>
+  </section>
+      <p class="footnote">Object, geometry, color and resource bounds keep this prototype reviewable. They are engineering choices, not medically established safety thresholds. Static displays can still cause symptoms.</p>
+    </aside>
+  </main>
+  <section class="viewing-bar" aria-label="Viewing controls">
+    <div class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
+    <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
+  </section>
+</div>
+<noscript><div class="noscript">JavaScript is required for this local editor. The scene is hidden.</div></noscript>
+<script>/*__MODEL__*/</script>
+<script>/*__APP__*/</script>
+</body>
+</html>
