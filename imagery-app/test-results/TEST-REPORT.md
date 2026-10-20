@@ -1,3 +1,12 @@
+# Version 0.7 verification pending
+
+2026-10-20. The current increment changes static startup visibility, background saturation through 100% with default 60%, explicit Steady/Pulse item modes, and responsive precision-control layout. Independent source review and 456/456 local Node checks passed; fresh complete native CI, actual-frame inspection and exact-final-head CI are required. Historical results below do not verify this changed artifact. The prepared native suite has 98 groups and 76 synthetic review captures. Its native step budget is ten minutes within a twelve-minute job, based on the previous 433.973-second run plus the counted new explicit Hide guards and added layout/timing checks. No assertions or browser-security settings were weakened.
+
+Local sandbox-enabled Chromium launch was blocked before app navigation. No browser-security setting was relaxed. This is an environment blocker, not a browser pass or evidence of app failure.
+
+This remains scoped software verification: physical devices, other engines, ordinary OS dialogs, full accessibility, calibrated sensory safety and clinical efficacy are not established.
+
+<!-- HISTORICAL-V06-EVIDENCE -->
 # Version 0.6 verified item styles and finite timelines
 
 2026-10-20. **424/424 non-browser checks and 96/96 native Chrome scenario groups PASS.** [Full successful run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), job 118443770240, tested source `3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79` through PR test-merge checkout `df3e57d63f1cba3d1749e8228f2ef6acb1d046ca`. All **52 actual synthetic rendered captures** were byte/hash verified and independently inspected; no visual blocker remained.

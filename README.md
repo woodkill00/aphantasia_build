@@ -1,17 +1,17 @@
 # Imagery Field
 
-A local-first scene and sequence editor. Version 0.6 adds precise numeric/step controls, independently colored item outlines and shadows, and a finite per-item timeline with overlapping fades. Live actual-scene editing remains separate from timed playback. See the [item editor and timeline contract](docs/item-timeline.md).
+A local-first scene and sequence editor. Version 0.7 starts the static live preview immediately, keeps background saturation editable through 100% with a 60% default, and makes per-item Steady/Pulse timing and responsive precision controls clearer. Independently colored outlines/shadows and finite overlapping item fades remain available. Live actual-scene editing remains separate from timed playback. See the [item editor and timeline contract](docs/item-timeline.md).
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
 
-**Scoped software verification:** version 0.6 passed **424 code checks and 96/96 native Chrome groups** in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), with all 52 actual rendered captures verified and independently inspected. The [test report](imagery-app/test-results/TEST-REPORT.md) records the exact source/runtime, earlier fixture failure, full retry and remaining limits. Documentation-only integration still requires green exact-head CI before merge.
+**Version 0.7 verification is pending for the changed artifact. Historical software verification:** version 0.6 passed **424 code checks and 96/96 native Chrome groups** in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), with all 52 actual rendered captures verified and independently inspected. The [test report](imagery-app/test-results/TEST-REPORT.md) records the exact source/runtime, earlier fixture failure, full retry and remaining limits. Those results do not verify version 0.7; its exact-source CI and fresh rendered-frame review are separate gates.
 
 ## Open and use the app
 
-Download and extract the repository, then open `imagery-app/index.html` in a browser with JavaScript enabled. Read **Viewing guidance** before displaying a design. No account, server, Docker, or runtime package installation is needed.
+Download and extract the repository, then open `imagery-app/index.html` in a browser with JavaScript enabled. The starter scene appears as a static live preview on opening. **Hide** is immediately available; read **Viewing guidance** before choosing timed playback or further viewing. No account, server, Docker, or runtime package installation is needed.
 
-1. In **Scene**, choose a preset or add objects, then adjust position, size, shape, and color. Choose **Live preview** once to see the actual draft, then sliders, shapes, positions, adding/removing objects and presets update it immediately. The preview stays visible beside/above the controls. Small color samples also work while hidden.
-2. Live preview does not need Apply. Use **Apply changes** to commit the draft for undo/history and scene download, or **Discard** to abandon it. These actions hide the field; restart Live preview when wanted. Invalid fields also stop/hide preview; fixing them never automatically reveals it. For a snapshot, **Add scene as step** becomes **Apply scene and add step** when there are edits, combining application and capture. **Replace selected step** similarly becomes **Apply scene and replace step**. Both documents are checked before either is accepted.
+1. In **Scene**, choose a preset or add objects, then adjust position, size, shape, and color. The actual draft is already visible at startup, and sliders, shapes, positions, adding/removing objects and presets update it immediately. The preview stays visible beside/above the controls. Small color samples also work while hidden.
+2. Live preview does not need Apply. Use **Apply changes** to commit the draft for undo/history and scene download, or **Discard** to abandon it. These actions hide the field; choose **Resume live preview** when wanted. Invalid fields also stop/hide preview; fixing them never automatically reveals it. For a snapshot, **Add scene as step** becomes **Apply scene and add step** when there are edits, combining application and capture. **Replace selected step** similarly becomes **Apply scene and replace step**. Both documents are checked before either is accepted.
 3. In **Sequence**, choose **Selected snapshot** and edit its name, **Hold · seconds**, and **Transition · seconds**. Valid changes commit immediately while stopped/hidden; there is no extra Apply sequence action. **Move earlier**, **Move later**, and **Delete step** change the order.
 4. Choose **Previous** or **Next**, then **Show step**, for manual preview. Or use **Play once** in the window, with **Pause**, **Resume**, and **Stop / Hide**. Pause keeps the exact last painted frame; completion hides the field and never replays.
 5. Save with **Download scene JSON** or **Download sequence JSON**. Optional notes have their own preview, selection, and download. Closing or reloading can lose unexported work.
@@ -22,15 +22,15 @@ A sequence supports 1–32 nonempty snapshots, 1–12 objects each, holds of 1�
 
 Timed playback is windowed-only so Pause and Stop remain reachable. Static scenes and manual step previews may use clean fullscreen. Fullscreen transitions and handled lifecycle changes cancel/conceal; nothing automatically resumes. Reduced-motion preference uses manual stepping. See [app instructions](imagery-app/README.md) for exact controls, atomic capture failures, file separation, and viewing cautions.
 
-## Item editor increment
+## Live editor and item timing
 
-New starter scenes use HSL **4°, 60%, 4%**. Imported scenes retain their saved background. Slider values are directly editable numeric controls with fine-step minus/plus actions. Optional outline and shadow effects have independent colors and geometry. Their disabled defaults preserve old imported appearance.
+New starter scenes use HSL **4°, 60%, 4%**. Background saturation can be set anywhere from **0–100%**; 60% is the default, not the maximum. Imported scenes retain their saved background. Slider values are directly editable numeric controls with fine-step minus/plus actions. Optional outline and shadow effects have independent colors and geometry. Their disabled defaults preserve old imported appearance.
 
-Per-item Start, Fade in, Hold and Fade out determine visibility; items can overlap or follow one another. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and verification contract.
+Choose **Steady · no pulse** to hold an item at constant opacity between its fades, or **Pulse** for smooth opacity variation. Items can mix both modes, overlap, or follow one another. Per-item Start, Fade in, Hold and Fade out determine visibility; zero fades give a steady on/off hold. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and verification contract.
 
 ## Verification: separate artifacts
 
-**Version 0.6:** 424 code checks, 96 native groups and 52 independently inspected frames on the exact 162947-byte HTML with SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`. See the linked current test report for full environment, failed-attempt and integration details.
+**Historical version 0.6:** 424 code checks, 96 native groups and 52 independently inspected frames on the exact 162947-byte HTML with SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`. See the linked current test report for full environment, failed-attempt and integration details.
 
 **Historical version 0.5 live editing:** see the test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and final clean-exit CI. The earlier workflow-timeout failure is retained separately. Earlier results below apply only to their historical artifacts.
 
@@ -71,7 +71,7 @@ The dependency-free real-browser suite requires Node 22+ and an already installe
 - [Contributor/agent guidance](AGENTS.md)
 - [Security and private reporting](SECURITY.md)
 
-Scene, sequence, and optional observation-note files are separate downloads. There is no durable autosave, backend, telemetry, browser storage, or account system. Use synthetic data in public examples; personal exports do not belong in this repository. The version 0.6 item timeline is specified separately; unrestricted flashing, arbitrary effect curves and offscreen flash-risk analysis remain outside the implemented scope. Hosted deployment is outside this increment.
+Scene, sequence, and optional observation-note files are separate downloads. There is no durable autosave, backend, telemetry, browser storage, or account system. Use synthetic data in public examples; personal exports do not belong in this repository. The finite item timeline is specified separately; unrestricted flashing, arbitrary effect curves and offscreen flash-risk analysis remain outside the implemented scope. Hosted deployment is outside this increment.
 
 ## License
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T04:02:48Z",
+  "updated": "2026-10-20T05:27:23Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1353,7 +1353,7 @@
     {
       "id": "IF-042",
       "title": "Add precise styling and finite item timelines",
-      "status": "verified_pending_documentation_integration",
+      "status": "complete_for_scoped_software_release",
       "scope": "Typed range values and fine steps; HSL4/60/4 new-scene background; independent outline/shadow colors; per-item starts/fades/holds, shared slow opacity pulse, overlapping finite preview, duplicate and sequencing helpers; old files migrate without replacing saved appearance.",
       "evidence": [
         "424/424 non-browser checks pass.",
@@ -1361,9 +1361,22 @@
         "Exact HTML SHA256 920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97.",
         "All 52 actual rendered captures hash/byte verified and independently inspected; no visual blocker.",
         "First run 39365150191 failed two fixture imports; complete retry passed all formerly unexecuted tails without runtime/assertion changes.",
-        "imagery-app/test-results/TEST-REPORT.md"
+        "imagery-app/test-results/TEST-REPORT.md",
+        "Version 0.6 merged as 79adc0d9612b65a9353d78a648f2c89cdc6618ec; historical exact-runtime evidence retained."
       ],
-      "nextAction": "Require green full CI for documentation-only integration, then maintainer merge. Broader physical-device, accessibility and qualified sensory gates remain separate."
+      "nextAction": "Maintain historical evidence; current source changes are tracked separately in IF-043."
+    },
+    {
+      "id": "IF-043",
+      "title": "Improve live startup and responsive item timing",
+      "status": "source_ready_native_ci_pending",
+      "scope": "Start one static live preview; background saturation 0\u2013100 with default 60 and original legacy bounds; explicit Steady/Pulse and mixed finite timelines; calculated responsive spacing and complete precision-control visibility.",
+      "evidence": [
+        "456/456 local non-browser checks pass; 3 valid and 14 invalid synthetic fixture checks pass.",
+        "Independent source review accepted the frozen candidate; complete 98-group native CI and 76 actual rendered captures pending.",
+        "HTML SHA256 842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70"
+      ],
+      "nextAction": "Freeze reviewed source/tests, run complete native CI, inspect actual frames, reconcile documentation and require exact-final-head green CI before maintainer merge."
     }
   ],
   "sourceBase": {

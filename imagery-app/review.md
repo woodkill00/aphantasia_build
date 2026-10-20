@@ -1,3 +1,10 @@
+# Version 0.7 source and visual review pending
+
+The current increment starts one static Live preview, preserves explicit concealment and finite manual playback, extends current background saturation to 100% without changing legacy validation, and uses shared responsive layout calculations and explicit Steady/Pulse controls. Source review and fresh exact-artifact native/rendered evidence remain required. See the [test report](test-results/TEST-REPORT.md).
+
+Historical acceptance below applies only to its recorded artifacts, not this changed runtime.
+
+<!-- HISTORICAL-SOURCE-REVIEWS -->
 # Version 0.5 live-draft review
 
 The 118362-byte runtime `8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326` passed 349 non-browser checks and all 82 native Chrome groups. Independent source review and 36-frame inspection accepted the scoped live-draft and compact-layout changes. The actual field repaints synchronously from validated manual inputs; hidden output cannot be revived by an edit. Drafts remain separate from accepted history, exports and sequence snapshots. Native full-field visibility checks replace the insufficient center-only slider test.

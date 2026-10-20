@@ -131,7 +131,7 @@
     const present=prefix==='background'||!!selected();
     const color={h:number(prefix+'-hue'),s:number(prefix+'-saturation'),l:number(prefix+'-lightness')};
     const background=prefix==='background',effect=prefix==='outline'||prefix==='shadow';
-    const valid=Number.isInteger(color.h)&&color.h>=0&&color.h<=359&&Number.isInteger(color.s)&&color.s>=0&&color.s<=(background?60:70)&&Number.isInteger(color.l)&&color.l>=((background||effect)?0:10)&&color.l<=(background?40:70);
+    const valid=Number.isInteger(color.h)&&color.h>=0&&color.h<=359&&Number.isInteger(color.s)&&color.s>=0&&color.s<=(background?100:70)&&Number.isInteger(color.l)&&color.l>=((background||effect)?0:10)&&color.l<=(background?40:70);
     swatch.hidden=!present;
     if(!present||!valid){
       swatch.style.backgroundColor='transparent';
@@ -146,7 +146,7 @@
     description.textContent=text;
     const gradient=colors=>'linear-gradient(to right, '+colors.join(', ')+')';
     $(prefix+'-hue').style.backgroundImage=gradient([0,60,120,180,240,300,359].map(h=>M.colorCSS({...color,h})+' '+(h/359*100)+'%'));
-    $(prefix+'-saturation').style.backgroundImage=gradient([0,background?60:70].map(s=>M.colorCSS({...color,s})));
+    $(prefix+'-saturation').style.backgroundImage=gradient([0,background?100:70].map(s=>M.colorCSS({...color,s})));
     const min=background||effect?0:10,max=background?40:70;
     $(prefix+'-lightness').style.backgroundImage=gradient((background?[min,max]:[min,50,max]).map(l=>M.colorCSS({...color,l})+' '+((l-min)/(max-min)*100)+'%'));
   }
@@ -183,7 +183,7 @@
     canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object.'+(isLive()?' Live draft displayed.':' The scene is hidden.')+' Escape cancels.':state.visible?(displayKind==='live'?'Live draft. '+M.describe(state.draft):displayKind==='items'?itemDescription():displayKind==='scene'?M.describe(state.current):sequenceDescription()):'Scene hidden. No design is displayed.');
     $('undo').disabled=state.undoCount===0;$('redo').disabled=state.redoCount===0;
     $('draft-label').textContent=formDirty?(isLive()?'Live draft':'Changes staged'):'Applied';
-    $('show-scene').textContent=isLive()?'Live preview on':'Live preview';
+    $('show-scene').textContent=isLive()?'Live preview on':'Resume live preview';$('show-scene').disabled=isLive();
     $('scene-description').textContent=(isLive()?'Live draft: ':'Applied scene: ')+M.describe(isLive()?state.draft:state.current);
     $('object-count').textContent=working.scene.objects.length+' / '+M.MAX_OBJECTS;
     $('add-object').disabled=working.scene.objects.length>=M.MAX_OBJECTS;
@@ -221,7 +221,7 @@
       });
       $('outline-width').value=String(o.outline.width);$('shadow-offset-x').value=String(o.shadow.offsetX);$('shadow-offset-y').value=String(o.shadow.offsetY);$('shadow-blur').value=String(o.shadow.blur);
       [['item-start','startMs'],['item-fade-in','fadeInMs'],['item-hold','holdMs'],['item-fade-out','fadeOutMs']].forEach(([id,key])=>$(id).value=String(o.timing[key]/1000));
-      $('pulse-enabled').checked=o.timing.pulse.enabled;$('pulse-min-opacity').value=String(Math.round(o.timing.pulse.minOpacity*100));
+      $('pulse-enabled').value=o.timing.pulse.enabled?'pulse':'steady';$('pulse-min-opacity').value=String(Math.round(o.timing.pulse.minOpacity*100));
     }
     objectFields.forEach(id=>rawPrecision.delete(id));updateObjectList();updateOutputs();
   }
@@ -239,7 +239,7 @@
     if(o){o.shape=$('shape').value;o.x=number('position-x');o.y=number('position-y');o.size=number('size');o.color={h:number('object-hue'),s:number('object-saturation'),l:number('object-lightness')};
       o.outline={enabled:$('outline-enabled').checked,width:number('outline-width'),color:{h:number('outline-hue'),s:number('outline-saturation'),l:number('outline-lightness')}};
       o.shadow={enabled:$('shadow-enabled').checked,offsetX:number('shadow-offset-x'),offsetY:number('shadow-offset-y'),blur:number('shadow-blur'),color:{h:number('shadow-hue'),s:number('shadow-saturation'),l:number('shadow-lightness')}};
-      o.timing={startMs:milliseconds('item-start'),fadeInMs:milliseconds('item-fade-in'),holdMs:milliseconds('item-hold'),fadeOutMs:milliseconds('item-fade-out'),pulse:{enabled:$('pulse-enabled').checked,minOpacity:number('pulse-min-opacity')/100}};
+      o.timing={startMs:milliseconds('item-start'),fadeInMs:milliseconds('item-fade-in'),holdMs:milliseconds('item-hold'),fadeOutMs:milliseconds('item-fade-out'),pulse:{enabled:$('pulse-enabled').value==='pulse',minOpacity:number('pulse-min-opacity')/100}};
     }
     return next;
   }
@@ -262,7 +262,7 @@
     if(event.target.id==='shape'){
       const max=$('shape').value==='dot'||$('shape').value==='pixel'?8:28;$('size').max=String(max);if(number('size')>max)$('size').value=String(max);
     }
-    working=readFields();updateObjectList();stageWorking('Changes staged. Start Live preview to see this draft immediately.');
+    working=readFields();updateObjectList();stageWorking('Changes staged. Choose Resume live preview to see this draft immediately.');
   }
   fieldIDs.forEach(id=>$(id).addEventListener(id.endsWith('-enabled')?'change':'input',event=>{if(sliderIDs.includes(id))rawPrecision.delete(id);edited(event);}));
   sliderIDs.forEach(id=>{
@@ -315,7 +315,7 @@
     const extent=M.objectExtent(o),min=1+extent,max=99-extent;
     const clamp=v=>Math.round(Math.max(min,Math.min(max,v))*100)/100;
     o.x=clamp((event.clientX-(rect.left||0))*100/rect.width);o.y=clamp((event.clientY-(rect.top||0))*100/rect.height);
-    cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Start Live preview when you choose.');$('position-x').focus();
+    cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Choose Resume live preview to display it again.');$('position-x').focus();
   });
   $('skip-controls').addEventListener('click',event=>{
     event.preventDefault();conceal();cancelPlacement();editorOpen=true;section='scene';render();$('controls').focus();say('Scene controls focused. The field is hidden.');
@@ -325,24 +325,24 @@
   });
   $('editor-toggle').addEventListener('click',()=>{
     beginManualEdit();editorOpen=!editorOpen;render();
-    say((editorOpen?'Editor open.':'Editor closed.')+(isLive()?' Live preview continues.':' The field is hidden; start Live preview when you choose.'));
+    say((editorOpen?'Editor open.':'Editor closed.')+(isLive()?' Live preview continues.':' The field is hidden; choose Resume live preview when you choose.'));
     if(editorOpen){const heading=$(section==='scene'?'controls':'sequence-title');heading.setAttribute('tabindex','-1');heading.focus();}else $('editor-toggle').focus();
   });
   $('preset').addEventListener('change',()=>{
     const index=Number($('preset').value);if($('preset').value===''||!Number.isInteger(index)||!M.presets()[index])return;
-    beginManualEdit();const next=M.presets()[index];fillFields(next);stageWorking('Preset staged. Start Live preview to see it without Apply.');
+    beginManualEdit();const next=M.presets()[index];fillFields(next);stageWorking('Preset staged. Choose Resume live preview to see it without Apply.');
   });
   $('scene-form').addEventListener('submit',event=>{
     event.preventDefault();cancelPlacement();conceal();
     const result=controller.apply(readFields());
     if(!result.ok){render();say(result.error,true);return;}
-    formDirty=false;fillFields(result.state.current);render();say('Changes applied. The scene is hidden; choose Live preview to display it.');
+    formDirty=false;fillFields(result.state.current);render();say('Changes applied. The scene is hidden; choose Resume live preview to display it.');
   });
   $('discard').addEventListener('click',()=>{
     cancelPlacement();conceal();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
   });
   function showScene(){
-    if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; start Live preview again after the repeat-action lock.');return;}
+    if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Resume live preview again after the repeat-action lock.');return;}
     cancelPlayback();cancelPlacement();controller.invalidateImport();
     if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.');return;}
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
@@ -363,7 +363,7 @@
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
     cancelPlacement();conceal();const result=controller[action]();
     if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
-    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Live preview when you choose.':result.error,!result.ok);
+    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Resume live preview to display it again.':result.error,!result.ok);
   }));
   // Fullscreen is optional. Entry/exit/failure never reveal; the common ancestor
   // includes the always-reachable Exit control. Do not schedule a later Show.
@@ -375,7 +375,7 @@
     hide(enter?'Entering fullscreen with the field hidden.':'Leaving fullscreen with the field hidden.');
     const operation=++fullscreenOperation,owner=enter?root:document,method=enter?'requestFullscreen':'exitFullscreen';
     if(typeof owner[method]!=='function'){fullscreenFailure('Browser fullscreen could not be changed.');return;}
-    try{await owner[method]();if(operation===fullscreenOperation){conceal();cancelPlacement();render();say('Display mode changed. The field is hidden; choose Show when you choose.');}}
+    try{await owner[method]();if(operation===fullscreenOperation){conceal();cancelPlacement();render();say('Display mode changed. The field is hidden; use the visible preview control when ready.');}}
     catch(e){if(operation===fullscreenOperation)fullscreenFailure('Fullscreen could not be changed.');}
   }
   $('fullscreen').addEventListener('click',()=>changeFullscreen(true));
@@ -392,9 +392,13 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.');});
   window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.'));
   window.addEventListener('pagehide',()=>{cancelPlacement();conceal();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
-  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Live preview when you choose.'));
-  window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Live preview to resume.');});
-  window.addEventListener('resize',()=>hide('Scene hidden after the window size changed. Choose Live preview when you choose.'));
+  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Resume live preview to display it again.'));
+  window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Resume live preview to display it again.');});
+  // Initial browser sizing can dispatch resize without changing the viewport.
+  // Only a real geometry/DPR change interrupts display; this never reveals it.
+  const viewportSize=()=>[window.innerWidth,window.innerHeight,window.devicePixelRatio||1].join(':');
+  let lastViewportSize=viewportSize();
+  window.addEventListener('resize',()=>{const next=viewportSize();if(next===lastViewportSize)return;lastViewportSize=next;hide('Scene hidden after the window size changed. Choose Resume live preview to display it again.');});
   function download(value,filename) {
     const serialized=JSON.stringify(value,null,2)+'\n';
     let url;
@@ -421,7 +425,7 @@
       const text=await file.text(),state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;
       const result=controller.finishImport(token,text);
       if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
-      render();say(result.ok?'Scene opened and hidden. Choose Live preview when you choose.':result.error+' Your applied scene is unchanged.',!result.ok);
+      render();say(result.ok?'Scene opened and hidden. Choose Resume live preview to display it again.':result.error+' Your applied scene is unchanged.',!result.ok);
     }catch(e){const state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;controller.invalidateImport();render();say('The file could not be read. Your applied scene is unchanged.',true);}
   });
   function clearPreview() {notePreview=null;$('include-note').checked=false;$('export-notes').disabled=true;$('notes-export-area').hidden=true;$('notes-preview').textContent='';}
@@ -459,11 +463,15 @@
     const selectedIndex=working.scene.objects.findIndex(o=>o.id===selectedId);
     $('duplicate-object').disabled=!selected()||working.scene.objects.length>=M.MAX_OBJECTS;
     $('item-after-previous').disabled=selectedIndex<=0;
-    $('item-total').textContent=compiled?'Preview duration: '+(compiled.durationMs/1000)+' seconds · ends at the last item.':error;
+    const pulsing=compiled?compiled.document.scene.objects.filter(o=>o.timing.pulse.enabled).length:0;
+    const steady=compiled?compiled.tracks.length-pulsing:0;
+    $('item-total').textContent=compiled?'Preview duration: '+(compiled.durationMs/1000)+' seconds · '+steady+' steady · '+pulsing+' pulsing · ends at the last item.':error;
+    $('pulse-min-opacity').disabled=!selected()||$('pulse-enabled').value!=='pulse';
+    $('pulse-period-hint').textContent=pulsing?'All '+pulsing+' pulsing item'+(pulsing===1?'':'s')+' share this cycle and timeline phase. Steady items do not pulse.':'No pulsing items. This cycle is saved for later and does not affect steady items.';
     $('item-end').textContent=compiled&&selectedIndex>=0?'Selected item ends at '+(compiled.tracks[selectedIndex].endMs/1000)+' seconds.':'Fix the item timing to calculate its end.';
     if(compiled)compiled.tracks.forEach(track=>{
       const o=compiled.document.scene.objects[track.index],button=document.createElement('button');button.type='button';button.className='timeline-track';button.setAttribute('aria-pressed',String(o.id===selectedId));
-      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · pulse':'');button.appendChild(label);
+      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · Pulse':' · Steady');button.appendChild(label);
       const detail=document.createElement('span');detail.className='track-detail';detail.textContent='In '+o.timing.fadeInMs/1000+' s · hold '+o.timing.holdMs/1000+' s · out '+o.timing.fadeOutMs/1000+' s';button.appendChild(detail);
       const bar=document.createElement('span');bar.className='track-bar';bar.setAttribute('aria-hidden','true');bar.style.left=(track.startMs/compiled.durationMs*100)+'%';bar.style.width=((track.endMs-track.startMs)/compiled.durationMs*100)+'%';bar.style.color=M.colorCSS(o.color);
       [['fade-in',o.timing.fadeInMs],['hold',o.timing.holdMs],['fade-out',o.timing.fadeOutMs]].forEach(([phase,duration])=>{if(duration){const segment=document.createElement('span');segment.className='track-segment '+phase;segment.style.width=(duration/(track.endMs-track.startMs)*100)+'%';bar.appendChild(segment);}});button.appendChild(bar);
@@ -495,7 +503,10 @@
   });
   function startItems(){
     if(itemTimeline.getState().status!=='stopped')return;
-    if(controller.getState().visible){hide('Live preview hidden. Choose Play items once again after the repeat-action lock.');return;}
+    // An explicit Play gesture may replace the already visible static editor.
+    // Other visible modes must stop first; hidden previews still use the same
+    // reveal lock below. cancelPlayback and previewDraft invalidate old work.
+    if(controller.getState().visible&&!isLive()){hide('Preview mode changed. Choose Play items once again after the repeat-action lock.');return;}
     if(document.fullscreenElement===root||motionReduced){say(motionReduced?'Reduced motion is on. Use Live preview for a static composition.':'Exit fullscreen to use timed item preview.',true);return;}
     if(!context||!offscreenContext||typeof window.requestAnimationFrame!=='function'){say('Timed item preview is unavailable. Static Live preview may still work.',true);return;}
     cancelPlayback();cancelPlacement();
@@ -551,7 +562,7 @@
     const previouslyFocused=document.activeElement;
     const count=sequence?sequence.sequence.steps.length:0,invalid=!!sequenceError,full=document.fullscreenElement===root;
     const playback=timeline.getState(),running=playback.status==='running',paused=playback.status==='paused';
-    $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Start Live preview, then edit to see changes immediately.';
+    $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Choose Resume live preview, then edit to see changes immediately.';
     $('workspace-scene').setAttribute('aria-pressed',String(section==='scene'));
     $('workspace-sequence').setAttribute('aria-pressed',String(section==='sequence'));
     $('scene-panel').hidden=section!=='scene';$('sequence-panel').hidden=section!=='sequence';
@@ -624,7 +635,7 @@
   $('sequence-discard').addEventListener('click',()=>{conceal();sequenceError='';fillSequenceFields();render();say('Invalid sequence fields discarded. Accepted snapshots are unchanged.');});
   function chooseSection(next){
     conceal();cancelPlacement();section=next;render();$('editor-scroll').scrollTop=0;
-    say(next==='sequence'?'Sequence editor. Select a step, then Show step, or choose Play once.':'Scene editor. Start Live preview to see draft changes immediately.');
+    say(next==='sequence'?'Sequence editor. Select a step, then Show step, or choose Play once.':'Scene editor. Choose Resume live preview to see draft changes immediately.');
   }
   $('workspace-scene').addEventListener('click',()=>chooseSection('scene'));
   $('workspace-sequence').addEventListener('click',()=>chooseSection('sequence'));
@@ -783,5 +794,9 @@
   });
 
   fillFields(controller.getState().current);fillSequenceFields();render();
+  // The user requested an initially visible static editor. This synchronous,
+  // one-time action schedules nothing: Hide and lifecycle stops cannot be undone
+  // by a deferred startup callback. Timed playback remains an explicit action.
+  if(context&&!document.hidden)showScene();
   if(!context)say('Canvas is unavailable in this browser. No scene is displayed. JSON editing and downloads remain available.',true);
 }());

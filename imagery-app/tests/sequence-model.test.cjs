@@ -12,6 +12,28 @@ function expectFrame(frame,expected){for(const [key,value]of Object.entries(expe
 test('SEQUENCE MODEL: independent reference is closed, copied, canonical and JSON portable',()=>{
  const value=sequence(),canonical=accept(value);assert.deepEqual(canonical,value);assert.notEqual(canonical,value);assert.notEqual(canonical.sequence.steps,value.sequence.steps);const raw=S.serializeSequence(canonical);assert.equal(typeof raw,'string');assert.deepEqual(S.parseSequence(raw),value);assert.equal(S.FORMAT,'imagery-field-sequence');assert.equal(S.VERSION,2);assert.equal(S.SAMPLER,'ordered-crossfade-2');assert.ok(Object.isFrozen(S));assert.throws(()=>M.parseScene(raw));assert.throws(()=>S.parseSequence(JSON.stringify(require('./fixtures.cjs').scene())));
 });
+test('SEQUENCE VALIDATION: current shared background accepts0–100, preserves capture and roundtrips',()=>{
+ for(const saturation of [0,60,61,99,100]){
+  const value=sequence({background:{h:4,s:saturation,l:4}}),canonical=accept(value),compiled=S.compileTimeline(canonical);
+  assert.deepEqual(compiled.document.sequence.background,{h:4,s:saturation,l:4});
+  assert.deepEqual(S.parseSequence(S.serializeSequence(canonical)),canonical);
+  for(const step of canonical.sequence.steps){
+   const captured=M.canonicalScene({format:M.FORMAT,version:M.VERSION,sampler:M.SAMPLER,scene:{name:step.name,background:canonical.sequence.background,pulsePeriodMs:step.pulsePeriodMs,objects:step.objects}});
+   assert.equal(captured.scene.background.s,saturation);
+  }
+  assert.equal(S.frameAt(compiled,3500).alpha,.5);
+ }
+ for(const saturation of [-1,101,60.5,'100',null,NaN,Infinity])reject(sequence({background:{h:4,s:saturation,l:4}}));
+});
+test('SEQUENCE VALIDATION: historical background60 cap stays strict and object/effect caps stay70',()=>{
+ const {legacySequence}=require('./sequence-fixtures.cjs');
+ const old=legacySequence();old.sequence.background.s=60;assert.equal(accept(old).sequence.background.s,60);
+ for(const saturation of [61,100]){const invalid=legacySequence();invalid.sequence.background.s=saturation;reject(invalid);assert.throws(()=>S.parseSequence(JSON.stringify(invalid)));}
+ for(const path of ['color','outline.color','shadow.color']){
+  const value=sequence({background:{h:4,s:100,l:4}}),at=path.split('.').reduce((o,key)=>o[key],value.sequence.steps[0].objects[0]);
+  at.s=70;accept(value);at.s=71;reject(value);
+ }
+});
 for(const [label,get,fields]of [['root',s=>s,['format','version','sampler','sequence']],['sequence',s=>s.sequence,['name','background','steps']],['step',s=>s.sequence.steps[0],['id','name','holdMs','transitionMs','objects']]])test(`SEQUENCE VALIDATION: ${label} missing or extra fields rejected`,()=>{
  for(const key of fields){const s=sequence();delete get(s)[key];reject(s)}
  for(const key of ['notes','url','callback','loop','easing','expression','__proto__','constructor','prototype']){const s=sequence();Object.defineProperty(get(s),key,{value:'synthetic',enumerable:true});reject(s)}

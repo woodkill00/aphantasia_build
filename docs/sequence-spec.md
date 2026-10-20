@@ -14,7 +14,7 @@ Timed playback is windowed-only with Pause and Stop kept reachable. Static/manua
 
 ## Current migration extension
 
-Version 0.6 uses sequence version 2 to retain styled scene-version-3 objects and each step's `pulsePeriodMs`. Version 1 inputs are validated before migration with disabled effects/default item timing and a 4,000 ms period. Snapshot playback keeps its original single clock and renders items at static full opacity: per-item timing and pulse are preserved for loading a snapshot into the scene editor, not nested inside snapshot playback. See [the item specification](item-timeline.md).
+Current versions use sequence version 2 to retain styled scene-version-3 objects and each step's `pulsePeriodMs`. Version 1 inputs are validated before migration with disabled effects/default item timing and a 4,000 ms period. Snapshot playback keeps its original single clock and renders items at static full opacity: per-item timing and pulse are preserved for loading a snapshot into the scene editor, not nested inside snapshot playback. Version 0.7 permits background saturation 0–100% in sequence version 2 while retaining the original 60% maximum when validating legacy sequence version 1. Older app versions cannot import new backgrounds above 60%. See [the item specification](item-timeline.md).
 
 ## Historical version 1 portable schema
 
