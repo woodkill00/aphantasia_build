@@ -1,6 +1,6 @@
 # Imagery Field user guide
 
-Version 0.7 engineering preview. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
+Version 0.8 engineering preview. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
 
 **No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, and notes.
 
@@ -165,3 +165,11 @@ The merged version 0.7 runtime passed 457 non-browser checks, 98 native Chrome g
 Physical phones, Safari/Firefox, ordinary OS file-opening/chooser workflows, actual OS/browser zoom, screen-reader workflows, and full accessibility remain unverified. The 640×450 scenario is effective viewport reflow, not actual zoom. Software checks and screenshot review provide no clinical clearance or evidence of safety or effectiveness.
 
 Need help? Read [troubleshooting](../docs/troubleshooting.md) or [support](../SUPPORT.md). Use synthetic reproductions in public reports, never private notes or medical observations.
+
+## Direct preview editing
+
+Click or tap a visible item to select it and open its inspector. Drag the item to move it; its coordinates and live preview update together. Release completes one draft move. Escape, Hide, viewport changes or interrupted pointer capture cancel the move and hide the preview. Shadows are not selection targets; hollow shapes can be selected through their interior. Use the item list or **Select next overlapping item** for overlaps.
+
+Use the four nudge buttons or focus the preview and use arrow keys (1 position unit, Shift for 0.1). Typed coordinates and **Place on field** remain available without dragging. **Undo move** and **Redo move** affect only the draft, conceal the preview and are separate from applied scene history. Other edits reset move history. **Apply changes** is still required before the ordinary scene download; moving a preview does not silently save or apply it.
+
+The next-stage [Spec-Kit plan](../specs/008-interactive-scene-roadmap/plan.md) separates implemented direct editing from future geometry, photo conversion, local journaling and governed research requirements. Check the [public work register](../project-queue.json) and current evidence before assuming a planned feature is available.

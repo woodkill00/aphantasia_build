@@ -2,7 +2,7 @@
    One visibility gate. Live manual draft edits preserve an explicitly visible field; interruptions conceal. */
 (function () {
   'use strict';
-  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems;
+  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor;
   const $=id=>document.getElementById(id);
   let lastGateClock=0,gateClockFault=false;
   function gateClock(){
@@ -16,6 +16,7 @@
   let context=null,offscreenContext=null;
   try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:true});}catch(e){/* Data controls remain available. */}
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
+  let gesture=null,moveUndo=[],moveRedo=[],lastHit=null,moveStaging=false;
   let working=controller.getState().current;
   let section='scene',sequence=null,stepIndex=0,sequenceError='',displayKind='scene';
   let generation=0,rafId=null,paintedFrame=null,lastPhaseKey='';
@@ -189,7 +190,10 @@
     $('add-object').disabled=working.scene.objects.length>=M.MAX_OBJECTS;
     $('place-object').setAttribute('aria-pressed',String(placing));
     $('place-object').textContent=placing?'Cancel placement':'Place on field';
-    canvas.className=placing?'placing':'';
+    canvas.className=placing?'placing':isLive()&&section==='scene'&&!full?'direct-edit'+(gesture&&gesture.moved?' dragging':''):'';
+    $('undo-move').disabled=!moveUndo.length;$('redo-move').disabled=!moveRedo.length;
+    $('cycle-overlap').disabled=!lastHit||lastHit.ids.length<2;
+    ['nudge-left','nudge-right','nudge-up','nudge-down'].forEach(id=>{$(id).disabled=!selected();});
     $('editor-panel').hidden=!editorOpen;
     $('editor-toggle').setAttribute('aria-expanded',String(editorOpen));
     $('editor-toggle').textContent=editorOpen?'Close editor':'Open editor';
@@ -226,7 +230,7 @@
     objectFields.forEach(id=>rawPrecision.delete(id));updateObjectList();updateOutputs();
   }
   function fillFields(scene){
-    rawPrecision.clear();working=copy(M.canonicalScene(scene));
+    clearMoveHistory();rawPrecision.clear();working=copy(M.canonicalScene(scene));
     if(!working.scene.objects.some(o=>o.id===selectedId))selectedId=working.scene.objects[0]?.id||null;
     $('scene-name').value=working.scene.name;$('pulse-period').value=String(working.scene.pulsePeriodMs/1000);
     const b=working.scene.background;$('background-hue').value=String(b.h);$('background-saturation').value=String(b.s);$('background-lightness').value=String(b.l);
@@ -246,12 +250,14 @@
   function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
   function isLive(){return displayKind==='live'&&controller.getState().visible;}
   function beginManualEdit(){
+    cancelDirectGesture();
     if(isLive())controller.invalidateImport();
     else if(controller.getState().visible)conceal();
     else{cancelPlayback();controller.invalidateImport();}
     cancelPlacement();
   }
   function stageWorking(message){
+    if(!moveStaging)clearMoveHistory();
     const live=isLive();formDirty=true;
     const result=live?controller.stageLive(working):controller.stage(working);
     if(!result.ok&&live)conceal();
@@ -317,6 +323,81 @@
     o.x=clamp((event.clientX-(rect.left||0))*100/rect.width);o.y=clamp((event.clientY-(rect.top||0))*100/rect.height);
     cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Choose Resume live preview to display it again.');$('position-x').focus();
   });
+  // A drag is a draft transaction, never an Apply or a reveal action.
+  function clearMoveHistory(){moveUndo=[];moveRedo=[];lastHit=null;}
+  function sameScene(a,b){return JSON.stringify(a)===JSON.stringify(b);}
+  function releaseCapture(active){if(!active)return;try{if(typeof canvas.hasPointerCapture==='function'&&canvas.hasPointerCapture(active.pointerId))canvas.releasePointerCapture(active.pointerId);}catch(e){/* Concealment and rollback do not depend on capture. */}}
+  function cancelDirectGesture(){
+    const active=gesture;if(!active)return;gesture=null;releaseCapture(active);
+    working=copy(active.before);selectedId=active.id;formDirty=active.wasDirty;controller.stage(working);fillSelected();
+  }
+  function recordMove(before,after,id=selectedId){
+    if(sameScene(before,after))return;
+    moveUndo.push({before:copy(before),after:copy(after),id});if(moveUndo.length>E.HISTORY_LIMIT)moveUndo.shift();moveRedo=[];
+  }
+  function stageMove(next){
+    if(!sameScene(working,next))lastHit=null;
+    working=copy(next);fillSelected();moveStaging=true;
+    try{return stageWorking('Position changed in the draft. Apply keeps it for download.');}finally{moveStaging=false;}
+  }
+  function selectAtEnd(){
+    editorOpen=true;section='scene';fillSelected();render();
+    say('Selected '+selectedId+'. Drag or use the position controls to move it.');
+  }
+  canvas.addEventListener('pointerdown',event=>{
+    if(gesture){if(event.pointerId!==gesture.pointerId)hide('Move canceled because another pointer touched the field.');return;}
+    if(placing||!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
+    const rect=canvas.getBoundingClientRect(),p=E.point(rect,event.clientX,event.clientY);if(!p)return;
+    const checked=M.validateScene(readFields());if(!checked.ok){hide('Fix invalid fields before direct editing.');return;}
+    const ids=E.hits(checked.scene,rect.width,rect.height,p.x,p.y,event.pointerType==='touch'?12:6);
+    lastHit={ids,x:p.x,y:p.y,width:rect.width,height:rect.height};if(!ids.length){render();return;}
+    working=copy(checked.scene);selectedId=ids[0];fillSelected();
+    gesture={id:selectedId,pointerId:event.pointerId,before:copy(working),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function'};
+    try{if(typeof canvas.setPointerCapture==='function')canvas.setPointerCapture(event.pointerId);}catch(e){hide('Move canceled because pointer capture is unavailable. Use position controls.');return;}
+    event.preventDefault();canvas.focus();
+  });
+  function updateDirectGesture(event){
+    const active=gesture;if(!active||active.selectionOnly||event.pointerId!==active.pointerId||!isLive())return;
+    if(selectedId!==active.id){hide('Move canceled because the selected item changed.');return;}
+    if(!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return;
+    const current=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>current[key]!==active.rect[key])){hide('Move canceled because the preview layout changed.');return;}
+    const dx=event.clientX-active.startX,dy=event.clientY-active.startY;
+    if(!active.moved&&Math.hypot(dx,dy)<E.DRAG_THRESHOLD)return;
+    active.moved=true;event.preventDefault();
+    try{if(!stageMove(E.translate(active.before,active.id,dx,dy,active.rect.width,active.rect.height)))hide('Move canceled because the position is invalid.');}catch(e){hide('Move canceled. '+e.message);}
+  }
+  canvas.addEventListener('pointermove',updateDirectGesture);
+  canvas.addEventListener('pointerup',event=>{
+    const active=gesture;if(!active||event.pointerId!==active.pointerId)return;
+    updateDirectGesture(event);if(gesture!==active)return;
+    gesture=null;releaseCapture(active);
+    if(active.moved)recordMove(active.before,working,active.id);
+    selectAtEnd();
+  });
+  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
+  $('cycle-overlap').addEventListener('click',()=>{
+    if(gesture){hide('Move canceled. Select overlapping items after releasing the pointer.');return;}
+    if(!lastHit||lastHit.ids.length<2)return;
+    const ids=lastHit.ids.filter(id=>working.scene.objects.some(o=>o.id===id));if(!ids.length)return;
+    selectedId=ids[(ids.indexOf(selectedId)+1)%ids.length];fillSelected();render();say('Selected overlapping item '+selectedId+'.');
+  });
+  function nudge(dx,dy){
+    if(!selected())return;
+    beginManualEdit();const before=readFields(),checked=M.validateScene(before);if(!checked.ok){hide('Fix invalid fields before moving.');return;}
+    try{const next=E.translate(checked.scene,selectedId,dx,dy,100,100);if(stageMove(next)){recordMove(checked.scene,next);render();}}catch(e){hide('Move canceled. '+e.message);}
+  }
+  [['left',-1,0],['right',1,0],['up',0,-1],['down',0,1]].forEach(([direction,dx,dy])=>$('nudge-'+direction).addEventListener('click',()=>nudge(dx,dy)));
+  canvas.addEventListener('keydown',event=>{
+    const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+    if(event.target!==canvas||!directions[event.key]||event.ctrlKey||event.altKey||event.metaKey||!isLive()||section!=='scene'||document.fullscreenElement===root)return;
+    event.preventDefault();const step=event.shiftKey?0.1:1;nudge(...directions[event.key].map(value=>value*step));
+  });
+  [['undo-move','before'],['redo-move','after']].forEach(([id,key])=>$(id).addEventListener('click',()=>{
+    cancelDirectGesture();const from=key==='before'?moveUndo:moveRedo,to=key==='before'?moveRedo:moveUndo,entry=from.at(-1);if(!entry)return;
+    const expected=key==='before'?entry.after:entry.before;
+    if(!sameScene(readFields(),expected)){clearMoveHistory();render();say('Move history cleared because other fields changed.');return;}
+    conceal();from.pop();to.push(entry);selectedId=entry.id;stageMove(entry[key]);formDirty=!sameScene(controller.getState().current,working);render();say('Draft move '+(key==='before'?'undone':'redone')+'. The preview is hidden; applied scene is unchanged.');
+  }));
   $('skip-controls').addEventListener('click',event=>{
     event.preventDefault();conceal();cancelPlacement();editorOpen=true;section='scene';render();$('controls').focus();say('Scene controls focused. The field is hidden.');
   });
@@ -530,6 +611,7 @@
   });
   $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.'));
   function cancelPlayback(){
+    cancelDirectGesture();
     generation++;
     if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
     timeline.stop();itemTimeline.stop();paintedFrame=null;itemFrame=null;lastPhaseKey='';displayKind='scene';

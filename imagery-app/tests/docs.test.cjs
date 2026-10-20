@@ -43,10 +43,13 @@ test('DOCS: every repository Markdown local target and fragment resolves', () =>
   assert.deepEqual(result.errors, []);
 });
 
-test('DOCS: screenshots are reviewed static JPEGs bound to the unchanged runtime', () => {
+test('DOCS: historical screenshots retain exact v0.7 provenance and are not current-runtime evidence', () => {
   const manifest = JSON.parse(read('docs/images/capture-manifest.json'));
   assert.equal(manifest.appVersion, '0.7');
-  assert.equal(manifest.runtimeSha256, sha256(fs.readFileSync(path.join(ROOT, 'imagery-app/index.html'))));
+  assert.equal(manifest.runtimeSha256, 'c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857');
+  assert.equal(manifest.status, 'historical-v0.7-not-current-runtime-evidence');
+  assert.match(read('docs/images/README.md'), /historical v0\.7 screenshots, not current v0\.8 visual acceptance/);
+  assert.match(read('README.md'), /Historical v0\.7 synthetic scene/);
   assert.equal(manifest.sourceRun, 'https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917');
   assert.match(manifest.platform, /Linux.*Chrome 155\.0\.8059\.39.*sandbox/);
   assert.match(manifest.limitations, /not.*Windows.*physical phones/i);
@@ -76,14 +79,16 @@ test('DOCS: current procedure identifies final runtime evidence without rewritin
     'ten minutes', 'twelve-minute', '455.236', 'Emulation is not physical-device'])
     assert.ok(procedure.includes(token), token);
   assert.doesNotMatch(procedure, /awaits native|final gate.*pending/i);
-  assert.match(read('imagery-app/src/shell.html'), /ITEM STUDIO \/ 0\.7/);
+  assert.match(read('imagery-app/src/shell.html'), /ITEM STUDIO \/ 0\.8/);
 });
 
-test('DOCS: no published-release download URL is invented before an approved publication', () => {
+test('DOCS: release asset links name only verified published v0.7.0 files', () => {
+  const prefix = 'https://github.com/woodkill00/aphantasia_build/releases/';
+  const allowed = new Set(['Imagery-Field-portable.zip', 'Imagery-Field.html', 'LICENSE', 'SHA256SUMS.txt', 'release-metadata.json'].map(name => `${prefix}download/v0.7.0/${name}`));
   for (const file of docs.markdownFiles(ROOT)) {
     for (const target of docs.links(fs.readFileSync(file, 'utf8'))) {
-      assert.doesNotMatch(target, /github\.com\/woodkill00\/aphantasia_build\/releases\/(?:latest\/download|download\/)/,
-        `${path.relative(ROOT, file)} advertises a not-yet-published release asset.`);
+      if (target.startsWith(prefix) && /\/(?:latest\/download|download\/)/.test(target))
+        assert.ok(allowed.has(target), `${path.relative(ROOT, file)} advertises an unverified release asset.`);
     }
   }
 });
@@ -94,7 +99,7 @@ test('DOCS: beginner guidance describes the current source download, version and
   assert.match(readme, /Code\s*→\s*Download ZIP/);
   assert.match(readme, /imagery-app\/index\.html/);
   assert.ok(fs.statSync(path.join(ROOT, 'imagery-app/index.html')).isFile());
-  assert.match(guide, /Version 0\.7 engineering preview/);
+  assert.match(guide, /Version 0\.8 engineering preview/);
   assert.doesNotMatch(guide.split('## In this guide')[0], /candidate|await|pending/i);
   for (const text of [readme, guide]) {
     assert.match(text, /no autosave/i);
@@ -155,8 +160,8 @@ test('CI: real-checkout packaging follows the complete browser gate without publ
   assert.match(smoke, /git status --porcelain=v1 --untracked-files=all/);
   assert.match(smoke, /source_commit="\$\(git rev-parse HEAD\)"/);
   assert.match(smoke, /--source-commit "\$source_commit"/);
-  assert.match(smoke, /--version 0\.7\.0-preview\.1/);
-  assert.match(smoke, /--tested-html-sha256 c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857/);
+  assert.match(smoke, /--version 0\.8\.0-preview\.1/);
+  assert.ok(smoke.includes('--tested-html-sha256 '+sha256(fs.readFileSync(path.join(ROOT, 'imagery-app/index.html')))), 'CI must pin the exact current HTML hash');
   assert.match(smoke, /actions\/runs\/\$\{\{ github\.run_id \}\}/);
   assert.match(smoke, /supplied reference only; this run is still in progress/);
   assert.match(smoke, /node scripts\/build-release\.cjs/);

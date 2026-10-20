@@ -1,6 +1,6 @@
 # Static interface screenshots
 
-These are actual, visually reviewed screenshots of synthetic test scenes in
+These are historical v0.7 screenshots, not current v0.8 visual acceptance. They are actual, visually reviewed screenshots of synthetic test scenes in
 version 0.7, not generated mockups or a demonstration of personal imagery.
 They are still images. Nothing in this page starts playback.
 

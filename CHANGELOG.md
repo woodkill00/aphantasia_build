@@ -2,6 +2,14 @@
 
 User-visible changes are listed here. Version labels describe engineering increments, not a promise that a tagged Release or downloadable release asset exists. Exact test attempts, failures, environments and artifact hashes live in the [test report](imagery-app/test-results/TEST-REPORT.md).
 
+## 0.8 — direct-editor increment under verification
+
+- Click/tap selection, transactional live dragging, overlap cycling and non-drag nudge/keyboard controls.
+- Separate bounded draft move undo/redo; Apply and downloaded scene semantics unchanged.
+- Spec-Kit constitution, clarified staged specification, 64-proposal traceability and explicit research-governance gates.
+- Pure bounded geometry and private-journal foundations have synthetic tests but are not yet exposed as completed UI features.
+- Local browser startup is blocked; exact-head CI and actual visual acceptance are still required. Historical v0.7 evidence is not reused as acceptance.
+
 ## Unreleased documentation and distribution preparation
 
 - Shorter getting-started path, a canonical user guide and task-based documentation index.

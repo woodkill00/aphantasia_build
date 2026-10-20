@@ -1,3 +1,11 @@
+# Version 0.8 direct editing: current candidate
+
+The Spec-Kit first increment adds direct selection, transactional draft dragging, move undo, overlap cycling and non-drag controls. Local model/DOM tests are not browser evidence. The sandboxed local Chromium launch timed out before navigation on 20 October 2026; no native scenario or screenshot was obtained. Cleanup confirmed browser closed and profile removed. No security flags were relaxed. Exact-head CI and visual review are pending.
+
+The geometry and journal model files are pure future-phase foundations, not integrated UI or completed roadmap features. Research submission remains unavailable. Historical screenshots remain explicitly labelled v0.7; they do not verify this candidate.
+
+## Historical verification below
+
 # Public repository onboarding, MIT licensing and release preparation
 
 2026-10-20. This increment adds task-based user/contributor/support documentation, privacy-aware forms, current synthetic examples, four original reviewed screenshots, bounded Actions dependency updates, offline portable-file tools and the owner-selected MIT license. It does not change app runtime bytes, publish a Release/tag, upload release assets, deploy a site or change repository security settings. Repository-authored code, documentation and examples are licensed under [MIT](../../LICENSE), copyright (c) 2026 woodkill00; cited research and other third-party material retain their own rights and terms.

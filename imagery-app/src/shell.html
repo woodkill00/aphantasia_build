@@ -10,11 +10,11 @@
 </head>
 <body>
 <div id="stage-root" class="stage-root">
-  <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
+  <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="0" aria-describedby="direct-edit-hint" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
   <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Choose Resume live preview, then edit to see changes immediately.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
   <header id="masthead" class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">ITEM STUDIO / 0.7</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">ITEM STUDIO / 0.8</span></div><span id="visibility-label" class="pill">Hidden</span></div>
     <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
   <main id="stage-body" class="stage-body">
@@ -41,6 +41,9 @@
               <div><label for="position-y">Vertical position</label><input id="position-y" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
             </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
+            <div class="nudge-actions" role="group" aria-label="Move selected object by one position unit"><button id="nudge-left" type="button" aria-label="Move selected object left by one position unit">← Left</button><button id="nudge-up" type="button" aria-label="Move selected object up by one position unit">↑ Up</button><button id="nudge-down" type="button" aria-label="Move selected object down by one position unit">↓ Down</button><button id="nudge-right" type="button" aria-label="Move selected object right by one position unit">Right →</button></div>
+            <div class="small-actions"><button id="cycle-overlap" type="button" disabled>Select next overlapping item</button><button id="undo-move" type="button" disabled>Undo move</button><button id="redo-move" type="button" disabled>Redo move</button></div>
+            <p class="hint" id="direct-edit-hint">Click a visible item to edit it, or drag to move. Arrow keys on the preview move the selected item by 1; Shift moves by 0.1. Move history is separate from applied scene history and resets after other edits. Nothing is saved until you download.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
@@ -139,6 +142,7 @@
 <script>/*__MODEL__*/</script>
 <script>/*__SEQUENCE__*/</script>
 <script>/*__ITEMS__*/</script>
+<script>/*__EDITOR__*/</script>
 <script>/*__APP__*/</script>
 </body>
 </html>

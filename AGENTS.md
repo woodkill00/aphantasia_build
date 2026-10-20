@@ -2,7 +2,7 @@
 
 ## Scope
 
-Maintain a manually controlled local visual editor. The one-pass snapshot sequence is specified in `docs/sequence-spec.md`; the version 0.7 live-startup, responsive precision controls and finite per-item timeline increment is specified in `docs/item-timeline.md`. No unrelated stimulation capability is authorized. Read `README.md`, `docs/architecture.md`, `docs/scientific-limitations.md`, `docs/plan.md`, and `project-queue.json` before changing behavior. The queue records work and evidence; an open task is not approval for a new feature, deployment, publication, participant study, or data collection.
+Maintain a manually controlled local visual editor. The one-pass snapshot sequence is specified in `docs/sequence-spec.md`; the version 0.7 live-startup, responsive precision controls and finite per-item timeline increment is specified in `docs/item-timeline.md`. The approved next-stage scope and boundaries are specified in `specs/008-interactive-scene-roadmap/spec.md` and `.specify/memory/constitution.md`. Implement and verify each increment separately; governed research activation remains blocked. No unrelated stimulation capability is authorized. Read `README.md`, `docs/architecture.md`, `docs/scientific-limitations.md`, `docs/plan.md`, and `project-queue.json` before changing behavior. The queue records work and evidence; an open task is not approval for a new feature, deployment, publication, participant study, or data collection.
 
 ## Required boundaries
 
