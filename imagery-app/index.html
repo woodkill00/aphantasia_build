@@ -144,10 +144,26 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 
 /* Optional gallery uses explicit, small static thumbnails, never enlarged previews. */
 .preset-gallery{margin-block:calc(var(--control-gap) * 2);padding:var(--editor-pad);min-width:0;max-width:100%;box-sizing:border-box}.gallery-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:var(--control-gap)}.gallery-filters label,.gallery-filters select{min-width:0;max-width:100%}.gallery-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--control-gap);padding:0;list-style:none}.gallery-entry{min-width:0;border:1px solid var(--line);padding:var(--control-gap);overflow-wrap:anywhere}.gallery-entry button,.preset-gallery>button{min-height:44px;max-width:100%;white-space:normal}.gallery-thumbnail{width:64px!important;height:48px!important;max-width:64px;max-height:48px;object-fit:contain;display:block;margin-block:var(--control-gap)}
+
+/* Editor-only marks are a bounded, noninteractive sibling, never scene pixels.
+   All positioning comes from the canvas/content rectangles, not layout guesses. */
+#editor-aids-overlay{position:absolute;overflow:hidden;pointer-events:none;z-index:1;contain:layout paint;border-radius:8px}
+#editor-aids-overlay *{pointer-events:none}
+#editor-aids-content{position:absolute;overflow:hidden}
+.editor-aid-line{position:absolute;display:block;margin:0;padding:0;border:0;border-color:rgba(160,160,160,.45);border-style:solid}
+.editor-aid-line.grid-x,.editor-aid-line.center-x{top:0;height:100%;width:0;border-left-width:1px}
+.editor-aid-line.grid-y,.editor-aid-line.center-y{left:0;width:100%;height:0;border-top-width:1px}
+.editor-aid-line.center-x,.editor-aid-line.center-y{border-color:rgba(184,184,184,.7)}
+#editor-aids-status{min-height:7.75em}
+
+/* Canvas pixels retain authored colors in forced-colors mode. Preserve only
+   neutral guide marks; form controls continue using the user's system palette. */
+@media(forced-colors:active){.editor-aid-line{forced-color-adjust:none}}
 </style>
 </head>
 <body>
 <div id="stage-root" class="stage-root">
+  <div id="editor-aids-overlay" aria-hidden="true" hidden></div>
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="0" aria-describedby="direct-edit-hint" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
   <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Choose Resume live preview, then edit to see changes immediately.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
@@ -170,6 +186,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         <p id="canvas-mode-hint" class="hint">Legacy viewport scene. Conversion is explicit and may change proportions; review before Apply.</p>
         <label for="canvas-ratio">Authored aspect ratio</label><select id="canvas-ratio"><option value="1:1">Square · 1:1</option><option value="4:3">Landscape · 4:3</option><option value="3:4">Portrait · 3:4</option><option value="16:9">Wide · 16:9</option><option value="9:16">Tall · 9:16</option></select>
         <label for="authored-preset">Authored scene examples</label><select id="authored-preset"><option value="">Choose an editable example…</option></select><p id="authored-preset-hint" class="hint">Original geometric examples, not treatments or ranked recommendations. Choosing one never starts timed playback.</p>
+        <fieldset id="editor-aids-controls" class="group" aria-describedby="editor-aids-help editor-aids-status"><legend>Editor aids</legend>
+          <label class="check-label" for="show-editor-aids"><input id="show-editor-aids" type="checkbox"><span>Show editor aids</span></label>
+          <label for="editor-grid-step">Grid spacing · content units</label><select id="editor-grid-step"><option value="5">5 units</option><option value="1">1 unit</option><option value="10">10 units</option></select>
+          <label class="check-label" for="editor-center-guides"><input id="editor-center-guides" type="checkbox"><span>Center guides</span></label>
+          <p id="editor-aids-help" class="hint">Editor guides are not part of the scene or downloads. Snap is a separate control. At small sizes, only a subset of grid lines is painted, at least 8 CSS pixels apart. This is a legibility choice, not a safety threshold.</p>
+          <p id="editor-aids-status" class="hint" role="status">Editor aids are off. Enable them only in a valid, visible Live preview with the Scene editor open.</p>
+        </fieldset>
         <form id="scene-form" novalidate>
           <label for="scene-name">Scene name</label><input id="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation">
           <fieldset class="group"><legend>Objects <span id="object-count">3 / 12</span></legend>
@@ -1137,6 +1160,100 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   return Object.freeze({DRAG_THRESHOLD,HISTORY_LIMIT,point,hits,translate,place,align,createLocks});
 }));
+</script>
+<script>/* Pure, bounded editor-guide layout. No DOM, pixels, clock or visibility authority. */
+(function(root,factory){'use strict';if(typeof module==='object'&&module.exports)module.exports=factory(require('./model.js'));else root.ImageryEditorAids=factory(root.ImageryModel);}(typeof globalThis!=='undefined'?globalThis:this,function(M){
+  'use strict';
+  const GRID_STEPS=Object.freeze([1,5,10]),MIN_GRID_CSS_PX=8,MAX_GRID_LINES=198,MAX_CENTER_LINES=2;
+  function record(value,keys,required,label){
+    if(!value||typeof value!=='object'||Array.isArray(value)||![Object.prototype,null].includes(Object.getPrototypeOf(value)))throw Error(label+' must be an ordinary object.');
+    const own=Reflect.ownKeys(value);
+    if(own.some(key=>typeof key!=='string'||!keys.includes(key))||required.some(key=>!own.includes(key)))throw Error(label+' has missing or unsupported fields.');
+    for(const key of own)if(!Object.prototype.hasOwnProperty.call(Object.getOwnPropertyDescriptor(value,key),'value'))throw Error(label+' cannot contain accessors.');
+  }
+  function axis(length,gridStep){
+    // Multiply by a fraction first: length * gridStep can overflow at finite
+    // CSS dimensions. Reject unrepresentable spacing rather than return a
+    // misleading interval, an infinite coordinate, or an unbounded loop.
+    const baseSpacing=length*(gridStep/100);
+    const multiplier=Math.max(1,Math.ceil(MIN_GRID_CSS_PX/baseSpacing)),interval=gridStep*multiplier;
+    if(!Number.isFinite(baseSpacing)||baseSpacing<=0||!Number.isFinite(interval)||interval<=0)throw Error('Editor guide spacing exceeds numeric layout bounds.');
+    const positions=[];
+    // There can never be more than 99 interior lines on either axis. Use an
+    // index instead of accumulated floating-point additions or pixel loops.
+    for(let index=1;index<100;index++){
+      const normalized=index*interval;
+      if(normalized>=100)break;
+      const position=length*(normalized/100);
+      if(!Number.isFinite(position)||position<=0||position>=length)throw Error('Editor guide position exceeds numeric layout bounds.');
+      positions.push(position);
+    }
+    return {positions,interval};
+  }
+  function guideLayout(scene,viewport,options={}){
+    record(viewport,['width','height'],['width','height'],'Editor guide viewport');
+    if(![viewport.width,viewport.height].every(Number.isFinite)||viewport.width<=0||viewport.height<=0)throw Error('Editor guide dimensions must be finite and positive.');
+    record(options,['gridStep','centerGuides'],[],'Editor guide options');
+    const gridStep=Object.prototype.hasOwnProperty.call(options,'gridStep')?options.gridStep:5;
+    const centerGuides=Object.prototype.hasOwnProperty.call(options,'centerGuides')?options.centerGuides:false;
+    if(!GRID_STEPS.includes(gridStep))throw Error('Editor grid spacing must be 1, 5 or 10.');
+    if(typeof centerGuides!=='boolean')throw Error('Center guides must be true or false.');
+    // contentRect is the authoritative mapping and validates the complete
+    // closed scene first, including descriptors, without invoking getters.
+    const rect=M.contentRect(scene,viewport.width,viewport.height);
+    if(![rect.x,rect.y,rect.width,rect.height].every(Number.isFinite)||rect.width<=0||rect.height<=0)throw Error('Editor content rectangle exceeds numeric layout bounds.');
+    const x=axis(rect.width,gridStep),y=axis(rect.height,gridStep);
+    const grid={x:x.positions,y:y.positions},center={x:centerGuides?[rect.width/2]:[],y:centerGuides?[rect.height/2]:[]};
+    const gridCount=grid.x.length+grid.y.length,centerCount=center.x.length+center.y.length;
+    // All returned records and arrays are fresh. No source scene, preference,
+    // selection, snap or render-authority reference escapes through this API.
+    return {contentRect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height},grid,center,effectiveInterval:{x:x.interval,y:y.interval},count:{grid:gridCount,center:centerCount,total:gridCount+centerCount}};
+  }
+  return Object.freeze({GRID_STEPS,MIN_GRID_CSS_PX,MAX_GRID_LINES,MAX_CENTER_LINES,guideLayout});
+}));
+</script>
+<script>/* Bounded noninteractive editor marks. No scene pixels, clock or reveal authority. */
+(function (root) {
+  'use strict';
+  function mount(overlay) {
+    const document = overlay.ownerDocument || root.document;
+    const MAX_NODES = 230;
+    function clear() {
+      overlay.hidden = true;
+      overlay.replaceChildren();
+      delete overlay.dataset.paintedX;
+      delete overlay.dataset.paintedY;
+    }
+    function render(layout, origin) {
+      clear();
+      if (!layout || !origin || ![origin.left, origin.top, origin.width, origin.height].every(Number.isFinite) || origin.width <= 0 || origin.height <= 0) throw new Error('Editor guide bounds are unavailable.');
+      const rect = layout.contentRect;
+      if (!rect || ![rect.x, rect.y, rect.width, rect.height].every(Number.isFinite) || rect.x < -1e-7 || rect.y < -1e-7 || rect.width <= 0 || rect.height <= 0 || rect.x + rect.width > origin.width + 1e-7 || rect.y + rect.height > origin.height + 1e-7) throw new Error('Editor content bounds are unavailable.');
+      const lines = [];
+      for (const kind of ['grid', 'center']) for (const axis of ['x', 'y']) {
+        const values = layout[kind] && layout[kind][axis], extent = axis === 'x' ? rect.width : rect.height;
+        if (!Array.isArray(values) || values.length > 99) throw new Error('Editor guide line count is invalid.');
+        for (const position of values) {
+          if (!Number.isFinite(position) || position <= 0 || position >= extent) throw new Error('Editor guide position is invalid.');
+          lines.push({kind, axis, position});
+        }
+      }
+      if (lines.length + 2 > MAX_NODES || !layout.effectiveInterval || ![layout.effectiveInterval.x, layout.effectiveInterval.y].every(value => Number.isFinite(value) && value > 0)) throw new Error('Editor guide layout is invalid.');
+      const content = document.createElement('div'); content.id = 'editor-aids-content';
+      for (const [property, value] of Object.entries({left: rect.x, top: rect.y, width: rect.width, height: rect.height})) content.style[property] = value + 'px';
+      for (const {kind, axis, position} of lines) {
+        const line = document.createElement('span'); line.className = 'editor-aid-line ' + kind + '-' + axis;
+        line.dataset.kind = kind; line.dataset.axis = axis;
+        line.style[axis === 'x' ? 'left' : 'top'] = position + 'px'; content.appendChild(line);
+      }
+      for (const [property, value] of Object.entries(origin)) overlay.style[property] = value + 'px';
+      overlay.dataset.paintedX = String(layout.effectiveInterval.x); overlay.dataset.paintedY = String(layout.effectiveInterval.y);
+      overlay.replaceChildren(content); overlay.hidden = false;
+    }
+    clear(); return Object.freeze({render, clear});
+  }
+  root.ImageryEditorAidsUI = Object.freeze({mount});
+}(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
 <script>/* Original authored composition examples. MIT, copyright (c) 2026 woodkill00.
    Pure scene data only: no presentation, scheduling, persistence or network. */
@@ -2675,7 +2792,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   let context=null,offscreenContext=null;
   try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:true});}catch(e){/* Data controls remain available. */}
   let journalUI=null,imageUI=null,imageReplacement=null,galleryUI=null;
-  let provenanceIdentity=1;
+  let provenanceIdentity=1,cleanProvenanceEligible=true;
+  const editorAids=window.ImageryEditorAidsUI.mount($('editor-aids-overlay'));
+  let aidsArmed=false,gridStep=5,centerGuides=false,aidBounds=null;
   const provenance=window.ImageryProvenance.createTracker({onChange:()=>{if(journalUI)journalUI.refreshProvenance();},hash:async canonical=>{
     if(!window.crypto||!window.crypto.subtle||typeof TextEncoder!=='function')throw new Error('SHA-256 unavailable');
     const bytes=new TextEncoder().encode(canonical);
@@ -2685,10 +2804,19 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function provenanceNow(){try{return performance.now();}catch(e){return NaN;}}
   function stopProvenance(reason){provenance.stop(reason,provenanceNow());provenanceIdentity++;if(journalUI)journalUI.refreshProvenance();}
   function recordVisibleDisplay(state){
-    if(!provenance.getState().enabled||!state.visible||document.hidden)return;
+    if(!cleanProvenanceEligible||aidsArmed||!provenance.getState().enabled||!state.visible||document.hidden)return;
     const timed=displayKind==='timed',items=displayKind==='items';
     const value=timed?sequence:items?itemSource:displayKind==='step'?stepScene(stepIndex):displayKind==='live'?state.draft:state.current;
     provenance.start({identity:provenanceIdentity,canonical:JSON.stringify(value),format:value.format,version:value.version,rendererVersion:'0.8.0-dev.provenance1',mode:timed?'sequence':items?'items':'static',plannedMs:timed?compiledSequence.durationMs:items?compiledItems.durationMs:null},provenanceNow());
+  }
+  function recordFreshCleanDisplay(){
+    const state=controller.getState();
+    if(!state.visible||document.hidden||aidsArmed)return;
+    // Only the caller's completed paint/start grants a new clean association.
+    // A rejected Show or a failed raster must not expose an old clean digest.
+    cleanProvenanceEligible=true;recordVisibleDisplay(state);
+    if(journalUI)journalUI.refreshProvenance();
+    syncEditorAids(state);
   }
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
   let lockedTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null,moveStaging=false;
@@ -2714,6 +2842,52 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function say(message,error){
     const text=String(message).slice(0,300);
     ['status','fullscreen-status'].forEach(id=>{$(id).textContent=text;$(id).className=error?'error':'';});
+  }
+  function disarmEditorAids(){
+    aidsArmed=false;aidBounds=null;$('show-editor-aids').checked=false;
+    try{editorAids.clear();}catch(e){
+      // Even a failed DOM cleanup cannot veto Hide or retain a registered view.
+      $('editor-aids-overlay').hidden=true;controller.hide();stopProvenance('technical-failure');return false;
+    }
+    return true;
+  }
+  function eligibleForEditorAids(state){
+    return !!(context&&state.visible&&displayKind==='live'&&section==='scene'&&editorOpen&&!document.hidden&&!document.fullscreenElement&&M.validateScene(state.draft).ok&&M.validateScene(readFields()).ok);
+  }
+  function syncEditorAids(state){
+    const eligible=eligibleForEditorAids(state);
+    $('show-editor-aids').disabled=!eligible;$('editor-grid-step').value=String(gridStep);$('editor-center-guides').checked=centerGuides;
+    if(!eligible&&!disarmEditorAids())return false;
+    $('show-editor-aids').checked=aidsArmed;
+    let description=aidsArmed?'Editor aids on.':'Editor aids off.';
+    if(!aidsArmed){if(!disarmEditorAids())return false;description+=' Enable only in a valid, visible Live preview with the Scene editor open.';}
+    else try{
+      const bounds=canvas.getBoundingClientRect(),parent=root.getBoundingClientRect();
+      if(![bounds.left,bounds.top,bounds.width,bounds.height,parent.left,parent.top].every(Number.isFinite)||bounds.width<=0||bounds.height<=0)throw new Error('Editor guide bounds are unavailable.');
+      const layout=window.ImageryEditorAids.guideLayout(state.draft,{width:bounds.width,height:bounds.height},{gridStep,centerGuides});
+      const nextBounds=[bounds.left,bounds.top,bounds.width,bounds.height,layout.contentRect.x,layout.contentRect.y,layout.contentRect.width,layout.contentRect.height];
+      if(aidBounds&&nextBounds.some((value,index)=>value!==aidBounds[index]))throw new Error('Editor guide alignment changed.');
+      // A scene hash does not describe the composite screen once marks appear.
+      // The latch survives turning guides off, tracking changes and async hashes.
+      if(cleanProvenanceEligible){cleanProvenanceEligible=false;stopProvenance('edit');}
+      editorAids.render(layout,{left:bounds.left-parent.left+(root.scrollLeft||0)-(root.clientLeft||0),top:bounds.top-parent.top+(root.scrollTop||0)-(root.clientTop||0),width:bounds.width,height:bounds.height});
+      aidBounds=nextBounds;
+      description+=' Selected '+gridStep+'-unit grid. Painted intervals: X '+layout.effectiveInterval.x+', Y '+layout.effectiveInterval.y+' content units.';
+      if(layout.effectiveInterval.x!==gridStep||layout.effectiveInterval.y!==gridStep)description+=' A subset of grid lines is painted for legibility.';
+    }catch(e){
+      disarmEditorAids();conceal('technical-failure');
+      $('editor-aids-status').textContent='Editor aids removed. The field is hidden because guide alignment could not be verified. Use Resume live preview when ready.';
+      say('Editor guides could not be aligned. The field is hidden; data controls remain available.',true);return false;
+    }
+    if(!cleanProvenanceEligible)description+=' Display provenance unavailable for this viewing action. Start a fresh clean preview to record again.';
+    $('editor-aids-status').textContent=description;return true;
+  }
+  function changeEditorAids(change){
+    const hadGesture=!!gesture,hadPlacement=placing,wasVisible=controller.getState().visible;
+    beginManualEdit();
+    change();
+    if(hadGesture||hadPlacement||controller.getState().visible!==wasVisible)render();
+    else if(!syncEditorAids(controller.getState()))render();
   }
   function dimensions(){
     const rect=canvas.getBoundingClientRect();
@@ -2861,7 +3035,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     // Resolve control rows before sizing the canvas; mode switches must not
     // resize a freshly painted frame or let an inspector obscure item playback.
     updateOutputs();renderSequence();renderItemEditor();renderItemPlayback();
-    try{draw(state);}catch(e){
+    if(!syncEditorAids(state))state=controller.getState();
+    let painted=false;
+    try{painted=draw(state);}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
       cancelPlayback('technical-failure');controller.hide();canvas.hidden=true;context=null;state=controller.getState();
       say('The canvas could not be drawn. The field is hidden; data controls remain available.',true);
@@ -2893,6 +3069,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('fullscreen-start').hidden=!full||state.visible;
     $('fullscreen').hidden=full;$('exit-fullscreen').hidden=!full;
     syncArrangementControls();
+    return painted&&state.visible;
   }
   function cancelPlacement(){placing=false;}
   function selected(){return working.scene.objects.find(o=>o.id===selectedId);}
@@ -2966,6 +3143,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function clearReplacementLocks(){const changed=locks.clear();if(changed)fillSelected();return changed?' Session item locks cleared because the scene was replaced.':'';}
   function replaceDraft(value,message){
     const next=M.canonicalScene(value),before=copy(working),id=selectedId;
+    disarmEditorAids();
     fillFields(next);
     if(stageWorking(message,true))return true;
     selectedId=id;fillFields(before);render();return false;
@@ -2981,6 +3159,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(moveRedo.length&&count&&!locks.allows(moveRedo.at(-1).after))$('redo-move').disabled=true;
     updateOutputs();
   }
+  $('show-editor-aids').addEventListener('change',()=>{
+    const requested=$('show-editor-aids').checked;
+    changeEditorAids(()=>{aidsArmed=requested&&eligibleForEditorAids(controller.getState());if(!aidsArmed)disarmEditorAids();});
+  });
+  $('editor-grid-step').addEventListener('change',()=>{
+    const value=Number($('editor-grid-step').value);
+    changeEditorAids(()=>{if([1,5,10].includes(value))gridStep=value;else say('Choose 1, 5 or 10 content units for the editor grid.',true);});
+  });
+  $('editor-center-guides').addEventListener('change',()=>{
+    const value=$('editor-center-guides').checked;changeEditorAids(()=>{centerGuides=value;});
+  });
   $('lock-selected').addEventListener('click',()=>{
     beginManualEdit();
     if(locks.has(selectedId)){locks.unlock(selectedId);fillSelected();render();say('Item unlocked.');return;}
@@ -3169,7 +3358,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     conceal();cancelPlacement();editorOpen=true;render();$('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();say('Viewing guidance focused. The field is hidden.');
   });
   $('editor-toggle').addEventListener('click',()=>{
-    beginManualEdit();editorOpen=!editorOpen;render();
+    beginManualEdit();if(editorOpen)disarmEditorAids();editorOpen=!editorOpen;render();
     say((editorOpen?'Editor open.':'Editor closed.')+(isLive()?' Live preview continues.':' The field is hidden; choose Resume live preview when you choose.'));
     if(editorOpen){const heading=$(section==='scene'?'controls':'sequence-title');heading.setAttribute('tabindex','-1');heading.focus();}else $('editor-toggle').focus();
   });
@@ -3205,7 +3394,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const result=controller.previewDraft(working);
     if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     if(result.ok)displayKind='live';
-    render();say(result.ok?'Live preview on. Object and background edits appear immediately. Apply keeps changes for history/download; Hide or Escape stops preview.':result.error+(document.fullscreenElement===root?' Exit fullscreen to fix the fields or discard the draft.':''),!result.ok);
+    const painted=render();if(result.ok&&!painted)return;if(result.ok)recordFreshCleanDisplay();say(result.ok?'Live preview on. Object and background edits appear immediately. Apply keeps changes for history/download; Hide or Escape stops preview.':result.error+(document.fullscreenElement===root?' Exit fullscreen to fix the fields or discard the draft.':''),!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('show-scene').addEventListener('click',showScene);
@@ -3370,7 +3559,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       itemSource=M.canonicalScene(readFields());compiledItems=I.compileTimeline(itemSource);const result=controller.previewDraft(itemSource);
       if(gateClockFault){hide('The display clock failed. Reload before viewing.','technical-failure');return;}
       if(!result.ok){render();say(result.error,true);return;}
-      const started=itemTimeline.start(compiledItems);displayKind='items';itemFrame=started.frame;render();paintPlayback(started.frame);scheduleFrame();$('item-pause').focus();
+      const started=itemTimeline.start(compiledItems);displayKind='items';itemFrame=started.frame;render();paintPlayback(started.frame);scheduleFrame();recordFreshCleanDisplay();$('item-pause').focus();
       say('Playing items once for '+compiledItems.durationMs/1000+' seconds. Pause retains the displayed frame; Stop / Hide ends preview.');
     }catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   }
@@ -3386,6 +3575,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.','user-stop'));
   function cancelPlayback(reason='edit'){
+    disarmEditorAids();
     stopProvenance(reason);if(galleryUI)galleryUI.invalidate('Static thumbnails hidden. Showing them again requires an explicit gallery action.');
     if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the scene or controls changed.');
     cancelDirectGesture();
@@ -3579,7 +3769,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     cancelPlacement();if(!canPresent()){render();return;}
     cancelPlayback();const result=controller.show();
     if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
-    if(result.ok)displayKind='step';render();say(result.ok?'Step '+(stepIndex+1)+' visible: '+sequence.sequence.steps[stepIndex].name+'. Stop / Hide or Escape conceals it.':result.error,!result.ok);
+    if(result.ok)displayKind='step';const painted=render();if(result.ok&&!painted)return;if(result.ok)recordFreshCleanDisplay();say(result.ok?'Step '+(stepIndex+1)+' visible: '+sequence.sequence.steps[stepIndex].name+'. Stop / Hide or Escape conceals it.':result.error,!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('sequence-show').addEventListener('click',showStep);
@@ -3620,7 +3810,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(motionReduced){say('Reduced motion is on. Use Previous or Next, then Show step.',true);return;}
     if(!offscreenContext||typeof window.requestAnimationFrame!=='function'){say('Timed playback is unavailable in this browser. Use manual step previews.',true);return;}
     cancelPlacement();cancelPlayback();const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}if(!result.ok){render();say(result.error,true);return;}
-    try{const started=timeline.start(compiledSequence);displayKind='timed';paintPlayback(started.frame);render();scheduleFrame();$('sequence-pause').focus();}
+    try{const started=timeline.start(compiledSequence);displayKind='timed';paintPlayback(started.frame);render();scheduleFrame();recordFreshCleanDisplay();$('sequence-pause').focus();}
     catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
   $('sequence-pause').addEventListener('click',()=>{
@@ -3656,7 +3846,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
 
   $('undo-image-replacement').addEventListener('click',()=>{if(!imageReplacement)return;const previous=imageReplacement;beginManualEdit();conceal();selectedId=previous.id;replaceDraft(previous.before,'Previous draft restored and hidden. Apply keeps it for download.');});
-  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal('edit');render();},onTrackingChange:enabled=>{provenance.setEnabled(enabled);provenanceIdentity++;},clearTracking:()=>provenance.clear(),getProvenance:()=>provenance.getSummary(),getTrackingState:()=>provenance.getState()});
+  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal('edit');render();},onTrackingChange:enabled=>{provenance.setEnabled(enabled);provenanceIdentity++;},clearTracking:()=>provenance.clear(),getProvenance:()=>cleanProvenanceEligible?provenance.getSummary():{scene:{status:'unavailable'},exposure:{status:'unavailable'}},getTrackingState:()=>cleanProvenanceEligible?provenance.getState():{...provenance.getState(),status:'unavailable for this viewing action because editor guides were displayed'}});
   galleryUI=window.ImageryGalleryUI.mount($('gallery-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{conceal();section='scene';replaceDraft(value,'Original gallery scene staged and hidden. Edit freely; Apply keeps it for download. No playback started.');}});
   $('open-image-tools').addEventListener('click',()=>{conceal();render();if(!imageUI)imageUI=window.ImageryImageUI.mount($('image-tools-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{const before=M.canonicalScene(readFields()),id=selectedId;conceal();section='scene';if(replaceDraft(value,'Image approximation staged and hidden. Undo image draft replacement restores the previous draft until another edit. Apply commits it for download.')){imageReplacement={before,id};render();}}});$('image-tools-container').hidden=false;$('open-image-tools').hidden=true;$('open-image-tools').setAttribute('aria-expanded','true');$('image-file').focus();});
   fillFields(controller.getState().current);fillSequenceFields();render();

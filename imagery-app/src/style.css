@@ -136,3 +136,18 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 
 /* Optional gallery uses explicit, small static thumbnails, never enlarged previews. */
 .preset-gallery{margin-block:calc(var(--control-gap) * 2);padding:var(--editor-pad);min-width:0;max-width:100%;box-sizing:border-box}.gallery-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:var(--control-gap)}.gallery-filters label,.gallery-filters select{min-width:0;max-width:100%}.gallery-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--control-gap);padding:0;list-style:none}.gallery-entry{min-width:0;border:1px solid var(--line);padding:var(--control-gap);overflow-wrap:anywhere}.gallery-entry button,.preset-gallery>button{min-height:44px;max-width:100%;white-space:normal}.gallery-thumbnail{width:64px!important;height:48px!important;max-width:64px;max-height:48px;object-fit:contain;display:block;margin-block:var(--control-gap)}
+
+/* Editor-only marks are a bounded, noninteractive sibling, never scene pixels.
+   All positioning comes from the canvas/content rectangles, not layout guesses. */
+#editor-aids-overlay{position:absolute;overflow:hidden;pointer-events:none;z-index:1;contain:layout paint;border-radius:8px}
+#editor-aids-overlay *{pointer-events:none}
+#editor-aids-content{position:absolute;overflow:hidden}
+.editor-aid-line{position:absolute;display:block;margin:0;padding:0;border:0;border-color:rgba(160,160,160,.45);border-style:solid}
+.editor-aid-line.grid-x,.editor-aid-line.center-x{top:0;height:100%;width:0;border-left-width:1px}
+.editor-aid-line.grid-y,.editor-aid-line.center-y{left:0;width:100%;height:0;border-top-width:1px}
+.editor-aid-line.center-x,.editor-aid-line.center-y{border-color:rgba(184,184,184,.7)}
+#editor-aids-status{min-height:7.75em}
+
+/* Canvas pixels retain authored colors in forced-colors mode. Preserve only
+   neutral guide marks; form controls continue using the user's system palette. */
+@media(forced-colors:active){.editor-aid-line{forced-color-adjust:none}}

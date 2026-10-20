@@ -2,13 +2,15 @@
 
 Version 0.8 **unreleased development candidate**, with scoped native-browser and arrangement visual checks passed. Each final head must pass required CI before protected integration; consult [PR 14 checks](https://github.com/woodkill00/aphantasia_build/pull/14/checks) for its outcome. The published v0.7.0 ZIP does not include its new features. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
 
+The separate [editor-aids candidate](#editor-aids-candidate) adds optional visible references. Its recorded runtime passed scoped native-browser, inspected-visual and bounded timing checks; every final head still requires full CI before protected integration. See [PR 15 checks](https://github.com/woodkill00/aphantasia_build/pull/15/checks) and the [exact evidence](test-results/TEST-REPORT.md).
+
 **No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, notes and journal records.
 
 ## In this guide
 
 - [Before viewing](#before-viewing) and [open the app](#open-the-app)
 - [First scene and download](#first-scene-and-download)
-- [Build a static scene](#build-a-static-scene) and [direct preview editing](#direct-preview-editing)
+- [Build a static scene](#build-a-static-scene), [direct preview editing](#direct-preview-editing), and [editor aids candidate](#editor-aids-candidate)
 - [Fixed-ratio scenes and examples](#fixed-ratio-scenes-and-examples)
 - [Approximate a local picture](#approximate-a-local-picture)
 - [Private session journal](#private-session-journal)
@@ -191,7 +193,18 @@ The fourth development increment implements the following controls, accepted wit
 - **Snap: Off / 1 / 5 / 10** affects drag and tap-placement only, in normalized content units. It starts Off and does not move existing items when changed. Letterbox margins are not placement targets. Typed positions, directional buttons, focused-preview arrow keys and centering remain exact and unsnapped.
 - **Center horizontally**, **Center vertically** and **Center both axes** set the selected unlocked item's X, Y or both to 50. Each actual change is one draft move, not Apply; an unchanged position adds no history. A hidden preview stays hidden.
 
-Lock, unlock or snap changes cancel an active move/placement rather than completing it. Locks never block Hide, Stop, End, Escape or ordinary downloads. Locks and snap settings are session-only and are not saved in scene/sequence files. No visible grid, guide, distribution or grouping tool is included. See the [contract and acceptance map](../specs/008-interactive-scene-roadmap/tasks.md#if-050-fourth-increment-acceptance-matrix).
+Lock, unlock or snap changes cancel an active move/placement rather than completing it. Locks never block Hide, Stop, End, Escape or ordinary downloads. Locks and snap settings are session-only and are not saved in scene/sequence files. Those accepted fourth-increment controls did not include visible aids; the separate candidate below adds only an optional editor grid and center guides. Distribution and grouping remain deferred. See the [contract and acceptance map](../specs/008-interactive-scene-roadmap/tasks.md#if-050-fourth-increment-acceptance-matrix).
+
+### Editor aids candidate
+
+**Unreleased candidate: recorded scoped native-browser, visual and bounded timing checks passed; every final head requires full CI before protected integration.** These controls are not part of the published v0.7.0 ZIP or covered by the earlier core pass. See the [bounded specification](../specs/012-editor-aids/spec.md) and [acceptance tasks](../specs/012-editor-aids/tasks.md).
+
+- In **Scene → Editor aids**, check **Show editor aids** only while a valid static Live preview is visible and the editor is open. It starts unchecked. Choose **Grid spacing · content units**: 1, 5 or 10, with 5 initially. **Center guides**, initially unchecked, adds references halfway across and down the authored content area. Black letterbox margins stay unmarked.
+- The visible grid and **Snap centers** are independent. A grid does not enable snap; snap does not show a grid. Neither changes existing item coordinates. Snap still affects only drag/tap placement; typed positions, nudges and centering retain their existing behavior.
+- In a small preview, only a subset of grid lines is painted so grid lines stay at least 8 CSS pixels apart. The status reports the actual horizontal/vertical intervals. This changes the visible reference, not snap precision, and is a legibility choice rather than a safety threshold.
+- Hide/End/Escape, invalid input, imports, fullscreen/lifecycle interruption, closing the editor or leaving static Live turns aids off. A successful scene replacement also turns them off without changing that action's existing Live/hidden behavior. Resume Live shows only the scene; check **Show editor aids** again if wanted. Settings may be adjusted while hidden without revealing anything. Aids are absent from fullscreen and item/sequence viewing, including paused playback.
+- Aids and preferences are session-only editor information. They are not painted into the scene, saved in scene/sequence downloads, or included in captured steps. Closing/reloading loses the preferences. They do not move shapes, apply a scene or start playback.
+- If optional display provenance is enabled, showing aids makes the current viewing action's scene fingerprint/duration association **unavailable**, because the screen now includes editor marks. Unchecking aids alone does not restore it. A successful fresh explicit clean Live/Show or new one-pass playback can begin a new eligible interval; failed Show attempts, tracking toggles and Pause/Resume cannot. Existing saved reflections stay unchanged. You can still record a reflection with unavailable fields; there is no need to repeat a view.
 
 ## Fixed-ratio scenes and examples
 
@@ -230,6 +243,8 @@ Open **Private session journal** and optionally check **Enable optional session 
 The separate fields describe external perception, visual persistence, voluntary imagery, nonvisual memory, comfort before/after, discomfort, early stopping, preference and ease of use. They are custom exploratory descriptions, not a validated questionnaire, diagnosis, causal finding, score or evidence of imagery improvement. Scene identity and visible-duration fields are **unavailable by default**.
 
 A second unchecked option, **Include optional scene fingerprint and visible duration in future reflections**, tracks only subsequent successful main-field displays. It does not reconstruct earlier viewing or track gallery/source thumbnails. When the latest display has ended and its digest is ready, a new reflection can include a SHA-256 canonical scene/sequence fingerprint, format and renderer versions, mode, planned duration, foreground-visible duration and stop reason. Timed playback fingerprints the whole sequence; manually showing a step fingerprints that step as a scene. Paused frames remain visible and keep counting. A changed displayed draft starts a new interval, not a cumulative viewing total.
+
+The [editor-aids candidate](#editor-aids-candidate) also excludes aid-marked viewing and does not restore association merely when guides are unchecked.
 
 While a display is active or its digest is pending/failed/unavailable, these fields remain unavailable; an older result is never substituted. The status beside the option explains readiness. Uncheck the option to stop tracking and discard retained provenance. Turning reflections off also disables it. No timestamp/epoch, original picture, full scene content or device identifier is exported. The renderer label `0.8.0-dev.provenance1` is a version identifier, not a hash of the app. A fingerprint does not make a record anonymous, and visible duration is not gaze, attention, light dose or a safety measurement.
 

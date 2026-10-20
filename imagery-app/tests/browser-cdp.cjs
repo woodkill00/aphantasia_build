@@ -79,6 +79,7 @@ const {runAuthoredScenarios}=require('./browser-authored.cjs');
 const {runPrivateToolScenarios}=require('./browser-private-tools.cjs');
 const {runGalleryProvenanceScenarios}=require('./browser-gallery-provenance.cjs');
 const {runArrangementScenarios}=require('./browser-arrangement.cjs');
+const {runEditorAidsScenarios}=require('./browser-editor-aids.cjs');
 const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
 const scene = changes => { const {shape,x,y,size,...rest}=changes||{}; const value = fixtureScene(rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
@@ -781,6 +782,7 @@ async function run() {
         await runPrivateToolScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runGalleryProvenanceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runArrangementScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
+        await runEditorAidsScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runIndependentSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});
