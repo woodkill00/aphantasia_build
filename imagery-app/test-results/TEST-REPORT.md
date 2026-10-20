@@ -1,3 +1,21 @@
+# Feature 013 evidence-transport repair preparation
+
+20 October 2026, 17:01 UTC. This is an evidence-harness-only preparation record, not native acceptance or integration. Runtime remains **382339 bytes**, SHA-256 `df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4`. All 200 existing native groups, their assertions/order, 78 assigned Feature013 captures, screenshot settings, baseline fixture/paired timing criteria, sandbox/cleanup, single read-only job and 23-minute native / 26-minute job budgets remain unchanged. No group model, scenario import or runner call is added.
+
+## Green workflow with unavailable detailed evidence, retained
+
+[Run 39453086729](https://github.com/woodkill00/aphantasia_build/actions/runs/39453086729) reports workflow success on published head `ac0bb7db`. Its source tree `20c9f2659f6211db0e346b82b180be5e29523912` exactly matches clean local preparation commit `a399532556cb10e1de34c1cd0bb86d8fcb9f1b8a`. The completed-log connector response closes before its detailed evidence can be retrieved. Actual captures, paired timing, final native report and package details remain **unreviewed**. Green workflow metadata is not acceptance of those gates. The new transport cannot reconstruct or retroactively accept that old unavailable log; prior failures below remain failures.
+
+## Narrow repair and remaining gates
+
+The independently reviewed [lossless transport](../tests/BROWSER-EVIDENCE-TRANSPORT.md) retains every original formatted output record and JPEG byte/hash in bounded local spooling and independently compressed, ordered log blocks. It adds only generic runner reporting and source/runtime identity. No new action, dependency, upload, permission, setting or destination is introduced. The exact helper and tests match the accepted shared freeze; local targeted transport/CDP checks passed **46/46**. Complete local `node --test imagery-app/tests/*.test.cjs`: **1215/1215 PASS**, zero failures, Node v24.19.0, 22091.237608 ms. Offline documentation checks passed 51 Markdown files / 339 links; synthetic fixtures passed 3 valid / 14 rejected without a browser. All 84 manifest entries verify; assembly reproduces identical runtime bytes and 82 other tracked source/test/workflow/script files remain byte-identical. These are local checks, not native execution or a clean-checkout CI package pass.
+
+The native output cap is **7,350,000 bytes**, an empirical reviewed budget, not a known connector limit or delivery guarantee. The shared 350-capture projections are approximately 6,564,851 bytes from the current group corpus and 7,666,076 bytes from the older PR16 mix; the unfavorable estimate exceeds the cap and is not hidden. Neither is a bound or a measured size for Feature013's complete 200-group corpus. Non-native output and Actions timestamps add overhead. A cap or delivery failure remains nonacceptance, never permission to drop frames or silently increase the cap.
+
+The repair has **not run native CI**. A decoded complete transcript is not acceptance: independently verify terminal job success, expected source/tree/runtime and clean checkout, all **200** ordered original case results, final suite/cleanup and every capture hash; inspect assigned actual images and paired measurements; review the clean-checkout package output. No commit, publication, merge, release, hosting or collection is claimed by this preparation.
+
+---
+
 # Feature 013 repaired-candidate preparation record
 
 20 October 2026, 15:53 UTC. This is a dated source-preparation snapshot, not a claim of later native acceptance or integration. The independently reviewed repaired runtime is **382339 bytes**, SHA-256 `df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4`. Complete local `node --test imagery-app/tests/*.test.cjs`: **1192/1192 PASS**, zero failures, Node v24.19.0, 17203.442198 ms. Independent targeted UI checks passed 233 tests; atomic UI passed 62. Repaired native/visual/package checks had not run at this snapshot. Every exact head must pass all gates before protected merge; see [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) for the subsequent exact-head outcome.

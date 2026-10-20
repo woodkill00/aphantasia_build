@@ -1,6 +1,6 @@
 {
   "date": "2026-10-20",
-  "status": "DATED_REPAIR_PREPARATION_SNAPSHOT",
+  "status": "DATED_TRANSPORT_REPAIR_PREPARATION_SNAPSHOT",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
@@ -11,36 +11,36 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "passed": 1192,
-    "total": 1192,
+    "passed": 1215,
+    "total": 1215,
     "failed": 0,
     "nodeVersion": "v24.19.0",
-    "durationMs": 17203.442198,
-    "scope": "Exact final runtime local Node/model/DOM-double/package-unit suite after metadata refresh; not native browser execution."
+    "durationMs": 22091.237608,
+    "scope": "Complete local Node/model/DOM-double/package-unit and lossless transport suite after transport port and metadata refresh; not native browser execution or clean-checkout CI package acceptance."
   },
   "browser": {
-    "status": "REPAIRED_RUNTIME_NOT_RUN_AT_SNAPSHOT",
+    "status": "TRANSPORT_REPAIR_FRESH_NATIVE_NOT_RUN_PRIOR_GREEN_RUN_UNREVIEWED",
     "preparedGroups": 200,
     "preservedGroups": 178,
     "newGroups": 22,
     "preparedAdditionalCaptures": 78
   },
   "visual": {
-    "status": "REPAIRED_RUNTIME_NOT_RUN_AT_SNAPSHOT"
+    "status": "PRIOR_GREEN_RUN_UNREVIEWED_FRESH_TRANSPORT_RUN_NOT_RUN"
   },
   "performance": {
-    "status": "NOT_RUN",
+    "status": "PRIOR_GREEN_RUN_DETAILS_UNAVAILABLE_FRESH_TRANSPORT_RUN_NOT_RUN",
     "comparison": "Local hash-pinned Feature 012 baseline; six alternating pairs per device for shared singleton nudge/drag/first Hide. New batch/gap costs are candidate-only.",
     "predeclaredCriteria": "Candidate minus baseline p95 <=10 ms for shared routes; candidate events and first Hide <50 ms. Synthetic synchronous handler plus forced layout only.",
     "baselineSha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735"
   },
   "package": {
-    "status": "LOCAL_UNIT_PASS_CLEAN_CHECKOUT_NATIVE_CI_PACKAGE_NOT_RUN"
+    "status": "PRIOR_GREEN_RUN_DETAILS_UNAVAILABLE_FRESH_CLEAN_CHECKOUT_GATE_NOT_RUN"
   },
   "documentation": {
     "status": "PASS",
-    "markdownFiles": 50,
-    "localLinks": 337,
+    "markdownFiles": 51,
+    "localLinks": 339,
     "command": "node scripts/check-docs.cjs"
   },
   "priorFailedAttempt": {
@@ -1648,7 +1648,7 @@
     "scope": "Complete local Node/model/DOM-double/package-unit suite after runtime/source integrity refresh; not native browser execution.",
     "artifactSha256": "fce4844df0a639eba3096516de0e05e8e38e3b9a4e195a1e9cb9b27c240f2ce4"
   },
-  "snapshotAt": "2026-10-20T15:53:00Z",
+  "snapshotAt": "2026-10-20T17:01:00Z",
   "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
   "firstNativeAttempt": {
     "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39447144887",
@@ -1672,5 +1672,51 @@
       "Provenance screenshot was taken after export cleared the preview."
     ],
     "repairStatus": "Source and strict test-sequence/aperture repairs independently accepted; repaired native and visual outcome requires exact-head checks."
+  },
+  "previousRepairPreparationLocalNode": {
+    "status": "PASS",
+    "command": "node --test imagery-app/tests/*.test.cjs",
+    "passed": 1192,
+    "total": 1192,
+    "failed": 0,
+    "nodeVersion": "v24.19.0",
+    "durationMs": 17203.442198,
+    "scope": "Exact final runtime local Node/model/DOM-double/package-unit suite after metadata refresh; not native browser execution."
+  },
+  "priorGreenUnreviewedAttempt": {
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39453086729",
+    "publishedHeadPrefix": "ac0bb7db",
+    "equivalentLocalCommit": "a399532556cb10e1de34c1cd0bb86d8fcb9f1b8a",
+    "tree": "20c9f2659f6211db0e346b82b180be5e29523912",
+    "runtimeSha256": "df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4",
+    "workflowConclusion": "SUCCESS",
+    "evidenceReview": "UNREVIEWED_COMPLETE_LOG_UNAVAILABLE",
+    "limitation": "The completed-log connector response closes before detailed evidence can be retrieved. Actual capture, paired timing, final native report and package details were not independently reviewed. Green workflow metadata is not acceptance; this transport repair does not retroactively accept that run."
+  },
+  "transportRepair": {
+    "status": "SOURCE_REVIEWED_LOCAL_GATES_PASS_FRESH_NATIVE_NOT_RUN",
+    "snapshotAt": "2026-10-20T17:01:00Z",
+    "helperSha256": "b453d6563215c6c438e31c316c2de6afc2b8047e855fbf09106d5909dff8e274",
+    "testsSha256": "b57b88318d2aa50ccbc603719df2e5e3699670150bcff94357cc495a9ed88356",
+    "runnerSha256": "afe1189e78d0d0ef4e7086fcd0c4cf7ae0a4b895f545f497aa6fe111d5666d15",
+    "documentation": "imagery-app/tests/BROWSER-EVIDENCE-TRANSPORT.md",
+    "maxNativeTransportBytes": 7350000,
+    "expectedNativeGroups": 200,
+    "targetedLocalTests": {
+      "passed": 46,
+      "total": 46,
+      "failed": 0
+    },
+    "scope": "Exact shared lossless transport helper/tests/documentation and generic runner reporting only. No group feature imports, calls, models or scenarios. Runtime, 200 native groups, capture bytes/settings, paired criteria, default sandbox, cleanup, single read-only workflow and 23-minute native / 26-minute job budgets remain unchanged.",
+    "acceptanceBoundary": "A complete decoded transcript alone is insufficient. Independently verify terminal job success, expected source/tree/runtime and clean checkout, all 200 ordered case results, final suite/cleanup, capture hashes, assigned actual images, paired timing and clean-checkout package output before acceptance.",
+    "budgetRisk": "The 7,350,000-byte native cap is an empirical reviewed budget, not a connector limit or delivery guarantee. Shared 350-capture projections are approximately 6,564,851 bytes from the current group corpus and 7,666,076 bytes from the older PR16 mix, the latter exceeding the cap. Neither bounds the 200-group Feature013 corpus; non-native output and timestamp overhead are additional. Do not drop captures or silently increase the cap.",
+    "localIntegrity": {
+      "manifestFiles": 84,
+      "unchangedTrackedSourceTestWorkflowAndScriptFiles": 82,
+      "runtimeReassembly": "BYTE_IDENTICAL",
+      "fixtureValid": 3,
+      "fixtureRejected": 14,
+      "browserExecuted": false
+    }
   }
 }
