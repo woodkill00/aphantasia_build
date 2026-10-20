@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T14:09:00Z",
+  "updated": "2026-10-20T14:32:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1520,7 +1520,7 @@
       "id": "IF-050",
       "title": "Add layer tools, original presets and session arrangement",
       "priority": "P2",
-      "status": "core_accepted_editor_aids_source_review_native_pending",
+      "status": "core_and_recorded_editor_aids_acceptance_pass_final_integration_pending",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1541,9 +1541,10 @@
         "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Fourth increment implemented: session-only full-record item locks, Unlock all, accepted history guard, retained Apply/capture locks, successful-only replacement clearing, drag/placement-only Off/1/5/10 snap and Center X/Y/both. Duplicate locked item creates an independent unlocked copy. Current local Node suite passes 935/935 and independent source/code review is accepted; native/visual/package remain NOT RUN.",
         "Independent PR 14 review accepted all 22 v10 arrangement captures and four v8 rapid/focused-Undo captures, each actually inspected after SHA verification. Original/rapid movable/rapid locked touch paths passed first trusted Undo/Unlock without browser fling suppression. All 160 native groups and package passed; final documentation-head CI/integration pending.",
         "Feature 012 planning contract: specs/012-editor-aids/spec.md, clarifications.md, plan.md, tasks.md, analysis.md, research.md and checklists/requirements.md. This specifies only opt-in editor aids, disclosed grid thinning, concealment disarming and scene-only provenance exclusion; it is not implementation or new-feature acceptance. Baseline main edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a / tree a436707b99e5b62324f6d9ee6f4f585c6ed210be independently passed run 39428678423 (935 Node, 160 native, package/cleanup).",
-        "20 October 2026 current reconciliation: PR 14 merged edc92d58; exact-main run 39428678423 passed 935 Node / 160 native/package/cleanup with assigned 26-frame visual acceptance. Feature 012 candidate 1069 Node PASS did not clear a subsequent independent failed-paint provenance finding; repair and new aggregate/native gates pending. Prior pending-integration statements above are historical premerge snapshots."
+        "Historical pre-corrected-head snapshot: 20 October 2026 current reconciliation: PR 14 merged edc92d58; exact-main run 39428678423 passed 935 Node / 160 native/package/cleanup with assigned 26-frame visual acceptance. Feature 012 candidate 1069 Node PASS did not clear a subsequent independent failed-paint provenance finding; repair and new aggregate/native gates pending. Prior pending-integration statements above are historical premerge snapshots.",
+        "20 October 2026: Feature 012 PR 15 corrected head 5edddc18 / run 39437474221 passed 1080 Node, 178 native, package and cleanup. Independent review accepted assigned 36 v11 images (27 identical previously inspected, 9 new/changed inspected) and predeclared paired timing. Prior 176/178 failure and forced-colors defect remain recorded. Final evidence/test-assertion head CI and protected integration remain required; multi-selection/groups not implemented."
       ],
-      "nextAction": "Complete Feature 012 failed-paint isolation repair and independent source/native/visual/package gates before protected merge. Then separately implement atomic multi-selection alignment/distribution and session groups."
+      "nextAction": "Complete exact final-head CI and protected Feature 012 integration, verify exact main, then separately promote reviewed multi-selection and flat session-group contracts."
     },
     {
       "id": "IF-051",
@@ -1923,24 +1924,24 @@
       "nextAction": "Preserve all existing gates during separate Feature 012 work."
     },
     "editorAidsProvenance": {
-      "status": "SOURCE_REPAIRED_INDEPENDENT_REPRODUCTION_PASS_NATIVE_PENDING",
+      "status": "RECORDED_SCOPED_NATIVE_ACCEPTED_FINAL_HEAD_CI_REQUIRED",
       "scope": "A failed fresh clean paint after aids must not expose a previously completed clean record. Source review reproduced defect after1069 local checks passed; targeted all-start-route regressions required.",
-      "nextAction": "Retain success-only eligibility regressions; latest corrected local aggregate passes 1080/1080, exact-head native and visual/package gates pending."
+      "nextAction": "Preserve success-only eligibility and stale-record regressions through final-head and exact-main gates."
     },
     "editorAidsForcedColors": {
-      "status": "SOURCE_REPAIR_ACCEPTED_ACTUAL_VISUAL_RERUN_REQUIRED",
+      "status": "RECORDED_NATIVE_AND_ACTUAL_VISUAL_ACCEPTED_FINAL_HEAD_CI_REQUIRED",
       "scope": "Both forced-colors screenshots had near-black grid borders against dark canvas. Mark-only fixed-neutral CSS opt-out preserves visibility without changing system-colored controls.",
-      "nextAction": "Verify exact-head native computed styles and inspect repaired desktop/mobile frames."
+      "nextAction": "Retain exact mark/control computed-color and actual screenshot checks in final-head CI."
     }
   },
-  "currentStatus": "Core PR11\u201314 merged, exact-main edc92d58 independently accepted in run 39428678423: 935 Node / 160 native/package/cleanup and assigned 26-frame visual scope. Feature 012 editor aids is a separate unmerged candidate under source review; native/visual/performance not run. Failed-clean-paint provenance isolation repair independently passes its original reproduction and 77 aids UI tests; latest corrected local aggregate passes 1080/1080, while first exact-head native run passed 176/178 with two new test-sequence failures after intentionally hidden Redo. Explicit resume/rearm added to test; full rerun, visual review and package gate remain required. Multi-selection alignment/distribution and session groups remain subsequent increments. No new release, hosting or collection.",
+  "currentStatus": "Core PR 11\u201314 merged and accepted at exact main edc92d58. Feature 012 recorded corrected head passes 1080 Node, 178 native, package and cleanup; assigned 36-frame visual scope and predeclared paired timing accepted. Final evidence/test-assertion head requires full CI before protected PR 15 integration. Multi-selection and session groups remain separate subsequent increments. No new release, hosting or research collection.",
   "currentIteration": {
     "name": "Feature 012: bounded editor aids",
     "base": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
     "baseTree": "a436707b99e5b62324f6d9ee6f4f585c6ed210be",
     "remoteBranch": "feature/012-editor-aids",
     "publicationStatus": "DRAFT_PR_15_OPEN_NOT_MERGED",
-    "status": "native_test_sequence_and_forced_colors_repairs_reviewed_rerun_pending",
+    "status": "recorded_scoped_acceptance_pass_final_head_ci_required",
     "contract": "specs/012-editor-aids/spec.md",
     "acceptanceReference": "specs/012-editor-aids/tasks.md",
     "htmlSha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735",
@@ -1950,10 +1951,78 @@
       "total": 1080,
       "failed": 0,
       "nodeVersion": "v24.19.0",
-      "durationMs": 16967.507973
+      "durationMs": 13897.355976
     },
-    "sourceHead": "c41840c4a98d54560ac955a5caba6aebebe7b5ae",
-    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39434279779"
+    "sourceHead": "5edddc18cabdbaeb6cd9612c34fd8b68f9fc5f16",
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39437474221",
+    "recordedNative": {
+      "passed": 178,
+      "total": 178,
+      "failed": 0,
+      "seconds": 795.126
+    },
+    "recordedVisual": {
+      "emittedAndByteHashVerified": 178,
+      "assignedV11Scope": 36,
+      "newOrChangedInspected": 9,
+      "identicalToPreviouslyInspected": 27,
+      "otherFramesChangedSincePrevious": 20,
+      "otherFramesNotClaimedInspected": true,
+      "findings": [
+        "Both forced-colors captures now show clearly visible neutral grids with system-colored controls retained.",
+        "Previously unreached desktop/mobile aided drag/nudge/history captures now inspected; no scoped layout blocker.",
+        "Other scoped ratio/clipping/provenance/narrow/short/fullscreen images either inspected anew or exact matches to inspected prior bytes."
+      ]
+    },
+    "recordedPerformance": {
+      "predeclaredAt": "2026-10-20T14:16:00Z",
+      "criteria": "on p95 minus off p95 <=10ms; on max <50ms; first Hide <50ms",
+      "result": "PASS within synthetic synchronous handler/layout scope",
+      "measurements": [
+        {
+          "device": "desktop",
+          "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency",
+          "off": {
+            "count": 12,
+            "median": 1.5,
+            "p95": 1.7999999999883585,
+            "max": 1.7999999999883585
+          },
+          "on": {
+            "count": 12,
+            "median": 2.2000000000116415,
+            "p95": 2.900000000023283,
+            "max": 2.900000000023283
+          },
+          "hide": {
+            "trusted": true,
+            "ms": 7,
+            "hidden": true
+          }
+        },
+        {
+          "device": "mobile-emulation",
+          "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency",
+          "off": {
+            "count": 12,
+            "median": 1.599999999976717,
+            "p95": 2.5,
+            "max": 2.5
+          },
+          "on": {
+            "count": 12,
+            "median": 2.300000000046566,
+            "p95": 2.5,
+            "max": 2.5
+          },
+          "hide": {
+            "trusted": true,
+            "ms": 7.200000000069849,
+            "hidden": true
+          }
+        }
+      ]
+    }
   },
   "historicalArrangementPremergeIteration": {
     "name": "Fourth increment: session locks and precise arrangement",
