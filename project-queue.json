@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T00:51:00Z",
+  "updated": "2026-10-20T01:30:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -789,7 +789,7 @@
         "Independent acceptance and native browser evidence"
       ],
       "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
-      "status": "received_reviewed",
+      "status": "accepted_used",
       "next": {
         "pass": "Consumer reviews, integrates and tests",
         "fail": "Responsible owner repairs its writable files",
@@ -807,7 +807,13 @@
         "tokens": null,
         "cost": null
       },
-      "nextAction": "Wait for actual native and visual feedback before repair or acceptance"
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
     },
     {
       "id": "IF-031",
@@ -835,7 +841,7 @@
         "Independent acceptance and native browser evidence"
       ],
       "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Consumer reviews, integrates and tests",
         "fail": "Responsible owner repairs its writable files",
@@ -854,11 +860,12 @@
         "cost": null
       },
       "evidence": [
-        "240/240 non-browser pass",
-        "54 native groups and14 reference captures prepared",
-        "CI39347872671 running"
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
       ],
-      "nextAction": "Inspect actual native results, retain failures, repair with evidence"
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects."
     },
     {
       "id": "IF-032",
@@ -882,7 +889,7 @@
         "Independent acceptance and native browser evidence"
       ],
       "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Consumer reviews, integrates and tests",
         "fail": "Responsible owner repairs its writable files",
@@ -899,7 +906,14 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
     },
     {
       "id": "IF-033",
@@ -940,7 +954,7 @@
         "Independent acceptance and native browser evidence"
       ],
       "authority": "Owner explicitly requested continued work until implemented, tested and merged with main; no hosted deployment.",
-      "status": "queued",
+      "status": "in_progress",
       "next": {
         "pass": "Consumer reviews, integrates and tests",
         "fail": "Responsible owner repairs its writable files",
@@ -957,7 +971,8 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "Review final documentation/outgoing tree, verify its CI, then merge and confirm main."
     },
     {
       "id": "IF-034",
@@ -1040,7 +1055,13 @@
         "tokens": null,
         "cost": null
       },
-      "nextAction": "Review rendered sequence behavior when native captures arrive"
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
     },
     {
       "id": "IF-036",
@@ -1062,7 +1083,7 @@
         "Explicit scope decision before temporal implementation"
       ],
       "authority": "Owner requested timed scenes, ordered shapes, fades, flash/pulse consideration, independent user/visual testing and designer/coder discussion. Risk research and design authorized; no unrestricted flash/pulse implementation or external deployment.",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Coordinator resolves proposal and authorized implementation scope",
         "fail": "Owner repairs analysis or names evidence limitation",
@@ -1085,7 +1106,13 @@
         "tokens": null,
         "cost": null
       },
-      "nextAction": "Inspect actual sequence screenshots and independent native results"
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
     },
     {
       "id": "IF-037",
@@ -1175,7 +1202,7 @@
         "Independent native and visual acceptance"
       ],
       "authority": "Owner requested ordered timed scenes and fades, independent visual/designer/coder review and implementation. Review completed; final one-pass scope documented. Owner now authorizes merge after all checks pass.",
-      "status": "received_reviewed",
+      "status": "accepted_used",
       "next": {
         "pass": "Independent test/review and integrate",
         "fail": "Owner repairs its source files",
@@ -1194,11 +1221,12 @@
         "cost": null
       },
       "evidence": [
-        "Current HTML111934bytes SHA256 be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e",
-        "319/319 current non-browser checks pass",
-        "Independent source review conditional pass; native verification pending"
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
       ],
-      "nextAction": "Run native user journeys/pixel checks and repair evidenced defects"
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects."
     },
     {
       "id": "IF-039",
@@ -1234,7 +1262,7 @@
         "No unsupported clinical or verification claims"
       ],
       "authority": "Requested implementation documentation and public-repository privacy verification",
-      "status": "received_reviewed",
+      "status": "accepted_used",
       "next": {
         "pass": "Integrate final reviewed evidence",
         "fail": "Owner repairs own output or source owner fixes finding",
@@ -1251,7 +1279,14 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
     },
     {
       "id": "IF-040",
@@ -1277,7 +1312,7 @@
         "No unsupported clinical or verification claims"
       ],
       "authority": "Requested implementation documentation and public-repository privacy verification",
-      "status": "in_progress",
+      "status": "done",
       "next": {
         "pass": "Integrate final reviewed evidence",
         "fail": "Owner repairs own output or source owner fixes finding",
@@ -1294,20 +1329,27 @@
       "usage": {
         "tokens": null,
         "cost": null
+      },
+      "nextAction": "No remaining scoped outgoing privacy blocker; integration/merge and broader acceptance gates remain separate.",
+      "finalEvidence": {
+        "date": "2026-10-20",
+        "sourceCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
+        "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+        "result": "Reviewed source/test deltas and explicit eight-file documentation allowlist. Synthetic data only; no raw logs, user notes, private paths or unsupported acceptance claims included."
       }
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
-    "targetBranch": "feat/portable-imagery-preview",
+    "repositoryBaseCommit": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+    "targetBranch": "feat/live-colors-clean-fullscreen",
     "appPath": "imagery-app/index.html",
-    "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
-    "appBytes": 40716,
-    "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+    "appSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+    "appBytes": 114116,
+    "note": "Current tested source head 13cfac66e80b55d401b454dc99c8e6c690f09962; successful native run 39352924875. Documentation-only integration follows."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
-    "limits": "Task entries do not authorize publication, deployment, data sharing, package installation, security changes, human-participant research, or features outside the documented static scope. Those actions require appropriate explicit authorization.",
+    "limits": "Task entries do not authorize publication, deployment, data sharing, package installation, security changes, human-participant research, or features outside the documented scene/sequence scope. Those actions require appropriate explicit authorization.",
     "evidencePolicy": "Keep passed, failed, blocked, and not-run work distinct. Never infer browser, device, clinical, or accessibility acceptance from synthetic checks.",
     "privacyPolicy": "Use synthetic fixtures only. Do not add personal observations, credentials, private identifiers, or unreviewed process output.",
     "writePolicy": "Each task may change only its declared public paths. A single writer must own a shared path at a time; coordinate a handoff before overlap. Generated local browser output remains untracked pending review.",
@@ -1337,7 +1379,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current static implementation complete; future features deferred."
+      "currentStatus": "Authorized version 0.4 scene/sequence implementation complete in scoped software verification; broader features deferred."
     },
     {
       "role": "tester",
@@ -1354,7 +1396,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "156 non-browser and 22 headless Chrome scenario groups passed; physical-device and manual accessibility checks remain pending."
+      "currentStatus": "324 non-browser and 74 native Chrome groups passed; physical-device and full manual accessibility checks remain pending."
     },
     {
       "role": "reviewer",
@@ -1390,19 +1432,19 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version0.3 live color feedback and clean fullscreen implementation started from verified main; earlier verification is historical for this new iteration.",
+  "currentStatus": "Version 0.4 passes 324 non-browser checks and 74 native Chrome groups on the exact recorded runtime. Final documentation/outgoing-tree integration and merge verification remain; physical-device, full accessibility and qualified sensory/clinical gates remain open.",
   "currentIteration": {
     "base": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
     "concurrencySlots": 7,
     "coordinatorCounts": true,
-    "activeWorkerLanes": 5,
     "requestedModel": "gpt-6-astra",
     "requestedReasoning": "xhigh",
     "remoteBranch": "feat/live-colors-clean-fullscreen",
-    "recovery": "v0.3 accepted at241+54native checks. Sequence engine accepted and UI source frozen at be1be8a2;319nonbrowser pass. Native temporal/user-journey runner integration and reports finishing. No sequence browser pass claimed. Documentation returns accepted pending final evidence. Privacy review pending exact final tree. Owner authorized merge after all checks pass.",
-    "sourceHead": "b16cc2683145389abe53e30ae201d978d26c99c9",
+    "recovery": "All 324 non-browser and 74 native groups pass. Reviewed runtime and source context fixes accepted in scoped software verification. Final documentation/outgoing-tree review and merge remain distinct. No deployment or physical-device/clinical acceptance claimed.",
+    "sourceHead": "13cfac66e80b55d401b454dc99c8e6c690f09962",
     "pullRequest": 2,
-    "candidateRun": 39347872671,
-    "htmlSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a"
+    "candidateRun": 39352924875,
+    "htmlSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+    "visualReview": "All 28 final-run JPEG byte counts/hashes verified; actual contact-sheet pixels and selected full-size frames inspected, consistent with earlier independent exact-runtime visual acceptance."
   }
 }

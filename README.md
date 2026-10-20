@@ -1,10 +1,10 @@
 # Imagery Field
 
-A local-first scene and sequence editor. The version 0.4 candidate adds ordered scene snapshots, editable holds and adjacent crossfades, manual step preview, and explicitly started one-pass playback. Static scenes still have individual dots/pixels/outlines, object/background HSL controls, immediate editor-only color samples, and optional clean fullscreen viewing.
+A local-first scene and sequence editor. Version 0.4 adds ordered scene snapshots, editable holds and adjacent crossfades, manual step preview, and explicitly started one-pass playback. Static scenes still have individual dots/pixels/outlines, object/background HSL controls, immediate editor-only color samples, and optional clean fullscreen viewing.
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
 
-**Candidate status:** sequence controls are implemented in the candidate source; independent verification is in progress. The instructions below describe this candidate; the v0.3 results below do not verify its new behavior. See the [sequence contract](docs/sequence-spec.md) and [current test report](imagery-app/test-results/TEST-REPORT.md).
+**Verified software preview:** version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups. Independent source/user-flow review and actual rendered-frame inspection informed the repairs. Physical-device, full accessibility and clinical acceptance remain separate. See the [sequence contract](docs/sequence-spec.md) and [current test report](imagery-app/test-results/TEST-REPORT.md).
 
 ## Open and use the app
 
@@ -24,11 +24,11 @@ Timed playback is windowed-only so Pause and Stop remain reachable. Static scene
 
 ## Verification: separate artifacts
 
-**Version 0.4 sequence candidate:** not yet independently accepted. Rebuild and retest its exact source/artifact before assigning a pass. New sequence rendering, timing, atomic edits, reduced-motion handling, and revised layout need their own evidence.
+**Version 0.4:** [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) passed **324 non-browser checks and 74/74 native Chrome scenario groups**, 37 each for desktop and phone-sized touch emulation. Source head: `13cfac66e80b55d401b454dc99c8e6c690f09962`. The 114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux were used; browser/profile cleanup passed. This covers sequence pixels/timing, atomic edits, reduced-motion events, file flows and revised layout, not untested devices or clinical efficacy. The two earlier failing runs and their repairs remain in the test report.
 
 **Version 0.3 baseline:** [Chrome CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905) passed **241 non-browser checks and 54 real-browser scenario groups** in sandbox-enabled headless Chrome **155.0.8059.39** on Linux. Source head: `57b8f2c2811dc246abca55d9630c0581551d448d`. The 65,152-byte HTML has SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`.
 
-Two independent scripted native-browser journeys and inspection of 14 actual captured frames informed the next layout. They found excessive scrolling between hue and Apply and a hidden-state decorative circle that could resemble residual scene content. These are engineering usability observations, not a human study. Compact Scene/Sequence sections, a selected-step inspector, reachable Apply/capture actions, and removal of that circle are implemented in the candidate source and need fresh independent checks.
+Two independent scripted native-browser journeys and inspection of 14 actual captured frames informed the next layout. They found excessive scrolling between hue and Apply and a hidden-state decorative circle that could resemble residual scene content. These are engineering usability observations, not a human study. Compact Scene/Sequence sections, a selected-step inspector, reachable Apply/capture actions, and removal of that circle are implemented and checked in the version 0.4 source, native journeys and rendered-frame review.
 
 **Historical version 0.2:** [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180) passed 216 non-browser checks and 38 real-browser groups on 2026-10-19. Source head: `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`. Its 57,177-byte HTML has SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. A separate fixture check accepted 3 valid and rejected 14 invalid inputs. Its first browser run passed 36/38; a harness-only fullscreen-event observation repair preceded the complete rerun with the app unchanged. The runs used different Chrome patch versions, so the original failure's cause remains unproven.
 

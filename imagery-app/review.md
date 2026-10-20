@@ -1,6 +1,14 @@
+# Current source and native-browser acceptance: version 0.4
+
+The exact 114,116-byte artifact `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda` passed 324 non-browser checks and all 74 native Chrome groups in [run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), source `13cfac66e80b55d401b454dc99c8e6c690f09962`. Production fixes and the final harness-only observation repair were independently reviewed. The native run confirms repaired focus recovery, 44-pixel short-layout controls, capture-source context, sequence boundaries/composition, genuine real-time playback and cancellation, separate downloads, static color feedback and clean fullscreen. Independent inspection of 28 actual frames from the preceding run accepted this same unchanged runtime; final-run capture evidence is reconciled in the [test report](test-results/TEST-REPORT.md) and summary.
+
+The first two failed v0.4 runs are retained, including native auto-blur/target failures and media observer timeouts. The final harness reads event records before live preference state, retaining trusted synchronous Hidden/black assertions. The live-getter cache explanation remains a hypothesis, not a proven browser defect. No production code changed for that final harness repair.
+
+This is scoped software acceptance. Physical devices, other engines, full accessibility, qualified sensory review and clinical efficacy are not established. Merge status is separate from test acceptance; nothing here claims hosted deployment. Earlier version-specific findings below are historical.
+
 # Source and browser-repair review
 
-Current reviewed artifact: Imagery Field 0.1.0, 2026-10-19; **40,716 bytes**, SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) subsequently passed 156 non-browser checks and all 22 scoped real-Chrome scenario groups.
+Historical reviewed artifact: Imagery Field 0.1.0, 2026-10-19; **40,716 bytes**, SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) subsequently passed 156 non-browser checks and all 22 scoped real-Chrome scenario groups.
 
 ## Baseline source findings
 

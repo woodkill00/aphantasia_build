@@ -95,7 +95,7 @@ Avoid unnecessary identifying/medical details. The note export contains its form
 
 ## Testing and limits
 
-The sequence candidate has no inherited test pass. Its controls, timing, rendering, atomic transactions, file separation, and layout require new verification on the exact built artifact. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
+Version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups in [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) on source `13cfac66e80b55d401b454dc99c8e6c690f09962` and HTML SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Controls, timing, native pixels, atomic transactions, file separation, concealment and selected layout/focus flows were exercised on desktop and phone-sized touch emulation. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
 
 The separate v0.3 baseline passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), using sandbox-enabled headless Chrome 155.0.8059.39 on Linux. Two independent scripted journeys and 14 inspected actual frames informed the redesign; they were not a human usability study. The [root README](../README.md) identifies the exact v0.3 artifact and older baseline results.
 

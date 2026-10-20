@@ -2,11 +2,11 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: version 0.4 sequence candidate
+## Current increment: verified version 0.4 software preview
 
-Implement the [final one-pass sequence contract](sequence-spec.md): independent scene snapshots, atomic apply/capture, immediate valid sequence edits, 1–32 steps, finite holds, adjacent crossfades/direct cuts against one shared background, manual step preview, windowed one-pass playback, exact painted-frame Pause/Resume, immediate cancellation/concealment, reduced-motion handling, and separate sequence JSON.
+Implemented the [final one-pass sequence contract](sequence-spec.md): independent scene snapshots, atomic apply/capture, immediate valid sequence edits, 1–32 steps, finite holds, adjacent crossfades/direct cuts against one shared background, manual step preview, windowed one-pass playback, exact painted-frame Pause/Resume, immediate cancellation/concealment, reduced-motion handling, and separate sequence JSON.
 
-The current candidate has implemented source controls and is in independent verification. It has no inherited acceptance from the static v0.3 artifact. Compact Scene/Sequence sections, one selected-step inspector, reachable Apply/capture actions, and removal of the decorative hidden-state circle respond to the v0.3 visual review. Confirm them on the built candidate before describing them as verified.
+The exact version 0.4 artifact passed 324 non-browser checks and 74 native Chrome groups in [run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875). Compact Scene/Sequence sections, a selected-step inspector, reachable Apply/capture actions, visible capture-source context and removal of the decorative hidden-state circle were reviewed using actual native flows and rendered frames. This is scoped engineering acceptance, not inherited v0.3 evidence or physical-device/clinical clearance.
 
 The supported hold/transition/count/total capacities are engineering limits, not medical thresholds. The 11-second circle/square/triangle example is an editable authoring fixture, not a prescription. No autoplay, replay loop, strobe/pulse oscillator, exposure escalation, or automatic reduced-motion cuts are included. Timed playback stays windowed; static/manual preview may use clean fullscreen. No hosted deployment is authorized for this increment.
 
@@ -17,9 +17,9 @@ The supported hold/transition/count/total capacities are engineering limits, not
 - **v0.2:** [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), 216 non-browser checks and 38 browser groups. The initial run passed 36/38; a harness-only fullscreen-event observation repair preceded the complete rerun with unchanged app source. Chrome patch versions differed, so the first failure's cause remains unproven. Preserve the failure and local launch blocker.
 - **v0.1:** [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608), 156 non-browser checks and 22 browser groups after the recorded layout/harness repairs.
 
-The [root README](../README.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) distinguish artifact hashes, environments, attempts, and limits. None of these older results closes the new sequence gates.
+The [root README](../README.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) distinguish artifact hashes, environments, attempts, and limits. The separate version 0.4 run supplies current sequence evidence; older runs remain historical.
 
-## Sequence acceptance work
+## Sequence acceptance checks completed in the recorded software scope
 
 1. **Closed data contract:** independently review static/sequence separation, canonical validation on every path, unknown/duplicate keys, accessors/holes/depth/UTF-8 bounds, names/IDs, nonempty snapshots, timing increments, total duration, and immutable accepted data. Keep legacy static migration unchanged.
 2. **Atomic reduced-click editing:** test Add/Replace with valid and invalid scene drafts, mismatched backgrounds, full capacity, excessive totals, invalid sequence raw fields, reorder/delete normalization, no partial commit/history change on failure, and load-step copy behavior. Confirm sequence edits do not change scene undo history or notes.

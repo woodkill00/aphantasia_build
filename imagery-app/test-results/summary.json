@@ -1,13 +1,13 @@
 {
   "date": "2026-10-20",
-  "status": "V04_NONBROWSER_PASS_NATIVE_NOT_RUN",
+  "status": "V04_SCOPED_CHROME_CI_PASS",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.4.0",
-    "bytes": 111934,
-    "sha256": "be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e"
+    "bytes": 114116,
+    "sha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda"
   },
-  "candidateCommit": null,
+  "candidateCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
   "localEnvironment": {
     "node": "v24.19.0",
     "platform": "linux"
@@ -16,11 +16,11 @@
     "status": "PASS",
     "modelTests": 113,
     "sequenceModelTests": 25,
-    "domDoubleTests": 151,
+    "domDoubleTests": 153,
     "staticTests": 11,
-    "browserHarnessAndFixtureTests": 19,
-    "total": 319,
-    "passed": 319,
+    "browserHarnessAndFixtureTests": 22,
+    "total": 324,
+    "passed": 324,
     "failed": 0,
     "standaloneFixtures": {
       "staticValid": 3,
@@ -31,20 +31,120 @@
     }
   },
   "browser": {
-    "status": "NOT_RUN",
+    "status": "PASS",
     "preparedGroups": 74,
     "desktopGroups": 37,
     "mobileViewportTouchEmulationGroups": 37,
     "localEnvironmentStatus": "BLOCKED_BASELINE_LAUNCH",
     "newLocalLaunchAttempts": 0,
     "securityBypassUsed": false,
-    "note": "v0.4 native suite is prepared, not executed. Existing trusted fullscreenchange Hidden/black/focus snapshot assertions remain unchanged. Controlled clock/RAF pixel tests are separately labeled from real-time native user journeys; each case reloads the document."
+    "note": "Complete final run passed every group and previously unexecuted tail. Strict trusted native event, preference, Hidden and black-raster assertions are retained. Final harness-only repair avoids live observer.matches reads before native event delivery; causal getter/cache mechanism remains a hypothesis.",
+    "firstV04Attempt": {
+      "status": "FAIL",
+      "runId": 39350355646,
+      "jobId": 118392825118,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646",
+      "sourceCommit": "6c0e73e99b67b410569261880ce42f8403354725",
+      "artifactSha256": "be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e",
+      "node": "v22.23.3",
+      "chrome": "Chrome/155.0.8059.84",
+      "total": 74,
+      "passed": 66,
+      "failed": 8,
+      "failures": [
+        {
+          "device": "desktop",
+          "group": "v4 controlled-clock native pixels at all11s boundaries and last-painted Pause"
+        },
+        {
+          "device": "desktop",
+          "group": "v4 controlled native stale RAF, mode guard and lifecycle cancellation"
+        },
+        {
+          "device": "desktop",
+          "group": "v4 reduced-motion manual route and native media-change concealment"
+        },
+        {
+          "device": "desktop",
+          "group": "v4 fixed editor actions reserve focus space and Stop stays reachable on short layouts"
+        },
+        {
+          "device": "mobile-emulation",
+          "group": "v4 controlled-clock native pixels at all11s boundaries and last-painted Pause"
+        },
+        {
+          "device": "mobile-emulation",
+          "group": "v4 controlled native stale RAF, mode guard and lifecycle cancellation"
+        },
+        {
+          "device": "mobile-emulation",
+          "group": "v4 reduced-motion manual route and native media-change concealment"
+        },
+        {
+          "device": "mobile-emulation",
+          "group": "v4 fixed editor actions reserve focus space and Stop stays reachable on short layouts"
+        }
+      ],
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      },
+      "runtimeErrors": 0,
+      "unexpectedDialogs": 0,
+      "remoteAppRequests": 0,
+      "durationSeconds": 291.174,
+      "unexecutedTails": [
+        "Boundary groups stopped at completion-focus assertion; later pending-RAF and stale-postcompletion checks did not run.",
+        "Desktop stale/mode group stopped at Escape focus; stale callback, crossover and native fullscreen tails did not run. Mobile group stopped at initial disabled Play.",
+        "Media groups stopped before post-change concealment checks completed; later repeat checks did not run.",
+        "Tiny-layout groups stopped at Stop width; subsequent Show target and skip-link tail did not run."
+      ]
+    },
+    "total": 74,
+    "passed": 74,
+    "failed": 0,
+    "failures": [],
+    "runId": 39352924875,
+    "jobId": 118401068686,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875",
+    "sourceCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
+    "testMergeCheckout": "7dc3a5663548e1275d34f8f611807d44fdc9f19e",
+    "node": "v22.23.3",
+    "chrome": "Chrome/155.0.8059.39",
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "started": "2026-10-20T01:21:05.280Z",
+    "finished": "2026-10-20T01:25:49.285Z",
+    "secondV04Attempt": {
+      "status": "FAIL",
+      "runId": 39352036226,
+      "jobId": 118398205436,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39352036226",
+      "sourceCommit": "551b9800680145ae398dda47b9bfdfec024e6938",
+      "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+      "nonBrowserPassed": 323,
+      "total": 74,
+      "passed": 67,
+      "failed": 7,
+      "cause": "Separate native media-query observer delivery wait timeouts; app diagnostics showed motion-handler concealment. Runtime focus/target and all six independent sequence groups passed, but aggregate run failed.",
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      }
+    }
   },
   "visualReview": {
-    "status": "NOT_RUN_FOR_V04",
-    "preparedCaptures": 28,
+    "status": "FINAL_RUN_CAPTURES_VERIFIED_AND_INSPECTED",
+    "captured": 28,
+    "inspected": 28,
+    "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+    "reviewedRunId": 39352924875,
+    "finalRunId": 39352924875,
     "fixture": "Synthetic shared circle-square-triangle static scene and independent 11-second sequence.",
-    "note": "Previous v0.3 frames establish only the historical artifact. New v0.4 compact JPEG captures must be decoded, hash verified and inspected before visual acceptance."
+    "note": "All 28 final-run JPEG byte counts and SHA-256 values verified. Actual pixels inspected in four contact sheets plus full-size desktop circle-hold and desktop/mobile hue/pinned-action images; consistent with earlier independent inspection of all 28 exact-runtime frames. No new visual blocker. 320x180 evidence is native geometry/hit-testing, not screenshots; compressed images and automated journeys are not a human study.",
+    "totalJpegBytes": 312207
   },
   "sequenceCoverage": {
     "status": "PASS",
@@ -61,9 +161,9 @@
     }
   ],
   "limits": [
-    "Native v0.4 Chrome execution and screenshots are pending.",
     "Phone-sized touch emulation is not physical-device evidence.",
-    "OS dialogs, Safari, complete screen-reader/zoom/manual accessibility, calibrated color, qualified sensory review and efficacy remain unverified."
+    "OS dialogs, Safari/other engines, full screen-reader/zoom/manual accessibility, calibrated color/timing, qualified sensory review and efficacy remain unverified.",
+    "No hosted deployment; no live flash/pulse mode or automatic replay."
   ],
   "historicalV03": {
     "date": "2026-10-20",
@@ -551,5 +651,9 @@
         "cleanup": "PASS"
       }
     ]
+  },
+  "captureContextRegression": {
+    "status": "PASS_DOM_DOUBLE_NATIVE_PENDING",
+    "note": "Capture-source name and separate Applied/Staged state are checked against a different selected target, including edits, discard, undo/redo, empty and long names. Native authoring adds visible caption and source/target checks without relaxing focus or44px targets. Applied and staged accessible Replace names must include the full visible button label."
   }
 }

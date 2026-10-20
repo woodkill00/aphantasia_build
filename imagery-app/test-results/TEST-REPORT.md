@@ -1,27 +1,43 @@
-# Version 0.4 candidate verification
+# Version 0.4 verified software preview
 
-Date: 2026-10-20. **319/319 non-browser checks PASS. Native v0.4 browser and visual checks are NOT RUN.**
+Date: 2026-10-20. **324/324 non-browser checks and 74/74 native Chrome groups PASS.** [Successful full run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), job 118401068686, tested source `13cfac66e80b55d401b454dc99c8e6c690f09962` through PR test-merge checkout `7dc3a5663548e1275d34f8f611807d44fdc9f19e`.
 
-Frozen HTML: 111,934 bytes; SHA-256 `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e`. Local Node v24.19.0, Linux. These results cover the authorized finite one-pass sequence extension and retained static/fullscreen behavior. The accepted v0.3 evidence is preserved below and does not establish v0.4 compatibility.
+HTML: **114,116 bytes**, SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. CI used Node **22.23.3**, Linux and sandbox-enabled Chrome **155.0.8059.39**. Browser closure and temporary-profile removal both passed. No package-install, security-bypass or deployment step was added. This is a local software preview, not medical or comprehensive accessibility clearance.
 
-Executed checks: 113 static-scene model/controller, 25 independent sequence-engine, 151 DOM/Canvas/clock doubles, 11 static artifact, and 19 CDP transport/fixture/oracle checks. Browser-helper syntax, 3 accepted/14 rejected static fixtures, and the independent sequence fixture with seven reference-time cases pass. Commands:
+## Executed checks
+
+The dependency-free suite passed 113 static-model/controller, 25 sequence-engine, 153 DOM/Canvas/clock-double, 11 static-artifact and 22 CDP transport/fixture/oracle checks. Browser-helper syntax and synthetic fixture checks passed. Commands:
 
 ```sh
 node --test imagery-app/tests/*.test.cjs
 node --check imagery-app/tests/browser-cdp.cjs
-node --check imagery-app/tests/browser-sequence.cjs
-node --check imagery-app/tests/independent-sequence-user-scenarios.cjs
 node imagery-app/tests/browser-cdp.cjs --check-fixtures
-node imagery-app/tests/independent-sequence-user-scenarios.cjs --check-fixture
+node imagery-app/tests/browser-cdp.cjs
 ```
 
-Independent engine tests cover closed validation and parser limits, 32 steps, 1-hour total, two 12-object frames, exact half-open 11-second boundaries and direct cuts, 8,000 seeded reference samples, last-painted Pause, resume offsets, exact-frame acknowledgments, stale generations, invalid clocks and atomic invalid starts. Isolated engine coverage is 99.10% lines, 93.37% branches and 100% functions. The initial engine adaptation passed 19/24 due to four state-versus-frame return assumptions and one overbroad static regex. Those test assumptions were corrected to the documented API; no engine source change was needed.
+All 74 native scenario groups passed, 37 per desktop and phone-sized touch-emulation profile. Coverage includes immediate draft HSL swatches; static and manual fullscreen with explicit Show/Exit; atomic scene-to-step capture and separate file round trips; controlled-clock native RGB at hold/crossfade/cut boundaries; 12+12 overlapping objects; genuine real-time Play/Pause/Resume/Stop and one-pass completion; native focus recovery; stale callback/mode/lifecycle concealment; reduced-motion changes; and fixed actions/focus/hit targets in narrow/short layouts, including 44-pixel Stop/Show targets at 320×180. The 320×180 assertion is native geometry/hit-testing evidence, not a screenshot claim.
 
-DOM-double coverage adds atomic scene-plus-step capture, snapshot independence, immediate valid edits and invalid raw input, import races, one pending RAF, two-buffer composition, reduced motion, lifecycle cancellation, stale callbacks, and manual/timed crossover concealment. Regressions now cover persistent and one-shot NaN/throwing clocks and focus recovery after completion/Escape. Doubles establish ordering and guards, not native layout or pixels.
+Each native case reloads the document. Controlled test clocks do not leak into the separate unmodified real-time journeys. Event waits observe delivery only: immutable trusted fullscreen and media-event snapshots must already report the required hidden state and black raster. The tests do not poll until application concealment eventually succeeds. All previously unexecuted tails now ran and passed in the complete successful run.
 
-The prepared native suite has 74 groups, 37 each for desktop and phone-sized touch emulation. Sequence groups include real Canvas RGB composition at controlled boundaries, 12+12 overlaps, direct cuts, actual real-time Pause/Resume/completion, native fullscreen/media interruption, fixed-action focus/hit testing at narrow and short viewports, independent native snapshot-edit/save journeys, and a genuine unmodified 11-second run. Each case reloads the document; test-clock replacements cannot leak into real-time groups. Prior immutable trusted fullscreenchange Hidden/black/focus assertions remain unchanged. Twenty-eight compact synthetic JPEG checkpoints are prepared for actual inspection. No v0.4 native or visual pass is claimed yet.
+The independent engine suite includes 8,000 seeded timing-oracle samples. Earlier isolated sequence-engine coverage was 99.10% lines, 93.37% branches and 100% functions for the unchanged engine only; it is not whole-app or native/device coverage.
 
-The previous local sandbox-enabled launch remains blocked; no new local launch, package installation, browser-security bypass, workflow action or upload mechanism was attempted. Root-managed existing GitHub CI is the native execution route. Physical devices, OS dialogs, Safari, full accessibility, calibrated color, qualified sensory review and efficacy remain unverified.
+## Actual visual and user-flow review
+
+The final run captured 28 compact synthetic JPEG checkpoints, totaling 312,207 bytes. Every decoded byte count and SHA-256 was verified. Actual pixels were inspected in four contact sheets, with full-size desktop circle-hold and desktop/mobile hue/action-strip rechecks; no new visual blocker was found. This is consistent with the independent review of all 28 preceding-run frames for the exact unchanged runtime hash. The current artifact shows color samples and reachable Apply/capture actions, a source-scene caption with separate Applied/Staged status, correctly separated static and snapshot edits, clean shown fullscreen, explicit hidden Show, the expected circle hold and blended paused frame, and black fields after Stop/Exit. Native independent journeys exercised authoring, replacement/reorder/timing edits, save/reload, manual preview and unmodified real-time playback.
+
+These are automated user-perspective engineering checks, not a human usability study. JPEGs are reduced/compressed; exact colors and concealment use separate native Canvas pixel assertions. Long-name behavior is covered in source/regression tests; canonical-name screenshots do not prove every possible layout.
+
+## Preserved failures and repairs
+
+1. [First v0.4 run 39350355646](https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646), source `6c0e73e99b67b410569261880ce42f8403354725`, original HTML `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e`: 319 non-browser checks passed, 66/74 native groups passed and 8 failed. Native auto-blur exposed focus recovery reading activeElement too late; tiny Stop targets were below the unchanged 44-pixel requirement; media assertions ran before observed native delivery. Repairs preserve focus before hiding/disabling, reserve minimum target size and observe immutable native-event snapshots. Source/target capture context was also clarified. Failed groups' unexecuted tails were not counted as passes.
+2. [Second run 39352036226](https://github.com/woodkill00/aphantasia_build/actions/runs/39352036226), source `551b9800680145ae398dda47b9bfdfec024e6938`, current runtime hash: 323 non-browser checks passed; 67/74 native groups passed and 7 failed waiting for the separate media-query observer. The original focus/target failures and all six independent sequence journeys passed. The app's diagnostics showed its motion handler had concealed, but the observer did not record the expected event. This was still an overall failed run.
+3. Independently reviewed **harness-only** repair removed the observer's live MediaQueryList.matches read between emulation invalidation and native change delivery. It waits only on event-record count, then checks trusted event, expected preference, Hidden description, every-pixel black raster and final live preference. A two-direction regression rejects reads during pending delivery. No timeout was increased and no behavior assertion was removed. The cache/getter causal explanation remains a hypothesis; the observed timeouts resolved in the full successful rerun with unchanged production HTML.
+
+Both failed runs remain failures, not retroactive passes. The successful run supplies the current acceptance evidence. The previous local sandbox-enabled browser launch blocker was not bypassed; existing GitHub CI supplied native execution.
+
+## Remaining gates
+
+Physical Android/iOS devices, ordinary OS file choosers/opening/download locations, other browser engines, full screen-reader/keyboard/zoom/forced-color accessibility, calibrated display/color/timing, qualified sensory assessment and clinical efficacy remain unverified. Timed playback is windowed, single-pass and has no autoplay, replay loop or flash/pulse oscillator. Wider effect analysis/authoring remains a proposal. No hosted deployment is included.
 
 ---
 
