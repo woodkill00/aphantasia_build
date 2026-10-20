@@ -38,6 +38,12 @@
             <div class="add-row"><div><label for="add-shape">New object</label><select id="add-shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div><button id="add-object" type="button">Add object</button></div>
             <label for="object-select">Selected object</label><select id="object-select" aria-describedby="object-hint"></select>
             <p id="object-hint" class="hint">Select any object to edit it. Removing all objects leaves a background-only scene.</p>
+            <div class="small-actions" role="group" aria-label="Session item locks"><button id="lock-selected" type="button" aria-pressed="false">Lock selected item</button><button id="unlock-all" type="button" disabled>Unlock all items</button></div>
+            <p id="lock-status" class="hint" role="status">No session item locks.</p>
+            <p class="hint">Locks protect stored item properties, including its own timing, only for this session. Global background, canvas ratio, shared pulse period and other items can still change. Accepted scene Undo/Redo requires Unlock all. Apply keeps locks; successful scene replacement clears them with a notice. Locks are not downloaded. Duplicate creates a new unlocked copy.</p>
+            <label for="snap-step">Snap centers · drag and placement only</label><select id="snap-step"><option value="0">Off · exact movement</option><option value="1">1 unit</option><option value="5">5 units</option><option value="10">10 units</option></select>
+            <p class="hint">Typed coordinates, nudges and centering remain exact. No grid is drawn in the scene.</p>
+            <div class="small-actions" role="group" aria-label="Center selected unlocked item"><button id="align-x" type="button">Center horizontally</button><button id="align-y" type="button">Center vertically</button><button id="align-both" type="button">Center both axes</button></div>
             <div class="control-grid">
               <div><label for="shape">Shape</label><select id="shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div>
               <div><label for="size">Size</label><input id="size" type="number" min="1" max="28" step="1" inputmode="numeric" value="2"></div>
