@@ -360,3 +360,106 @@ test('forty structural whole-state snapshots bound both item/group reservations 
   for(let index=0;index<2;index++)cursor=commit(cursor.document,state(cursor.document,cursor.groups,cursor.selection),cursor.history,{type:'move',dx:0.01,dy:0});
   const evicted=plan(cursor.document,cursor.groups,{type:'duplicate'},{history:cursor.history});assert.equal(evicted.selection.ids[0],'object-7');assert.deepEqual(evicted.groups.slice(3).map(group=>group.id),['group-4','group-5','group-6']);
 });
+
+test('empty-group document delegation matches Feature013 for every whitelisted command and selection cardinality',()=>{
+  let accepted=0,rejected=0;
+  for(const authored of [false,true])for(const shape of ['dot','triangle'])for(const count of [0,1,2,3,6,12]){
+    const document=scene(count,authored,shape),variants=[selection(document,[]),selection(document),selection(document,count?['object-'+count]:[])];
+    if(count)document.scene.objects[0].y+=0.00000000001;
+    const commands=[{type:'move',dx:0,dy:0},{type:'move',dx:0.01,dy:-0.01},{type:'nudge',dx:100,dy:0},{type:'translate',dx:0,dy:0},{type:'translate',dx:0.831,dy:-0.831},{type:'place',x:25.005,y:50},...['x','y','both'].map(axis=>({type:'center',axis})),...G.ALIGNMENTS.map(mode=>({type:'align',mode})),...['x','y'].map(axis=>({type:'distribute',axis})),{type:'delete'},{type:'reorder',direction:'forward'},{type:'reorder',direction:'backward'}];
+    for(const selected of variants)for(const command of commands){
+      const options={viewport:{width:12,height:12}},snapshot=bytes(document),session=state(document,[],selected);let expected;
+      try{expected=S.plan(document,selected,command,options);}catch(error){assert.throws(()=>G.plan(document,session,command,options),actual=>actual.code===error.code);assert.equal(bytes(document),snapshot);rejected++;continue;}
+      const actual=G.plan(document,session,command,options);
+      for(const key of ['document','selection','changed','kind','targetIds'])assert.deepEqual(actual[key],expected[key]);
+      assert.deepEqual(actual.groups,[]);assert.deepEqual(actual.targetGroupIds,[]);assert.equal(actual.changedScene,expected.changed);assert.equal(actual.changedGroups,false);assert.equal(bytes(document),snapshot);assert.deepEqual(session.groups,[]);accepted++;
+    }
+  }
+  assert.ok(accepted>400);assert.ok(rejected>400);
+});
+test('empty-group delegation preserves boundary-zero, snap, half-hundredth and finite-derived viewport behavior',()=>{
+  for(const document of [edgeFixture(false),edgeFixture(true),scene(2,false),scene(2,true)]){
+    for(const selected of [selection(document,undefined,'object-1'),selection(document,['object-1'])])for(const command of [{type:'move',dx:0,dy:0},{type:'nudge',dx:-0.01,dy:0},{type:'translate',dx:0.0001,dy:0},{type:'translate',dx:-1e6,dy:0},{type:'translate',dx:0,dy:0,snapStep:5},{type:'place',x:25.005,y:50}]){
+      const options={viewport:{width:100,height:100}};let expected;try{expected=S.plan(document,selected,command,options);}catch(error){assert.throws(()=>G.plan(document,state(document,[],selected),command,options),actual=>actual.code===error.code);continue;}
+      assert.deepEqual(G.plan(document,state(document,[],selected),command,options).document,expected.document);
+    }
+  }
+  const document=scene(3),current=state(document),snapshot=bytes(current);
+  for(const badViewport of [undefined,null,{width:0,height:1},{width:Number.MAX_VALUE,height:Number.MAX_VALUE},{width:Number.MIN_VALUE,height:Number.MIN_VALUE},{width:1,height:Number.MIN_VALUE}]){
+    for(const command of [{type:'translate',dx:0,dy:0},{type:'place',x:60,y:20},{type:'align',mode:'left'},{type:'distribute',axis:'x'},{type:'center',axis:'both'}])assert.throws(()=>G.plan(document,current,command,{viewport:badViewport}));
+    assert.doesNotThrow(()=>G.plan(document,current,{type:'move',dx:0,dy:0},{viewport:badViewport}));
+  }
+  assert.equal(bytes(current),snapshot);
+});
+test('empty-group delegation rejects hostile session envelopes and arrays before evaluating their values',()=>{
+  const document=scene(3),selected=selection(document),command={type:'move',dx:0,dy:0};let calls=0;
+  const accessor=(target,key,value)=>{Object.defineProperty(target,key,{enumerable:true,get(){calls++;return value;}});return target;};
+  for(const current of [
+    {},{groups:[]},{selection:selected},{groups:[],selection:selected,extra:true},{groups:[],selection:selected,[Symbol('unknown')]:1},
+    Object.assign(Object.create({}),{groups:[],selection:selected}),accessor({selection:selected},'groups',[]),accessor({groups:[]},'selection',selected),
+    {groups:{length:0},selection:selected},{groups:Object.assign([],{extra:1}),selection:selected},{groups:Object.assign([],{[Symbol('extra')]:1}),selection:selected},
+    {groups:Object.setPrototypeOf([],null),selection:selected},{groups:Object.setPrototypeOf([],{}),selection:selected},{groups:new Array(1),selection:selected},
+    {groups:new Array(7),selection:selected},{groups:accessor(new Array(1),'0',group(1,1,2)),selection:selected}
+  ])assert.throws(()=>G.plan(document,current,command));
+  assert.equal(calls,0);
+  assert.doesNotThrow(()=>G.plan(document,Object.assign(Object.create(null),{groups:[],selection:selected}),command,Object.create(null)));
+});
+test('empty-group delegation rejects command/options/scene/selection accessors and malformed values even for zero no-ops',()=>{
+  const document=scene(3),current=state(document),zero={type:'move',dx:0,dy:0};let calls=0;
+  const accessor=(target,key,value)=>{Object.defineProperty(target,key,{enumerable:true,get(){calls++;return value;}});return target;};
+  for(const command of [accessor({dx:0,dy:0},'type','move'),accessor({type:'move',dy:0},'dx',0),{...zero,extra:1},{...zero,[Symbol('x')]:1},Object.assign(Object.create({}),zero),{type:'move',dx:NaN,dy:0},{type:'move',dx:0.001,dy:0},{type:'translate',dx:Infinity,dy:0},{type:'place',x:0,y:0,snapStep:2},{type:'delete',id:'object-1'},{type:'unknown'}])assert.throws(()=>G.plan(document,current,command));
+  for(const key of ['locks','viewport','history'])assert.throws(()=>G.plan(document,current,zero,accessor({},key,{})));
+  for(const options of [{extra:1},{[Symbol('x')]:1},Object.create({})])assert.throws(()=>G.plan(document,current,zero,options));
+  for(const selected of [accessor({ids:current.selection.ids},'primaryId','object-3'),accessor({primaryId:'object-3'},'ids',current.selection.ids),{ids:new Array(1),primaryId:'object-1'},{ids:Object.assign(['object-1'],{extra:true}),primaryId:'object-1'},{ids:['object-3','object-1'],primaryId:'object-1'},{ids:['object-1','object-1'],primaryId:'object-1'},{ids:['object-99'],primaryId:'object-99'},{...current.selection,extra:1},Object.assign(Object.create({}),current.selection)])assert.throws(()=>G.plan(document,{groups:[],selection:selected},zero));
+  const badScene=copy(document);accessor(badScene.scene.objects[0],'x',20);assert.throws(()=>G.plan(badScene,current,zero));
+  const incomplete=copy(document);delete incomplete.scene.background;assert.throws(()=>G.plan(incomplete,current,zero));
+  assert.equal(calls,0);
+});
+test('empty-group delegation retains source and output lock validation and selected-lock rejection before no-op',()=>{
+  const document=scene(3),current=state(document),snapshot=bytes(document),locks=E.createLocks();locks.lock(document,'object-1');
+  for(const command of [{type:'move',dx:0,dy:0},{type:'nudge',dx:0,dy:0},{type:'translate',dx:0,dy:0},{type:'place',x:60,y:20},{type:'align',mode:'left'},{type:'distribute',axis:'x'},{type:'center',axis:'x'},{type:'delete'},{type:'reorder',direction:'forward'}])assert.throws(()=>G.plan(document,current,command,{locks,viewport}),error=>error.code==='LOCKED');
+  const altered=copy(document);altered.scene.objects[0].color.h++;assert.throws(()=>G.plan(altered,current,{type:'move',dx:0,dy:0},{locks}),error=>error.code==='LOCKED');
+  const seen=[],targetRejecting={ids(){return [];},allows(candidate){seen.push(bytes(candidate));return bytes(candidate)===snapshot;}};
+  assert.throws(()=>G.plan(document,current,{type:'move',dx:1,dy:0},{locks:targetRejecting}),error=>error.code==='LOCKED');assert.deepEqual(seen,[snapshot,bytes(S.plan(document,current.selection,{type:'move',dx:1,dy:0}).document)]);
+  seen.length=0;const noOp=G.plan(document,current,{type:'move',dx:0,dy:0},{locks:targetRejecting});assert.equal(noOp.changed,false);assert.deepEqual(seen,[snapshot,snapshot]);assert.equal(bytes(document),snapshot);
+  let called=0;const hostile={ids(){return [];}};Object.defineProperty(hostile,'allows',{get(){called++;return ()=>true;}});assert.throws(()=>G.plan(document,current,{type:'move',dx:0,dy:0},{locks:hostile}));assert.equal(called,0);
+});
+test('empty-group delegation returns defensive metadata, selection and document arrays without caller aliases',()=>{
+  const document=scene(3),current=state(document),snapshot=bytes({document,current}),out=G.plan(document,current,{type:'move',dx:0,dy:0});
+  out.groups.push(group(1,1,2));out.targetGroupIds.push('group-1');out.targetIds.push('object-99');out.selection.ids.length=0;out.document.scene.objects[0].color.h++;
+  assert.equal(bytes({document,current}),snapshot);
+});
+test('empty current groups with group-bearing history retain no-op redo, branch endpoints and duplicate reservations',()=>{
+  const document=scene(2),grouped=commit(document,state(document),G.emptyHistory(),{type:'group'}),copied=commit(document,state(document,grouped.groups,grouped.selection),grouped.history,{type:'duplicate'}),undoCopy=G.planHistory(copied.document,state(copied.document,copied.groups,copied.selection),copied.history,'undo',1),undoGroup=G.planHistory(undoCopy.document,state(undoCopy.document,undoCopy.groups,undoCopy.selection),undoCopy.history,'undo',1),current=state(undoGroup.document,undoGroup.groups,undoGroup.selection);
+  assert.deepEqual(current.groups,[]);assert.equal(undoGroup.history.redo.length,2);
+  const noOp=commit(undoGroup.document,current,undoGroup.history,{type:'move',dx:0,dy:0});assert.equal(noOp.entry,null);assert.deepEqual(noOp.history,undoGroup.history);
+  const branch=commit(undoGroup.document,current,undoGroup.history,{type:'move',dx:1,dy:0});assert.equal(branch.history.redo.length,0);assert.deepEqual(branch.groups,[]);assert.deepEqual(branch.entry.beforeGroups,[]);assert.deepEqual(branch.entry.afterGroups,[]);
+  const duplicate=commit(undoGroup.document,current,undoGroup.history,{type:'duplicate'});assert.deepEqual(duplicate.selection.ids,['object-5','object-6']);assert.deepEqual(duplicate.groups,[]);assert.equal(duplicate.history.redo.length,0);
+  // An allocated command still checks the group-history schema. Nonallocating
+  // commands do not inspect irrelevant nested history, just as before repair.
+  let calls=0;const hostileHistory={};Object.defineProperty(hostileHistory,'undo',{get(){calls++;return [];}});Object.defineProperty(hostileHistory,'redo',{value:[]});
+  assert.doesNotThrow(()=>G.plan(document,state(document),{type:'move',dx:0,dy:0},{history:hostileHistory}));assert.throws(()=>G.plan(document,state(document),{type:'duplicate'},{history:hostileHistory}));assert.equal(calls,0);
+});
+test('only the explicit empty-group document whitelist delegates, without forwarding group history',()=>{
+  let delegated=0;const tracedSelection={...S,plan(...args){delegated++;assert.equal(Object.hasOwn(args[3],'history'),false);return S.plan(...args);}},source=fs.readFileSync(require.resolve('../src/group-model.js'),'utf8'),factory=new Function('require','module',source+'; return module.exports;'),traced=factory(name=>name==='./model.js'?M:tracedSelection,{exports:{}}),document=scene(3),current=state(document),history=G.emptyHistory();
+  for(const command of [{type:'move',dx:0,dy:0},{type:'nudge',dx:0,dy:0},{type:'translate',dx:0,dy:0},{type:'place',x:60,y:20},{type:'center',axis:'x'},{type:'align',mode:'left'},{type:'distribute',axis:'x'},{type:'delete'},{type:'reorder',direction:'forward'}]){
+    const prior=delegated;traced.plan(document,current,command,{viewport,history});assert.equal(delegated,prior+1);
+  }
+  for(const command of [{type:'group'},{type:'ungroup'},{type:'duplicate'}]){const prior=delegated;traced.plan(document,current,command,{history});assert.equal(delegated,prior);}
+  const prior=delegated;assert.throws(()=>traced.plan(document,state(document,[group(1,1,2)],selection(document,['object-1'])),{type:'move',dx:0,dy:0}));assert.equal(delegated,prior);
+});
+test('empty-group delegation keeps exactly the inherited positive canonical-validation count, not an unchecked path',()=>{
+  let canonicalCalls=0;
+  function load(filename,dependencies,instrument=false){
+    let source=fs.readFileSync(require.resolve(filename),'utf8');if(instrument){const marker='function canonicalScene(value) {';assert.ok(source.includes(marker));source=source.replace(marker,marker+' countCanonical();');}
+    const module={exports:{}};new Function('require','module','countCanonical',source)(name=>{assert.ok(Object.hasOwn(dependencies,name));return dependencies[name];},module,()=>canonicalCalls++);return module.exports;
+  }
+  const model=load('../src/model.js',{'./geometry-model.js':Geometry},true),editor=load('../src/editor-model.js',{'./model.js':model}),selectionModel=load('../src/selection-model.js',{'./model.js':model,'./editor-model.js':editor}),groupsModel=load('../src/group-model.js',{'./model.js':model,'./selection-model.js':selectionModel}),document=scene(12),singleton=selection(document,['object-12']),multiple=selection(document),locks=editor.createLocks();
+  document.scene.objects.forEach(item=>{item.outline.enabled=true;item.outline.width=1;item.shadow.enabled=true;item.shadow.offsetX=1;item.shadow.offsetY=1;item.shadow.blur=1;});M.canonicalScene(document);locks.lock(document,'object-1');
+  function count(action){canonicalCalls=0;const result=action();return {result,calls:canonicalCalls};}
+  for(const selected of [singleton,multiple])for(const command of [{type:'move',dx:0,dy:0},{type:'move',dx:0.1,dy:0},{type:'translate',dx:5,dy:0},{type:'center',axis:'x'},{type:'delete'},{type:'reorder',direction:'forward'}]){
+    const options={viewport,...(selected===singleton?{locks}:{})},baseline=count(()=>selectionModel.plan(document,selected,command,options)),delegated=count(()=>groupsModel.plan(document,state(document,[],selected),command,options));
+    assert.ok(baseline.calls>0);assert.equal(delegated.calls,baseline.calls);assert.deepEqual(delegated.result.document,baseline.result.document);
+  }
+  const command={type:'translate',dx:5,dy:0},baseline=count(()=>selectionModel.plan(document,multiple,command,{viewport})),grouped=count(()=>groupsModel.plan(document,state(document,[group(1,1,2)],multiple),command,{viewport}));assert.ok(grouped.calls>baseline.calls);sameOffsets(document,grouped.result.document,['object-1','object-2']);
+});

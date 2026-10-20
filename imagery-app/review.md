@@ -1,3 +1,13 @@
+# Feature 014 repaired preparation, 20 October 2026
+
+The first [PR 17 native attempt](https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362) is terminal FAIL with package SKIPPED. Only partial native evidence is retained: 146 observed passes, three desktop failures, 198 byte/hash-verified captures and 45 actually inspected desktop group images. Final full/mobile counts and duration are unknown after log transport failed. No full-run visual acceptance is inferred.
+
+The repaired candidate has 1289/1289 local runtime/model/DOM, 146/146 focused UI and independently repeated 104/104 group-plus-selection model passes. Its narrow defensive empty-group optimization preserves validation and reduces local canonical-call counts without claiming native performance. The two native fixture-premise corrections retain every assertion and threshold. Combined runtime, native premise-repair and lossless transport source are now independently accepted. The complete local aggregate passes 1353/1353 after metadata refresh; docs 58 files/400 links and all 88 manifest entries verify. Fresh native/visual/performance/clean-checkout package and actual evidence delivery remain unverified. See the [dated report](test-results/TEST-REPORT.md).
+
+---
+
+## Historical preparation and source reviews
+
 # Feature 014 source-preparation review
 
 20 October 2026. The exact flat-group source/runtime was independently reviewed after its safety repairs and narrow Feature 013 reconciliation. Focused group/inherited DOM checks pass 143/143; runtime/model/DOM aggregate passes 1277/1277. The complete local suite and exact artifact are recorded in the [dated report](test-results/TEST-REPORT.md). This is source/test-double evidence, not native, actual visual, performance, clean-checkout package or final-head CI acceptance. No runtime, browser-security, permissions, release or hosting change is made by this metadata reconciliation.

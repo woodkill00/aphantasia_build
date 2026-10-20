@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T16:03:00Z",
+  "updated": "2026-10-20T17:02:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1520,7 +1520,7 @@
       "id": "IF-050",
       "title": "Add layer tools, original presets and session arrangement",
       "priority": "P2",
-      "status": "session_groups_source_reviewed_local_node_pass_native_not_run",
+      "status": "session_groups_repair_source_transport_review_full_local_node_pass_native_not_run",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1545,9 +1545,11 @@
         "20 October 2026: Feature 012 PR 15 corrected head 5edddc18 / run 39437474221 passed 1080 Node, 178 native, package and cleanup. Independent review accepted assigned 36 v11 images (27 identical previously inspected, 9 new/changed inspected) and predeclared paired timing. Prior 176/178 failure and forced-colors defect remain recorded. Final evidence/test-assertion head CI and protected integration remain required; multi-selection/groups not implemented.",
         "20 October 2026: Feature 012 PR15 merged d95fbdc0, exact accepted tree0f19c407; final-head run39441769939 passed1080 Node/178native/package/cleanup and assigned36-frame visual review. Exact-main run39444608463 is running. Separate Feature013 source review and full local1177/1177 pass;200 native groups prepared, NOT RUN. Prior1147/1156 failure retained.",
         "20 October 2026, 15:55 UTC preparation: Feature 013 first native194/200 failure preserved; repaired source1192/1192 local and narrow source review accepted, with subsequent outcome at PR16 checks. Feature 014 reconciled runtime417565 bytes / 7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9 passes143 focused,1277 runtime/model/DOM and1318 complete local Node checks after hash refresh. Native224 groups and94 new captures PREPARED NOT RUN; visual/performance/clean-checkout CI package/integration not claimed. See exact dated report.",
-        "20 October 2026, 16:03 UTC final preparation: exact accepted native helper 0fdde8 and matching Feature 013 specs propagated. Full local 1318/1318 PASS in 21233.043654 ms, Node v24.19.0; docs 57 files/396 links, synthetic 3 valid/14 rejected (no browser), 85 manifest entries/3 recursive fixtures and frozen source hashes PASS. Reviewed native 30-minute/job 33-minute allowance is a coverage projection, not measured performance. All previous failures/checkpoints remain historical."
+        "20 October 2026, 16:03 UTC final preparation: exact accepted native helper 0fdde8 and matching Feature 013 specs propagated. Full local 1318/1318 PASS in 21233.043654 ms, Node v24.19.0; docs 57 files/396 links, synthetic 3 valid/14 rejected (no browser), 85 manifest entries/3 recursive fixtures and frozen source hashes PASS. Reviewed native 30-minute/job 33-minute allowance is a coverage projection, not measured performance. All previous failures/checkpoints remain historical.",
+        "20 October 2026, 16:33 UTC: first PR 17 run 39454651362 is terminal FAIL, package SKIPPED. Full logs unavailable; 146 observed native passes/3 desktop failures are a partial snapshot, not final counts. Independent review inspected 45 available desktop group images, 198 capture payloads byte/hash verified; missing/mobile scope unaccepted. A+B defensive repair runtime e4551d30 has 1289 runtime/model/DOM, 146 focused UI and independently repeated 104 model passes. Native +12.4 ms versus +10 ms drag failure retained; local call-count reduction is not native performance acceptance.",
+        "20 October 2026, 17:02 UTC: exact accepted runtime e4551d30 and source-reviewed native premise repair 46ab0bf7 plus lossless transport pass complete local 1353/1353, zero failures, Node v24.19.0, 23926.495041 ms. Docs 58 files/400 links, all 88 manifest entries and three recursive fixtures verify. Transport targeted checks 46/46 pass, but 6,564,851/7,666,076-byte linear projections are not bounds; fixed 7,350,000-byte native cap fails closed. Fresh complete native/visual/performance/package evidence remains required. Original terminal failure and unknown full/mobile counts retained."
       ],
-      "nextAction": "Verify Feature 013 main, reconcile its exact tree, then execute and independently review all group native/visual/performance/package/docs/integrity and exact-head CI gates."
+      "nextAction": "Review exact outgoing tree; execute fresh repaired native/visual/performance and clean-checkout package CI gates. Verify complete evidence and exact-head outcomes before integration; local tests do not accept unknown native results."
     },
     {
       "id": "IF-051",
@@ -1814,13 +1816,13 @@
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "c9a31520bcfb256cf940781d17923ae8867eae47",
-    "repositoryBaseTree": "51f641ecbd13007028ff1b22d31088fe6f579ba7",
+    "repositoryBaseCommit": "3e35243ca0f0ad55b236e9a62cd8a6eaeb2b8fa7",
+    "repositoryBaseTree": "8ea48e89e402c1e5ff6eb5e6bb27b4faf1f6deea",
     "appPath": "imagery-app/index.html",
-    "appSha256": "7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9",
-    "appBytes": 417565,
-    "artifactStatus": "DATED_SOURCE_PREPARATION_LOCAL_NODE_PASS_NATIVE_VISUAL_PERFORMANCE_CI_PACKAGE_NOT_RUN",
-    "note": "Local Feature 014 preparation base only, with exact reviewed Feature 013 repairs reconciled. Verified Feature 013 main and final group exact-head gates remain required; no integration/release/hosting/collection claim.",
+    "appSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
+    "appBytes": 419083,
+    "artifactStatus": "DATED_REPAIR_SOURCE_TRANSPORT_REVIEW_FULL_LOCAL_NODE_PASS_NATIVE_VISUAL_PERFORMANCE_CI_PACKAGE_NOT_RUN",
+    "note": "Local Feature 014 repair-preparation base with exact reviewed Feature 013 repairs and accepted lossless transport. The prior PR 16 ac0 workflow is reported green but detailed evidence remains unreviewed; a separate unchanged-df7-runtime evidence-only update is being prepared. Verified prerequisite and final group gates are required; no new unpublished dependency head, integration, release, hosting or collection is claimed.",
     "targetBranch": "feature/014-session-groups"
   },
   "authority": {
@@ -1855,8 +1857,9 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Flat session-group source reviewed after safety repairs and exact upstream compatibility reconciliation. Runtime remains frozen; no broader group/persistence capability added.",
-      "historicalArrangementStatus": "Bounded session locks/Unlock all, drag/placement snap and centering implemented; exact-source native and scoped visual/package checks passed. Wider grouping/distribution/editor-only grids remain deferred."
+      "currentStatus": "Exact A+B defensive empty-group runtime and lossless test-evidence transport source are frozen and independently accepted; no runtime scope expansion.",
+      "historicalArrangementStatus": "Bounded session locks/Unlock all, drag/placement snap and centering implemented; exact-source native and scoped visual/package checks passed. Wider grouping/distribution/editor-only grids remain deferred.",
+      "historicalFirstFeature014PreparationStatus": "Flat session-group source reviewed after safety repairs and exact upstream compatibility reconciliation. Runtime remains frozen; no broader group/persistence capability added."
     },
     {
       "role": "tester",
@@ -1872,8 +1875,9 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Exact reconciled local aggregate 1318/1318 and focused 143/143 pass; native 224 groups and 94 new captures prepared, NOT RUN at this dated snapshot.",
-      "historicalArrangementStatus": "Recorded PR 14 source passed 935/935 CI Node and 160/160 native groups; 142 captures emitted. Independent review inspected 26 actual SHA-verified arrangement/direct-input frames. Final documentation-head full CI remains required."
+      "currentStatus": "Complete local 1353/1353 PASS after accepted runtime/native-premise/transport integration; docs 58 files/400 links and integrity verify. Repaired native/visual/performance/clean-checkout CI package NOT RUN.",
+      "historicalArrangementStatus": "Recorded PR 14 source passed 935/935 CI Node and 160/160 native groups; 142 captures emitted. Independent review inspected 26 actual SHA-verified arrangement/direct-input frames. Final documentation-head full CI remains required.",
+      "historicalFirstFeature014PreparationStatus": "Exact reconciled local aggregate 1318/1318 and focused 143/143 pass; native 224 groups and 94 new captures prepared, NOT RUN at this dated snapshot."
     },
     {
       "role": "reviewer",
@@ -1890,8 +1894,9 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Exact source/narrow upstream reconciliation reviewed with no remaining source blocker. Actual group native/visual/performance/package and final outgoing-tree/CI acceptance remain separate.",
-      "historicalArrangementStatus": "Assigned PR 14 source/native/input/scoped-visual/package review accepted. All 22 arrangement and four rapid/focused-Undo captures inspected, not all 142. Accepted PR 12/13 feature visual reviews remain separately scoped; external device/AT/content gates remain open."
+      "currentStatus": "Exact combined source and transport accepted. First-run visual scope remains 45 inspected desktop group images only; missing/mobile and repaired native results are not accepted.",
+      "historicalArrangementStatus": "Assigned PR 14 source/native/input/scoped-visual/package review accepted. All 22 arrangement and four rapid/focused-Undo captures inspected, not all 142. Accepted PR 12/13 feature visual reviews remain separately scoped; external device/AT/content gates remain open.",
+      "historicalFirstFeature014PreparationStatus": "Exact source/narrow upstream reconciliation reviewed with no remaining source blocker. Actual group native/visual/performance/package and final outgoing-tree/CI acceptance remain separate."
     },
     {
       "role": "integrator",
@@ -1907,8 +1912,9 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Dated Feature 014 metadata reconciled, including exact inherited native-helper/spec repairs and reviewed 30/33-minute bounded allowance. Verified Feature 013 main and all group final exact-head gates required before integration; no release or hosting.",
-      "historicalArrangementStatus": "PR 11/12/13 accepted and merged on their own scoped source/native/visual/package evidence. PR 14 scoped software evidence passed; final documentation-head CI/outgoing-tree review and protected integration pending. No new release or hosting."
+      "currentStatus": "Dated repaired evidence and manifest reconciled. Review outgoing tree and execute fresh exact-head native/visual/performance/package CI; fixed transport cap remains risk-bearing, no release/hosting/collection claim.",
+      "historicalArrangementStatus": "PR 11/12/13 accepted and merged on their own scoped source/native/visual/package evidence. PR 14 scoped software evidence passed; final documentation-head CI/outgoing-tree review and protected integration pending. No new release or hosting.",
+      "historicalFirstFeature014PreparationStatus": "Dated Feature 014 metadata reconciled, including exact inherited native-helper/spec repairs and reviewed 30/33-minute bounded allowance. Verified Feature 013 main and all group final exact-head gates required before integration; no release or hosting."
     }
   ],
   "activeRepairs": {
@@ -1940,102 +1946,112 @@
       "nextAction": "Retain exact mark/control computed-color and actual screenshot checks in final-head CI."
     }
   },
-  "currentStatus": "Dated Feature 014 preparation snapshot, 20 October 2026 16:03 UTC: reviewed flat-group source incorporates accepted Feature 013 repairs; 143 focused and 1277 runtime/model/DOM checks pass, with complete local 1318/1318 after exact inherited native-helper/spec propagation and metadata reconciliation. Native 224 groups/94 new captures, actual visual, measured performance and clean-checkout CI package are NOT RUN for this runtime. Verified Feature 013 main and final exact-head gates remain required. No release, hosting or collection.",
+  "currentStatus": "Dated Feature 014 repair snapshot, 20 October 2026 17:02 UTC: exact runtime/native-premise/transport source review accepted; complete local 1353/1353 PASS, docs 58 files/400 links and all 88 manifest entries verified. First PR 17 remains terminal FAIL/package SKIPPED; final full/mobile counts unknown. Repaired native/visual/performance/clean-checkout CI package NOT RUN. The lossless transport cap/projections remain a risk-bearing experiment, not guaranteed delivery. No release, hosting or collection.",
   "currentIteration": {
-    "name": "Feature 014: flat session groups",
+    "name": "Feature 014: flat session groups, first-native repair",
     "contract": "specs/014-session-groups/spec.md",
-    "snapshotAt": "2026-10-20T16:03:00Z",
-    "status": "dated_source_preparation_snapshot",
-    "base": "c9a31520bcfb256cf940781d17923ae8867eae47",
-    "baseTree": "51f641ecbd13007028ff1b22d31088fe6f579ba7",
-    "baseVerification": "Local preparation identity only. Feature 013 reviewed repairs reconciled; verified exact integrated main remains required.",
-    "prerequisiteExactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
-    "htmlSha256": "7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9",
-    "htmlBytes": 417565,
-    "appSha256": "c0251f809f29ebb9bab5727214532b1d7bc7633e7a6b26fe3589c0b6cf69a56f",
+    "snapshotAt": "2026-10-20T17:02:00Z",
+    "status": "dated_repair_source_transport_review_and_full_local_node_pass_native_not_run",
+    "htmlSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
+    "htmlBytes": 419083,
+    "appSha256": "e1bb5f1c8706b9f2f692fc233aafe903a5a5e7e023626690815de1353fcb68ee",
+    "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/17/checks",
+    "runtimeAggregate": {
+      "status": "PASS",
+      "passed": 1289,
+      "total": 1289,
+      "failed": 0,
+      "durationMs": 19363.321859,
+      "nodeVersion": "v24.19.0",
+      "excludedSuites": [
+        "docs.test.cjs",
+        "release-package.test.cjs"
+      ]
+    },
+    "focused": {
+      "status": "PASS",
+      "passed": 146,
+      "total": 146,
+      "groupTests": 84,
+      "inheritedMultiSelectionTests": 62,
+      "durationMs": 8183.622748,
+      "nodeVersion": "v24.19.0",
+      "scope": "Focused UI test doubles; not native."
+    },
+    "model": {
+      "status": "PASS",
+      "passed": 104,
+      "total": 104,
+      "independentlyRepeated": true,
+      "scope": "Focused pure group plus inherited selection model tests, independently repeated"
+    },
     "localNode": {
       "status": "PASS",
       "command": "node --test imagery-app/tests/*.test.cjs",
-      "passed": 1318,
-      "total": 1318,
+      "passed": 1353,
+      "total": 1353,
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
       "nodeVersion": "v24.19.0",
-      "durationMs": 21233.043654,
-      "scope": "Full local model/DOM-double/docs/package-unit aggregate after final accepted inherited native-helper/spec propagation and budget/documentation changes; not native execution or actual clean-checkout CI packaging."
+      "durationMs": 23926.495041,
+      "scope": "Complete local runtime/model/DOM-double/transport/docs/package-unit aggregate on accepted A+B runtime, native two-hunk premise repair and lossless transport source. Not native execution or actual clean-checkout CI packaging."
     },
-    "focused": {
-      "passed": 143,
-      "total": 143,
-      "independentlyRepeated": true
+    "sourceReview": {
+      "status": "PASS_EXACT_COMBINED_SOURCE_AND_TRANSPORT_FREEZES",
+      "nativeTwoHunkRepair": "SOURCE_ACCEPTED_NOT_EXECUTED",
+      "nativeTestSha256": "46ab0bf79e94c502d4729908ebff53276d1ee92cdc5ae4fc3fccf7ba67b8ee66"
     },
-    "runtimeAggregate": {
-      "passed": 1277,
-      "total": 1277,
-      "excludes": "docs/package-unit suites"
+    "firstNativeAttempt": {
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362",
+      "head": "7bc6bbf1435275b9fe882a27f0b2564c98238176",
+      "tree": "8ea48e89e402c1e5ff6eb5e6bb27b4faf1f6deea",
+      "jobId": 118738197312,
+      "runtimeSha256": "7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9",
+      "status": "FAIL",
+      "nativeStep": "FAIL",
+      "package": "SKIPPED",
+      "fullNativePassed": null,
+      "fullNativeFailed": null,
+      "fullNativeTotal": null,
+      "fullDurationSeconds": null,
+      "evidenceLimit": "Full log retrieval ended with Transport closed. Final full/mobile counts and duration are unknown; preserved partial snapshot is not the terminal full result.",
+      "partialSnapshot": {
+        "observedAtUtc": "2026-10-20T16:29:00Z",
+        "lastAvailableLogUtc": "2026-10-20T16:21:09Z",
+        "passesObserved": 146,
+        "failuresObserved": 3,
+        "desktopNewGroupPassed": 10,
+        "desktopNewGroupFailed": 2,
+        "desktopNewGroupExpected": 12,
+        "capturesByteHashVerified": 198,
+        "newDesktopGroupCapturesInspected": 45,
+        "expectedNewDesktopGroupCaptures": 47,
+        "newMobileGroupCapturesInspected": 0,
+        "visualOutcome": "No additional blocker in the 45 actually inspected desktop group images; missing rapid/provenance and all mobile group images not accepted."
+      },
+      "failures": [
+        {
+          "case": "Desktop paired singleton drag against frozen Feature 012 baseline",
+          "classification": "Genuine paired performance regression",
+          "deltaP95Ms": 12.4,
+          "unchangedMaximumDeltaMs": 10,
+          "nudgeDeltaP95Ms": 6.3,
+          "hideDeltaP95Ms": 3.2,
+          "absoluteHandlersBelowMs": 50
+        },
+        {
+          "case": "Desktop rapid grouped drag placement",
+          "classification": "Independently confirmed test premise: obsolete canvas rectangle reused after placement activated and editor closed",
+          "repair": "Read fresh content rectangle after placement activation, retaining expected coordinates and rapid/first Undo assertions."
+        },
+        {
+          "case": "Desktop clean metadata provenance",
+          "classification": "Independently confirmed test premise: baseline included five selection-induced draws/tracker calls",
+          "repair": "Finish selection before baseline; then click Group/Ungroup/Group directly, retaining zero-call/raster/dirty assertions."
+        }
+      ]
     },
-    "preparedNativeGroups": 224,
-    "preservedNativeGroups": 200,
-    "newNativeGroups": 24,
-    "preparedNewCaptures": 94,
-    "nativeStatus": "NOT_RUN",
-    "visualStatus": "NOT_RUN",
-    "performanceStatus": "NOT_RUN",
-    "cleanCheckoutPackageStatus": "NOT_RUN",
-    "publicationStatus": "Local preparation; no Feature 014 PR or CI outcome verified here",
-    "failedAttempts": [
-      {
-        "scope": "First group focused UI",
-        "passed": 105,
-        "total": 108,
-        "failed": 3,
-        "reason": "Out-of-inset synthetic fixture; wrong-realm validator object; overbroad final-stage injector. New tests corrected; this failure remains retained."
-      },
-      {
-        "scope": "First group complete local suite",
-        "passed": 1271,
-        "total": 1279,
-        "failed": 8,
-        "reason": "Seven stale manifest package fixtures and one stale workflow exact-HTML pin. Not a complete-suite pass."
-      },
-      {
-        "scope": "Independent captured-gesture metadata cancellation",
-        "passed": 1,
-        "total": 6,
-        "failed": 5,
-        "reason": "Controller concealment skipped stale raster/aid/provenance cleanup."
-      },
-      {
-        "scope": "Independent metadata clock fault",
-        "passed": 0,
-        "total": 2,
-        "failed": 2,
-        "reason": "No-paint metadata refresh could leave stale raster after gate-clock failure."
-      },
-      {
-        "scope": "Independent semantic refresh failure",
-        "passed": 0,
-        "total": 3,
-        "failed": 3,
-        "reason": "Timeline exceptions could retain raster or overwrite truthful failure status."
-      },
-      {
-        "scope": "Independent post-publication UI failure",
-        "passed": 0,
-        "total": 1,
-        "failed": 1,
-        "reason": "Removed canvas could retain stale Visible label."
-      },
-      {
-        "scope": "Independent metadata no-op clock failure",
-        "passed": 0,
-        "total": 2,
-        "failed": 2,
-        "reason": "No-op result could overwrite new clock-failure concealment notice."
-      }
-    ],
-    "nextAction": "Verify Feature 013 main, reconcile its exact tree, then execute and independently review all group native/visual/performance/package/docs/integrity and exact-head CI gates.",
     "executionBudget": {
       "status": "INDEPENDENTLY_REVIEWED_PROJECTION_NOT_PERFORMANCE_ACCEPTANCE",
       "nativeMinutes": 30,
@@ -2051,42 +2067,69 @@
       "failedPartialRunIsNotCompleteBaseline": true,
       "required": "Reconcile actual complete repaired Feature 013 and Feature 014 results/durations before acceptance."
     },
-    "priorMetadataCheckpoints": [
-      {
-        "status": "PASS",
-        "command": "node --test imagery-app/tests/*.test.cjs",
-        "passed": 1318,
-        "total": 1318,
-        "failed": 0,
-        "nodeVersion": "v24.19.0",
-        "durationMs": 23953.905555,
-        "scope": "Exact frozen runtime; complete local model/DOM-double/docs/package-unit suite after hash refresh. Not native or real-checkout CI packaging."
+    "nativeStatus": "NOT_RUN_FOR_REPAIRED_RUNTIME",
+    "visualStatus": "NOT_RUN_FOR_REPAIRED_RUNTIME",
+    "performanceStatus": "NOT_RUN_FOR_REPAIRED_RUNTIME",
+    "cleanCheckoutPackageStatus": "NOT_RUN_FOR_REPAIRED_RUNTIME",
+    "evidenceTransport": {
+      "status": "SOURCE_INDEPENDENTLY_ACCEPTED_NOT_NATIVE_EXECUTION",
+      "files": {
+        "imagery-app/tests/browser-evidence-transport.cjs": "b453d6563215c6c438e31c316c2de6afc2b8047e855fbf09106d5909dff8e274",
+        "imagery-app/tests/browser-evidence-transport.test.cjs": "b57b88318d2aa50ccbc603719df2e5e3699670150bcff94357cc495a9ed88356",
+        "imagery-app/tests/browser-cdp.cjs": "64eb5129950c9bf2cebab647e5dffb4851ced214aa7a12e8041fbff1693c2b6d",
+        "imagery-app/tests/BROWSER-EVIDENCE-TRANSPORT.md": "de8c7f77d9cd9cb8cbb90ffcf9fc8c0e2a52ed3153040596b66604b127fb6d03"
       },
-      {
+      "targetedChecks": {
         "status": "PASS",
-        "command": "node --test imagery-app/tests/*.test.cjs",
-        "passed": 1318,
-        "total": 1318,
-        "failed": 0,
-        "nodeVersion": "v24.19.0",
-        "durationMs": 22576.584384,
-        "scope": "After docs/metadata/budget update, before exact accepted inherited native helper/spec propagation; not final aggregate evidence."
-      }
-    ],
+        "newTransportTests": 23,
+        "existingCdpTests": 23,
+        "total": 46,
+        "durationMs": 342.890308
+      },
+      "nativeOutputCapBytes": 7350000,
+      "brotliQuality": 6,
+      "blockMaxRawBytes": 1048576,
+      "spoolMaxBytes": 67108864,
+      "projections": {
+        "basis": "Linear 350-capture projections from retained every-line transport replay; neither is a worst-case bound",
+        "pr17Bytes": 6564851,
+        "pr16Bytes": 7666076,
+        "secondProjectionExceedsCap": true
+      },
+      "scope": "Lossless original stdout/stderr records and unchanged capture bytes in ordered bounded Brotli envelopes; narrow runner reporting only. Runtime, scenario assertions/order, screenshot settings, timing criteria, budgets, workflow actions/settings/permissions, sandbox and cleanup unchanged.",
+      "limits": [
+        "Retained-log replay reconstructs exact bytes but is synthetic BLOCKED/nonaccepted evidence, not fresh native/visual/performance/package acceptance.",
+        "The native cap can be exceeded; cap/spool/output/decode failures are explicit nonacceptance and original native assertions/cleanup continue.",
+        "Setup/Node/transport-test/package output and Actions timestamp overhead lie outside the native cap.",
+        "Whole-job connector reads remain unbounded by this encoding; no guarantee of delivery through an undocumented service limit.",
+        "Acceptance requires complete decoded evidence plus independently verified terminal job success, clean expected source/runtime identity and expected case count; no partial output can pass.",
+        "Temporary spool is not an upload or remotely retrievable artifact after runner disposal."
+      ]
+    },
+    "nextAction": "Review exact outgoing tree; execute fresh repaired native/visual/performance and clean-checkout package CI gates. Verify complete evidence and exact-head outcomes before integration; local tests do not accept unknown native results.",
     "documentation": {
       "status": "PASS",
-      "markdownFiles": 57,
-      "localLinks": 396
+      "command": "node scripts/check-docs.cjs",
+      "markdownFiles": 58,
+      "localLinks": 400
     },
     "integrity": {
       "status": "PASS",
-      "manifestEntries": 85,
+      "manifestEntries": 88,
       "recursiveFixtureFiles": 3,
       "allRecursiveFixturesCovered": true,
-      "sourceFreezeHashesVerified": true,
-      "assemblerReleaseKitMarkers": 19,
-      "exactReconstruction": true,
+      "allTransportSourceAndDocumentFilesCovered": true,
+      "runtimeFreezeHashesVerified": true,
+      "transportFreezeHashesVerified": true,
       "whitespace": "PASS"
+    },
+    "prerequisiteCurrentPreparation": {
+      "status": "PR16_GREEN_STATUS_DETAILED_EVIDENCE_UNREVIEWED",
+      "previousPublishedHeadPrefix": "ac0bb7db",
+      "runtimeSha256": "df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4",
+      "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
+      "evidenceLimit": "Integration owner reports the old ac0 head workflow green, but detailed evidence remains unreviewed because log transport was unavailable. Green status alone is not native/visual acceptance.",
+      "nextPreparation": "A separate evidence-only Feature 013 update with the identical df7 runtime and exact accepted transport helper/test/document bytes is being prepared. No new published head or source identity is claimed here. The final group revision must reconcile that dependency without replacing this dated group metadata or losing group source."
     }
   },
   "historicalArrangementPremergeIteration": {
@@ -2521,5 +2564,153 @@
     "appBytes": 322869,
     "artifactStatus": "EXACT_RUNTIME_NATIVE_AND_SCOPED_VISUAL_PACKAGE_PASS; final documentation-head CI and protected integration pending.",
     "note": "Fourth unreleased increment: session locks, drag/placement snap and centering implemented and accepted within the recorded source/native/scoped-visual/package scope. Runtime bytes remain unchanged during documentation reconciliation. No PR 14 merge, release, hosting or collection is claimed."
+  },
+  "previousFeature014PreparationIteration": {
+    "name": "Feature 014: flat session groups",
+    "contract": "specs/014-session-groups/spec.md",
+    "snapshotAt": "2026-10-20T16:03:00Z",
+    "status": "dated_source_preparation_snapshot",
+    "base": "c9a31520bcfb256cf940781d17923ae8867eae47",
+    "baseTree": "51f641ecbd13007028ff1b22d31088fe6f579ba7",
+    "baseVerification": "Local preparation identity only. Feature 013 reviewed repairs reconciled; verified exact integrated main remains required.",
+    "prerequisiteExactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
+    "htmlSha256": "7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9",
+    "htmlBytes": 417565,
+    "appSha256": "c0251f809f29ebb9bab5727214532b1d7bc7633e7a6b26fe3589c0b6cf69a56f",
+    "localNode": {
+      "status": "PASS",
+      "command": "node --test imagery-app/tests/*.test.cjs",
+      "passed": 1318,
+      "total": 1318,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "nodeVersion": "v24.19.0",
+      "durationMs": 21233.043654,
+      "scope": "Full local model/DOM-double/docs/package-unit aggregate after final accepted inherited native-helper/spec propagation and budget/documentation changes; not native execution or actual clean-checkout CI packaging."
+    },
+    "focused": {
+      "passed": 143,
+      "total": 143,
+      "independentlyRepeated": true
+    },
+    "runtimeAggregate": {
+      "passed": 1277,
+      "total": 1277,
+      "excludes": "docs/package-unit suites"
+    },
+    "preparedNativeGroups": 224,
+    "preservedNativeGroups": 200,
+    "newNativeGroups": 24,
+    "preparedNewCaptures": 94,
+    "nativeStatus": "NOT_RUN",
+    "visualStatus": "NOT_RUN",
+    "performanceStatus": "NOT_RUN",
+    "cleanCheckoutPackageStatus": "NOT_RUN",
+    "publicationStatus": "Local preparation; no Feature 014 PR or CI outcome verified here",
+    "failedAttempts": [
+      {
+        "scope": "First group focused UI",
+        "passed": 105,
+        "total": 108,
+        "failed": 3,
+        "reason": "Out-of-inset synthetic fixture; wrong-realm validator object; overbroad final-stage injector. New tests corrected; this failure remains retained."
+      },
+      {
+        "scope": "First group complete local suite",
+        "passed": 1271,
+        "total": 1279,
+        "failed": 8,
+        "reason": "Seven stale manifest package fixtures and one stale workflow exact-HTML pin. Not a complete-suite pass."
+      },
+      {
+        "scope": "Independent captured-gesture metadata cancellation",
+        "passed": 1,
+        "total": 6,
+        "failed": 5,
+        "reason": "Controller concealment skipped stale raster/aid/provenance cleanup."
+      },
+      {
+        "scope": "Independent metadata clock fault",
+        "passed": 0,
+        "total": 2,
+        "failed": 2,
+        "reason": "No-paint metadata refresh could leave stale raster after gate-clock failure."
+      },
+      {
+        "scope": "Independent semantic refresh failure",
+        "passed": 0,
+        "total": 3,
+        "failed": 3,
+        "reason": "Timeline exceptions could retain raster or overwrite truthful failure status."
+      },
+      {
+        "scope": "Independent post-publication UI failure",
+        "passed": 0,
+        "total": 1,
+        "failed": 1,
+        "reason": "Removed canvas could retain stale Visible label."
+      },
+      {
+        "scope": "Independent metadata no-op clock failure",
+        "passed": 0,
+        "total": 2,
+        "failed": 2,
+        "reason": "No-op result could overwrite new clock-failure concealment notice."
+      }
+    ],
+    "nextAction": "Verify Feature 013 main, reconcile its exact tree, then execute and independently review all group native/visual/performance/package/docs/integrity and exact-head CI gates.",
+    "executionBudget": {
+      "status": "INDEPENDENTLY_REVIEWED_PROJECTION_NOT_PERFORMANCE_ACCEPTANCE",
+      "nativeMinutes": 30,
+      "jobMinutes": 33,
+      "nonNativeAllowanceSeconds": 180,
+      "acceptedCompleteGuideBaselineSeconds": 795.126,
+      "feature013ConservativeProjectionSeconds": 320,
+      "feature014UpperProjectionSeconds": 360,
+      "projectedSeconds": 1475.126,
+      "headroomSeconds": 324.874,
+      "headroomPercent": 22.023,
+      "failedPartialFeature013Seconds": 1032.432,
+      "failedPartialRunIsNotCompleteBaseline": true,
+      "required": "Reconcile actual complete repaired Feature 013 and Feature 014 results/durations before acceptance."
+    },
+    "priorMetadataCheckpoints": [
+      {
+        "status": "PASS",
+        "command": "node --test imagery-app/tests/*.test.cjs",
+        "passed": 1318,
+        "total": 1318,
+        "failed": 0,
+        "nodeVersion": "v24.19.0",
+        "durationMs": 23953.905555,
+        "scope": "Exact frozen runtime; complete local model/DOM-double/docs/package-unit suite after hash refresh. Not native or real-checkout CI packaging."
+      },
+      {
+        "status": "PASS",
+        "command": "node --test imagery-app/tests/*.test.cjs",
+        "passed": 1318,
+        "total": 1318,
+        "failed": 0,
+        "nodeVersion": "v24.19.0",
+        "durationMs": 22576.584384,
+        "scope": "After docs/metadata/budget update, before exact accepted inherited native helper/spec propagation; not final aggregate evidence."
+      }
+    ],
+    "documentation": {
+      "status": "PASS",
+      "markdownFiles": 57,
+      "localLinks": 396
+    },
+    "integrity": {
+      "status": "PASS",
+      "manifestEntries": 85,
+      "recursiveFixtureFiles": 3,
+      "allRecursiveFixturesCovered": true,
+      "sourceFreezeHashesVerified": true,
+      "assemblerReleaseKitMarkers": 19,
+      "exactReconstruction": true,
+      "whitespace": "PASS"
+    }
   }
 }

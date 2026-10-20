@@ -1,3 +1,53 @@
+# Feature 014 repaired-candidate preparation record
+
+20 October 2026, 17:02 UTC. This is a dated source-and-transport repair snapshot, not native/performance acceptance. Runtime **419083 bytes**, SHA-256 `e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8`; app `e1bb5f1c8706b9f2f692fc233aafe903a5a5e7e023626690815de1353fcb68ee`. The exact combined runtime/model/DOM suite passes **1289/1289**, Node v24.19.0, 19363.321859 ms; focused UI **146/146** and independently repeated group-plus-selection model **104/104** pass. Exact combined runtime, native two-hunk test-premise repair and lossless transport source review have passed. Complete local `node --test imagery-app/tests/*.test.cjs`: **1353/1353 PASS**, zero failures/cancelled/skipped, Node v24.19.0, **23926.495041 ms**, after accepted runtime/native-premise/transport integration and metadata refresh. **Repaired native, actual visual, paired performance and clean-checkout CI package gates are NOT RUN.** The independently accepted bounded lossless test-evidence transport is integrated; its 23 new tests and 23 existing CDP tests pass. This source acceptance is not a native run.
+
+## First PR 17 native attempt: terminal failure, partial evidence only
+
+[Run 39454651362](https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362), source `7bc6bbf1435275b9fe882a27f0b2564c98238176`, tree `8ea48e89e402c1e5ff6eb5e6bb27b4faf1f6deea`, tested prior runtime `7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9`. The terminal API confirms **FAIL**, native step **FAIL**, and portable package step **SKIPPED**. Full log retrieval ended with “Transport closed”; final native counts, full duration and mobile outcomes remain **UNKNOWN**, not invented from the prepared 224-group count.
+
+The retained partial snapshot contains **146 observed passes and three desktop failures**. Of the twelve new desktop group cases, ten passed and two failed in that available portion. Review byte/hash-verified **198 capture payloads** and actually inspected all **45 available new desktop group images**, with no additional visual blocker in that scope. Two planned desktop group images (rapid/provenance) and every mobile group image were not inspected. These observations do not constitute full-run or repaired-runtime acceptance.
+
+The three retained failures are:
+
+1. **Real paired singleton drag regression:** candidate-minus-frozen-baseline p95 **+12.4 ms**, exceeding the unchanged **+10 ms** limit. Nudge +6.3 ms and first Hide +3.2 ms met their delta gates, and observed absolute handlers were below 50 ms. This does not excuse the drag failure.
+2. **Rapid grouped-placement test premise:** the fixture reused the previous live-editor rectangle after placement activated and the editor closed. Independently confirmed repair reads the fresh content rectangle after activation; expected numeric coordinates and rapid release/first Undo gates remain unchanged.
+3. **Clean metadata-provenance test premise:** the baseline preceded five selection-induced draws/tracker calls. Independently confirmed repair completes selection before taking the baseline, then activates Group/Ungroup/Group directly; zero-call, raster and dirty-state assertions remain unchanged.
+
+The exact two-hunk native repair is SHA-256 `46ab0bf79e94c502d4729908ebff53276d1ee92cdc5ae4fc3fccf7ba67b8ee66` and is source-accepted, not executed native acceptance. No native case, assertion, timing threshold or expected coordinate was removed.
+
+## Narrow defensive performance repair and its evidence limit
+
+A. Presentation-only counts use already validated internal selection length when groups are empty. Nonempty groups retain the existing validated unit derivation. This is not an input validator, command path, mutable cache or scene publication.
+
+B. An explicit bounded set of document commands with a strictly validated ordinary empty-group envelope delegates to the existing defensive selection planner, preserving its closed scene/selection/command/options, canonical output and lock validation. Group/Ungroup/Duplicate and all commands with groups retain the full group path, including both-stack ID reservations. History and atomic prepublication validation are unchanged.
+
+The three new UI count regressions initially failed **0/3** for repeated empty-group validation; that failed pre-repair attempt is retained. Synthetic local call-count instrumentation on the same maximum-effects singleton move drops full canonical-scene calls **38 → 28** (repaired Feature 013: **26**) while retaining the same **943 Canvas operations**. This diagnoses eliminated redundant validation; it is **not native performance PASS**, calibrated latency, heap measurement or evidence that the +10 ms native threshold now passes. The unchanged paired native comparison and full visual/CI gates must run on the exact repair.
+
+The independently reviewed execution ceiling remains **30 minutes native / 33 minutes for the same job**, with the unchanged +10 ms p95-delta and <50 ms handler gates, sandbox, read-only permissions, cleanup and one-minute package step. No assertion-threshold or security change is part of this repair.
+
+## Bounded lossless transport experiment, independently source-reviewed
+
+The new [transport contract](../tests/BROWSER-EVIDENCE-TRANSPORT.md) preserves exact original stdout/stderr record bytes and capture payloads through ordered Brotli quality-6 blocks. It does not resize/re-encode JPEGs, remove a scenario/assertion, alter thresholds, or change runtime/browser settings. New transport tests **23/23** plus existing CDP tests **23/23** pass. The runner-only integration leaves the runtime, native scenario order and 30/33-minute budgets unchanged.
+
+This is a risk-bearing delivery experiment, not a guarantee of connector capacity. Two retained-corpus every-line replays project to **6,564,851 bytes** (PR 17 basis) and **7,666,076 bytes** (older PR 16 basis) for 350 captures. Neither linear projection is a bound; the second exceeds the reviewed **7,350,000-byte native-output cap**. The cap stays fixed and fails closed. Node/setup/transport-test/package output and Actions timestamp overhead remain outside it, and encoding does not turn whole-job connector reads into bounded range reads.
+
+Retained-corpus replay reconstructed exact bytes but remained synthetic BLOCKED/nonaccepted evidence. Cap, spool, output or decoding failures cannot count as successful delivery; native assertions and cleanup continue, and final acceptance additionally needs independently verified terminal job success plus the expected clean source/runtime identity and case count. The bounded temporary spool is not uploaded or guaranteed retrievable later. No package, permission, workflow action/settings, credential, remote destination or screenshot-quality change is added. Fresh full-run evidence remains required.
+
+## Remaining exact-head gates
+
+[PR 17 checks](https://github.com/woodkill00/aphantasia_build/pull/17/checks) provide subsequent exact-head outcomes; this dated record does not predict them. Exact independent source freeze, refreshed runtime pin, complete local aggregate and offline documentation checks are accepted within their local scope: **58 Markdown files / 400 links**, **88 manifest entries** including all three recursive fixtures and every transport helper/test/document, runtime/transport freeze hashes and whitespace all PASS. Then execute and inspect the complete repaired native, actual visual, same-runner timing and clean-checkout package evidence. The accepted transport helper, tests, runner integration and explanatory document are included in the final aggregate/manifest. No workflow action, setting or permission was changed. Verified prerequisite/main identity and final exact-head review remain integration requirements.
+
+The prerequisite record is also explicitly dated: the integration owner reports that the previous published Feature 013 head `ac0bb7db` has a green workflow status, but its detailed native/visual evidence remains unreviewed because log transport was unavailable. Green status alone does not close that evidence gate. A separate evidence-only Feature 013 update is being prepared with identical runtime `df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4` and the exact accepted transport helper/test/document bytes. No new published head or source identity is claimed here. The eventual group revision must reconcile that dependency while preserving its group source and this dated group evidence; consult [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) for subsequent exact-head status, not inferred acceptance.
+
+Physical devices, other engines, actual assistive technology, zoom/OS-file workflows, sensory safety and efficacy remain unverified. No release, hosting, collection, storage, dependency or permission change is made by this metadata work.
+
+---
+
+## Historical first Feature 014 preparation, superseded artifact
+
+The following dated record preserves earlier local passes and then-unrun gates for a different runtime. It is not acceptance of this repair, and the first PR 17 failure above remains failed.
+
 # Feature 014 flat session-group preparation record
 
 20 October 2026, 16:03 UTC. This is a dated source-preparation snapshot, not later native acceptance, verified-main integration, a release or hosting. The independently reviewed reconciled runtime is **417565 bytes**, SHA-256 `7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9`; app SHA-256 `c0251f809f29ebb9bab5727214532b1d7bc7633e7a6b26fe3589c0b6cf69a56f`. **Group native, actual visual, measured performance and clean-checkout CI package acceptance: NOT RUN at this snapshot.** Prepared coverage is 224 native groups (200 preserved plus 24 additive) and 94 new planned captures, not passed cases or inspected images.

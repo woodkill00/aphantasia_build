@@ -304,6 +304,13 @@
   function groupFor(id){return groups.find(group=>group.memberIds.includes(id));}
   function groupLabel(id){const group=groupFor(id);return group?' · Group '+group.id.slice(6)+' ('+group.memberIds.length+' items)':'';}
   function sessionState(){return {groups,selection};}
+  function selectedUnitCounts(){
+    // Presentation only: internal selection and metadata were validated before
+    // publication. Empty groups need no second full scene-validation pass.
+    if(!groups.length)return {unitCount:selection.ids.length,groupCount:0};
+    const units=A.selectionUnits(working,selection,groups);
+    return {unitCount:units.length,groupCount:units.filter(unit=>unit.groupId).length};
+  }
   function updateObjectList(){
     const selector=$('object-select'),focused=document.activeElement;
     selector.replaceChildren();
@@ -327,8 +334,8 @@
     }
     anchor.value=selectedId||'';anchor.disabled=selection.ids.length<2;$('move-anchor-row').hidden=selection.ids.length<2;
     const primary=working.scene.objects.find(o=>o.id===selectedId),locked=selection.ids.filter(id=>locks.has(id)).length;
-    const units=A.selectionUnits(working,selection,groups),groupCount=units.filter(unit=>unit.groupId).length,individualCount=units.length-groupCount;
-    $('selection-summary').textContent=selection.ids.length+' items selected, '+units.length+' arrangement units: '+groupCount+' groups and '+individualCount+' items. Move anchor: '+(primary?primary.shape+' · '+primary.id+groupLabel(primary.id):'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
+    const {unitCount,groupCount}=selectedUnitCounts(),individualCount=unitCount-groupCount;
+    $('selection-summary').textContent=selection.ids.length+' items selected, '+unitCount+' arrangement units: '+groupCount+' groups and '+individualCount+' items. Move anchor: '+(primary?primary.shape+' · '+primary.id+groupLabel(primary.id):'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
     $('select-all').disabled=!working.scene.objects.length;$('clear-selection').disabled=!selection.ids.length;
     $('object-hint').textContent=selection.ids.length===1?'Edit this item’s properties. Removing all items leaves a background-only scene.':groups.some(group=>group.memberIds.some(id=>selection.ids.includes(id)))?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to edit its properties. Selection movement is available separately.';
   }
@@ -407,8 +414,8 @@
     const painted=render();say(live&&!painted?'Draft updated; preview unavailable and hidden.':message+notice,live&&!painted);return true;
   }
   function syncArrangementControls(){
-    const singleton=selected(),locked=!!singleton&&locks.has(selectedId),count=locks.ids().length,n=selection.ids.length,selectedLocked=selection.ids.some(id=>locks.has(id)),invalid=!M.validateScene(readFields()).ok,units=A.selectionUnits(working,selection,groups),selectedGroups=units.filter(unit=>unit.groupId).length;
-    const exactGroup=selectedGroups===1&&units.length===1;
+    const singleton=selected(),locked=!!singleton&&locks.has(selectedId),count=locks.ids().length,n=selection.ids.length,selectedLocked=selection.ids.some(id=>locks.has(id)),invalid=!M.validateScene(readFields()).ok,{unitCount,groupCount:selectedGroups}=selectedUnitCounts();
+    const exactGroup=selectedGroups===1&&unitCount===1;
     $('group-selected').disabled=!metadataEligible()||invalid||(!exactGroup&&(n<2||selectedGroups>0||groups.length>=6));
     // Keep the activating native control focusable after its successful no-op
     // endpoint. Ungroup with no selected groups is deliberately a validated no-op.
@@ -421,9 +428,9 @@
     $('duplicate-object').disabled=!n||working.scene.objects.length+n>M.MAX_OBJECTS;
     $('duplicate-object').textContent=n>1?'Duplicate selection':'Duplicate object';$('delete-object').textContent=n>1?'Remove selection':'Remove object';
     ['x','y','both'].forEach(axis=>{$('align-'+axis).disabled=!n||selectedLocked;$('align-'+axis).textContent=(n>1?'Center selection bounds ':'Center item position ')+(axis==='x'?'horizontally':axis==='y'?'vertically':'both axes');});
-    ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).disabled=units.length<2||selectedLocked);
-    ['x','y'].forEach(axis=>$('distribute-'+axis).disabled=units.length<3||selectedLocked);
-    $('arrangement-unit-help').textContent=units.length+' arrangement unit'+(units.length===1?'':'s')+' selected. Alignment needs at least two arrangement units; equal gaps need at least three. A complete group counts as one unit.';
+    ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).disabled=unitCount<2||selectedLocked);
+    ['x','y'].forEach(axis=>$('distribute-'+axis).disabled=unitCount<3||selectedLocked);
+    $('arrangement-unit-help').textContent=unitCount+' arrangement unit'+(unitCount===1?'':'s')+' selected. Alignment needs at least two arrangement units; equal gaps need at least three. A complete group counts as one unit.';
     for(const [id,direction] of [['undo-move','undo'],['redo-move','redo']]){let blocked=invalid;try{if(!blocked)A.planHistory(working,sessionState(),{undo:moveUndo,redo:moveRedo},direction,sceneGeneration,{locks});}catch(e){blocked=true;}$(id).disabled=blocked||!(direction==='undo'?moveUndo:moveRedo).length;}
     updateOutputs();
   }

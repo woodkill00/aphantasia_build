@@ -351,7 +351,7 @@ async function runSessionGroupScenarios({page,runCase}) {
         const timing=stats(dom.moves.map(e=>e.ms));console.log('IMAGERY_SESSION_GROUP_DRAG_COST '+JSON.stringify({device:page.device.name,scope:'Candidate-only grouped pointer handler plus forced layout; not physical latency or a baseline comparison',timing}));assert.ok(timing.max<HANDLER_MAX_MS);
       }
       await page.click('#redo-move');const moved=copy(value);moved.scene.objects.forEach(o=>{o.x+=15;o.y+=5;});assert.deepEqual(await draft(),moved);rigidOffsets(value,moved,saved);
-      await page.nativeSelect('#move-anchor','object-2');await page.click('#place-object');await tap(point(r,70,60));await page.hidden();const placed=copy(moved);placed.scene.objects.forEach(o=>{o.x-=10;o.y+=10;});assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),saved);
+      await page.nativeSelect('#move-anchor','object-2');await page.click('#place-object');const placement=await content();await tap(point(placement,70,60));await page.hidden();const placed=copy(moved);placed.scene.objects.forEach(o=>{o.x-=10;o.y+=10;});assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),saved);
       await page.click('#undo-move');assert.deepEqual(await draft(),moved);await live();await capture('selection-summary','v13-rapid-group-drag-rigid-result');assert.deepEqual(await applyRead(),moved);
     });
 
@@ -394,8 +394,8 @@ async function runSessionGroupScenarios({page,runCase}) {
 
     await runCase('v13 metadata-only groups retain one clean provenance interval and cannot reset aid suppression',async()=>{
       const value=groupFixture();await load(value);await page.click('#journal-container summary');await page.click('#journal-enable');await page.click('#journal-track-display');await live();
-      const before=await page.evaluate(()=>window.__groupProvenanceCalls.slice()),pixels=await rasterHash();
-      await group(['object-1','object-3'],'object-3');await page.click('#ungroup-selected');await page.click('#group-selected');
+      await select(['object-1','object-3'],'object-3');const before=await page.evaluate(()=>window.__groupProvenanceCalls.slice()),pixels=await rasterHash();
+      await page.click('#group-selected');await page.click('#ungroup-selected');await page.click('#group-selected');
       assert.deepEqual(await page.evaluate(()=>window.__groupProvenanceCalls),before,'metadata neither ends nor begins a visible provenance interval');assert.equal(await rasterHash(),pixels);
       assert.deepEqual(await draft(),value);assert.equal(await page.property('#draft-label','textContent'),'Applied');await page.click('#hide-scene');
       const deadline=Date.now()+5000;while((await page.evaluate(()=>window.__groupTracker.getState().status))==='pending-digest'&&Date.now()<deadline)await sleep(25);

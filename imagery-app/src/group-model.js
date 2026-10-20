@@ -6,6 +6,7 @@
   // Current + both retained endpoints + planned IDs have bounded reservations.
   const ITEM_SEARCH_LIMIT=985,GROUP_SEARCH_LIMIT=493;
   const KINDS=Object.freeze(S.KINDS.concat('group','ungroup')),ALIGNMENTS=S.ALIGNMENTS;
+  const UNGROUPED_DOCUMENT_KINDS=Object.freeze(['move','nudge','translate','place','center','align','distribute','delete','reorder']);
   const transactions=new WeakSet(),own=(value,key)=>Object.prototype.hasOwnProperty.call(value,key),bytes=JSON.stringify,q=value=>Math.round(value*100);
   const suffix=id=>Number(id.slice(id.indexOf('-')+1)),natural=(a,b)=>suffix(a)-suffix(b);
   function fail(message,code='INVALID_ARRANGEMENT'){const error=new Error(message);error.code=code;throw error;}
@@ -159,6 +160,20 @@
     return {document:candidate,groups:metadata,selection:selected,changed:changedScene||changedGroups,changedScene,changedGroups,kind,targetIds:state.selection.ids.slice(),targetGroupIds:unitsFor(before,state.selection,state.groups).filter(unit=>unit.groupId!==null).map(unit=>unit.groupId)};
   }
   function plan(value,current,command,options={}){
+    // Only a strictly validated empty metadata envelope can delegate. Selection's
+    // existing planner owns all canonical input/output, geometry and source/target
+    // lock checks here; repeating them in the group envelope adds no authority.
+    record(current,['groups','selection'],['groups','selection'],'Arrangement session');
+    array(current.groups,MAX_GROUPS,'Session groups');
+    if(current.groups.length===0){
+      checkCommand(command);record(options,['locks','viewport','history'],[],'Arrangement options');
+      if(UNGROUPED_DOCUMENT_KINDS.includes(command.type)){
+        // Do not forward group history into the older history schema. Metadata
+        // commands and Duplicate retain the full path and both-stack reservations.
+        const result=S.plan(value,current.selection,command,{locks:options.locks,viewport:options.viewport});
+        return {document:result.document,groups:[],selection:result.selection,changed:result.changed,changedScene:result.changed,changedGroups:false,kind:result.kind,targetIds:result.targetIds,targetGroupIds:[]};
+      }
+    }
     const before=M.canonicalScene(value),state=session(before,current);checkCommand(command);record(options,['locks','viewport','history'],[],'Arrangement options');
     const selected=state.selection,units=unitsFor(before,selected,state.groups),selectedGroups=units.filter(unit=>unit.groupId!==null),policy=lockPolicy(before,options.locks);
     if(command.type!=='ungroup'&&!selected.ids.length)fail('Select at least one item to arrange.');
