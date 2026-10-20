@@ -1,34 +1,62 @@
 {
   "date": "2026-10-20",
-  "status": "V07_SOURCE_READY_NATIVE_CI_PENDING",
+  "status": "V07_REVISED_CANDIDATE_NATIVE_CI_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.7.0",
-    "bytes": 167235,
-    "sha256": "842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70"
+    "bytes": 167297,
+    "sha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857"
   },
   "baseCommit": "79adc0d9612b65a9353d78a648f2c89cdc6618ec",
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 456,
-    "passed": 456,
+    "total": 457,
+    "passed": 457,
     "failed": 0,
     "node": "24.19.0"
   },
   "browser": {
-    "status": "NOT_RUN_ON_CANDIDATE",
-    "localAttempt": "Sandbox-enabled local Chromium launch blocked before navigation. No browser-security flags changed; complete native CI remains required.",
+    "status": "RETRY_PENDING",
     "preparedGroups": 98,
-    "expectedCaptures": 76,
+    "expectedCaptures": 78,
     "timeoutBudget": {
       "nativeStepMinutes": 10,
       "jobMinutes": 12,
       "rationale": "Prior native run433.973s plus up to56s for18 explicit Hide guards,12.4s for4 new responsive starts and about20s additional actions/captures; estimated about522s. Assertions and browser security unchanged."
-    }
+    },
+    "failedAttempts": [
+      {
+        "runId": 39375994747,
+        "jobId": 118474153259,
+        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39375994747",
+        "sourceCommit": "fdb4afff3c943af6118de37b82fb557cf2f25963",
+        "artifactSha256": "842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70",
+        "nonBrowserPassed": 456,
+        "passed": 96,
+        "failed": 2,
+        "durationSeconds": 447.411,
+        "cleanup": {
+          "browserClosed": true,
+          "profileRemoved": true
+        },
+        "cause": "Both new precision-layout groups mistakenly classified a text LABEL as a 44px numeric/range/button target. Later full-field and timing/layout assertions and 20 planned captures did not execute.",
+        "repair": "Explicit INPUT/BUTTON/SELECT classification plus a Node regression, retaining complete-label bounds/hit checks and44px actual-control assertions. Independent inspection of56 available frames also identified a wasted mobile header row; a narrow three-column action grid repairs it. Runtime changed, so complete native CI and fresh visual evidence are required.",
+        "visualCaptures": 56,
+        "visualReview": "All56 available actual captures independently inspected. Missing responsive tail remains unverified; prior frames do not certify revised runtime."
+      }
+    ]
   },
   "visualReview": {
-    "status": "PENDING_ACTUAL_NATIVE_CAPTURES"
+    "status": "PENDING_REVISED_ARTIFACT_CAPTURES",
+    "expected": 78,
+    "priorAttempt": {
+      "runId": 39375994747,
+      "artifactSha256": "842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70",
+      "captured": 56,
+      "inspected": 56,
+      "totalJpegBytes": 999716
+    }
   },
   "limits": [
     "Physical devices, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy are not established.",

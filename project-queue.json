@@ -1369,12 +1369,13 @@
     {
       "id": "IF-043",
       "title": "Improve live startup and responsive item timing",
-      "status": "source_ready_native_ci_pending",
+      "status": "revised_candidate_native_ci_pending",
       "scope": "Start one static live preview; background saturation 0\u2013100 with default 60 and original legacy bounds; explicit Steady/Pulse and mixed finite timelines; calculated responsive spacing and complete precision-control visibility.",
       "evidence": [
-        "456/456 local non-browser checks pass; 3 valid and 14 invalid synthetic fixture checks pass.",
-        "Independent source review accepted the frozen candidate; complete 98-group native CI and 76 actual rendered captures pending.",
-        "HTML SHA256 842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70"
+        "457/457 local Node checks pass after explicit element-role regression.",
+        "First native run39375994747 passed96/98; two harness label classifications failed and the responsive tail was not reached.",
+        "All56 available first-run frames inspected; approved compact header spacing repair implemented.",
+        "Revised HTML SHA256 c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857; full98-group native CI and78 fresh frames pending."
       ],
       "nextAction": "Freeze reviewed source/tests, run complete native CI, inspect actual frames, reconcile documentation and require exact-final-head green CI before maintainer merge."
     }

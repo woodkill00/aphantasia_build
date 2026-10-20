@@ -1,10 +1,19 @@
-# Version 0.7 verification pending
+# Version 0.7 revised candidate awaiting full native verification
 
-2026-10-20. The current increment changes static startup visibility, background saturation through 100% with default 60%, explicit Steady/Pulse item modes, and responsive precision-control layout. Independent source review and 456/456 local Node checks passed; fresh complete native CI, actual-frame inspection and exact-final-head CI are required. Historical results below do not verify this changed artifact. The prepared native suite has 98 groups and 76 synthetic review captures. Its native step budget is ten minutes within a twelve-minute job, based on the previous 433.973-second run plus the counted new explicit Hide guards and added layout/timing checks. No assertions or browser-security settings were weakened.
+2026-10-20. All 457 local Node checks pass. The first native attempt below failed two test-harness label classifications; its actual frames also exposed a wasted mobile header row. The explicit control-role regression and narrow three-column header repair are complete. All label bounds/hit checks and actual input/button/select 44px requirements remain. Complete 98-group native CI and 78 fresh synthetic captures are required for the revised artifact.
 
-Local sandbox-enabled Chromium launch was blocked before app navigation. No browser-security setting was relaxed. This is an environment blocker, not a browser pass or evidence of app failure.
+Revised runtime: 167297 bytes; SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`. The available 56 first-run frames were independently inspected, but cannot verify the changed runtime or previously unexecuted responsive checks. Added actual mixed-summary/track frames supplement mode-selector views.
 
-This remains scoped software verification: physical devices, other engines, ordinary OS dialogs, full accessibility, calibrated sensory safety and clinical efficacy are not established.
+<!-- V07-FIRST-FAILED-ATTEMPT -->
+# First version 0.7 native attempt (failed)
+
+2026-10-20. [First native run 39375994747](https://github.com/woodkill00/aphantasia_build/actions/runs/39375994747) passed all 456 Node checks and 96/98 native Chrome groups, but is a failed workflow. Both new precision-layout groups misclassified a text LABEL as a 44px numeric/range/button target. Later responsive/timing assertions and 20 planned captures did not execute. Repair requires explicit control-role classification while preserving complete-label bounds and actual-control 44px assertions, followed by a complete native rerun.
+
+Source head: `fdb4afff3c943af6118de37b82fb557cf2f25963`; PR test-merge checkout: `7188016cfe29d1f0bcb1dd6bf271b6641975dcdb`. Runtime: 167235 bytes, SHA-256 `842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux. Native duration 447.411 seconds; browser closure and temporary-profile deletion passed. All 56 emitted synthetic JPEG captures were byte/hash verified (999716 bytes); missing captures and pending visual review prevent full layout acceptance.
+
+The candidate changes one static startup preview, background saturation through 100% with default 60%, explicit Steady/Pulse item modes and calculated responsive precision layout. The native step/job budget is 10/12 minutes based on measured prior runtime plus counted new guards/checks. No assertions or browser-security settings were weakened. Local sandbox-enabled Chromium launch was blocked before navigation; native CI is the actual browser evidence.
+
+Full exact-head CI, actual-frame acceptance and evidence reconciliation remain required before merge. Physical devices, other engines, ordinary OS dialogs, full accessibility, calibrated sensory safety and clinical efficacy are not established. Historical results below do not verify this changed runtime.
 
 <!-- HISTORICAL-V06-EVIDENCE -->
 # Version 0.6 verified item styles and finite timelines

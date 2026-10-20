@@ -445,6 +445,12 @@ class Page {
     await this.send('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:this.device.scale,mobile:this.device.touch,screenWidth:width,screenHeight:height});
     await sleep(50);
   }
+  async workspaceHeader() {
+    const metrics=await this.evaluate(()=>[...document.querySelectorAll('.workspace-actions button')].filter(e=>!e.hidden).map(e=>{const r=e.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);const t=range.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{id:e.id,left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,text:{left:t.left,right:t.right,top:t.top,bottom:t.bottom},hit:hit===e||e.contains(hit),viewport:{width:innerWidth,height:innerHeight}}}));
+    assert.equal(metrics.length,3,'all three workspace actions must remain present');
+    for(const m of metrics){assert.ok(m.width>=44&&m.height>=44&&m.hit&&m.left>=0&&m.right<=m.viewport.width+1&&m.top>=0&&m.bottom<=m.viewport.height+1,'whole44px workspace target: '+JSON.stringify(m));assert.ok(m.text.left>=m.left&&m.text.right<=m.right&&m.text.top>=m.top&&m.text.bottom<=m.bottom,'whole visible workspace button text: '+JSON.stringify(m));assert.ok(Math.abs(m.top-metrics[0].top)<=1,'workspace actions stay on one row: '+JSON.stringify(metrics));}
+    return metrics;
+  }
   async visualCapture(name) {
     // Synthetic, explicitly requested review frames only. This is separate from
     // optional raw failure screenshots, which never enter public CI output.
@@ -528,7 +534,7 @@ async function run() {
           assert.equal(await page.evaluate(() => navigator.onLine),false);
           assert.equal(await page.evaluate(() => location.protocol),'file:');
           const canvas = await page.canvas(); assert.ok(canvas.width>0 && canvas.width<=4096); assert.ok(canvas.height>0 && canvas.height<=4096); assert.ok(canvas.width*canvas.height<=8388608); const ratio=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();return {w:r.width,h:r.height}}); assert.ok(Math.abs(canvas.width/canvas.height-ratio.w/ratio.h)<0.01,'canvas backing and CSS aspect ratios differ');
-          await page.noOverflow(device.width);
+          await page.noOverflow(device.width);await page.workspaceHeader();
           await page.visible();assert.equal(await page.evaluate(()=>window.__testRAFRequests),0);await page.visualCapture('v7-startup-live-static');await page.screenshot('startup',out);
           const rgb=await page.evaluate(()=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(0,0,1,1).data).slice(0,3)});hslRgb({h:4,s:60,l:4}).forEach((v,i)=>assert.ok(Math.abs(rgb[i]-v)<=1));
           await page.fill('#background-saturation-value',100);await page.visible();assert.equal(await page.property('#background-saturation','value'),'100');const saturated=await page.evaluate(()=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(0,0,1,1).data).slice(0,3)});hslRgb({h:4,s:100,l:4}).forEach((v,i)=>assert.ok(Math.abs(saturated[i]-v)<=1));await page.visualCapture('v7-live-background-saturation-100');
