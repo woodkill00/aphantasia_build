@@ -2,7 +2,7 @@
 
 Version 0.8 **unreleased development candidate**, with scoped native-browser and arrangement visual checks passed. Each final head must pass required CI before protected integration; consult [PR 14 checks](https://github.com/woodkill00/aphantasia_build/pull/14/checks) for its outcome. The published v0.7.0 ZIP does not include its new features. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
 
-The separate [editor-aids candidate](#editor-aids-candidate) adds optional visible references. Its new native-browser and inspected-visual acceptance is **NOT RUN** pending exact-source CI and review; the accepted core results above do not verify this addition.
+The separate [editor-aids candidate](#editor-aids-candidate) adds optional visible references. Its complete native-browser and inspected-visual acceptance is **PENDING** the corrected exact-source CI and review; the accepted core results above do not verify this addition.
 
 **No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, notes and journal records.
 
@@ -197,7 +197,7 @@ Lock, unlock or snap changes cancel an active move/placement rather than complet
 
 ### Editor aids candidate
 
-**New candidate: native-browser and inspected-visual acceptance NOT RUN pending exact-source CI and review.** These controls are not part of the published v0.7.0 ZIP or covered by the earlier core pass. See the [bounded specification](../specs/012-editor-aids/spec.md) and [acceptance tasks](../specs/012-editor-aids/tasks.md).
+**New candidate: complete native-browser and inspected-visual acceptance PENDING corrected exact-source CI and review.** These controls are not part of the published v0.7.0 ZIP or covered by the earlier core pass. See the [bounded specification](../specs/012-editor-aids/spec.md) and [acceptance tasks](../specs/012-editor-aids/tasks.md).
 
 - In **Scene → Editor aids**, check **Show editor aids** only while a valid static Live preview is visible and the editor is open. It starts unchecked. Choose **Grid spacing · content units**: 1, 5 or 10, with 5 initially. **Center guides**, initially unchecked, adds references halfway across and down the authored content area. Black letterbox margins stay unmarked.
 - The visible grid and **Snap centers** are independent. A grid does not enable snap; snap does not show a grid. Neither changes existing item coordinates. Snap still affects only drag/tap placement; typed positions, nudges and centering retain their existing behavior.

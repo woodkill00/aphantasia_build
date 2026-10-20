@@ -155,6 +155,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 .editor-aid-line.grid-y,.editor-aid-line.center-y{left:0;width:100%;height:0;border-top-width:1px}
 .editor-aid-line.center-x,.editor-aid-line.center-y{border-color:rgba(184,184,184,.7)}
 #editor-aids-status{min-height:7.75em}
+
+/* Canvas pixels retain authored colors in forced-colors mode. Preserve only
+   neutral guide marks; form controls continue using the user's system palette. */
+@media(forced-colors:active){.editor-aid-line{forced-color-adjust:none}}
 </style>
 </head>
 <body>

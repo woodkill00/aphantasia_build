@@ -69,3 +69,5 @@ for(const [kind,id] of [['Live','show-scene'],['step','sequence-show'],['items',
 for(const [kind,id] of [['items','item-play'],['sequence','sequence-play']])test('throwing '+kind+' scheduling cannot restore prior clean provenance',async()=>{
  const h=createHarness({crypto:crypto.webcrypto});await prepareAidAffectedTracking(h,kind==='sequence');h.sandbox.requestAnimationFrame=()=>{throw Error('synthetic failed start');};h.advance(3100);await h.fire(id,'click');assert.equal(h.visible(),false);cleared(h);assert.equal(h.rafPending.size,0);assert.match(h.get('journal-tracking-status').textContent,/unavailable.*editor guides/);unavailable(await reflection(h));
 });
+
+test('forced colors preserve only neutral guide marks, not system-colored controls',()=>{const css=fs.readFileSync(path.join(__dirname,'../src/style.css'),'utf8');assert.match(css,/@media\(forced-colors:active\)\{\.editor-aid-line\{forced-color-adjust:none\}\}/);assert.deepEqual(Array.from(css.matchAll(/([.#][\w-]+)\{forced-color-adjust:none\}/g),m=>m[1]).sort(),['.color-swatch','.editor-aid-line']);});

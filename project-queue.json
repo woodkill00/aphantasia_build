@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T13:49:00Z",
+  "updated": "2026-10-20T14:09:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1925,28 +1925,35 @@
     "editorAidsProvenance": {
       "status": "SOURCE_REPAIRED_INDEPENDENT_REPRODUCTION_PASS_NATIVE_PENDING",
       "scope": "A failed fresh clean paint after aids must not expose a previously completed clean record. Source review reproduced defect after1069 local checks passed; targeted all-start-route regressions required.",
-      "nextAction": "Exact-head native, visual, performance and clean-checkout package acceptance; local aggregate passes 1079/1079."
+      "nextAction": "Retain success-only eligibility regressions; latest corrected local aggregate passes 1080/1080, exact-head native and visual/package gates pending."
+    },
+    "editorAidsForcedColors": {
+      "status": "SOURCE_REPAIR_ACCEPTED_ACTUAL_VISUAL_RERUN_REQUIRED",
+      "scope": "Both forced-colors screenshots had near-black grid borders against dark canvas. Mark-only fixed-neutral CSS opt-out preserves visibility without changing system-colored controls.",
+      "nextAction": "Verify exact-head native computed styles and inspect repaired desktop/mobile frames."
     }
   },
-  "currentStatus": "Core PR11\u201314 merged, exact-main edc92d58 independently accepted in run 39428678423: 935 Node / 160 native/package/cleanup and assigned 26-frame visual scope. Feature 012 editor aids is a separate unmerged candidate under source review; native/visual/performance not run. Failed-clean-paint provenance isolation repair independently passes its original reproduction and 77 aids UI tests; corrected local aggregate passes 1079/1079, while exact-head native/visual/performance/package gates remain required. Multi-selection alignment/distribution and session groups remain subsequent increments. No new release, hosting or collection.",
+  "currentStatus": "Core PR11\u201314 merged, exact-main edc92d58 independently accepted in run 39428678423: 935 Node / 160 native/package/cleanup and assigned 26-frame visual scope. Feature 012 editor aids is a separate unmerged candidate under source review; native/visual/performance not run. Failed-clean-paint provenance isolation repair independently passes its original reproduction and 77 aids UI tests; latest corrected local aggregate passes 1080/1080, while first exact-head native run passed 176/178 with two new test-sequence failures after intentionally hidden Redo. Explicit resume/rearm added to test; full rerun, visual review and package gate remain required. Multi-selection alignment/distribution and session groups remain subsequent increments. No new release, hosting or collection.",
   "currentIteration": {
     "name": "Feature 012: bounded editor aids",
     "base": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
     "baseTree": "a436707b99e5b62324f6d9ee6f4f585c6ed210be",
     "remoteBranch": "feature/012-editor-aids",
-    "publicationStatus": "NOT_PUBLISHED",
-    "status": "source_accepted_1079_local_checks_pass_native_pending",
+    "publicationStatus": "DRAFT_PR_15_OPEN_NOT_MERGED",
+    "status": "native_test_sequence_and_forced_colors_repairs_reviewed_rerun_pending",
     "contract": "specs/012-editor-aids/spec.md",
     "acceptanceReference": "specs/012-editor-aids/tasks.md",
-    "htmlSha256": "58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65",
-    "htmlBytes": 337422,
+    "htmlSha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735",
+    "htmlBytes": 337656,
     "localNode": {
-      "passed": 1079,
-      "total": 1079,
+      "passed": 1080,
+      "total": 1080,
       "failed": 0,
       "nodeVersion": "v24.19.0",
-      "durationMs": 14791.818884
-    }
+      "durationMs": 16967.507973
+    },
+    "sourceHead": "c41840c4a98d54560ac955a5caba6aebebe7b5ae",
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39434279779"
   },
   "historicalArrangementPremergeIteration": {
     "name": "Fourth increment: session locks and precise arrangement",

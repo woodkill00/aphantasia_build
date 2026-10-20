@@ -4,38 +4,55 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 337422,
-    "sha256": "58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65",
+    "bytes": 337656,
+    "sha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735",
     "releaseStatus": "UNRELEASED_DEVELOPMENT_CANDIDATE"
   },
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "passed": 1079,
-    "total": 1079,
+    "passed": 1080,
+    "total": 1080,
     "failed": 0,
     "nodeVersion": "v24.19.0",
-    "durationMs": 14791.818884,
-    "scope": "Corrected runtime local Node/model/DOM-double/package-unit evidence; native execution remains pending."
+    "durationMs": 16967.507973,
+    "scope": "Corrected forced-colors runtime local Node/model/DOM-double/package-unit evidence; exact-head native rerun remains pending."
   },
   "browser": {
-    "status": "NOT_RUN",
-    "preparedGroups": 178,
-    "command": "node imagery-app/tests/browser-cdp.cjs",
-    "scope": "160 existing plus18 additive editor-aids groups; no current artifact browser pass inferred."
+    "status": "FAIL_PRIOR_HEAD_TEST_SEQUENCE_CORRECTED_RERUN_REQUIRED",
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39434279779",
+    "sourceHead": "c41840c4a98d54560ac955a5caba6aebebe7b5ae",
+    "runtimeSha256": "58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65",
+    "passed": 176,
+    "total": 178,
+    "failed": 2,
+    "seconds": 799.627,
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "failure": "Both aided input cases attempted keyboard nudge after Redo correctly concealed preview. Test now asserts Hidden/aids off then explicitly starts Live and rearms aids before nudge. Runtime hidden-input guard unchanged.",
+    "command": "node imagery-app/tests/browser-cdp.cjs"
   },
   "visual": {
-    "status": "NOT_RUN",
-    "scope": "Exact-artifact grid, authored ratios, narrow/short/focus, forced colors, provenance and input captures require actual inspection."
+    "status": "CHANGES_REQUESTED_PRIOR_HEAD_FORCED_COLORS_FIXED_RERUN_REQUIRED",
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39434279779",
+    "capturesHashVerified": 176,
+    "manuallyInspectedNewAids": 34,
+    "missingNewAids": 2,
+    "finding": "Forced-colors system palette made grid nearly black against authored dark canvas. Mark-only forced-color-adjust:none repair and actual-color assertions added; controls retain system palette. Repaired screenshot not yet inspected.",
+    "otherScopedFindings": "Normal grids clip to five authored ratios, aid-free fullscreen, narrow/short labels/focus and Hide reachability accepted in34 inspected frames. No all-old-frame acceptance claim."
   },
   "package": {
-    "status": "CLEAN_CHECKOUT_CI_PENDING",
+    "status": "SKIPPED_ON_FAILED_NATIVE_GATE",
     "unitTestsPassed": 21,
     "published": false
   },
   "integration": {
-    "status": "NOT_PUBLISHED_OR_MERGED",
-    "baseMain": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a"
+    "status": "DRAFT_PR_OPEN_NOT_MERGED",
+    "baseMain": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
+    "pullRequest": 15,
+    "head": "c41840c4a98d54560ac955a5caba6aebebe7b5ae"
   },
   "priorExactMain": {
     "commit": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
@@ -1434,9 +1451,26 @@
     "scope": "Local Node/model/DOM-double/package unit checks, not native browser execution."
   },
   "independentReview": {
-    "status": "SOURCE_ACCEPTED_FOR_DRAFT_CI_NATIVE_PENDING",
-    "runtimeSha256": "58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65",
-    "aidsUiTests": 77,
-    "finding": "Failed fresh clean paint after guides exposed an older completed record; success-only raster/start gating repaired and original independent reproduction now stays unavailable. Four raster, four repeat-lock and two throwing-scheduler regressions pass."
+    "status": "SOURCE_REPAIRS_ACCEPTED_FOR_CORRECTED_NATIVE_CI",
+    "runtimeSha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735",
+    "aidsUiTests": 78,
+    "finding": "Failed fresh clean paint after guides exposed an older completed record; success-only raster/start gating repaired and original independent reproduction now stays unavailable. Four raster, four repeat-lock and two throwing-scheduler regressions pass.",
+    "forcedColors": "Narrow mark-only CSS repair and native computed-color assertion source-reviewed; actual repaired visuals remain pending."
+  },
+  "performance": {
+    "status": "PASS_PRIOR_HEAD_BOUNDED_SYNCHRONOUS_CASE",
+    "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency or human usability.",
+    "desktop": {
+      "onP95Ms": 3.5,
+      "onMaxMs": 3.5,
+      "offMaxMs": 1.9,
+      "firstHideMs": 6.9
+    },
+    "mobileEmulation": {
+      "onP95Ms": 2.6,
+      "onMaxMs": 2.6,
+      "offMaxMs": 2.4,
+      "firstHideMs": 6.7
+    }
   }
 }
