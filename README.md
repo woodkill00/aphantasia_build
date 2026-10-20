@@ -6,14 +6,18 @@ Build simple visual scenes in your browser, change their appearance live, and ar
 
 ## Get started
 
-1. On this repository's GitHub page, choose **Code → Download ZIP**. Extract the ZIP first.
-2. Open **imagery-app/index.html** in a browser with JavaScript enabled. If it opens as text or an attachment preview, choose **Open with** and select a browser.
+1. Download the published [v0.7.0 portable ZIP](https://github.com/woodkill00/aphantasia_build/releases/download/v0.7.0/Imagery-Field-portable.zip) and extract the entire folder.
+2. Open **Imagery-Field.html** in a browser with JavaScript enabled. If it opens as text or an attachment preview, choose **Open with** and select a browser.
 3. The starter scene appears immediately as a **static live preview**. Change a color or item to see it update without Apply or reloading. **Hide** conceals the field; **Resume live preview** shows it again when you choose.
 4. To keep your scene, choose **Apply changes**, then **Download scene JSON**. Confirm the file exists in your Downloads folder.
 
 **There is no autosave.** Apply accepts changes for this session; it does not save a file. Closing or refreshing the page can lose unexported work. Scenes, sequences, and optional notes have separate downloads.
 
-This source ZIP is the current download route. A portable release-preparation tool is provided for maintainers, but a published Release or hosted preview is not implied. Physical-device and ordinary file-opening workflows remain unverified; see [compatibility](docs/compatibility.md).
+The [v0.7.0 release](https://github.com/woodkill00/aphantasia_build/releases/tag/v0.7.0) is the published engineering preview. It does not contain the unreleased roadmap features below. No installation, account, Node, Git, or server is needed. Keep the included LICENSE with the app. For the development source instead, choose **Code → Download ZIP**, extract it, and open **imagery-app/index.html**. No hosted preview is implied. Physical-device and ordinary file-opening workflows remain unverified; see [compatibility](docs/compatibility.md).
+
+## Current development scope
+
+Unreleased version 0.8 adds direct preview selection and draft movement. Its current browser/visual verification is tracked separately from the historical v0.7 evidence below. The [Spec-Kit roadmap](specs/008-interactive-scene-roadmap/spec.md) and [task map](specs/008-interactive-scene-roadmap/tasks.md) distinguish implemented increments and gated future work.
 
 ## What you can do
 
@@ -29,7 +33,7 @@ This source ZIP is the current download route. A portable release-preparation to
 
 ![A static three-dot scene beside the desktop scene editor, with Live preview on and Hide controls visible.](docs/images/live-editor.jpg)
 
-*Actual v0.7 synthetic scene in Linux Chrome, not a mockup or animation. [More interface screenshots and provenance](docs/images/README.md).*
+*Historical v0.7 synthetic scene in Linux Chrome, not a mockup or animation. [More interface screenshots and provenance](docs/images/README.md).*
 
 ## Find the right guide
 

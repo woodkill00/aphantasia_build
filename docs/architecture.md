@@ -2,6 +2,12 @@
 
 Version 0.7 architecture, updated 2026-10-20. The [item-timeline specification](item-timeline.md) is authoritative for scene version 3, sequence version 2, appearance effects and finite item playback. The version 2/1 contracts below are historical migration inputs; their old closed-key lists must not be mistaken for the new export formats. Scoped live-edit source/native/rendered evidence and the separate CI gate are recorded in the test report. The [sequence contract](sequence-spec.md) remains authoritative for sequence presentation; historical passes do not verify new live behavior.
 
+## Version 0.8 direct-editor candidate
+
+The [Spec-Kit roadmap](../specs/008-interactive-scene-roadmap/spec.md) defines the new increment. `editor-model.js` supplies pure shared-geometry hit testing and validated translation. The UI binds pointer transactions to an immutable item ID, preserves the grab offset and rolls back interrupted gestures. One completed move creates one bounded draft-history entry; this does not apply the scene or mutate accepted history. Other edits clear draft move history. Overlap candidates are invalidated when geometry changes.
+
+New geometry and journal modules are pure future-phase foundations, not yet assembled runtime features. Their synthetic tests do not claim UI/native or scientific acceptance. Existing scene-v3 / sequence-v2 formats and validators remain unchanged in this increment.
+
 ## Components and rendering
 
 - `imagery-app/src/model.js`: closed static validation, canonical serialization, legacy migration, deterministic geometry, presets, and the existing visibility/history/import controller.

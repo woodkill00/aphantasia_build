@@ -1,0 +1,141 @@
+'use strict';
+// Native CDP input and actual raster checks. Synthetic fixtures only.
+const assert=require('node:assert/strict');
+const {setTimeout:sleep}=require('node:timers/promises');
+const {scene,styledObject}=require('./fixtures.cjs');
+const {rgb}=require('./browser-live.cjs');
+// Browser-root tracing is intentionally separate from target-session Page.send.
+// Only synthetic input diagnostics are retained; no stacks, network or screenshots.
+async function beginInputTrace(page){
+ const events=[],names=new Map();let total=0,retainedBytes=0,dropped=0,complete=null,started=false,stopped=false;
+ const unlisten=page.cdp.on(message=>{
+  if(message.sessionId)return;
+  if(message.method==='Tracing.tracingComplete')complete=message.params||{};
+  if(message.method!=='Tracing.dataCollected')return;
+  for(const e of message.params?.value||[]){
+   if(!String(e.cat||'').split(',').includes('input'))continue;
+   total++;const name=String(e.name||'').slice(0,160);if(names.has(name)||names.size<80)names.set(name,(names.get(name)||0)+1);
+   if(!/Fling|TapSuppression|TouchAction|FilteredForFling/i.test(name))continue;
+   const event={name,ts:e.ts,ph:e.ph,pid:e.pid,tid:e.tid,args:JSON.stringify(e.args||{}).slice(0,2048)},bytes=JSON.stringify(event).length;
+   if(events.length<120&&retainedBytes+bytes<=131072){events.push(event);retainedBytes+=bytes;}else dropped++;
+  }
+ });
+ try{await page.cdp.send('Tracing.start',{transferMode:'ReportEvents',traceConfig:{recordMode:'recordUntilFull',traceBufferSizeInKb:1024,enableSampling:false,enableSystrace:false,includedCategories:['input']}});started=true;}
+ catch(error){unlisten();throw Error('Input tracing unavailable: '+error.message);}
+ return async function stop(){
+  if(stopped)throw Error('Input trace was already stopped.');stopped=true;
+  try{
+   if(started)await page.cdp.send('Tracing.end');
+   const deadline=Date.now()+10000;while(!complete&&Date.now()<deadline)await sleep(25);
+   assert.ok(complete,'Input tracing unavailable: tracingComplete did not arrive');
+   assert.equal(complete.dataLossOccurred===true,false,'Input trace reported data loss');
+   assert.ok(total>0,'Input tracing unavailable: no input-category events received');
+   return {total,retainedBytes,dropped,events,names:Array.from(names,([name,count])=>({name,count})),complete:true};
+  }finally{unlisten();}
+ };
+}
+function assertRapidReleaseEvidence(dom,trace){
+ assert.ok(Number.isFinite(dom?.lastMoveToUpMs)&&dom.lastMoveToUpMs>=0&&dom.lastMoveToUpMs<80,'Rapid release regime not exercised: measured last move to release must be below 80ms');
+ assert.ok(trace?.complete&&trace.total>0,'Rapid release input trace unavailable');
+ assert.equal(trace.dropped,0,'Rapid release trace retention dropped events');
+ assert.ok(!trace.events.some(e=>/FlingController::HandlingGestureFling|FilterTapSuppression|FilteredForFling/.test(e.name)),'Rapid release activated browser fling or tap suppression');
+}
+async function runDirectEditorScenarios({page,runCase}){
+ const fixture=()=>scene({name:'Synthetic direct editing',background:{h:210,s:20,l:8},objects:[styledObject({id:'object-1',shape:'pixel',x:35,y:50,size:6,color:{h:120,s:40,l:50}})]});
+ const start=async value=>{await page.file('direct-editor.json',value);await sleep(3100);await page.click('#show-scene');await page.visible();};
+ const rect=()=>page.evaluate(()=>{const r=document.getElementById('scene-canvas').getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height};});
+ async function input(type,x,y){
+  if(page.device.touch){const names={down:'touchStart',move:'touchMove',up:'touchEnd'};await page.send('Input.dispatchTouchEvent',{type:names[type],touchPoints:type==='up'?[]:[{x,y,radiusX:1,radiusY:1,force:1,id:1}]});}
+  else{const names={down:'mousePressed',move:'mouseMoved',up:'mouseReleased'};await page.send('Input.dispatchMouseEvent',{type:names[type],x,y,button:'left',buttons:type==='up'?0:1,clickCount:1});}
+ }
+ async function sample(x,y){return page.evaluate(([x,y])=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(Math.floor(c.width*x/100),Math.floor(c.height*y/100),1,1).data).slice(0,3)},[x,y]);}
+ async function beginDirectTrace(){
+  await page.evaluate(()=>{
+   const button=document.getElementById('undo-move'),canvas=document.getElementById('scene-canvas');
+   window.__directTapTrace=[];window.__directTouchStyle=[];
+   for(let e=canvas;e&&window.__directTouchStyle.length<12;e=e.parentElement)window.__directTouchStyle.push({tag:e.tagName,id:e.id,className:e.className,touchAction:getComputedStyle(e).touchAction});
+   const snapshot=r=>({x:r.x,y:r.y,w:r.width,h:r.height});
+   for(const type of ['touchstart','touchmove','touchend','touchcancel','pointerdown','pointermove','pointerup','pointercancel','gotpointercapture','lostpointercapture','mousedown','mouseup','click'])for(const capture of [true,false])document.addEventListener(type,event=>{
+    if(window.__directTapTrace.length>=160)return;
+    window.__directTapTrace.push({type,capture,time:event.timeStamp,target:event.target.id,trusted:event.isTrusted,defaultPrevented:event.defaultPrevented,cancelable:event.cancelable,pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary,x:event.clientX,y:event.clientY,touches:event.changedTouches?Array.from(event.changedTouches,t=>({id:t.identifier,x:t.clientX,y:t.clientY})):null,path:event.composedPath().slice(0,8).map(e=>e.id||e.nodeName||'window'),button:snapshot(button.getBoundingClientRect()),canvas:snapshot(canvas.getBoundingClientRect()),buttonConnected:button.isConnected,sameButton:button===document.getElementById('undo-move'),disabled:button.disabled,scroll:document.getElementById('editor-scroll').scrollTop});
+   },{capture,passive:true});
+  });
+ }
+ async function settledDirectClick(selector,dwellMs=0){
+  await page.evaluate(async selector=>{const e=document.querySelector(selector);e.scrollIntoView({block:'center',inline:'center',behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));},selector);
+  try{
+   if(!dwellMs||!page.device.touch)await page.click(selector);
+   else {
+    // One separately identified trusted tap. Dwell is the only input change;
+    // never retry a missing click or synthesize a DOM activation.
+    const point=await page.evaluate(selector=>{
+     const e=document.querySelector(selector);if(!e||e.disabled)throw Error('Missing or disabled '+selector);
+     const r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);
+     if(hit!==e&&!e.contains(hit))throw Error('Occluded '+selector);
+     window.__directDwellClick=null;e.addEventListener('click',event=>{window.__directDwellClick={trusted:event.isTrusted};},{once:true});return {x,y};
+    },selector);
+    await page.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point,radiusX:1,radiusY:1,force:1,id:1}]});
+    await sleep(dwellMs);
+    await page.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    const deadline=Date.now()+7000;let delivered;
+    do {delivered=await page.evaluate(()=>window.__directDwellClick);if(delivered)break;await sleep(30);}while(Date.now()<deadline);
+    assert.ok(delivered,'Timed out waiting for trusted dwell click delivery to '+selector);assert.equal(delivered.trusted,true,'interaction must be browser-trusted');
+   }
+  }catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>({events:window.__directTapTrace,state:{x:document.getElementById('position-x').value,y:document.getElementById('position-y').value,undoMoveDisabled:document.getElementById('undo-move').disabled,redoMoveDisabled:document.getElementById('redo-move').disabled,acceptedUndoDisabled:document.getElementById('undo').disabled,visibility:document.getElementById('visibility-label').textContent,status:document.getElementById('status').textContent}}))));}
+ }
+ const near=(a,b)=>a.forEach((value,i)=>assert.ok(Math.abs(value-b[i])<=3,`actual pixel ${a} expected ${b}`));
+ async function dragUndoScenario({captureName,dwellMs=0,postDragGapMs=0,preReleaseHoldMs=0,inputTrace=false,rapidRelease=false}){
+  const value=fixture();await start(value);const acceptedUndoBefore=await page.property('#undo','disabled');await beginDirectTrace();const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
+  await page.evaluate(()=>{window.__directTrust=[];for(const type of ['pointerdown','pointermove','pointerup'])document.getElementById('scene-canvas').addEventListener(type,e=>window.__directTrust.push({type,trusted:e.isTrusted}));});
+  const stopTrace=inputTrace?await beginInputTrace(page):null;let scenarioError=null;
+  try{
+  await input('down',p.x,p.y);await input('move',q.x,q.y);if(rapidRelease)await input('up',q.x,q.y);await sleep(40);
+  assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);assert.ok(Math.abs(Number(await page.property('#position-y','value'))-45)<.1);await page.visible();near(await sample(47,45),rgb(value.scene.objects[0].color));near(await sample(35,50),rgb(value.scene.background));
+  if(preReleaseHoldMs)await sleep(preReleaseHoldMs);
+  if(!rapidRelease)await input('up',q.x,q.y);await sleep(40);assert.ok((await page.evaluate(()=>window.__directTrust)).every(e=>e.trusted));assert.equal(await page.property('#undo-move','disabled'),false);assert.equal(await page.property('#undo','disabled'),acceptedUndoBefore,'draft move must not change accepted history');
+  if(captureName)await page.visualCapture(captureName);if(postDragGapMs)await sleep(postDragGapMs);await settledDirectClick('#undo-move',dwellMs);await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
+  await page.click('#discard');const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);
+  }catch(error){scenarioError=error;throw error;}
+  finally{
+   let trace=null,traceError=null;
+   if(stopTrace)try{trace=await stopTrace();}catch(error){traceError=error;}
+   let dom=null;
+   try{dom=await page.evaluate(()=>{const events=window.__directTapTrace||[],move=events.filter(e=>e.type==='pointermove'&&e.target==='scene-canvas'&&e.capture).at(-1),up=events.find(e=>e.type==='pointerup'&&e.target==='scene-canvas'&&e.capture);return {events,touchStyle:window.__directTouchStyle,lastMoveToUpMs:move&&up?up.time-move.time:null};});}catch(error){traceError=traceError||Error('DOM diagnostic unavailable: '+error.message);}
+   if(rapidRelease&&!traceError)try{assertRapidReleaseEvidence(dom,trace);}catch(error){traceError=error;}
+   console.log('IMAGERY_DIRECT_INPUT_DIAGNOSTIC '+JSON.stringify({device:page.device.name,captureName,dwellMs,postDragGapMs,preReleaseHoldMs,rapidRelease,status:scenarioError||traceError?'FAIL':'PASS',dom,trace,traceError:traceError?.message||null}));
+   if(traceError)throw Error((scenarioError?scenarioError.message+'; ':'')+'Input diagnostic failed: '+traceError.message);
+  }
+ }
+ await runCase('v8 trusted drag updates actual pixels before release and one move undo preserves applied scene',()=>dragUndoScenario({captureName:'v8-dragged-live-item',inputTrace:true}));
+ await runCase('v8 diagnostic fresh drag Undo without intervening screenshot',()=>dragUndoScenario({captureName:null}));
+ await runCase('v8 diagnostic fresh drag Undo with single 80ms touch dwell',()=>dragUndoScenario({captureName:'v8-diagnostic-dwell-before-undo',dwellMs:80}));
+ await runCase('v8 diagnostic fresh drag Undo with single tap after 600ms gap',()=>dragUndoScenario({captureName:'v8-diagnostic-gap-before-undo',postDragGapMs:600}));
+ await runCase('v8 diagnostic fresh drag Undo with 120ms stationary hold before release',()=>dragUndoScenario({captureName:'v8-diagnostic-pre-release-hold',preReleaseHoldMs:120,inputTrace:true}));
+ await runCase('v8 rapid native release below 80ms preserves first Undo tap without browser fling suppression',()=>dragUndoScenario({captureName:'v8-rapid-release-first-undo',rapidRelease:true,inputTrace:true}));
+ await runCase('v8 native click selects topmost item and explicit overlap cycling selects underlying item',async()=>{
+  const value=fixture();value.scene.objects.push(styledObject({id:'object-2',shape:'circle',x:35,y:50,size:12}));await start(value);const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5};await input('down',p.x,p.y);await input('up',p.x,p.y);await sleep(40);
+  assert.equal(await page.property('#object-select','value'),'object-2');assert.equal(await page.property('#editor-panel','hidden'),false);assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#cycle-overlap');assert.equal(await page.property('#object-select','value'),'object-1');await page.visible();await page.visualCapture('v8-overlap-selection-controls');
+ });
+ await runCase('v8 Escape cancels captured native move and stale release never reveals',async()=>{
+  await start(fixture());const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.1,y:p.y};await input('down',p.x,p.y);await input('move',q.x,q.y);await page.key('Escape');await page.hidden();await input('up',q.x,q.y);await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);
+ });
+ await runCase('v8 non-drag controls and focused keyboard movement stay reachable at narrow width',async()=>{
+  await page.viewport(320,568);await start(fixture());await page.click('#nudge-right');assert.equal(await page.property('#position-x','value'),'36');await page.focus('#scene-canvas');await page.key('ArrowLeft');assert.equal(await page.property('#position-x','value'),'35');await page.visible();await page.noOverflow(320);
+  for(const id of ['nudge-left','nudge-up','nudge-down','nudge-right','undo-move','redo-move']){await page.evaluate(id=>document.getElementById(id).scrollIntoView({block:'center'}),id);if(!await page.property('#'+id,'disabled'))await page.focus('#'+id);const result=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {width:r.width,height:r.height,top:r.top,bottom:r.bottom,hit:hit===e,viewport:innerHeight};},id);assert.ok(result.width>=44&&result.height>=44&&result.hit&&result.top>=0&&result.bottom<=result.viewport,`${id} unreachable: ${JSON.stringify(result)}`);}
+  for(const id of ['cycle-overlap','undo-move','redo-move']){
+   // Disabled history/overlap actions still need readable labels; do not claim
+   // they can receive focus while disabled.
+   if(!await page.property('#'+id,'disabled'))await page.focus('#'+id);
+   const result=await page.evaluate(id=>{const e=document.getElementById(id);e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect(),scroll=document.getElementById('editor-scroll'),s=scroll.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);return {id,box:{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height},text:Array.from(range.getClientRects(),t=>({left:t.left,right:t.right,top:t.top,bottom:t.bottom})),visible:{left:Math.max(0,s.left+scroll.clientLeft),right:Math.min(innerWidth,s.left+scroll.clientLeft+scroll.clientWidth),top:Math.max(0,s.top+scroll.clientTop),bottom:Math.min(innerHeight,s.top+scroll.clientTop+scroll.clientHeight)},hit:[[r.left+4,r.top+4],[r.right-4,r.top+4],[r.left+4,r.bottom-4],[r.right-4,r.bottom-4]].every(([x,y])=>document.elementFromPoint(x,y)===e)};},id);
+   assert.ok(result.hit&&result.box.width>=44&&result.box.height>=44&&result.box.left>=result.visible.left&&result.box.right<=result.visible.right&&result.box.top>=result.visible.top&&result.box.bottom<=result.visible.bottom,'Action clips behind inspector chrome: '+JSON.stringify(result));
+   for(const text of result.text)assert.ok(text.left>=result.box.left&&text.right<=result.box.right&&text.top>=result.box.top&&text.bottom<=result.box.bottom,'Action label clips: '+JSON.stringify(result));
+  }
+  // The final disabled Redo check may scroll the focused Undo out of the
+  // aperture. Capture an actually focused, fully visible enabled control.
+  assert.equal(await page.property('#undo-move','disabled'),false);await page.focus('#undo-move');
+  const focusedUndo=await page.evaluate(()=>{const e=document.getElementById('undo-move');e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect(),a=document.getElementById('editor-scroll').getBoundingClientRect();return {focused:document.activeElement===e,top:r.top,bottom:r.bottom,left:r.left,right:r.right,aperture:{top:Math.max(0,a.top),bottom:Math.min(innerHeight,a.bottom),left:Math.max(0,a.left),right:Math.min(innerWidth,a.right)},hit:[[r.left+4,r.top+4],[r.right-4,r.top+4],[r.left+4,r.bottom-4],[r.right-4,r.bottom-4],[r.left+r.width/2,r.top+r.height/2]].every(([x,y])=>{const hit=document.elementFromPoint(x,y);return hit===e||e.contains(hit);})};});
+  assert.ok(focusedUndo.focused&&focusedUndo.hit&&focusedUndo.top>=focusedUndo.aperture.top&&focusedUndo.bottom<=focusedUndo.aperture.bottom&&focusedUndo.left>=focusedUndo.aperture.left&&focusedUndo.right<=focusedUndo.aperture.right,JSON.stringify(focusedUndo));
+  await page.visualCapture('v8-narrow-move-controls');await page.click('#hide-scene');await page.hidden();
+ });
+}
+module.exports={runDirectEditorScenarios,beginInputTrace,assertRapidReleaseEvidence};

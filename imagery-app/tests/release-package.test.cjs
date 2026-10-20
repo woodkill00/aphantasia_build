@@ -31,7 +31,7 @@ function fixture(t) {
   git(root, ['config', 'user.name', 'Synthetic release test']);
   git(root, ['config', 'user.email', 'test@example.invalid']);
   git(root, ['add', '.']); git(root, ['commit', '--no-gpg-sign', '-qm', 'Synthetic fixture']);
-  const options = {root, version: '0.7.0-preview.1', sourceCommit: git(root, ['rev-parse', 'HEAD']),
+  const options = {root, version: '0.8.0-preview.1', sourceCommit: git(root, ['rev-parse', 'HEAD']),
     testedHtmlSha256: K.sha256(fs.readFileSync(path.join(root, 'imagery-app/index.html'))),
     evidenceUrl, output: path.join(directory, 'output')};
   return {root, directory, options};

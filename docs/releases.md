@@ -1,6 +1,6 @@
 # Prepare a portable release
 
-This is a maintainer guide, not the current user's download path. Users can obtain the source ZIP and open `imagery-app/index.html` using the [getting-started instructions](../README.md#get-started). Do not advertise a release asset or `/releases/latest` link before that exact asset exists; GitHub's “latest” route also excludes prereleases.
+This is a maintainer guide. Users can download the published [v0.7.0 engineering preview](https://github.com/woodkill00/aphantasia_build/releases/tag/v0.7.0) using the [getting-started instructions](../README.md#get-started). The current development roadmap is unreleased; the commands below do not authorize publishing another release. Do not advertise a release asset or `/releases/latest` link before that exact asset exists; GitHub's “latest” route also excludes prereleases.
 
 The local tools below prepare files only. They do not publish a Release, create a tag, deploy a site or change repository settings. Those actions require separate maintainer approval. The owner has selected the [MIT License](../LICENSE) for repository-authored code, documentation and examples; preserve its notices and all applicable third-party rights. A version label does not turn this engineering preview into a clinical or broadly verified product.
 

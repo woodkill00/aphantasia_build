@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T08:05:00Z",
+  "updated": "2026-10-20T10:05:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1389,7 +1389,7 @@
     {
       "id": "IF-044",
       "title": "Improve public onboarding and release preparation",
-      "status": "local_mit_checks_pass_prior_native_pass_final_head_gate_separate",
+      "status": "complete_for_scoped_software_release",
       "scope": "Task-based documentation, privacy-aware forms, current synthetic examples, four reviewed static screenshots, bounded Actions updates, MIT licensing and deterministic offline portable release-preparation tools. Runtime bytes remain unchanged.",
       "evidence": [
         "498/498 local Node checks pass, including 20 documentation/onboarding and 21 packaging checks.",
@@ -1398,18 +1398,371 @@
         "The later MIT integration requires a full final-head CI, including the real-checkout license-preserving packaging smoke; see https://github.com/woodkill00/aphantasia_build/pull/6/checks.",
         "Independent archive readers verify a deterministic 14-entry MIT kit; no actual Release or asset publication.",
         "imagery-app/test-results/TEST-REPORT.md",
-        "imagery-app/test-results/summary.json"
+        "imagery-app/test-results/summary.json",
+        "PR 6 merged as 3561bfbbd652f375531220fd9dcd92f58d5c9366; post-merge CI 39395724138 passed. Release publication remains separate from documentation completion."
       ],
-      "nextAction": "Merge only after final exact-head CI and review pass. Actual Release publication, hosting and repository settings remain separate operations; the MIT licensing decision is complete."
+      "nextAction": "Maintain historical documentation evidence; current feature work is tracked in IF-045 onward."
+    },
+    {
+      "id": "IF-045",
+      "title": "Specify the interactive-scene roadmap",
+      "priority": "P1",
+      "status": "specification_authored_reviewed",
+      "scope": "Specification, clarification, research, plan, acceptance map and analysis; no runtime completion implied.",
+      "dependencies": [],
+      "writeBoundary": [
+        ".specify/memory/constitution.md",
+        "specs/008-interactive-scene-roadmap/**",
+        "project-queue.json"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Constitution and seven spec/plan/analysis/checklist documents;64 proposal codes mapped to 17 queue items. Offline docs: 33 files / 188 links."
+      ],
+      "nextAction": "Independent specification consistency review; integration owner must reconcile historical screenshot binding after actual current-artifact visual verification."
+    },
+    {
+      "id": "IF-046",
+      "title": "Implement direct selection and transactional dragging",
+      "priority": "P1",
+      "status": "implemented_local_tests_pass_native_pending",
+      "scope": "Existing-shape direct interaction, canonical coordinates, draft-only gesture history and cancellation.",
+      "dependencies": [
+        "IF-045"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "25 direct model/DOM tests pass after immutable drag-target/overlapcache review fixes;4 native groups per device prepared;actual CI+visual pending."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-047",
+      "title": "Provide equivalent controls and stable inspector layout",
+      "priority": "P1",
+      "status": "implemented_local_tests_pass_native_pending",
+      "scope": "Typed, tap, nudge and keyboard equivalents; visible focus, stable canvas and responsive controls.",
+      "dependencies": [
+        "IF-046"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Typed/nudge/tap/keyboard routes and inspector layout implemented; native rendered verification pending."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-048",
+      "title": "Freeze versioned geometry and authored-canvas contracts",
+      "priority": "P2",
+      "status": "contract_specified_implementation_pending",
+      "scope": "Scene-v4/sequence-v3 metadata preservation, strict legacy migrations and opt-in fixed-ratio mapping.",
+      "dependencies": [
+        "IF-045"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/model.js",
+        "imagery-app/src/sequence-model.js",
+        "imagery-app/tests/**",
+        "docs/architecture.md"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Explicit scene-v4 / sequence-v3 authored-canvas contract proposed, preserve legacy semantics; not integrated."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-049",
+      "title": "Implement bounded geometric families",
+      "priority": "P2",
+      "status": "pure_geometry_foundation_only",
+      "scope": "Closed shared registry, fill/stroke/dimensions/rotation, first parametric families and preserved limits; advanced paths remain follow-on.",
+      "dependencies": [
+        "IF-048"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "10 bounded shape kernels; 14 pure tests pass; newformat,UI and renderer integration not complete."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-050",
+      "title": "Add layer tools and original versioned presets",
+      "priority": "P2",
+      "status": "not_started",
+      "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
+      "dependencies": [
+        "IF-047",
+        "IF-049"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**",
+        "examples/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-051",
+      "title": "Bound local raster intake and processing",
+      "priority": "P3",
+      "status": "not_started",
+      "scope": "Raster-only local decode, resource ledger, cancellable computation, no network/storage and no metadata export.",
+      "dependencies": [
+        "IF-048",
+        "IF-049"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-052",
+      "title": "Benchmark editable geometric approximation",
+      "priority": "P3",
+      "status": "not_started",
+      "scope": "Deterministic ordinary-item output; synthetic/held-out quality, resources and correction-effort no-go gates.",
+      "dependencies": [
+        "IF-051"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-053",
+      "title": "Integrate reviewable image conversion drafts",
+      "priority": "P3",
+      "status": "not_started",
+      "scope": "Crop/palette/comparison, accessible review, atomic Apply/Discard/Undo and stale-result rejection.",
+      "dependencies": [
+        "IF-052",
+        "IF-047"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-054",
+      "title": "Define neutral private experience records",
+      "priority": "P4",
+      "status": "pure_model_tests_pass_ui_pending",
+      "scope": "Separate closed experience schema, missingness, scene/version association and minimal exposure accounting; no diagnostic scoring.",
+      "dependencies": [
+        "IF-045",
+        "IF-048"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**",
+        "docs/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Private journal strict model: 26 synthetic tests pass; no user data, UI not integrated."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-055",
+      "title": "Implement optional session-memory journal",
+      "priority": "P4",
+      "status": "not_started",
+      "scope": "Optional neutral reflection and exact separate preview/export/clear; no autosave, storage or transmission.",
+      "dependencies": [
+        "IF-054"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-056",
+      "title": "Specify disabled research submission boundary",
+      "priority": "P5",
+      "status": "disabled_contract_only",
+      "scope": "Synthetic contract/consent demonstration only; no endpoint, upload queue, real data or functional submission.",
+      "dependencies": [
+        "IF-054"
+      ],
+      "writeBoundary": [
+        "specs/008-interactive-scene-roadmap/**",
+        "imagery-app/src/**",
+        "imagery-app/tests/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Frozen disabled submission prerequisites; no endpoint/transport/data collection."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-057",
+      "title": "Resolve external research activation prerequisites",
+      "priority": "P5",
+      "status": "blocked_external_governance",
+      "scope": "External gate: responsible operator, qualified ethics/privacy/security/statistics review, instrument rights, retention/withdrawal, explicit collection/deployment authority.",
+      "dependencies": [
+        "IF-056"
+      ],
+      "writeBoundary": [
+        "docs/**",
+        "specs/008-interactive-scene-roadmap/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [],
+      "nextAction": "Obtain qualified governance and explicit activation authority before any real submission."
+    },
+    {
+      "id": "IF-058",
+      "title": "Verify cross-feature regression and privacy invariants",
+      "priority": "P1",
+      "status": "in_progress",
+      "scope": "Aggregate exact-source checks; each implemented stage still requires its own earlier tests; preserve failures.",
+      "dependencies": [
+        "IF-046",
+        "IF-047",
+        "IF-048",
+        "IF-049",
+        "IF-050",
+        "IF-051",
+        "IF-052",
+        "IF-053",
+        "IF-054",
+        "IF-055",
+        "IF-056"
+      ],
+      "writeBoundary": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Regression suite,privacy and legacy gates continuing; no native acceptance yet."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-059",
+      "title": "Inspect native behavior and rendered layouts",
+      "priority": "P1",
+      "status": "blocked_local_browser_ci_pending",
+      "scope": "Actual browser/visual review; physical-device, OS, assistive-technology and qualified content evidence separately reported.",
+      "dependencies": [
+        "IF-058"
+      ],
+      "writeBoundary": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**",
+        "docs/compatibility.md"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Sandboxed Chromium startup timeout before navigation; cleanup passed; no screenshots or native scenarios executed locally."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-060",
+      "title": "Reconcile user guides and exact-source evidence",
+      "priority": "P1",
+      "status": "in_progress",
+      "scope": "Document only observed implemented behavior; update hashes, commands, versions, limitations and synthetic outgoing artifacts.",
+      "dependencies": [
+        "IF-059"
+      ],
+      "writeBoundary": [
+        "README.md",
+        "imagery-app/README.md",
+        "docs/**",
+        "examples/**",
+        "CHANGELOG.md",
+        "project-queue.json",
+        "imagery-app/test-results/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Guides describe direct editing; old v0.7 screenshots explicitly historical. Exact current CI and visual review pending."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+    },
+    {
+      "id": "IF-061",
+      "title": "Review and integrate tested increments",
+      "priority": "P1",
+      "status": "independent_code_review_pass_native_visual_pending",
+      "scope": "Independent exact-tree review and required CI; no implied publication, hosting or participant collection.",
+      "dependencies": [
+        "IF-060"
+      ],
+      "writeBoundary": [
+        "project-queue.json",
+        "imagery-app/test-results/**"
+      ],
+      "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
+      "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
+      "evidence": [
+        "Independent reviewer found mutable drag target and stale overlap cache; fixed with regressions, re-review pending; main frozen for release."
+      ],
+      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
-    "targetBranch": "docs/public-onboarding-release-kit",
+    "repositoryBaseCommit": "3561bfbbd652f375531220fd9dcd92f58d5c9366",
+    "targetBranch": "feature/008-interactive-scene-roadmap",
     "appPath": "imagery-app/index.html",
-    "appSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
-    "appBytes": 167297,
-    "note": "Merged v0.7 runtime is unchanged by the public-repository documentation, MIT licensing and offline packaging increment. Historical source and native evidence is retained in the test report."
+    "appSha256": "a7a7d6ac091e1e8454efacecba781c25516bc3ccb1f5fbc78ad0e44bc0d9925c",
+    "appBytes": 178349,
+    "note": "Direct editor candidate from the verified v0.7 source; no temporary release publisher files inherited."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
@@ -1443,7 +1796,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Verified merged v0.7 runtime retained byte-for-byte; current work adds documentation, examples, MIT notices and offline packaging only."
+      "currentStatus": "Version 0.8 staged implementation: direct editor local checks and review; native CI/visual gates pending. Geometry and journal foundations are not completed UI features."
     },
     {
       "role": "tester",
@@ -1460,7 +1813,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "498 local checks pass; first documentation source passed 98 native Chrome groups and packaging. Final MIT/source-head CI and wider device/accessibility acceptance are distinct gates."
+      "currentStatus": "Version 0.8 staged implementation: direct editor local checks and review; native CI/visual gates pending. Geometry and journal foundations are not completed UI features."
     },
     {
       "role": "reviewer",
@@ -1475,7 +1828,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current source, strict migrations, scoped software evidence, public data and documentation independently reviewed; full accessibility and qualified sensory/clinical review remain unclaimed."
+      "currentStatus": "Version 0.8 staged implementation: direct editor local checks and review; native CI/visual gates pending. Geometry and journal foundations are not completed UI features."
     },
     {
       "role": "integrator",
@@ -1492,19 +1845,15 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current documentation, examples, MIT distribution and public-data boundary reviewed. Final exact-head full CI is required before maintainer merge. No Release, hosting or settings publication."
+      "currentStatus": "Version 0.8 staged implementation: direct editor local checks and review; native CI/visual gates pending. Geometry and journal foundations are not completed UI features."
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Public onboarding, MIT licensing and offline release preparation pass 498 local checks. The first documentation source passed full native CI and packaging; require final exact-head CI for the later MIT integration before merge. No Release publication, hosting or repository-settings change is claimed.",
+  "currentStatus": "Version 0.8 first increment implemented locally with Spec-Kit scope and future pure foundations. Exact-head native CI and visual review remain pending; no new research collection.",
   "currentIteration": {
-    "base": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
-    "remoteBranch": "docs/public-onboarding-release-kit",
-    "htmlSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
-    "sourceHead": "5fd67d4b65c31aeef1b5d955a7c84b641b5fb815",
-    "priorSourceNativeStatus": "PASS",
-    "runId": 39386135529,
-    "visualCaptures": 78,
-    "integrationRequirement": "Final-head full workflow and independent review must pass; see PR6 checks for its current outcome."
+    "base": "3561bfbbd652f375531220fd9dcd92f58d5c9366",
+    "remoteBranch": "feature/008-interactive-scene-roadmap",
+    "htmlSha256": "a7a7d6ac091e1e8454efacecba781c25516bc3ccb1f5fbc78ad0e44bc0d9925c",
+    "status": "local_tests_review_native_ci_pending"
   }
 }

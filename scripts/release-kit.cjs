@@ -20,7 +20,7 @@ const EXAMPLES = Object.freeze([
 const SOURCE_PARTS = Object.freeze([
   ['/*__STYLE__*/', 'style.css'], ['/*__MODEL__*/', 'model.js'],
   ['/*__SEQUENCE__*/', 'sequence-model.js'], ['/*__ITEMS__*/', 'item-model.js'],
-  ['/*__APP__*/', 'app.js']
+  ['/*__EDITOR__*/', 'editor-model.js'], ['/*__APP__*/', 'app.js']
 ]);
 const INPUTS = Object.freeze([
   'LICENSE', 'imagery-app/index.html', 'imagery-app/SHA256-MANIFEST.json',
