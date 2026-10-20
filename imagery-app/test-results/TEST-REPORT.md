@@ -18,6 +18,8 @@ The current candidate keeps final release coordinates but does not cancel pointe
 
 [Run 39412581986](https://github.com/woodkill00/aphantasia_build/actions/runs/39412581986) passed 108/112 native groups. All four mobile Undo variants still failed, including a measured 703 ms post-drag gap. Uncanceling pointerup and waiting longer were not sufficient. The next experiment leaves touch pointerdown/move defaults uncanceled while retaining CSS touch-action:none, captured transactional geometry, mouse/pen behavior and every original native assertion. Failure diagnostics include actual draft/history state, not an alternate pass condition. Narrow capture setup now restores the focused Undo control after checking disabled Redo. Fresh native and visual evidence remains required; this is not a proven root cause.
 
+[Run 39414688866](https://github.com/woodkill00/aphantasia_build/actions/runs/39414688866) again passed 108/112. All four mobile Undo taps failed with primary uncanceled pointer/touch events; actual draft coordinates/history prove Undo never activated. Focused 320px Undo captures now show full label/button/focus outline. Source-backed Chromium velocity/tap-suppression is a hypothesis only. The next bounded diagnostic retains every original group and adds a 120 ms stationary pre-release hold plus browser input tracing. It does not substitute synthetic activation or claim the original failures acceptable.
+
 ## Historical verification below
 
 # Public repository onboarding, MIT licensing and release preparation

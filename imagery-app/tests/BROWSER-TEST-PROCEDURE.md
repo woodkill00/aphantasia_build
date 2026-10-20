@@ -113,3 +113,10 @@ The dependency-free CDP gate observes the real initial static preview before any
 Steady and Pulse are native select choices for each item; a mixed raster fixture holds its steady item unchanged while a pulsing item varies and both stop at the latest end. Controlled-clock raster checks remain distinct from real scheduling tests.
 
 Full label, numeric output, slider and both fine buttons are checked for clipping, hit testing and 44-pixel input targets at 320×568, 844×390, 640×450 and 1024×768. The 640×450 case represents the effective CSS viewport of 1280×900 at 200% zoom; it is a reflow check, not browser-chrome zoom, physical-device or text-enlargement evidence. Actual captured frames still require independent inspection.
+
+
+## Expanded roadmap execution budget
+
+The same single required workflow job now permits 15 minutes for sandboxed native Chrome and 18 minutes for the complete job. Permissions, sandbox, assertion coverage, cleanup and the one-minute package smoke step are unchanged; this does not authorize retry-to-green or parallel jobs.
+
+Measured baseline: [run39413117772](https://github.com/woodkill00/aphantasia_build/actions/runs/39413117772) executed 136 native groups and 116 captures in 585.313 seconds with normal cleanup, close to the former 600-second limit. Two additional fresh pre-release input diagnostic groups add explicit reveal guards, raster checks, tracing and one trusted Undo attempt each. Budgeting up to 30 seconds for those groups plus approximately 285 seconds of bounded runner/tracing variation and upcoming separately reviewed lock/arrangement coverage gives 900 seconds. The 18-minute job limit reserves 180 seconds for checkout, Node checks, fixture checks and the unchanged package smoke. These are execution ceilings, not performance acceptance targets; actual durations and any timeouts remain reportable failures. Later added cases must document their cost rather than silently consuming unlimited headroom.

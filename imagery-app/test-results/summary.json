@@ -8,12 +8,19 @@
     "sha256": "9e701c43c95ad418f98fac90e9168f9175970aadf2fe7a25978c57b04b28416e"
   },
   "browser": {
-    "status": "TOUCH_DEFAULT_EXPERIMENT_NATIVE_PENDING",
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39412581986",
-    "previousHead": "cfcb265fdaccfcf25dac75942221d6b27093a88e",
+    "status": "PRE_RELEASE_HOLD_INPUT_TRACE_DIAGNOSTIC_PENDING",
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39414688866",
+    "previousHead": "2b77f41239469cf2af0605524552d904cbfacf7b",
     "passed": 108,
     "failed": 4,
-    "findings": "All four mobile drag-to-Undo variants failed, including a measured703ms post-drag gap. Current experiment removes redundant touch pointerdown/move default cancellation while preserving touch-action:none and mouse/pen behavior. Exact-head native evidence remains required."
+    "findings": "Touch defaults uncanceled did not repair four mobile click failures. Actual state confirms Undo never fired. Focused control captures now fully visible. New pre-release hold and bounded input tracing preserve all original gates; root cause unproven.",
+    "preparedGroups": 114,
+    "timeoutBudget": {
+      "nativeStepMinutes": 15,
+      "jobMinutes": 18,
+      "measuredExpandedBaselineSeconds": 585.313,
+      "rationale": "Same required single job and sandbox; two new diagnostic cases plus bounded tracing/runner headroom. See browser procedure."
+    }
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1018,8 +1025,8 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 566,
-    "passed": 566,
+    "total": 574,
+    "passed": 574,
     "failed": 0
   }
 }

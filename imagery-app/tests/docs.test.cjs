@@ -152,8 +152,8 @@ test('CI: real-checkout packaging follows the complete browser gate without publ
   const packaging = workflow.indexOf('- name: Prepare and verify portable files without publishing');
   assert.ok(browser >= 0 && packaging > browser);
   const smoke = workflow.slice(packaging);
-  assert.match(workflow, /timeout-minutes: 12/);
-  assert.match(workflow.slice(browser, packaging), /timeout-minutes: 10/);
+  assert.match(workflow, /timeout-minutes: 18/);
+  assert.match(workflow.slice(browser, packaging), /timeout-minutes: 15/);
   assert.match(workflow.slice(browser, packaging), /run: node imagery-app\/tests\/browser-cdp\.cjs/);
   assert.match(smoke, /timeout-minutes: 1/);
   assert.match(smoke, /RELEASE_OUTPUT: \$\{\{ runner\.temp \}\}\/imagery-release-smoke/);
