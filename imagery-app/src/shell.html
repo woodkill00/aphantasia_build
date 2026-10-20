@@ -44,14 +44,29 @@
           <label for="scene-name">Scene name</label><input id="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation">
           <fieldset class="group"><legend>Objects <span id="object-count">3 / 12</span></legend>
             <div class="add-row"><div><label for="add-shape">New object</label><select id="add-shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div><button id="add-object" type="button">Add object</button></div>
-            <label for="object-select">Selected object</label><select id="object-select" aria-describedby="object-hint"></select>
-            <p id="object-hint" class="hint">Select any object to edit it. Removing all objects leaves a background-only scene.</p>
+            <fieldset class="selection-controls" aria-describedby="selection-help"><legend>Select items</legend>
+              <p id="selection-summary" class="hint" tabindex="-1" role="status">No items selected. Move anchor: none.</p>
+              <div class="small-actions"><button id="select-all" type="button">Select all</button><button id="clear-selection" type="button">Clear selection</button></div>
+              <div id="selection-list" class="selection-list"></div>
+              <div id="move-anchor-row" hidden><label for="move-anchor">Move anchor</label><select id="move-anchor" aria-describedby="selection-help"></select></div>
+              <p id="selection-help" class="hint">Check items to arrange them together. The move anchor controls drag/placement snapping, not individual style. Every selected item must fit; a selected lock blocks the whole move. No selection marks are added to the field.</p>
+            </fieldset>
+            <label for="object-select">Select only this item</label><select id="object-select" aria-describedby="object-hint"></select>
+            <p id="object-hint" class="hint">Select one item to edit its properties. Removing all objects leaves a background-only scene.</p>
             <div class="small-actions" role="group" aria-label="Session item locks"><button id="lock-selected" type="button" aria-pressed="false">Lock selected item</button><button id="unlock-all" type="button" disabled>Unlock all items</button></div>
             <p id="lock-status" class="hint" role="status">No session item locks.</p>
             <p class="hint">Locks protect stored item properties, including its own timing, only for this session. Global background, canvas ratio, shared pulse period and other items can still change. Accepted scene Undo/Redo requires Unlock all. Apply keeps locks; successful scene replacement clears them with a notice. Locks are not downloaded. Duplicate creates a new unlocked copy.</p>
             <label for="snap-step">Snap centers · drag and placement only</label><select id="snap-step"><option value="0">Off · exact movement</option><option value="1">1 unit</option><option value="5">5 units</option><option value="10">10 units</option></select>
             <p class="hint">Typed coordinates, nudges and centering remain exact. No grid is drawn in the scene.</p>
-            <div class="small-actions" role="group" aria-label="Center selected unlocked item"><button id="align-x" type="button">Center horizontally</button><button id="align-y" type="button">Center vertically</button><button id="align-both" type="button">Center both axes</button></div>
+            <div class="small-actions" role="group" aria-label="Center selected items on the canvas"><button id="align-x" type="button">Center horizontally</button><button id="align-y" type="button">Center vertically</button><button id="align-both" type="button">Center both axes</button></div>
+            <div class="control-grid selection-deltas">
+              <div><label for="delta-x">Horizontal delta · content units</label><input id="delta-x" type="number" min="-100" max="100" step="0.01" inputmode="decimal" value="0"></div>
+              <div><label for="delta-y">Vertical delta · content units</label><input id="delta-y" type="number" min="-100" max="100" step="0.01" inputmode="decimal" value="0"></div>
+            </div><button id="move-selection" type="button">Move selection</button>
+            <div class="small-actions selection-alignment" role="group" aria-label="Align selected shapes and outlines">
+              <button id="selection-align-left" type="button">Align left</button><button id="selection-align-right" type="button">Align right</button><button id="selection-align-top" type="button">Align top</button><button id="selection-align-bottom" type="button">Align bottom</button><button id="selection-align-horizontal" type="button">Align horizontal centers</button><button id="selection-align-vertical" type="button">Align vertical centers</button>
+              <button id="distribute-x" type="button">Equal horizontal gaps</button><button id="distribute-y" type="button">Equal vertical gaps</button>
+            </div><p class="hint">Aligns shapes and outlines, not shadows. Equal gaps use the selected outer span, not equal centers or fixed endpoint items. Legacy scene bounds follow the current preview proportions. Centering one item uses its stored position; centering a selection uses its combined bounds.</p>
             <div class="control-grid">
               <div><label for="shape">Shape</label><select id="shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div>
               <div><label for="size">Size</label><input id="size" type="number" min="1" max="28" step="1" inputmode="numeric" value="2"></div>
@@ -67,11 +82,11 @@
               <div><label for="geometry-corner">Corner radius ratio</label><input id="geometry-corner" type="number" min="0" max="0.5" step="0.01" value="0.2"></div>
             </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
-            <div class="nudge-actions" role="group" aria-label="Move selected object by one position unit"><button id="nudge-left" type="button" aria-label="Move selected object left by one position unit">← Left</button><button id="nudge-up" type="button" aria-label="Move selected object up by one position unit">↑ Up</button><button id="nudge-down" type="button" aria-label="Move selected object down by one position unit">↓ Down</button><button id="nudge-right" type="button" aria-label="Move selected object right by one position unit">Right →</button></div>
-            <div class="small-actions"><button id="cycle-overlap" type="button" disabled>Select next overlapping item</button><button id="undo-move" type="button" disabled>Undo move</button><button id="redo-move" type="button" disabled>Redo move</button></div>
-            <p class="hint" id="direct-edit-hint">Click a visible item to edit it, or drag to move. Arrow keys on the preview move the selected item by 1; Shift moves by 0.1. Move history is separate from applied scene history and resets after other edits. Nothing is saved until you download.</p>
+            <div class="nudge-actions" role="group" aria-label="Move selected items by one position unit"><button id="nudge-left" type="button" aria-label="Move selected items left by one position unit">← Left</button><button id="nudge-up" type="button" aria-label="Move selected items up by one position unit">↑ Up</button><button id="nudge-down" type="button" aria-label="Move selected items down by one position unit">↓ Down</button><button id="nudge-right" type="button" aria-label="Move selected items right by one position unit">Right →</button></div>
+            <div class="small-actions"><button id="cycle-overlap" type="button" disabled>Select next overlapping item</button><button id="undo-move" type="button" disabled>Undo arrangement</button><button id="redo-move" type="button" disabled>Redo arrangement</button></div>
+            <p class="hint" id="direct-edit-hint">Click an unselected item to select only it. Drag a selected member to move the selection; Shift-click toggles membership without dragging. Arrow keys on the focused preview move by 1; Shift moves by 0.1. Undo arrangement retains 40 complete draft transactions, separate from applied history. Other successful scene edits reset it. Nothing is saved until you download.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="layer-back" type="button">Move back one layer</button><button id="layer-front" type="button">Move forward one layer</button><button id="delete-object" type="button">Remove object</button></div>
-            <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
+            <p id="placement-hint" class="hint">Placement moves the selected items together using the move anchor. Click or tap a new anchor position. An active live preview stays visible. Exact delta inputs offer a keyboard alternative.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
             <p id="object-color-hint" class="hint">Live preview updates the actual objects while on. After Hide, choose Resume live preview. The small sample also works while hidden.</p>
             <div class="precision-control"><div class="slider-label"><label for="object-hue">Object hue</label><span class="number-with-unit"><input id="object-hue-value" class="precision-number" type="number" min="0" max="359" step="1" value="208" inputmode="decimal" aria-label="Object hue in degrees, numeric value" aria-controls="object-hue"><span aria-hidden="true">°</span></span></div><div class="slider-row"><button id="object-hue-decrease" type="button" class="step-button" aria-label="Decrease object hue by 1">−</button><input id="object-hue" class="color-slider" type="range" min="0" max="359" step="1" value="208" aria-describedby="object-color-hint object-color-text"><button id="object-hue-increase" type="button" class="step-button" aria-label="Increase object hue by 1">+</button></div></div>
@@ -172,7 +187,8 @@
 /*__MODEL__*/</script>
 <script>/*__SEQUENCE__*/</script>
 <script>/*__ITEMS__*/</script>
-<script>/*__EDITOR__*/</script>
+<script>/*__EDITOR__*/
+/*__SELECTION__*/</script>
 <script>/*__EDITOR_AIDS_MODEL__*/</script>
 <script>/*__EDITOR_AIDS_UI__*/</script>
 <script>/*__PRESETS__*/</script>

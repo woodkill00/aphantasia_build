@@ -80,6 +80,7 @@ const {runPrivateToolScenarios}=require('./browser-private-tools.cjs');
 const {runGalleryProvenanceScenarios}=require('./browser-gallery-provenance.cjs');
 const {runArrangementScenarios}=require('./browser-arrangement.cjs');
 const {runEditorAidsScenarios}=require('./browser-editor-aids.cjs');
+const {runMultiSelectionScenarios}=require('./browser-multi-selection.cjs');
 const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
 const scene = changes => { const {shape,x,y,size,...rest}=changes||{}; const value = fixtureScene(rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
@@ -218,10 +219,15 @@ class Page {
   async property(selector, key) {
     return this.evaluate((s, k) => { const e = document.querySelector(s); if (!e) throw new Error(`Missing ${s}`); return e[k]; }, selector, key);
   }
-  async fresh() {
+  async fresh(localArtifact = artifact, expectedSha256 = null) {
+    assert.ok(typeof localArtifact === 'string' && path.isAbsolute(localArtifact) && path.extname(localArtifact) === '.html', 'Only an absolute local HTML artifact path is supported');
+    if(localArtifact !== artifact){
+      assert.match(expectedSha256 || '', /^[a-f0-9]{64}$/, 'An alternate local artifact requires its exact expected SHA-256');
+      assert.equal(digest(fs.readFileSync(localArtifact)), expectedSha256, 'Alternate local artifact hash mismatch');
+    }
     await this.send('Page.bringToFront');
     const previousLoads = this.loadCount;
-    const result = await this.send('Page.navigate', {url:pathToFileURL(artifact).href});
+    const result = await this.send('Page.navigate', {url:pathToFileURL(localArtifact).href});
     assert.ok(!result.errorText, result.errorText);
     await until(() => this.loadCount > previousLoads, 'page load event for local artifact');
     await until(() => this.evaluate(() => document.readyState === 'complete' && !!window.ImageryModel && !!document.querySelector('#scene-canvas')), 'loaded local artifact');
@@ -783,6 +789,7 @@ async function run() {
         await runGalleryProvenanceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runArrangementScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runEditorAidsScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
+        await runMultiSelectionScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runIndependentSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});

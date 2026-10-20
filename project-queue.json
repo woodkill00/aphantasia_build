@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T14:32:00Z",
+  "updated": "2026-10-20T15:11:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1520,7 +1520,7 @@
       "id": "IF-050",
       "title": "Add layer tools, original presets and session arrangement",
       "priority": "P2",
-      "status": "core_and_recorded_editor_aids_acceptance_pass_final_integration_pending",
+      "status": "guides_merged_main_verification_pending_multi_selection_source_reviewed",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1542,9 +1542,10 @@
         "Independent PR 14 review accepted all 22 v10 arrangement captures and four v8 rapid/focused-Undo captures, each actually inspected after SHA verification. Original/rapid movable/rapid locked touch paths passed first trusted Undo/Unlock without browser fling suppression. All 160 native groups and package passed; final documentation-head CI/integration pending.",
         "Feature 012 planning contract: specs/012-editor-aids/spec.md, clarifications.md, plan.md, tasks.md, analysis.md, research.md and checklists/requirements.md. This specifies only opt-in editor aids, disclosed grid thinning, concealment disarming and scene-only provenance exclusion; it is not implementation or new-feature acceptance. Baseline main edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a / tree a436707b99e5b62324f6d9ee6f4f585c6ed210be independently passed run 39428678423 (935 Node, 160 native, package/cleanup).",
         "Historical pre-corrected-head snapshot: 20 October 2026 current reconciliation: PR 14 merged edc92d58; exact-main run 39428678423 passed 935 Node / 160 native/package/cleanup with assigned 26-frame visual acceptance. Feature 012 candidate 1069 Node PASS did not clear a subsequent independent failed-paint provenance finding; repair and new aggregate/native gates pending. Prior pending-integration statements above are historical premerge snapshots.",
-        "20 October 2026: Feature 012 PR 15 corrected head 5edddc18 / run 39437474221 passed 1080 Node, 178 native, package and cleanup. Independent review accepted assigned 36 v11 images (27 identical previously inspected, 9 new/changed inspected) and predeclared paired timing. Prior 176/178 failure and forced-colors defect remain recorded. Final evidence/test-assertion head CI and protected integration remain required; multi-selection/groups not implemented."
+        "20 October 2026: Feature 012 PR 15 corrected head 5edddc18 / run 39437474221 passed 1080 Node, 178 native, package and cleanup. Independent review accepted assigned 36 v11 images (27 identical previously inspected, 9 new/changed inspected) and predeclared paired timing. Prior 176/178 failure and forced-colors defect remain recorded. Final evidence/test-assertion head CI and protected integration remain required; multi-selection/groups not implemented.",
+        "20 October 2026: Feature 012 PR15 merged d95fbdc0, exact accepted tree0f19c407; final-head run39441769939 passed1080 Node/178native/package/cleanup and assigned36-frame visual review. Exact-main run39444608463 is running. Separate Feature013 source review and full local1177/1177 pass;200 native groups prepared, NOT RUN. Prior1147/1156 failure retained."
       ],
-      "nextAction": "Complete exact final-head CI and protected Feature 012 integration, verify exact main, then separately promote reviewed multi-selection and flat session-group contracts."
+      "nextAction": "Verify exact guides main; execute and review Feature013 exact-head native, visual, paired comparison and package gates before protected integration. Then implement separately specified flat session groups."
     },
     {
       "id": "IF-051",
@@ -1934,95 +1935,33 @@
       "nextAction": "Retain exact mark/control computed-color and actual screenshot checks in final-head CI."
     }
   },
-  "currentStatus": "Core PR 11\u201314 merged and accepted at exact main edc92d58. Feature 012 recorded corrected head passes 1080 Node, 178 native, package and cleanup; assigned 36-frame visual scope and predeclared paired timing accepted. Final evidence/test-assertion head requires full CI before protected PR 15 integration. Multi-selection and session groups remain separate subsequent increments. No new release, hosting or research collection.",
+  "currentStatus": "Feature 012 guides merged as main d95fbdc0 after exact-head source/native/visual/timing/package acceptance; exact-main verification is running. Separate Feature 013 atomic multi-selection has independent source review and 1177 local Node passes, with 200 native groups prepared but NOT RUN. Flat session groups remain subsequent. No release, hosting or collection.",
   "currentIteration": {
-    "name": "Feature 012: bounded editor aids",
-    "base": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
-    "baseTree": "a436707b99e5b62324f6d9ee6f4f585c6ed210be",
-    "remoteBranch": "feature/012-editor-aids",
-    "publicationStatus": "DRAFT_PR_15_OPEN_NOT_MERGED",
-    "status": "recorded_scoped_acceptance_pass_final_head_ci_required",
-    "contract": "specs/012-editor-aids/spec.md",
-    "acceptanceReference": "specs/012-editor-aids/tasks.md",
-    "htmlSha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735",
-    "htmlBytes": 337656,
+    "name": "Feature 013: atomic multi-selection arrangement",
+    "contract": "specs/013-atomic-selection/spec.md",
+    "base": "d95fbdc004324d1a9e062c085952e4df0bfa4626",
+    "baseTree": "0f19c407632ea36765898f2a314b2e3624ce2412",
+    "baseVerification": "Exact-main run 39444608463 in progress; PR15 exact-head run39441769939 accepted",
+    "status": "source_review_and_local_node_pass_native_not_run",
+    "htmlSha256": "b3361a68f8ba585fcd3300b435a0ca7a38d3634446763a8983c194645b203bf8",
+    "htmlBytes": 381567,
     "localNode": {
-      "passed": 1080,
-      "total": 1080,
+      "passed": 1177,
+      "total": 1177,
       "failed": 0,
-      "nodeVersion": "v24.19.0",
-      "durationMs": 13897.355976
+      "durationMs": 16997.864914
     },
-    "sourceHead": "5edddc18cabdbaeb6cd9612c34fd8b68f9fc5f16",
-    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39437474221",
-    "recordedNative": {
-      "passed": 178,
-      "total": 178,
-      "failed": 0,
-      "seconds": 795.126
+    "preparedNativeGroups": 200,
+    "preparedNewCaptures": 78,
+    "publicationStatus": "LOCAL_BRANCH_NOT_PUBLISHED",
+    "priorFullLocalPass": {
+      "sha256": "fce4844df0a639eba3096516de0e05e8e38e3b9a4e195a1e9cb9b27c240f2ce4",
+      "passed": 1177,
+      "total": 1177,
+      "durationMs": 17590.644446
     },
-    "recordedVisual": {
-      "emittedAndByteHashVerified": 178,
-      "assignedV11Scope": 36,
-      "newOrChangedInspected": 9,
-      "identicalToPreviouslyInspected": 27,
-      "otherFramesChangedSincePrevious": 20,
-      "otherFramesNotClaimedInspected": true,
-      "findings": [
-        "Both forced-colors captures now show clearly visible neutral grids with system-colored controls retained.",
-        "Previously unreached desktop/mobile aided drag/nudge/history captures now inspected; no scoped layout blocker.",
-        "Other scoped ratio/clipping/provenance/narrow/short/fullscreen images either inspected anew or exact matches to inspected prior bytes."
-      ]
-    },
-    "recordedPerformance": {
-      "predeclaredAt": "2026-10-20T14:16:00Z",
-      "criteria": "on p95 minus off p95 <=10ms; on max <50ms; first Hide <50ms",
-      "result": "PASS within synthetic synchronous handler/layout scope",
-      "measurements": [
-        {
-          "device": "desktop",
-          "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency",
-          "off": {
-            "count": 12,
-            "median": 1.5,
-            "p95": 1.7999999999883585,
-            "max": 1.7999999999883585
-          },
-          "on": {
-            "count": 12,
-            "median": 2.2000000000116415,
-            "p95": 2.900000000023283,
-            "max": 2.900000000023283
-          },
-          "hide": {
-            "trusted": true,
-            "ms": 7,
-            "hidden": true
-          }
-        },
-        {
-          "device": "mobile-emulation",
-          "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency",
-          "off": {
-            "count": 12,
-            "median": 1.599999999976717,
-            "p95": 2.5,
-            "max": 2.5
-          },
-          "on": {
-            "count": 12,
-            "median": 2.300000000046566,
-            "p95": 2.5,
-            "max": 2.5
-          },
-          "hide": {
-            "trusted": true,
-            "ms": 7.200000000069849,
-            "hidden": true
-          }
-        }
-      ]
-    }
+    "nativeBudgetMinutes": 23,
+    "jobBudgetMinutes": 26
   },
   "historicalArrangementPremergeIteration": {
     "name": "Fourth increment: session locks and precise arrangement",
@@ -2303,6 +2242,95 @@
       "runtimeUnchanged": true,
       "snapshotAt": "2026-10-20T12:57:00Z",
       "finalChecks": "https://github.com/woodkill00/aphantasia_build/pull/14/checks"
+    }
+  },
+  "previousEditorAidsIteration": {
+    "name": "Feature 012: bounded editor aids",
+    "base": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
+    "baseTree": "a436707b99e5b62324f6d9ee6f4f585c6ed210be",
+    "remoteBranch": "feature/012-editor-aids",
+    "publicationStatus": "DRAFT_PR_15_OPEN_NOT_MERGED",
+    "status": "recorded_scoped_acceptance_pass_final_head_ci_required",
+    "contract": "specs/012-editor-aids/spec.md",
+    "acceptanceReference": "specs/012-editor-aids/tasks.md",
+    "htmlSha256": "bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735",
+    "htmlBytes": 337656,
+    "localNode": {
+      "passed": 1080,
+      "total": 1080,
+      "failed": 0,
+      "nodeVersion": "v24.19.0",
+      "durationMs": 13897.355976
+    },
+    "sourceHead": "5edddc18cabdbaeb6cd9612c34fd8b68f9fc5f16",
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39437474221",
+    "recordedNative": {
+      "passed": 178,
+      "total": 178,
+      "failed": 0,
+      "seconds": 795.126
+    },
+    "recordedVisual": {
+      "emittedAndByteHashVerified": 178,
+      "assignedV11Scope": 36,
+      "newOrChangedInspected": 9,
+      "identicalToPreviouslyInspected": 27,
+      "otherFramesChangedSincePrevious": 20,
+      "otherFramesNotClaimedInspected": true,
+      "findings": [
+        "Both forced-colors captures now show clearly visible neutral grids with system-colored controls retained.",
+        "Previously unreached desktop/mobile aided drag/nudge/history captures now inspected; no scoped layout blocker.",
+        "Other scoped ratio/clipping/provenance/narrow/short/fullscreen images either inspected anew or exact matches to inspected prior bytes."
+      ]
+    },
+    "recordedPerformance": {
+      "predeclaredAt": "2026-10-20T14:16:00Z",
+      "criteria": "on p95 minus off p95 <=10ms; on max <50ms; first Hide <50ms",
+      "result": "PASS within synthetic synchronous handler/layout scope",
+      "measurements": [
+        {
+          "device": "desktop",
+          "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency",
+          "off": {
+            "count": 12,
+            "median": 1.5,
+            "p95": 1.7999999999883585,
+            "max": 1.7999999999883585
+          },
+          "on": {
+            "count": 12,
+            "median": 2.2000000000116415,
+            "p95": 2.900000000023283,
+            "max": 2.900000000023283
+          },
+          "hide": {
+            "trusted": true,
+            "ms": 7,
+            "hidden": true
+          }
+        },
+        {
+          "device": "mobile-emulation",
+          "scope": "Synthetic synchronous trusted setting-handler plus forced layout, not physical display latency",
+          "off": {
+            "count": 12,
+            "median": 1.599999999976717,
+            "p95": 2.5,
+            "max": 2.5
+          },
+          "on": {
+            "count": 12,
+            "median": 2.300000000046566,
+            "p95": 2.5,
+            "max": 2.5
+          },
+          "hide": {
+            "trusted": true,
+            "ms": 7.200000000069849,
+            "hidden": true
+          }
+        }
+      ]
     }
   }
 }
