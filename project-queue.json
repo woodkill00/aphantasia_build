@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T12:31:00Z",
+  "updated": "2026-10-20T12:57:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1420,7 +1420,7 @@
       "evidence": [
         "Constitution and seven spec/plan/analysis/checklist documents;64 proposal codes mapped to 17 queue items. Offline docs: 33 files / 188 links.",
         "specs/008-interactive-scene-roadmap/acceptance.md: bounded inventory, historical incomplete PR 12 evidence and separate current acceptance gates.",
-        "Fourth-increment clarification/plan/task/checklist contract adds session-only stored-item locks, replacement/history semantics, Off/1/5/10 drag/placement snap and exact centering. Implementation/verification remain pending; no new schema, grid, distribution or persistence scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Fourth-increment clarification/plan/task/checklist contract adds session-only stored-item locks, replacement/history semantics, Off/1/5/10 drag/placement snap and exact centering. Implementation/verification remain pending; no new schema, grid, distribution or persistence scope."
       ],
       "nextAction": "Independently review fourth-increment specification consistency and documentation links against the exact implementation before acceptance."
     },
@@ -1428,7 +1428,7 @@
       "id": "IF-046",
       "title": "Implement direct selection and transactional dragging",
       "priority": "P1",
-      "status": "p1_prerequisite_accepted_current_arrangement_native_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Existing-shape direct interaction, canonical coordinates, draft-only gesture history and cancellation.",
       "dependencies": [
         "IF-045"
@@ -1442,15 +1442,16 @@
       "evidence": [
         "Historical implementation-stage note: 25 direct model/DOM tests pass after immutable drag-target/overlapcache review fixes;4 native groups per device prepared;actual CI+visual pending.",
         "Latest prior PR 13 run 39415125146: original immediate mobile drag-to-Undo failed while three fresh diagnostic variants passed. Focused narrow Undo was visibly complete. This does not close native acceptance or verify fourth-increment changes.",
-        "P1 source 372b81d8cf515e3ff19f1f3fca7505970c73d560 / run 39418445824: 591 Node and 116 native groups PASS, 92 captures, package PASS; scoped direct-editor visual review accepted eight captures (six unique). Original 73.2 ms and rapid 35.8 ms releases delivered first trusted Undo without fling activation/tap suppression. PR 11 merged as b8fccdd17240cd89d92872d80200306d64a0b8f3. Current arrangement regression is still NOT RUN."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): P1 source 372b81d8cf515e3ff19f1f3fca7505970c73d560 / run 39418445824: 591 Node and 116 native groups PASS, 92 captures, package PASS; scoped direct-editor visual review accepted eight captures (six unique). Original 73.2 ms and rapid 35.8 ms releases delivered first trusted Undo without fling activation/tap suppression. PR 11 merged as b8fccdd17240cd89d92872d80200306d64a0b8f3. Current arrangement regression is still NOT RUN.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Retake the unchanged original and required rapid-release gates on the final integrated arrangement runtime; do not substitute P1 acceptance for current-source native evidence."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-047",
       "title": "Provide equivalent controls and stable inspector layout",
       "priority": "P1",
-      "status": "p1_prerequisite_accepted_current_arrangement_native_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Typed, tap, nudge and keyboard equivalents; visible focus, stable canvas and responsive controls.",
       "dependencies": [
         "IF-046"
@@ -1464,15 +1465,16 @@
       "evidence": [
         "Historical implementation-stage note: Typed/nudge/tap/keyboard routes and inspector layout implemented; native rendered verification pending.",
         "Latest prior PR 13 run 39415125146: original immediate mobile drag-to-Undo failed while three fresh diagnostic variants passed. Focused narrow Undo was visibly complete. This does not close native acceptance or verify fourth-increment changes.",
-        "P1 source 372b81d8cf515e3ff19f1f3fca7505970c73d560 / run 39418445824: 591 Node and 116 native groups PASS, 92 captures, package PASS; scoped direct-editor visual review accepted eight captures (six unique). Original 73.2 ms and rapid 35.8 ms releases delivered first trusted Undo without fling activation/tap suppression. PR 11 merged as b8fccdd17240cd89d92872d80200306d64a0b8f3. Current arrangement regression is still NOT RUN."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): P1 source 372b81d8cf515e3ff19f1f3fca7505970c73d560 / run 39418445824: 591 Node and 116 native groups PASS, 92 captures, package PASS; scoped direct-editor visual review accepted eight captures (six unique). Original 73.2 ms and rapid 35.8 ms releases delivered first trusted Undo without fling activation/tap suppression. PR 11 merged as b8fccdd17240cd89d92872d80200306d64a0b8f3. Current arrangement regression is still NOT RUN.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Retake the unchanged original and required rapid-release gates on the final integrated arrangement runtime; do not substitute P1 acceptance for current-source native evidence."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-048",
       "title": "Freeze versioned geometry and authored-canvas contracts",
       "priority": "P2",
-      "status": "implemented_prior_scoped_native_pass_current_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Scene-v4/sequence-v3 metadata preservation, strict legacy migrations and opt-in fixed-ratio mapping.",
       "dependencies": [
         "IF-045"
@@ -1487,15 +1489,16 @@
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
         "Historical implementation-stage note: Scene-v4 / sequence-v3 authored-canvas contracts are integrated; strict legacy validation, shared canvas matching and atomic capture rejection have model/DOM regression coverage. Current exact-head native acceptance remains pending.",
-        "Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Reverify this feature on the final fourth-increment artifact, including lock/replacement lifecycle interactions where applicable; do not inherit prior candidate acceptance."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-049",
       "title": "Implement bounded geometric families",
       "priority": "P2",
-      "status": "implemented_prior_scoped_native_pass_current_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Closed shared registry, fill/stroke/dimensions/rotation, first parametric families and preserved limits; advanced paths remain follow-on.",
       "dependencies": [
         "IF-048"
@@ -1508,15 +1511,16 @@
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
         "Historical implementation-stage note: Ten bounded numeric shape families are integrated with shared geometry, validator, renderer, hit testing, description and round-trip fixtures. Arbitrary SVG/paths and every mathematical shape are not implemented; current native/visual acceptance remains pending.",
-        "Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Reverify this feature on the final fourth-increment artifact, including lock/replacement lifecycle interactions where applicable; do not inherit prior candidate acceptance."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-050",
       "title": "Add layer tools, original presets and session arrangement",
       "priority": "P2",
-      "status": "session_arrangement_implemented_source_review_pass_native_visual_pending",
+      "status": "bounded_arrangement_source_native_visual_pass_wider_tools_deferred",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1534,15 +1538,16 @@
         "Focused preset/gallery model and DOM suite: 46/46 passed on Node 24.19.0 before final integration; original four scene payload hashes unchanged. This is not native or visual acceptance.",
         "At most twelve 64\u00d748 canvases without DPR multiplication: 36,864 pixels, separate from main/offscreen buffers; invalidation hides and resets each backing store to 1\u00d71.",
         "Prior PR 13 head 65c96/run 39415125146: six new gallery/provenance groups per device passed; all 116 captures verified/inspected, including whole 320x760 gallery group. Full native gate still failed 135/136.",
-        "Fourth increment implemented: session-only full-record item locks, Unlock all, accepted history guard, retained Apply/capture locks, successful-only replacement clearing, drag/placement-only Off/1/5/10 snap and Center X/Y/both. Duplicate locked item creates an independent unlocked copy. Current local Node suite passes 935/935 and independent source/code review is accepted; native/visual/package remain NOT RUN."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Fourth increment implemented: session-only full-record item locks, Unlock all, accepted history guard, retained Apply/capture locks, successful-only replacement clearing, drag/placement-only Off/1/5/10 snap and Center X/Y/both. Duplicate locked item creates an independent unlocked copy. Current local Node suite passes 935/935 and independent source/code review is accepted; native/visual/package remain NOT RUN.",
+        "Independent PR 14 review accepted all 22 v10 arrangement captures and four v8 rapid/focused-Undo captures, each actually inspected after SHA verification. Original/rapid movable/rapid locked touch paths passed first trusted Undo/Unlock without browser fling suppression. All 160 native groups and package passed; final documentation-head CI/integration pending."
       ],
-      "nextAction": "Execute the reviewed 160-group native suite and inspect its 142 expected actual captures before acceptance. Distribution, visible grids/guides, groups and persistent lock/snap metadata remain deferred."
+      "nextAction": "Complete final documentation-head CI/protected integration. Equal-spacing distribution, visible editor-only grid/guides, grouping and persistent lock/snap settings remain deferred; broader gallery visual evidence remains separately scoped."
     },
     {
       "id": "IF-051",
       "title": "Bound local raster intake and processing",
       "priority": "P3",
-      "status": "implemented_prior_scoped_native_pass_current_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Raster-only local decode, resource ledger, cancellable computation, no network/storage and no metadata export.",
       "dependencies": [
         "IF-048",
@@ -1555,9 +1560,10 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Reverify this feature on the final fourth-increment artifact, including lock/replacement lifecycle interactions where applicable; do not inherit prior candidate acceptance."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-052",
@@ -1581,7 +1587,7 @@
       "id": "IF-053",
       "title": "Integrate reviewable image conversion drafts",
       "priority": "P3",
-      "status": "implemented_prior_scoped_native_pass_current_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Crop/palette/comparison, accessible review, atomic Apply/Discard/Undo and stale-result rejection.",
       "dependencies": [
         "IF-052",
@@ -1594,15 +1600,16 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Reverify this feature on the final fourth-increment artifact, including lock/replacement lifecycle interactions where applicable; do not inherit prior candidate acceptance."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-054",
       "title": "Define neutral private experience records",
       "priority": "P4",
-      "status": "implemented_prior_scoped_native_pass_current_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Separate closed experience schema, missingness, scene/version association and minimal exposure accounting; no diagnostic scoring.",
       "dependencies": [
         "IF-045",
@@ -1619,15 +1626,16 @@
         "imagery-app/src/journal-model.js and provenance-model.js: journal-v2 supports static-scene and whole-sequence references; explicit legacy v1 closed record validator retained.",
         "Separate unchecked opt-in records only subsequent successful main-field displays. Latest ended interval with ready digest only; active/pending/failure stays unavailable without older fallback. Paused visible frames count; no epoch/device identifier or scene content is exported.",
         "Bounded one active/latest-completed metadata record, one in-flight digest and one replaceable latest canonical queue, each input at most 1 MiB. Opt-out/Clear revoke stale results. Renderer label 0.8.0-dev.provenance1 is a version identifier, not a binary hash.",
-        "Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Reverify this feature on the final fourth-increment artifact, including lock/replacement lifecycle interactions where applicable; do not inherit prior candidate acceptance."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-055",
       "title": "Implement optional session-memory journal",
       "priority": "P4",
-      "status": "implemented_prior_scoped_native_pass_current_regression_pending",
+      "status": "implemented_current_native_regression_pass_scoped_visual_external_limits_retained",
       "scope": "Optional neutral reflection and exact separate preview/export/clear; no autosave, storage or transmission.",
       "dependencies": [
         "IF-054"
@@ -1641,9 +1649,10 @@
       "evidence": [
         "Optional session-only reflections remain initially off, with separate initially unchecked provenance, exact selected preview and single-use export approval. Journal-v2 remains separate from scene/sequence/note files.",
         "Integrated Node/DOM tests exercise actual Node SHA-256, default no-hash behavior, opt-out cancellation, lifecycle end reasons, whole-sequence reference, paused-visible duration and live-edit supersession. These are not native timing or visual evidence.",
-        "Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96/run 39415125146 executed related native scenarios successfully, but the full suite failed 135/136 at direct mobile Undo. Current fourth-increment integration is unverified; see currentIteration.priorCandidateEvidence for exact scope.",
+        "PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 / run 39423486474: full 935 Node and 160 native groups PASS on unchanged cab0383c runtime; package PASS. Independent actual-frame review is explicitly limited to 26 arrangement/direct-input captures, not all 142. External device/AT/empirical requirements remain open; accepted PR 12/13 feature visual reviews are separately scoped."
       ],
-      "nextAction": "Reverify this feature on the final fourth-increment artifact, including lock/replacement lifecycle interactions where applicable; do not inherit prior candidate acceptance."
+      "nextAction": "Preserve exact-source regression in final documentation-head CI and keep broader visual/external gates separate; do not infer full task or all-frame acceptance from this scoped software result."
     },
     {
       "id": "IF-056",
@@ -1688,7 +1697,7 @@
       "id": "IF-058",
       "title": "Verify cross-feature regression and privacy invariants",
       "priority": "P1",
-      "status": "current_local_node_935_pass_source_review_accepted_native_pending",
+      "status": "exact_source_935_node_160_native_pass_final_documentation_head_ci_pending",
       "scope": "Aggregate exact-source checks; each implemented stage still requires its own earlier tests; preserve failures.",
       "dependencies": [
         "IF-046",
@@ -1712,15 +1721,16 @@
       "evidence": [
         "Historical PR 12 recorded 737 passing Node checks; those totals do not accept the changed gallery/provenance runtime.",
         "Historical implementation-stage note: New focused model/DOM and real-Node-SHA integration checks pass. Final aggregate suite, source/artifact hashes and report totals must be refreshed after integration; intermediate failures remain recorded.",
-        "Prior PR 13 head 65c96 has 830/830 Node PASS, native 135/136 FAIL and skipped packaging. Current arrangement runtime cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f (322869 bytes) passes 935/935 local Node checks, zero failures/skips/cancellations; independent source/code review accepted. Native and package acceptance are NOT RUN."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior PR 13 head 65c96 has 830/830 Node PASS, native 135/136 FAIL and skipped packaging. Current arrangement runtime cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f (322869 bytes) passes 935/935 local Node checks, zero failures/skips/cancellations; independent source/code review accepted. Native and package acceptance are NOT RUN.",
+        "PR 14 run 39423486474 / job 118630054300: source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 tested through a955a9bf939666cd491ac19382a5384f6185d903; 935/935 CI Node and 160/160 native PASS, 645.442 seconds, normal sandbox/cleanup; actual package gate PASS."
       ],
-      "nextAction": "Preserve this source identity, retake full checks after any code change, and execute exact-head native and clean-checkout package verification. Local package unit tests are not the actual package gate."
+      "nextAction": "Run complete required CI on the final documentation/test head without changing runtime or weakening gates; preserve all earlier failures."
     },
     {
       "id": "IF-059",
       "title": "Inspect native behavior and rendered layouts",
       "priority": "P1",
-      "status": "current_arrangement_native_visual_not_run_prior_failures_preserved",
+      "status": "current_arrangement_native_scoped_visual_pass_external_gates_not_run",
       "scope": "Actual browser/visual review; physical-device, OS, assistive-technology and qualified content evidence separately reported.",
       "dependencies": [
         "IF-058"
@@ -1735,15 +1745,16 @@
       "evidence": [
         "Historical PR 12 native attempt passed 117 of 118 groups; the mobile Undo failure prevented a clean pass. Visual button-layout findings also required repair.",
         "Historical implementation-stage note: Candidate repairs and the new gallery/provenance integration require exact-head native execution and actual rendered-capture inspection. Historical counts and prepared tests do not establish the current result.",
-        "Prior failed runs remain FAIL: PR 11 run 39414688866 108/112, PR 12 run 39414923557 120/124, PR 13 run 39415125146 135/136. P1 was subsequently repaired and accepted at source 372b81d8 / run 39418445824 (116/116). Current arrangement has 160 native groups and 142 captures prepared, not run; no current visual acceptance."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Prior failed runs remain FAIL: PR 11 run 39414688866 108/112, PR 12 run 39414923557 120/124, PR 13 run 39415125146 135/136. P1 was subsequently repaired and accepted at source 372b81d8 / run 39418445824 (116/116). Current arrangement has 160 native groups and 142 captures prepared, not run; no current visual acceptance.",
+        "PR 14 emitted 142 captures. Independent review actually inspected 26 SHA-verified images, all 22 arrangement plus four rapid/focused-Undo. Narrow focused controls and centering/lock labels passed scoped review. No claim that all 142 were manually inspected or that emulation establishes physical-device/AT support."
       ],
-      "nextAction": "Run exact-head native scenarios and inspect current captures for original/rapid Undo, fast locked selection/first Unlock, locks/snap/centering and narrow/short focused controls. Preserve all assertions; device/OS/AT/content gates remain separate."
+      "nextAction": "Preserve exact inspected-capture scope and separately accepted PR 12/13 feature reviews; retain physical-device/OS/cross-engine/AT/qualified-content gates as NOT RUN."
     },
     {
       "id": "IF-060",
       "title": "Reconcile user guides and exact-source evidence",
       "priority": "P1",
-      "status": "current_evidence_reconciled_offline_documentation_pass_native_pending",
+      "status": "final_documentation_reconciled_local_935_pass_final_head_ci_pending",
       "scope": "Document only observed implemented behavior; update hashes, commands, versions, limitations and synthetic outgoing artifacts.",
       "dependencies": [
         "IF-059"
@@ -1763,17 +1774,19 @@
         "Historical implementation-stage note: README.md, imagery-app/README.md, docs/roadmap-features.md, docs/architecture.md and specs/008-interactive-scene-roadmap/acceptance.md describe twelve examples, explicit thumbnail resources and separately opt-in journal-v2 provenance.",
         "Historical implementation-stage note: Published v0.7 download guidance remains unchanged; version 0.8 remains unreleased. Final exact-head regression/native/visual evidence and offline documentation counts require integration refresh.",
         "Historical implementation-stage note: Documentation draft check PASS: node scripts/check-docs.cjs, 35 Markdown files and 228 local links/fragments. git diff --check passed; rerun after final integration.",
-        "Fourth-increment docs distinguish intended contract from observed behavior; sourceBase, public responsibility roles and currentIteration reconciled to the actual prior stack and changing arrangement candidate. No unstable current-runtime hash is asserted.",
-        "Current documentation draft check PASS: node scripts/check-docs.cjs, 35 Markdown files and 233 local links/fragments; scoped git diff --check PASS. This validates links/whitespace, not runtime behavior or final source acceptance.",
-        "Current three-file evidence reconciliation records the exact 322869-byte runtime, 935/935 local Node PASS, accepted source/code review, and native/visual/package NOT RUN. Accepted P1 evidence is separate and prior PR 12/13 failures remain failures. Offline documentation check PASS: 35 Markdown files and 233 local links/fragments; scoped whitespace check PASS. These are not runtime or final increment acceptance."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Fourth-increment docs distinguish intended contract from observed behavior; sourceBase, public responsibility roles and currentIteration reconciled to the actual prior stack and changing arrangement candidate. No unstable current-runtime hash is asserted.",
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Current documentation draft check PASS: node scripts/check-docs.cjs, 35 Markdown files and 233 local links/fragments; scoped git diff --check PASS. This validates links/whitespace, not runtime behavior or final source acceptance.",
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Current three-file evidence reconciliation records the exact 322869-byte runtime, 935/935 local Node PASS, accepted source/code review, and native/visual/package NOT RUN. Accepted P1 evidence is separate and prior PR 12/13 failures remain failures. Offline documentation check PASS: 35 Markdown files and 233 local links/fragments; scoped whitespace check PASS. These are not runtime or final increment acceptance.",
+        "Final guides, architecture, Spec-Kit matrix/checklist/plan/tasks, changelog, evidence records and documentation assertion now separate accepted bounded arrangement from deferred grouping/distribution/editor-only grid and external gaps. Runtime bytes unchanged; local documentation/full Node checks rerun after edits.",
+        "Post-reconciliation local checks PASS: node scripts/check-docs.cjs (35 Markdown files, 235 local links/fragments); node --test imagery-app/tests/*.test.cjs (935/935, zero fail/skip/cancel/TODO); git diff --check PASS. Runtime hash/bytes unchanged. Full final documentation-head CI and protected integration remain pending."
       ],
-      "nextAction": "Refresh evidence only from actual exact-source native/visual/package outcomes, then complete independent evidence consistency review. No private logs, source paths or unreviewed captures are public deliverables."
+      "nextAction": "Require independent outgoing-tree review and full final documentation-head CI before protected integration. No release/hosting/collection or PR 14 merge is claimed."
     },
     {
       "id": "IF-061",
       "title": "Review and integrate tested increments",
       "priority": "P1",
-      "status": "current_source_review_accepted_native_visual_package_pending",
+      "status": "recorded_scoped_acceptance_pass_final_docs_head_ci_protected_integration_pending",
       "scope": "Independent exact-tree review and required CI; no implied publication, hosting or participant collection.",
       "dependencies": [
         "IF-060"
@@ -1787,10 +1800,11 @@
       "evidence": [
         "Historical implementation-stage note: Scoped model/DOM reviews and targeted regression repairs are recorded. Earlier native/visual defects have candidate repairs, not current exact-head acceptance.",
         "Historical implementation-stage note: Final integrated review, required green CI and inspected current captures remain pending. No release publication, hosting or participant collection is implied.",
-        "Latest prior PR13 native 135/136 FAIL; full gallery/provenance visual review found no additional blocker after repaired capture. None of these results accepts changing fourth-increment source or permits a green integration claim.",
-        "Current source/test-code review accepted: 114 focused tests and 9 independent lifecycle/event-order adversarial cases PASS. P1 PR 11 merged after exact-source CI success; PR 12/13 repairs/retakes and current arrangement native/visual/package gates remain pending. This is implementation/source acceptance only, not full increment acceptance."
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Latest prior PR13 native 135/136 FAIL; full gallery/provenance visual review found no additional blocker after repaired capture. None of these results accepts changing fourth-increment source or permits a green integration claim.",
+        "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Current source/test-code review accepted: 114 focused tests and 9 independent lifecycle/event-order adversarial cases PASS. P1 PR 11 merged after exact-source CI success; PR 12/13 repairs/retakes and current arrangement native/visual/package gates remain pending. This is implementation/source acceptance only, not full increment acceptance.",
+        "Assigned independent PR 14 source/native/input/scoped-visual/package review ACCEPTED exact source 47adabdd and runtime cab0383c. PR 11/12/13 accepted and merged separately; PR 14 final documentation-head CI and protected integration are not yet complete."
       ],
-      "nextAction": "Require exact-head green native/package gates and independent inspection of actual current captures before protected arrangement integration. No new release, hosting or participant collection is implied."
+      "nextAction": "Require independent final outgoing-tree review and full exact-head green CI before protected PR 14 integration; no new release, hosting or participant collection."
     }
   ],
   "sourceBase": {
@@ -1801,8 +1815,8 @@
     "appPath": "imagery-app/index.html",
     "appSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
     "appBytes": 322869,
-    "artifactStatus": "ASSEMBLED_AND_LOCAL_NODE_PASS: source/code review accepted; current native, visual and package acceptance NOT RUN.",
-    "note": "Fourth unreleased increment: implemented session locks, drag/placement snap and centering. The recorded local runtime has not received exact-head native, visual or package acceptance. No new release, hosting or collection service."
+    "artifactStatus": "EXACT_RUNTIME_NATIVE_AND_SCOPED_VISUAL_PACKAGE_PASS; final documentation-head CI and protected integration pending.",
+    "note": "Fourth unreleased increment: session locks, drag/placement snap and centering implemented and accepted within the recorded source/native/scoped-visual/package scope. Runtime bytes remain unchanged during documentation reconciliation. No PR 14 merge, release, hosting or collection is claimed."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
@@ -1836,7 +1850,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Fourth increment implemented: stored-item session locks, Unlock all, Off/1/5/10 drag/placement snap and centering. Independent source/code review accepted; native and visual acceptance remain NOT RUN."
+      "currentStatus": "Bounded session locks/Unlock all, drag/placement snap and centering implemented; exact-source native and scoped visual/package checks passed. Wider grouping/distribution/editor-only grids remain deferred."
     },
     {
       "role": "tester",
@@ -1852,7 +1866,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current runtime passed 935/935 local Node checks with zero failures/skips. The prepared 160 native groups and 142 captures have NOT RUN; current visual and clean-checkout package gates have NOT RUN."
+      "currentStatus": "Recorded PR 14 source passed 935/935 CI Node and 160/160 native groups; 142 captures emitted. Independent review inspected 26 actual SHA-verified arrangement/direct-input frames. Final documentation-head full CI remains required."
     },
     {
       "role": "reviewer",
@@ -1869,7 +1883,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Independent current source/test-code review accepted, with 114 focused tests and 9 adversarial cases passing. This is not native or screenshot acceptance. P1 prerequisite is accepted separately; prior PR 12/13 failures remain historical failures."
+      "currentStatus": "Assigned PR 14 source/native/input/scoped-visual/package review accepted. All 22 arrangement and four rapid/focused-Undo captures inspected, not all 142. Accepted PR 12/13 feature visual reviews remain separately scoped; external device/AT/content gates remain open."
     },
     {
       "role": "integrator",
@@ -1885,65 +1899,105 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current source identity and local evidence reconciled. P1 PR 11 merged after exact-source green gates; PR 12/13 are being repaired and retaken, not green. Arrangement integration awaits its own native, visual and package evidence; no new release, hosting or collection."
+      "currentStatus": "PR 11/12/13 accepted and merged on their own scoped source/native/visual/package evidence. PR 14 scoped software evidence passed; final documentation-head CI/outgoing-tree review and protected integration pending. No new release or hosting."
     }
   ],
   "activeRepairs": {
     "mobileDragUndo": {
-      "status": "P1_REPAIR_ACCEPTED_CURRENT_ARRANGEMENT_REGRESSION_NOT_RUN",
-      "scope": "The tested Chromium browser fling-controller tap-suppression path was diagnosed by run 39416525048 and repaired in P1 by scoped canvas touchstart cancellation. Preserve the original and independent rapid-release first-trusted-Undo gates.",
+      "status": "P1_REPAIR_ACCEPTED_CURRENT_ARRANGEMENT_NATIVE_REGRESSION_PASS",
+      "scope": "Chromium fling-controller suppression was diagnosed and repaired in P1. Current arrangement original 77.1 ms, rapid movable 32.6 ms and rapid locked 34 ms paths passed first trusted Undo/Unlock with no fling activation/tap suppression or trace drops.",
       "latestPriorStackRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39415125146",
-      "nextAction": "Retake PR 12/13 and current arrangement native gates on their exact changed sources. The P1 pass does not retroactively pass earlier failures or establish physical-device behavior.",
+      "nextAction": "Retain the original and rapid movable/locked regressions for final documentation-head CI and future source changes; do not infer physical-device behavior.",
       "acceptedRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824",
       "acceptedSourceHead": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
-      "mergeCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3"
+      "mergeCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3",
+      "currentArrangementRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423486474"
     },
     "currentArrangementAcceptance": {
-      "status": "LOCAL_NODE_AND_SOURCE_REVIEW_PASS_NATIVE_VISUAL_PACKAGE_NOT_RUN",
-      "scope": "Implemented lock mutation/replacement/history guards, snap/centering and separate one-shot locked-touch selection intent. 160 native groups and 142 captures are prepared, not executed.",
-      "nextAction": "Run the full exact-head native suite, inspect actual current captures, and complete the clean-checkout package gate before claiming arrangement acceptance."
+      "status": "SCOPED_SOURCE_NATIVE_VISUAL_PACKAGE_PASS_FINAL_HEAD_INTEGRATION_PENDING",
+      "scope": "935 CI Node checks, 160 native groups and package PASS. 142 captures emitted; 26 actual SHA-verified frames independently inspected, all 22 arrangement plus four rapid/focused-Undo.",
+      "nextAction": "Complete final documentation-head full CI and independent outgoing-tree review before protected integration. PR 14 merge and broader external acceptance are not claimed."
     }
   },
-  "currentStatus": "Fourth increment implemented and source/code review accepted, not fully accepted: current 322869-byte runtime passes 935/935 local Node checks, while 160 native groups/142 captures are prepared NOT RUN and visual/package gates are NOT RUN. P1 mobile Undo repair passed exact-source CI and PR 11 merged; prior PR 12/13 failures remain history while repairs/reruns are pending. Version 0.8 remains unreleased; device/AT/scientific/governance gates remain separate.",
+  "currentStatus": "Bounded arrangement implemented with recorded source review, 935/935 CI Node, 160/160 native groups and package PASS. Independent scoped visual review accepted 26 actual SHA-verified frames (all 22 arrangement plus four rapid/focused-Undo) from 142 emitted; not all frames manually inspected. Runtime remains 322869 bytes / cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f. Final documentation-head CI and protected integration pending; PR 14 is not recorded as merged. PR 11/12/13 accepted and merged on their recorded scoped evidence. Wider deferred/external gates remain open; v0.8 unreleased.",
   "currentIteration": {
     "name": "Fourth increment: session locks and precise arrangement",
     "base": "65c96ebcae397884deb032d9bc430ddad61d68b7",
     "baseTree": "57d4ae6b049f0ad18e407921f014d50079582db8",
     "remoteBranch": "feature/011-session-arrangement",
-    "publicationStatus": "NOT_PUBLISHED: branch name identifies the intended work line; no remote fourth-increment PR/head or release is claimed.",
+    "publicationStatus": "PR_OPEN: PR 14 source 47adabdd1ca0b301ecb96b3a431b76dc1f63ad76 passed the recorded scoped gates; final documentation-head CI and protected integration pending. No PR 14 merge, release or hosting claimed.",
     "htmlSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
     "htmlBytes": 322869,
-    "status": "implemented_local_node_and_source_review_pass_native_visual_package_not_run",
+    "status": "bounded_arrangement_scoped_acceptance_pass_final_docs_head_ci_integration_pending",
     "contract": "specs/008-interactive-scene-roadmap/clarifications.md",
     "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md#if-050-fourth-increment-acceptance-matrix",
     "currentEvidence": {
-      "implementation": "IMPLEMENTED",
-      "node": "PASS_935_OF_935_LOCAL",
-      "native": "NOT_RUN_CURRENT_RUNTIME",
-      "visual": "NOT_RUN_CURRENT_RUNTIME",
-      "package": "NOT_RUN_CURRENT_RUNTIME",
-      "independentReview": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
-      "nodeCommand": "node --test imagery-app/tests/*.test.cjs",
-      "nodeVersion": "v24.19.0",
-      "nodePassed": 935,
-      "nodeTotal": 935,
-      "nodeFailed": 0,
-      "nodeSkipped": 0,
-      "nodeCancelled": 0,
-      "nodeTodo": 0,
-      "preparedNativeGroups": 160,
-      "expectedCaptures": 142,
-      "review": {
-        "status": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
-        "appSha256": "113235f2620a108c5203b4e07b4b2912180b3c6aa0f04da6684ab2934a6d32fd",
-        "runtimeSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
-        "nativeArrangementTestSha256": "f49c11af4961adaaca26f5f850e4b55dc1e544b0fde0c2484db4386c3962ea86",
-        "focusedPassed": 114,
-        "focusedFailed": 0,
-        "independentAdversarialPassed": 9,
-        "independentAdversarialFailed": 0,
-        "note": "Independent locked-selection token and rapid native-test source review found no source blocker. Actual arrangement native, rendered-capture and package acceptance remain NOT RUN."
-      }
+      "pullRequest": 14,
+      "sourceHead": "47adabdd1ca0b301ecb96b3a431b76dc1f63ad76",
+      "testMerge": "a955a9bf939666cd491ac19382a5384f6185d903",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423486474",
+      "jobId": 118630054300,
+      "runtimeSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
+      "runtimeBytes": 322869,
+      "node": {
+        "status": "PASS",
+        "passed": 935,
+        "total": 935,
+        "failed": 0,
+        "nodeVersion": "v22.23.3",
+        "command": "node --test imagery-app/tests/*.test.cjs"
+      },
+      "native": {
+        "status": "PASS",
+        "passed": 160,
+        "total": 160,
+        "failed": 0,
+        "seconds": 645.442,
+        "command": "node imagery-app/tests/browser-cdp.cjs",
+        "browser": "Chrome/155.0.8059.84",
+        "platform": "linux",
+        "sandbox": "Default Chrome sandbox retained; no sandbox/security-disabling flags used.",
+        "cleanup": {
+          "browserClosed": true,
+          "profileRemoved": true
+        }
+      },
+      "input": {
+        "mobileOriginalMoveToUpMs": 77.1,
+        "mobileRapidMovableMoveToUpMs": 32.6,
+        "mobileRapidLockedMoveToUpMs": 34,
+        "desktopRapidLockedMoveToUpMs": 8.4,
+        "firstTrustedUndoAndUnlock": true,
+        "noFlingActivationOrTapSuppression": true,
+        "noTraceRetentionDropsOrErrors": true,
+        "lockedTouchStartConsumed": true,
+        "unlockTouchStartUncanceled": true
+      },
+      "visual": {
+        "status": "ACCEPTED_SCOPED_ARRANGEMENT_AND_DIRECT_INPUT",
+        "emitted": 142,
+        "manuallyInspected": 26,
+        "shaVerifiedInspectedCaptures": 26,
+        "scope": "All 22 v10 arrangement captures plus four v8 rapid-release/focused-Undo captures, desktop and phone-sized touch emulation. Not all 142 emitted captures were manually inspected.",
+        "findings": [
+          "Full narrow lock/unlock and centering labels fit their buttons and inspector aperture.",
+          "Focused Undo remains entirely visible at320px; persistent Hide/End controls remain reachable.",
+          "Snapped authored placement and drag screenshots match asserted centered geometry; invalid/import correction states remain hidden.",
+          "Programmatic focus assertions and screenshots do not establish keyboard or screen-reader conformance."
+        ]
+      },
+      "package": {
+        "status": "PASS",
+        "zipSha256": "b4c3b91b8c97fbbf786522d7d45632cb29e369af70425688592412b5ed1ab58c",
+        "published": false,
+        "scope": "PASS exact file allowlists, ZIP structure/CRCs, internal/external checksums, metadata and identical HTML bytes."
+      },
+      "independentReview": "ACCEPTED_ASSIGNED_SOURCE_NATIVE_INPUT_SCOPED_VISUAL_PACKAGE",
+      "integration": "PENDING_FINAL_DOCUMENTATION_HEAD_CI_AND_PROTECTED_INTEGRATION",
+      "merged": false,
+      "release": "NOT_PUBLISHED",
+      "integrationSnapshotAt": "2026-10-20T12:57:00Z",
+      "finalChecks": "https://github.com/woodkill00/aphantasia_build/pull/14/checks"
     },
     "priorCandidateEvidence": [
       {
@@ -2042,7 +2096,109 @@
         "trace": "Original and required rapid-release paths delivered the first trusted Undo without browser fling activation or tap suppression.",
         "mergeCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3",
         "note": "Accepted P1 prerequisite only. This pass does not accept the changed arrangement runtime or make prior PR 12/13 failures green."
+      },
+      {
+        "pullRequest": 12,
+        "sourceHead": "61c0480baaaf4503209172b9154e1071e61baf37",
+        "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423240391",
+        "jobId": 118629226276,
+        "nodePassed": 764,
+        "nodeTotal": 764,
+        "nativePassed": 128,
+        "nativeTotal": 128,
+        "status": "PASS",
+        "captures": 108,
+        "capturesHashVerified": 108,
+        "visual": {
+          "status": "ACCEPTED",
+          "directlyInspected": 19,
+          "byteIdenticalToInspected": 89
+        },
+        "artifactSha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23",
+        "artifactBytes": 277594,
+        "package": {
+          "status": "PASS",
+          "zipSha256": "b2b3d4445f54ad50cef7f30c21898b3319dae4d172e1f70a814f1f85631439e6",
+          "scope": "Exact allowlists, ZIP structure/CRCs, internal/external checksums, metadata and identical tested HTML confirmed by terminal package logs; local preparation only, not published."
+        },
+        "mergeCommit": "b5fd8d8cb5728f31e0dd34ad449c0820a71588e7",
+        "note": "Accepted exact-source prerequisite; prior failed attempts remain FAIL. This is not a claim that all current arrangement frames were manually inspected."
+      },
+      {
+        "pullRequest": 13,
+        "sourceHead": "60143a989f3bc84e30028fb8f7ea1ba05f71741c",
+        "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423249334",
+        "jobId": 118629259317,
+        "nodePassed": 855,
+        "nodeTotal": 855,
+        "nativePassed": 140,
+        "nativeTotal": 140,
+        "status": "PASS",
+        "captures": 120,
+        "capturesHashVerified": 120,
+        "visual": {
+          "status": "ACCEPTED",
+          "directlyInspected": 93,
+          "byteIdenticalToInspected": 27
+        },
+        "artifactSha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b",
+        "artifactBytes": 313647,
+        "package": {
+          "status": "PASS",
+          "zipSha256": "e52120ac8de4b2c739a4bf4751daf4db262bbd428276be861352318e90e66f88",
+          "scope": "Exact allowlists, ZIP structure/CRCs, internal/external checksums, metadata and identical tested HTML confirmed by terminal package logs; local preparation only, not published."
+        },
+        "mergeCommit": "13febfe2ea96958af0ab7661dc7f395ee530e225",
+        "note": "Accepted exact-source prerequisite; 46 changed mobile and 47 changed desktop frames actually inspected, 27 matched previously inspected bytes. No claim all 142 arrangement captures were manually inspected."
       }
-    ]
+    ],
+    "priorLocalEvidence": {
+      "implementation": "IMPLEMENTED",
+      "node": "PASS_935_OF_935_LOCAL",
+      "native": "NOT_RUN_CURRENT_RUNTIME",
+      "visual": "NOT_RUN_CURRENT_RUNTIME",
+      "package": "NOT_RUN_CURRENT_RUNTIME",
+      "independentReview": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
+      "nodeCommand": "node --test imagery-app/tests/*.test.cjs",
+      "nodeVersion": "v24.19.0",
+      "nodePassed": 935,
+      "nodeTotal": 935,
+      "nodeFailed": 0,
+      "nodeSkipped": 0,
+      "nodeCancelled": 0,
+      "nodeTodo": 0,
+      "preparedNativeGroups": 160,
+      "expectedCaptures": 142,
+      "review": {
+        "status": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
+        "appSha256": "113235f2620a108c5203b4e07b4b2912180b3c6aa0f04da6684ab2934a6d32fd",
+        "runtimeSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
+        "nativeArrangementTestSha256": "f49c11af4961adaaca26f5f850e4b55dc1e544b0fde0c2484db4386c3962ea86",
+        "focusedPassed": 114,
+        "focusedFailed": 0,
+        "independentAdversarialPassed": 9,
+        "independentAdversarialFailed": 0,
+        "note": "Independent locked-selection token and rapid native-test source review found no source blocker. Actual arrangement native, rendered-capture and package acceptance remain NOT RUN."
+      }
+    },
+    "remainingStackReview": {
+      "status": "PR11_PR12_PR13_ACCEPTED_AND_MERGED",
+      "currentArrangement": "PR14_FINAL_DOCUMENTATION_HEAD_CI_AND_PROTECTED_INTEGRATION_PENDING"
+    },
+    "documentationReconciliation": {
+      "status": "LOCAL_CHECKS_PASS_FINAL_HEAD_CI_PENDING",
+      "nodePassed": 935,
+      "nodeTotal": 935,
+      "nodeFailed": 0,
+      "nodeSkipped": 0,
+      "nodeCancelled": 0,
+      "nodeTodo": 0,
+      "nodeVersion": "v24.19.0",
+      "markdownFiles": 35,
+      "localLinks": 235,
+      "runtimeUnchanged": true,
+      "snapshotAt": "2026-10-20T12:57:00Z",
+      "finalChecks": "https://github.com/woodkill00/aphantasia_build/pull/14/checks"
+    }
   }
 }

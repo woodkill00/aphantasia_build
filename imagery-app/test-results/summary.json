@@ -1,6 +1,6 @@
 {
   "date": "2026-10-20",
-  "status": "V08_ARRANGEMENT_IMPLEMENTED_LOCAL_NODE_SOURCE_REVIEW_PASS_NATIVE_VISUAL_PACKAGE_NOT_RUN",
+  "status": "V08_ARRANGEMENT_SCOPED_SOURCE_NATIVE_VISUAL_PACKAGE_PASS_FINAL_DOCS_HEAD_CI_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
@@ -10,48 +10,71 @@
   },
   "nonBrowser": {
     "status": "PASS",
-    "command": "node --test imagery-app/tests/*.test.cjs",
-    "nodeVersion": "v24.19.0",
-    "total": 935,
     "passed": 935,
+    "total": 935,
     "failed": 0,
-    "skipped": 0,
-    "cancelled": 0,
-    "todo": 0,
-    "durationMs": 13835.289512,
-    "scope": "Local full dependency-free suite on the recorded runtime; not native, screenshot or clean-checkout package acceptance."
+    "nodeVersion": "v22.23.3",
+    "command": "node --test imagery-app/tests/*.test.cjs",
+    "scope": "Recorded CI source; final documentation-head local rerun recorded separately."
   },
   "independentReview": {
-    "status": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
-    "appSha256": "113235f2620a108c5203b4e07b4b2912180b3c6aa0f04da6684ab2934a6d32fd",
+    "status": "ACCEPTED_ASSIGNED_SOURCE_NATIVE_INPUT_SCOPED_VISUAL_PACKAGE",
+    "sourceHead": "47adabdd1ca0b301ecb96b3a431b76dc1f63ad76",
     "runtimeSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
-    "nativeArrangementTestSha256": "f49c11af4961adaaca26f5f850e4b55dc1e544b0fde0c2484db4386c3962ea86",
-    "focusedPassed": 114,
-    "focusedFailed": 0,
-    "independentAdversarialPassed": 9,
-    "independentAdversarialFailed": 0,
-    "note": "Independent locked-selection token and rapid native-test source review found no source blocker. Actual arrangement native, rendered-capture and package acceptance remain NOT RUN."
+    "note": "ACCEPTED in assigned native arrangement, input regression, scoped visual and package consistency review. No merge or deployment performed."
   },
   "browser": {
-    "status": "NOT_RUN_CURRENT_RUNTIME",
-    "preparedGroups": 160,
-    "expectedCaptures": 142,
-    "note": "Prepared source/test-code review is not native execution. P1 pass is separate prerequisite evidence, not acceptance of this changed runtime. PR 12/13 prior failures remain failures while repairs and retakes are pending."
+    "status": "PASS",
+    "passed": 160,
+    "total": 160,
+    "failed": 0,
+    "seconds": 645.442,
+    "command": "node imagery-app/tests/browser-cdp.cjs",
+    "browser": "Chrome/155.0.8059.84",
+    "platform": "linux",
+    "sandbox": "Default Chrome sandbox retained; no sandbox/security-disabling flags used.",
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "input": {
+      "mobileOriginalMoveToUpMs": 77.1,
+      "mobileRapidMovableMoveToUpMs": 32.6,
+      "mobileRapidLockedMoveToUpMs": 34,
+      "desktopRapidLockedMoveToUpMs": 8.4,
+      "firstTrustedUndoAndUnlock": true,
+      "noFlingActivationOrTapSuppression": true,
+      "noTraceRetentionDropsOrErrors": true,
+      "lockedTouchStartConsumed": true,
+      "unlockTouchStartUncanceled": true
+    },
+    "scope": "Real headless Google Chrome; local file URL; desktop and phone-sized viewport/touch emulation; synthetic data only."
   },
   "visual": {
-    "status": "NOT_RUN_CURRENT_RUNTIME",
-    "expectedCaptures": 142
+    "status": "ACCEPTED_SCOPED_ARRANGEMENT_AND_DIRECT_INPUT",
+    "emitted": 142,
+    "manuallyInspected": 26,
+    "shaVerifiedInspectedCaptures": 26,
+    "scope": "All 22 v10 arrangement captures plus four v8 rapid-release/focused-Undo captures, desktop and phone-sized touch emulation. Not all 142 emitted captures were manually inspected.",
+    "findings": [
+      "Full narrow lock/unlock and centering labels fit their buttons and inspector aperture.",
+      "Focused Undo remains entirely visible at320px; persistent Hide/End controls remain reachable.",
+      "Snapped authored placement and drag screenshots match asserted centered geometry; invalid/import correction states remain hidden.",
+      "Programmatic focus assertions and screenshots do not establish keyboard or screen-reader conformance."
+    ]
   },
   "package": {
-    "status": "NOT_RUN_CURRENT_RUNTIME",
-    "note": "Local packaging unit tests are included in the Node suite; the actual clean-checkout portable-file gate is not yet run for this arrangement candidate."
+    "status": "PASS",
+    "zipSha256": "b4c3b91b8c97fbbf786522d7d45632cb29e369af70425688592412b5ed1ab58c",
+    "published": false,
+    "scope": "PASS exact file allowlists, ZIP structure/CRCs, internal/external checksums, metadata and identical HTML bytes."
   },
   "documentation": {
-    "status": "PASS",
+    "status": "PASS_LOCAL_CHECKS_FINAL_HEAD_CI_PENDING",
     "command": "node scripts/check-docs.cjs",
     "markdownFiles": 35,
-    "localLinks": 233,
-    "scope": "Offline local links/fragments only; not native behavior or final acceptance."
+    "localLinks": 235,
+    "finalHeadCI": "PENDING"
   },
   "acceptedPrerequisiteEvidence": [
     {
@@ -75,6 +98,60 @@
       "trace": "Original and required rapid-release paths delivered the first trusted Undo without browser fling activation or tap suppression.",
       "mergeCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3",
       "note": "Accepted P1 prerequisite only. This pass does not accept the changed arrangement runtime or make prior PR 12/13 failures green."
+    },
+    {
+      "pullRequest": 12,
+      "sourceHead": "61c0480baaaf4503209172b9154e1071e61baf37",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423240391",
+      "jobId": 118629226276,
+      "nodePassed": 764,
+      "nodeTotal": 764,
+      "nativePassed": 128,
+      "nativeTotal": 128,
+      "status": "PASS",
+      "captures": 108,
+      "capturesHashVerified": 108,
+      "visual": {
+        "status": "ACCEPTED",
+        "directlyInspected": 19,
+        "byteIdenticalToInspected": 89
+      },
+      "artifactSha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23",
+      "artifactBytes": 277594,
+      "package": {
+        "status": "PASS",
+        "zipSha256": "b2b3d4445f54ad50cef7f30c21898b3319dae4d172e1f70a814f1f85631439e6",
+        "scope": "Exact allowlists, ZIP structure/CRCs, internal/external checksums, metadata and identical tested HTML confirmed by terminal package logs; local preparation only, not published."
+      },
+      "mergeCommit": "b5fd8d8cb5728f31e0dd34ad449c0820a71588e7",
+      "note": "Accepted exact-source prerequisite; prior failed attempts remain FAIL. This is not a claim that all current arrangement frames were manually inspected."
+    },
+    {
+      "pullRequest": 13,
+      "sourceHead": "60143a989f3bc84e30028fb8f7ea1ba05f71741c",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423249334",
+      "jobId": 118629259317,
+      "nodePassed": 855,
+      "nodeTotal": 855,
+      "nativePassed": 140,
+      "nativeTotal": 140,
+      "status": "PASS",
+      "captures": 120,
+      "capturesHashVerified": 120,
+      "visual": {
+        "status": "ACCEPTED",
+        "directlyInspected": 93,
+        "byteIdenticalToInspected": 27
+      },
+      "artifactSha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b",
+      "artifactBytes": 313647,
+      "package": {
+        "status": "PASS",
+        "zipSha256": "e52120ac8de4b2c739a4bf4751daf4db262bbd428276be861352318e90e66f88",
+        "scope": "Exact allowlists, ZIP structure/CRCs, internal/external checksums, metadata and identical tested HTML confirmed by terminal package logs; local preparation only, not published."
+      },
+      "mergeCommit": "13febfe2ea96958af0ab7661dc7f395ee530e225",
+      "note": "Accepted exact-source prerequisite; 46 changed mobile and 47 changed desktop frames actually inspected, 27 matched previously inspected bytes. No claim all 142 arrangement captures were manually inspected."
     }
   ],
   "priorCandidateEvidence": [
@@ -1189,5 +1266,91 @@
       ]
     }
   },
-  "limits": "Synthetic Linux Chrome file-URL desktop/touch emulation and inspected frames are not physical-device, cross-engine, comprehensive AT, natural-photo/correction-effort, calibrated exposure, clinical or governed-participant evidence."
+  "limits": "Synthetic Linux Chrome file-URL desktop/touch emulation and inspected frames are not physical-device, cross-engine, comprehensive AT, natural-photo/correction-effort, calibrated exposure, clinical or governed-participant evidence.",
+  "historicalArrangementPreparedCandidate": {
+    "date": "2026-10-20",
+    "status": "V08_ARRANGEMENT_IMPLEMENTED_LOCAL_NODE_SOURCE_REVIEW_PASS_NATIVE_VISUAL_PACKAGE_NOT_RUN",
+    "artifact": {
+      "file": "imagery-app/index.html",
+      "version": "0.8.0",
+      "bytes": 322869,
+      "sha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
+      "releaseStatus": "UNRELEASED_DEVELOPMENT_CANDIDATE"
+    },
+    "nonBrowser": {
+      "status": "PASS",
+      "command": "node --test imagery-app/tests/*.test.cjs",
+      "nodeVersion": "v24.19.0",
+      "total": 935,
+      "passed": 935,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 13835.289512,
+      "scope": "Local full dependency-free suite on the recorded runtime; not native, screenshot or clean-checkout package acceptance."
+    },
+    "independentReview": {
+      "status": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
+      "appSha256": "113235f2620a108c5203b4e07b4b2912180b3c6aa0f04da6684ab2934a6d32fd",
+      "runtimeSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
+      "nativeArrangementTestSha256": "f49c11af4961adaaca26f5f850e4b55dc1e544b0fde0c2484db4386c3962ea86",
+      "focusedPassed": 114,
+      "focusedFailed": 0,
+      "independentAdversarialPassed": 9,
+      "independentAdversarialFailed": 0,
+      "note": "Independent locked-selection token and rapid native-test source review found no source blocker. Actual arrangement native, rendered-capture and package acceptance remain NOT RUN."
+    },
+    "browser": {
+      "status": "NOT_RUN_CURRENT_RUNTIME",
+      "preparedGroups": 160,
+      "expectedCaptures": 142,
+      "note": "Prepared source/test-code review is not native execution. P1 pass is separate prerequisite evidence, not acceptance of this changed runtime. PR 12/13 prior failures remain failures while repairs and retakes are pending."
+    },
+    "visual": {
+      "status": "NOT_RUN_CURRENT_RUNTIME",
+      "expectedCaptures": 142
+    },
+    "package": {
+      "status": "NOT_RUN_CURRENT_RUNTIME",
+      "note": "Local packaging unit tests are included in the Node suite; the actual clean-checkout portable-file gate is not yet run for this arrangement candidate."
+    },
+    "documentation": {
+      "status": "PASS",
+      "command": "node scripts/check-docs.cjs",
+      "markdownFiles": 35,
+      "localLinks": 233,
+      "scope": "Offline local links/fragments only; not native behavior or final acceptance."
+    }
+  },
+  "testedSource": {
+    "sourceHead": "47adabdd1ca0b301ecb96b3a431b76dc1f63ad76",
+    "testMerge": "a955a9bf939666cd491ac19382a5384f6185d903",
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423486474",
+    "jobId": 118630054300
+  },
+  "integration": {
+    "status": "PENDING_FINAL_DOCUMENTATION_HEAD_CI_AND_PROTECTED_INTEGRATION",
+    "pullRequest": 14,
+    "merged": false,
+    "releasePublished": false,
+    "snapshotAt": "2026-10-20T12:57:00Z",
+    "finalChecks": "https://github.com/woodkill00/aphantasia_build/pull/14/checks"
+  },
+  "remainingStackReview": {
+    "status": "PR11_PR12_PR13_ACCEPTED_AND_MERGED",
+    "currentArrangement": "PR14_FINAL_DOCUMENTATION_HEAD_CI_AND_PROTECTED_INTEGRATION_PENDING"
+  },
+  "localDocumentationHeadRegression": {
+    "status": "PASS",
+    "command": "node --test imagery-app/tests/*.test.cjs",
+    "nodeVersion": "v24.19.0",
+    "total": 935,
+    "passed": 935,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0,
+    "note": "Local final-documentation reconciliation regression; full remote final-head CI remains required."
+  }
 }

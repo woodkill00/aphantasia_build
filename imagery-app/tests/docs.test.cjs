@@ -100,7 +100,10 @@ test('DOCS: beginner guidance describes the current source download, version and
   assert.match(readme, /imagery-app\/index\.html/);
   assert.ok(fs.statSync(path.join(ROOT, 'imagery-app/index.html')).isFile());
   assert.match(guide, /Version 0\.8 \*\*unreleased development candidate\*\*/);
-  assert.match(guide.split('## In this guide')[0], /unreleased development candidate.*acceptance pending/i);
+  const intro = guide.split('## In this guide')[0];
+  assert.match(intro, /unreleased development candidate.*scoped native-browser and arrangement visual checks passed/i);
+  assert.match(intro, /Each final head must pass required CI before protected integration/i);
+  assert.match(intro, /https:\/\/github\.com\/woodkill00\/aphantasia_build\/pull\/14\/checks/);
   for (const text of [readme, guide]) {
     assert.match(text, /no autosave/i);
     assert.match(text, /Apply changes/);

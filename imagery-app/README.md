@@ -1,6 +1,6 @@
 # Imagery Field user guide
 
-Version 0.8 **unreleased development candidate**, with exact-head native-browser and visual acceptance pending. The published v0.7.0 ZIP does not include its new features. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
+Version 0.8 **unreleased development candidate**, with scoped native-browser and arrangement visual checks passed. Each final head must pass required CI before protected integration; consult [PR 14 checks](https://github.com/woodkill00/aphantasia_build/pull/14/checks) for its outcome. The published v0.7.0 ZIP does not include its new features. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
 
 **No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, notes and journal records.
 
@@ -86,7 +86,7 @@ Timed item previews remain windowed with reachable controls. Reduced-motion pref
 
 ## Capture and edit a sequence
 
-The editor uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. The historical v0.7 responsive layout passed scoped native focus/raster checks and actual-frame review. The expanded 0.8 controls need their own exact-source native and visual acceptance. Neither result substitutes for physical-device or actual OS-zoom acceptance.
+The editor uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. The historical v0.7 responsive layout passed scoped native focus/raster checks and actual-frame review. The 0.8 arrangement controls passed exact-source native checks and scoped actual-frame review; broader feature visuals are recorded separately. Neither result substitutes for physical-device or actual OS-zoom acceptance.
 
 - **Add scene as step** appends an independent copy of the scene. With a scene draft, its label becomes **Apply scene and add step**; it applies and captures a valid draft in one action, with no separate Apply click. The scene and proposed sequence are both checked before either is accepted. A rejected capture retains both accepted documents and scene history, and the field stays hidden.
 - The first captured step sets the shared background and format. Later captures must use the same background and either all legacy viewport scenes or all authored fixed-ratio scenes. Authored snapshots must also share the same canvas ratio. Mismatches are rejected atomically, without silently converting or cropping either document. A background-only scene cannot become a step. Later scene edits never silently change snapshots.
@@ -163,7 +163,7 @@ Avoid unnecessary identifying/medical details. The note export contains its form
 
 ## Testing and limits
 
-The expanded version 0.8 source is under verification. Node/model/DOM-double checks and independent code review are not native-browser, visual, accessibility or empirical-usability acceptance. See the [feature evidence boundaries](../docs/roadmap-features.md#verification-and-deferred-work) and current [public work register](../project-queue.json).
+[PR 14 run 39423486474](https://github.com/woodkill00/aphantasia_build/actions/runs/39423486474) passed 935 Node checks, all 160 native Chrome groups and the clean-checkout package gate on source `47adabdd1ca0b301ecb96b3a431b76dc1f63ad76`. Independent visual review accepted 26 actual SHA-verified captures: all 22 arrangement frames and four rapid-release/focused-Undo frames. The run emitted 142 captures; this is not a claim that all 142 were manually inspected. Each final head must pass required CI before protected integration; consult [PR 14 checks](https://github.com/woodkill00/aphantasia_build/pull/14/checks) for its outcome. Version 0.8 is unreleased. Native Chrome and the inspected frames do not establish accessibility conformance or empirical usefulness. See the [feature evidence boundaries](../docs/roadmap-features.md#verification-and-deferred-work) and current [public work register](../project-queue.json).
 
 For historical context only, the merged version 0.7 runtime passed 457 non-browser checks, 98 native Chrome groups, and independent inspection of 78 rendered captures in the [final integration run](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917), dated 20 October 2026. The [compatibility record](../docs/compatibility.md) identifies the exact tested runtime and remaining gaps. The [test report](test-results/TEST-REPORT.md) retains earlier attempts and failures; a later documentation or packaging change does not inherit verification merely by retaining this version label.
 
@@ -181,9 +181,9 @@ Use the four nudge buttons or focus the preview and use arrow keys (1 position u
 
 **Move back one layer** / **Move forward one layer** change the selected item's draw order by one position. Later items draw over earlier ones. **Duplicate object** makes an overlapping editable copy with a fresh ID.
 
-### Session locks and arrangement: implementation pending
+### Session locks and arrangement
 
-The fourth development increment is adding the following controls. This is its intended contract, not a claim that the current build has passed verification. It is not in the published v0.7.0 download.
+The fourth development increment implements the following controls, accepted within the recorded native Chrome and scoped arrangement visual review. It is not in the published v0.7.0 download; each final head must pass required CI before protected integration.
 
 - **Lock selected item** protects that item's stored shape, position, appearance and own timing for this page session. It does not freeze the whole picture: background, canvas ratio, shared pulse period and other items can still change. Locked items stay selectable and are identified in text. Duplicate may create a new unlocked copy without changing the locked source.
 - **Unlock all items** remains available. Applied-scene **Undo/Redo** are unavailable while any lock exists, with an explanation beside those controls. Apply and Add/Replace snapshot capture keep locks. **Undo move/Redo move** and Discard are allowed only when they preserve every locked record; otherwise unlock first.

@@ -2,7 +2,7 @@
 
 User-visible changes are listed here. Version labels describe engineering increments, not a promise that a tagged Release or downloadable release asset exists. Exact test attempts, failures, environments and artifact hashes live in the [test report](imagery-app/test-results/TEST-REPORT.md).
 
-## 0.8 — Unreleased; roadmap candidate under verification
+## 0.8 — Unreleased; bounded arrangement core tested
 
 - Direct click/tap selection, transactional live dragging, overlap cycling and non-drag numeric/tap/nudge/keyboard routes, with separate bounded draft move undo/redo.
 - Explicit scene-v4 fixed-ratio authoring: ten bounded shape families, five ratios with letterboxing, rotation/fill/dimensions and layer reordering. Twelve original editable examples now have a text-first gallery and separately enabled static thumbnails; the first four scene payloads are unchanged. Legacy viewport scene-v3 behavior remains unchanged.
@@ -10,9 +10,11 @@ User-visible changes are listed here. Version labels describe engineering increm
 - Experimental local still PNG/JPEG approximation with header/decode budgets, a 3/6/12-item bounded cooperative search, crop/palette/seed controls, explicit Generate and hidden Use editable draft with one-step draft-replacement undo. No original-image export or upload; derived shapes can reveal content.
 - Optional session-only journal, initially off, with 20-record bound, skipped defaults, selected exact export preview and separate approval. Journal-v2 has separately opt-in canonical scene/sequence SHA-256 and bounded visible-duration summaries; unavailable/pending states never inherit an older result. No storage, autosave or collection.
 - Disabled research-submission information and governance prerequisites. No endpoint, operational Send route, real participant collection, statistics or efficacy claims.
-- Fourth increment under implementation, not yet verified: session-only stored-item locks and Unlock all, Off/1/5/10 drag/placement snap, and horizontal/vertical/both centering. Apply/capture retain locks; successful whole-scene replacement clears them with notice. No persistent settings, visible grid or distribution is included.
+- Fourth increment implemented and accepted within scoped source/native/visual checks: session-only stored-item locks and Unlock all, Off/1/5/10 drag/placement snap, and horizontal/vertical/both centering. Apply/capture retain locks; successful whole-scene replacement clears them with notice. No persistent settings, visible grid or distribution is included.
 - Spec-Kit traceability, independent model-review findings and [implemented/deferred feature guide](docs/roadmap-features.md). Distribution/guides/groups, broader galleries, richer paths/formats and empirical usefulness studies remain deferred.
-- Exact-head native-browser CI, actual visual acceptance and final integrated review remain required. Scoped synthetic/model/mock evidence is not a whole-candidate pass; historical v0.7 evidence is not reused as acceptance. No 0.8 release or hosting is claimed.
+- Exact-source native and scoped arrangement visual checks passed; final documentation-head CI and protected integration remain required. Only the stated 26 actual frames were manually inspected out of 142 emitted. Broader feature visual reviews and external gates remain separate; historical v0.7 evidence is not reused as acceptance. No 0.8 release or hosting is claimed.
+
+[PR 14 run 39423486474](https://github.com/woodkill00/aphantasia_build/actions/runs/39423486474) passed 935 Node checks, all 160 native Chrome groups and the clean-checkout package gate on source `47adabdd1ca0b301ecb96b3a431b76dc1f63ad76`. Independent visual review accepted 26 actual SHA-verified captures: all 22 arrangement frames and four rapid-release/focused-Undo frames. The run emitted 142 captures; this is not a claim that all 142 were manually inspected. Each final head must pass required CI before protected integration; consult [PR 14 checks](https://github.com/woodkill00/aphantasia_build/pull/14/checks) for its outcome. Version 0.8 is unreleased.
 
 Prior candidate evidence is not erased: PR 13 source `65c96ebcae397884deb032d9bc430ddad61d68b7` passed 830 Node checks but [failed one of 136 native groups](https://github.com/woodkill00/aphantasia_build/actions/runs/39415125146), immediate mobile drag-to-Undo. All 116 actual captures were hash-verified and inspected, including the repaired whole gallery group; packaging was skipped after the native failure. These results do not verify the new arrangement increment.
 

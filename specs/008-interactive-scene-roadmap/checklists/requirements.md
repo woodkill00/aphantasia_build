@@ -28,7 +28,7 @@ This checklist describes review questions and evidence locations. Live status is
 
 ## Session lock and arrangement review
 
-Implementation and evidence are pending; these questions do not certify the fourth increment.
+The bounded arrangement source, native and scoped visual checks passed on the exact source recorded in the [public queue](../../../project-queue.json). These questions remain regression requirements, not certification of the full roadmap. Final documentation-head CI, protected integration and external gates remain separate.
 
 - Do locks protect defensive full stored-item records rather than imply immutable composite pixels, and stay within the 12-item bound?
 - Can users select a locked item without dragging or clicking through it, identify its lock in text, unlock it, or use Unlock all by keyboard/touch?

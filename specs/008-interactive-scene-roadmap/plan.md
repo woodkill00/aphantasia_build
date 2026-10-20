@@ -20,7 +20,7 @@ Layer/lock/overlap and optional snap/align operate on the same draft write path.
 
 ### Fourth increment: session locks, snap and centering
 
-Implementation and verification are pending. Build on the prior gallery/provenance candidate without inheriting its evidence as a pass: its latest recorded PR 13 run still failed the immediate mobile drag-to-Undo case. Preserve that failure and the separate preceding-stack failures in the public queue.
+The bounded implementation has passed source review, exact-source native checks and scoped arrangement visual review, recorded in the public queue. Each final head must pass required CI before protected integration; consult [PR 14 checks](https://github.com/woodkill00/aphantasia_build/pull/14/checks) for its outcome. The following steps document the execution contract and remain regression requirements. Preserve the earlier PR 13 immediate mobile Undo failure and preceding-stack failures as history; later accepted results do not rewrite them.
 
 1. Implement a pure session lock guard with at most 12 defensive canonical item snapshots. Compare a proposed complete scene against snapshots, not an already-mutated working object. Guard item deletion/mutation and targeted layer reordering; allow duplication into a new unlocked independent item.
 2. Integrate one coherent final disabled-state policy after geometry, timing and precision-control rules. Locked selection remains possible through the canvas, semantic list, overlap cycling and timing tracks. Preserve text-field keyboard behavior; keep Unlock all and concealment controls reachable.
@@ -30,7 +30,7 @@ Implementation and verification are pending. Build on the prior gallery/provenan
 6. Add Center horizontally/vertically/both as validated single draft-move operations. No-op creates no history; hidden state remains hidden. Do not add distribution, rendered grids, schema fields, saved preferences, timers or provenance-visible marks.
 7. Run focused model and hostile-event DOM tests, then full exact-source regression. Native evidence must cover trusted locked selection/drag refusal/unlock, all supported ratio mappings and boundary snapping, whole focused controls inside the actual scroll aperture, corner hit tests, and reachable Unlock all/Hide at narrow and short sizes. Inspect the actual captures, with focus re-established immediately before capture.
 
-The prior PR 13 native run took 591.044 seconds against a ten-minute native-step budget. Additional checks need a measured, explicitly reviewed CI budget decision, not omitted scenarios or weaker assertions. A timeout remains a failed attempt. No CI/security change, merge, deployment or release is authorized by this plan alone.
+The historical PR 13 run took 591.044 seconds against its ten-minute native-step budget. The separately reviewed current workflow permits 15 minutes for native checks within an 18-minute job; the accepted 160-group arrangement run took 645.442 seconds. No scenarios or assertions were waived. A timeout remains a failed attempt, and this plan authorizes no new CI/security change, merge, deployment or release.
 
 ## P3: local image approximation
 

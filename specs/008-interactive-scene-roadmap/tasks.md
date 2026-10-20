@@ -30,7 +30,7 @@ Actual implementation should add unit/model, DOM-state and native tests alongsid
 
 ## IF-050 fourth-increment acceptance matrix
 
-These are required checks, not completed tasks. Live results remain in the public queue.
+These are ongoing acceptance requirements, not a second live status register. The public queue records completed scoped checks, final integration gates and remaining deferred/external work.
 
 | Contract | Required evidence |
 | --- | --- |
@@ -42,5 +42,5 @@ These are required checks, not completed tasks. Live results remain in the publi
 | Snap mapping | Off/1/5/10; all five authored ratios plus legacy viewport; drag offset and letterbox exclusion; rotated/effected inset boundaries; nearest feasible grid index, finite two-decimal result, no input mutation. Selector change alone moves nothing. |
 | Exact alternatives and centering | Typed X/Y, button nudges, focused-preview arrows and Shift+arrows remain unsnapped. Center X/Y/both changes only intended axes, validates, creates one bounded draft move, and has no history effect when unchanged. Text-field keys retain their native role. |
 | Isolation | No serialized lock/snap fields, browser storage, network, new timer, visible grid or distribution. Lock/snap toggles with no active gesture preserve canonical document hash and rendered scene pixels; actual scene edits keep existing provenance invalidation. |
-| Native/visual evidence | Trusted lock/select/drag-refusal/unlock/drag, real coordinates/pixels and exact local exports. Whole focused controls, text Range containment, actual scroll-client aperture and corner/center hit tests at 320 CSS pixels and short layouts; inspect captures. Current-head tests and acceptance are pending. |
+| Native/visual evidence | Trusted lock/select/drag-refusal/unlock/drag, real coordinates/pixels and exact local exports. Whole focused controls, text Range containment, actual scroll-client aperture and corner/center hit tests at 320 CSS pixels and short layouts; inspect captures. Record exact-source executed results and the actual captures inspected; expected counts or prepared tests are not acceptance. |
 | Aggregate gates | Full exact-source Node/native checks and independent review after assembly. Preserve prior PR 11/12/13 failures. Physical devices, cross-engine/OS workflows, comprehensive assistive technology, qualified sensory review and participant governance remain separate. |
