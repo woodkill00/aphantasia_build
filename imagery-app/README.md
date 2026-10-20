@@ -1,6 +1,20 @@
-# Imagery Field 0.7 candidate
+# Imagery Field user guide
 
-A local engineering preview for static live editing, finite per-item animation and separate snapshot sequences. Version 0.7 adds startup static live preview, background saturation up to 100% with a 60% default, clearer Steady/Pulse choices and responsive precision-control improvements. The current runtime passed 457 code checks, 98 native Chrome groups and independent inspection of all 78 fresh rendered frames in [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664). The [test report](test-results/TEST-REPORT.md) records source/run identifiers, the initial precision-assertion failure, test/header repair and full retry, and the separate final-head integration gate. This is not a treatment, diagnostic test or validated way to develop mental imagery. Static displays, fades and engineering limits do not guarantee safety.
+Version 0.7 engineering preview. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
+
+**No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, and notes.
+
+## In this guide
+
+- [Before viewing](#before-viewing) and [open the app](#open-the-app)
+- [First scene and download](#first-scene-and-download)
+- [Build a static scene](#build-a-static-scene)
+- [Style an item and schedule its appearance](#style-an-item-and-schedule-its-appearance)
+- [Capture and edit a sequence](#capture-and-edit-a-sequence)
+- [Manual preview and one-pass playback](#manual-preview-and-one-pass-playback)
+- [Show, hide, and fullscreen](#show-hide-and-fullscreen)
+- [Keep your work](#keep-your-work) and [privacy](#optional-observations-and-privacy)
+- [Glossary](#glossary), [testing and limits](#testing-and-limits), [troubleshooting](../docs/troubleshooting.md)
 
 ## Before viewing
 
@@ -14,9 +28,28 @@ If you have photosensitive epilepsy or visual patterns trigger seizures, migrain
 2. Open **index.html** in a browser with JavaScript enabled. If it opens as text or an attachment preview, use your computer's **Open with** option to choose a browser.
 3. The starter scene is visible immediately as a static **Live preview**, with no timer, fade or pulse. Use **Hide** whenever you want a blank field. Read **Viewing guidance** before timed playback or further viewing.
 
+For in-app help, choose **Viewing guidance**. The wider header identifies the version as **ITEM STUDIO / 0.7**; at compact widths that branding may be hidden, so also retain the README or source version you downloaded.
+
 No installation, Docker, terminal, account, or local server is required. The HTML is self-contained and designed to work offline. Do not disable browser security or bypass a security warning to open it.
 
 The layout adapts to narrow windows, but physical-device compatibility is unverified. Mobile file viewers may preview HTML without running JavaScript; file opening/downloads vary by device. If your phone cannot open a functioning browser version, use a laptop. Phone-sized emulation is not proof of phone support.
+
+## First scene and download
+
+1. In **Scene**, keep the starter or choose a preset. Change the background saturation from its default 60% to another value. The visible scene changes immediately; 100% is available.
+2. Select an object, click its numeric value to type a precise change, then try a minus/plus button. You do not need Apply for a live edit.
+3. Choose **Apply changes** to accept your draft. The field hides by design. Choose **Download scene JSON**, then check the downloaded file exists.
+4. To continue editing visibly, choose **Resume live preview**. To reload a saved file later, use **Open scene JSON**; imports stay hidden until you explicitly show them.
+
+For ready-made synthetic starting points, see the [examples guide](../examples/README.md). Import a scene with **Open scene JSON**, or a sequence with **Open sequence JSON**. These files demonstrate authoring, not recommended viewing durations.
+
+### Choose the right preview
+
+- **Live preview:** all items are visible as one static composition. It ignores item timing so you can edit appearance.
+- **Play items once:** each item's Start, Fade in, Hold, Fade out and optional Pulse determine its finite appearance. It ends at the latest item end.
+- **Sequence → Play once:** independent snapshots use sequence holds and outgoing crossfades. Item timing is retained in their data but does not play inside the snapshots.
+
+Only the static live preview starts automatically. Timed playback always needs your explicit action.
 
 ## Build a static scene
 
@@ -30,9 +63,13 @@ Use **Scene** to open the scene controls. Your current valid draft is already vi
 
 Positions range from 0–100% with up to two decimal places, but the entire object must fit inside the validated edge inset. Size is a whole-number percentage of the field's shorter side: 1–8 for dots/pixels and 1–28 for outlines. Dots are filled circles; pixels are filled squares. Switching an outline to a dot/pixel caps its size at 8. Object hue is 0–359°, saturation 0–70%, and lightness 10–70%; background hue is 0–359°, saturation 0–100%, and lightness 0–40%. These are engineering restrictions, not medically safe settings.
 
+![A synthetic green square next to a typed hue value of 120, its slider and fine-step minus/plus buttons.](../docs/images/precision-controls.jpg)
+
+*Static screenshot from the verified v0.7 Chrome run. [Timeline and narrow-layout screenshots with limits](../docs/images/README.md).*
+
 ## Style an item and schedule its appearance
 
-The candidate item inspector separates Appearance and Timing. Enable **Outline** and/or **Shadow**, then set each effect's own color. Outline width, shadow offset and blur are percentages of the field's shorter side. Effects may be clipped at the field edge; enabling an effect never silently moves an item. Both effects fade with their item.
+The item inspector separates Appearance and Timing. Enable **Outline** and/or **Shadow**, then set each effect's own color. Outline width, shadow offset and blur are percentages of the field's shorter side. Effects may be clipped at the field edge; enabling an effect never silently moves an item. Both effects fade with their item.
 
 **Duplicate item** makes an exact appearance/timing copy with a new identifier. It initially overlaps the original. Use geometry or timing controls to separate them. **Start after previous item** copies the previous item's end into this item's start once; it does not create a continuing link between items.
 
@@ -86,7 +123,7 @@ Edits, imports, selection/mode changes, fullscreen changes, resize, loss of focu
 - Fullscreen hides normal editor/navigation chrome. While hidden it offers **Live preview** or **Show selected step**, according to the selected section. While showing, a small upper-right **Exit** control remains available for touch and keyboard; it hides the field before exiting. Escape also leaves browser fullscreen. Failure keeps the field hidden with recovery instructions; the ordinary window remains usable.
 - Explicit reveal uses the existing temporary anti-repeat guard. If blocked, the field stays hidden; choose Show or Play again later. No reveal is queued. The guard is an engineering restriction, not a medically safe interval or suggested schedule.
 
-The only pulse in this candidate is the finite shared-clock opacity effect described above. Unrestricted flash/strobe, independent-frequency modulation and offscreen flash-risk analysis are not implemented; warnings do not establish sensory safety.
+The only pulse in this version is the finite shared-clock opacity effect described above. Unrestricted flash/strobe, independent-frequency modulation and offscreen flash-risk analysis are not implemented; warnings do not establish sensory safety.
 
 ## Keep your work
 
@@ -110,10 +147,21 @@ Keep observations of a visible scene, incidental aftereffects, and attempts to i
 
 Avoid unnecessary identifying/medical details. The note export contains its format/version, category, and text. Scene, sequence, and step names may also contain personal text; inspect every file before sharing. The app has no accounts, telemetry, backend, or runtime network dependency. Browser session restoration, extensions, device backups, and cloud-folder syncing may retain or copy content/downloads. End viewing and closing the page are not secure deletion.
 
+## Glossary
+
+- **Item / object:** one shape in a scene. Some controls say “object”; timing and styling also call it an “item.”
+- **Draft:** edits currently being made. Live preview can show them before Apply.
+- **Applied scene:** the accepted scene available to session history and scene download. Apply is not disk saving.
+- **Snapshot / step:** an independent captured copy of a nonempty scene in a sequence. Later scene edits do not change it.
+- **Hold:** time at the item's steady/pulsing phase, or time a snapshot stays before its outgoing transition. Item fades are additional time.
+- **Fade / transition:** an item's opacity change, or a crossfade between adjacent snapshots. Zero means no fade or a direct cut.
+- **Pulse:** optional smooth opacity variation on an item during finite item playback, not a replay loop.
+- **JSON:** a text data file used to reopen a scene or sequence. It is not an image or video; note JSON is separate and cannot be imported.
+
 ## Testing and limits
 
-Current version 0.7 passed 457 non-browser checks and all 98 native groups in [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664), on source `33bca8b59e52596f0784529b9162ea5240d1a7fb` and 167,297-byte HTML SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`. All 78 actual frames were independently inspected. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.84 on Linux were used, with cleanup confirmed. The separate final documentation-head CI gate is still required. The [test report](test-results/TEST-REPORT.md) preserves attempts and scoped outcomes; earlier results do not verify this increment. The historical version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups in [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) on source `13cfac66e80b55d401b454dc99c8e6c690f09962` and HTML SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Controls, timing, native pixels, atomic transactions, file separation, concealment and selected layout/focus flows were exercised on desktop and phone-sized touch emulation. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
+The merged version 0.7 runtime passed 457 non-browser checks, 98 native Chrome groups, and independent inspection of 78 rendered captures in the [final integration run](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917), dated 20 October 2026. The [compatibility record](../docs/compatibility.md) identifies the exact tested runtime and remaining gaps. The [test report](test-results/TEST-REPORT.md) retains earlier attempts and failures; a later documentation or packaging change does not inherit verification merely by retaining this version label.
 
-The separate v0.3 baseline passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), using sandbox-enabled headless Chrome 155.0.8059.39 on Linux. Two independent scripted journeys and 14 inspected actual frames informed the redesign; they were not a human usability study. The [root README](../README.md) identifies the exact v0.3 artifact and older baseline results.
+Physical phones, Safari/Firefox, ordinary OS file-opening/chooser workflows, actual OS/browser zoom, screen-reader workflows, and full accessibility remain unverified. The 640×450 scenario is effective viewport reflow, not actual zoom. Software checks and screenshot review provide no clinical clearance or evidence of safety or effectiveness.
 
-Physical phones, Safari, ordinary OS file-opening/chooser workflows, actual OS/browser zoom, screen readers, and full accessibility remain unverified. The 640×450 scenario is effective viewport reflow, not actual zoom. Software checks and screenshot review provide no clinical clearance or evidence of safety or effectiveness.
+Need help? Read [troubleshooting](../docs/troubleshooting.md) or [support](../SUPPORT.md). Use synthetic reproductions in public reports, never private notes or medical observations.

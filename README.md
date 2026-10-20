@@ -1,80 +1,49 @@
 # Imagery Field
 
-A local-first scene and sequence editor. Version 0.7 starts the static live preview immediately, keeps background saturation editable through 100% with a 60% default, and makes per-item Steady/Pulse timing and responsive precision controls clearer. Independently colored outlines/shadows and finite overlapping item fades remain available. Live actual-scene editing remains separate from timed playback. See the [item editor and timeline contract](docs/item-timeline.md).
+Build simple visual scenes in your browser, change their appearance live, and arrange optional item timings or snapshot sequences. The app is a single self-contained HTML file: it works locally without an account, server, Docker, or package installation.
 
-**Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
+**Engineering preview, not a medical tool.** This is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, smooth fades, and software limits do not guarantee sensory safety. Read the [viewing guidance](imagery-app/README.md#before-viewing) before use.
 
-**Scoped version 0.7 software verification:** **457 code checks and 98/98 native Chrome groups** passed in [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664). All **78 fresh rendered captures** were byte/hash verified and independently inspected, including complete focused precision rows, steady/pulse/mixed timing, startup and the repaired compact phone-sized header. The [test report](imagery-app/test-results/TEST-REPORT.md) preserves the first failed precision-test attempt, subsequent test/layout repairs and remaining limits. A documentation-only final-head CI gate remains separate; no merge or deployment is claimed here.
+## Get started
 
-## Open and use the app
+1. On this repository's GitHub page, choose **Code → Download ZIP**. Extract the ZIP first.
+2. Open **imagery-app/index.html** in a browser with JavaScript enabled. If it opens as text or an attachment preview, choose **Open with** and select a browser.
+3. The starter scene appears immediately as a **static live preview**. Change a color or item to see it update without Apply or reloading. **Hide** conceals the field; **Resume live preview** shows it again when you choose.
+4. To keep your scene, choose **Apply changes**, then **Download scene JSON**. Confirm the file exists in your Downloads folder.
 
-Download and extract the repository, then open `imagery-app/index.html` in a browser with JavaScript enabled. The starter scene appears as a static live preview on opening. **Hide** is immediately available; read **Viewing guidance** before choosing timed playback or further viewing. No account, server, Docker, or runtime package installation is needed.
+**There is no autosave.** Apply accepts changes for this session; it does not save a file. Closing or refreshing the page can lose unexported work. Scenes, sequences, and optional notes have separate downloads.
 
-1. In **Scene**, choose a preset or add objects, then adjust position, size, shape, and color. The actual draft is already visible at startup, and sliders, shapes, positions, adding/removing objects and presets update it immediately. The preview stays visible beside/above the controls. Small color samples also work while hidden.
-2. Live preview does not need Apply. Use **Apply changes** to commit the draft for undo/history and scene download, or **Discard** to abandon it. These actions hide the field; choose **Resume live preview** when wanted. Invalid fields also stop/hide preview; fixing them never automatically reveals it. For a snapshot, **Add scene as step** becomes **Apply scene and add step** when there are edits, combining application and capture. **Replace selected step** similarly becomes **Apply scene and replace step**. Both documents are checked before either is accepted.
-3. In **Sequence**, choose **Selected snapshot** and edit its name, **Hold · seconds**, and **Transition · seconds**. Valid changes commit immediately while stopped/hidden; there is no extra Apply sequence action. **Move earlier**, **Move later**, and **Delete step** change the order.
-4. Choose **Previous** or **Next**, then **Show step**, for manual preview. Or use **Play once** in the window, with **Pause**, **Resume**, and **Stop / Hide**. Pause keeps the exact last painted frame; completion hides the field and never replays.
-5. Save with **Download scene JSON** or **Download sequence JSON**. Optional notes have their own preview, selection, and download. Closing or reloading can lose unexported work.
+This source ZIP is the current download route. A portable release-preparation tool is provided for maintainers, but a published Release or hosted preview is not implied. Physical-device and ordinary file-opening workflows remain unverified; see [compatibility](docs/compatibility.md).
 
-**Load 11-second example** replaces the sequence with circle → square → triangle, stays hidden, and does not start playback. Each shape holds for 3 seconds; the first two outgoing crossfades last 1 second. It is an editable authoring example, not a viewing prescription.
+## What you can do
 
-A sequence supports 1–32 nonempty snapshots, 1–12 objects each, holds of 1–600 seconds, and transitions of 0–60 seconds, both in 0.5-second increments. A zero transition is a direct cut, and the final transition is zero. Total duration is at most one hour. These are product-capacity limits, not medical thresholds. One shared background stays constant. Snapshot sequence playback has no autoplay, automatic replay, strobe or nested item-pulse mode; the item timeline is separate.
+- Edit shapes, positions, sizes and colors live. The new-scene background defaults to HSL **4°, 60%, 4%**; background saturation can still reach **100%**.
+- Type a precise slider value, drag its slider, or use the fine-step minus/plus buttons.
+- Add independently colored outlines and shadows.
+- Keep an item **Steady · no pulse**, give it fades, or choose **Pulse**. Mix steady and pulsing items, overlap them, or arrange them one after another.
+- Use **Play items once** for a finite item timeline. It stops at the latest item end; timed playback never starts automatically.
+- Capture independent scene snapshots and play a separate one-pass **Sequence** with holds and crossfades.
+- Import and download local JSON files. No accounts, telemetry, runtime network requests, or intentional browser storage are used.
 
-Timed playback is windowed-only so Pause and Stop remain reachable. Static scenes and manual step previews may use clean fullscreen. Fullscreen transitions and handled lifecycle changes cancel/conceal; nothing automatically resumes. Reduced-motion preference uses manual stepping. See [app instructions](imagery-app/README.md) for exact controls, atomic capture failures, file separation, and viewing cautions.
+**Three different previews:** Live preview shows the whole static composition while editing. Item playback uses each item's start/fade/hold settings. Snapshot sequence playback uses captured scenes and its own holds/transitions; it does not run item clocks inside snapshots.
 
-## Live editor and item timing
+![A static three-dot scene beside the desktop scene editor, with Live preview on and Hide controls visible.](docs/images/live-editor.jpg)
 
-New starter scenes use HSL **4°, 60%, 4%**. Background saturation can be set anywhere from **0–100%**; 60% is the default, not the maximum. Imported scenes retain their saved background. Slider values are directly editable numeric controls with fine-step minus/plus actions. Optional outline and shadow effects have independent colors and geometry. Their disabled defaults preserve old imported appearance.
+*Actual v0.7 synthetic scene in Linux Chrome, not a mockup or animation. [More interface screenshots and provenance](docs/images/README.md).*
 
-Choose **Steady · no pulse** to hold an item at constant opacity between its fades, or **Pulse** for smooth opacity variation. Items can mix both modes, overlap, or follow one another. Per-item Start, Fade in, Hold and Fade out determine visibility; zero fades give a steady on/off hold. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and verification contract.
+## Find the right guide
 
-## Verification: separate artifacts
+- **Use the app:** [Complete user guide](imagery-app/README.md), [examples](examples/README.md), [troubleshooting](docs/troubleshooting.md)
+- **Get help:** [Support and privacy](SUPPORT.md), [report a bug](https://github.com/woodkill00/aphantasia_build/issues/new/choose), [security reporting](SECURITY.md)
+- **Contribute:** [Contributor guide](CONTRIBUTING.md), [architecture](docs/architecture.md), [test procedure](imagery-app/tests/BROWSER-TEST-PROCEDURE.md)
+- **Understand the project:** [What's changed](CHANGELOG.md), [documentation index](docs/README.md), [scientific limitations](docs/scientific-limitations.md), [public work register](project-queue.json)
 
-**Version 0.7:** source `33bca8b59e52596f0784529b9162ea5240d1a7fb`, 167,297-byte HTML, SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`. [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664) passed 457 non-browser checks and 98 native groups using Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.84 on Linux, with cleanup confirmed. All 78 actual frames were independently reviewed. The 640×450 case is effective viewport reflow, not actual OS/browser zoom. Physical devices, actual OS zoom and full accessibility remain unverified. The final documentation-head CI is an additional integration gate.
+## Verification and limits
 
-**Historical version 0.6:** 424 code checks, 96 native groups and 52 independently inspected frames on the exact 162947-byte HTML with SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`. See the linked current test report for full environment, failed-attempt and integration details.
-
-**Historical version 0.5 live editing:** see the test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and final clean-exit CI. The earlier workflow-timeout failure is retained separately. Earlier results below apply only to their historical artifacts.
-
-**Version 0.4 baseline:** [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) passed **324 non-browser checks and 74/74 native Chrome scenario groups**, 37 each for desktop and phone-sized touch emulation. Source head: `13cfac66e80b55d401b454dc99c8e6c690f09962`. The 114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux were used; browser/profile cleanup passed. This covers sequence pixels/timing, atomic edits, reduced-motion events, file flows and revised layout, not untested devices or clinical efficacy. The two earlier failing runs and their repairs remain in the test report.
-
-**Version 0.3 baseline:** [Chrome CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905) passed **241 non-browser checks and 54 real-browser scenario groups** in sandbox-enabled headless Chrome **155.0.8059.39** on Linux. Source head: `57b8f2c2811dc246abca55d9630c0581551d448d`. The 65,152-byte HTML has SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`.
-
-Two independent scripted native-browser journeys and inspection of 14 actual captured frames informed the next layout. They found excessive scrolling between hue and Apply and a hidden-state decorative circle that could resemble residual scene content. These are engineering usability observations, not a human study. Compact Scene/Sequence sections, a selected-step inspector, reachable Apply/capture actions, and removal of that circle are implemented and checked in the version 0.4 source, native journeys and rendered-frame review.
-
-**Historical version 0.2:** [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180) passed 216 non-browser checks and 38 real-browser groups on 2026-10-19. Source head: `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`. Its 57,177-byte HTML has SHA-256 `b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43`. A separate fixture check accepted 3 valid and rejected 14 invalid inputs. Its first browser run passed 36/38; a harness-only fullscreen-event observation repair preceded the complete rerun with the app unchanged. The runs used different Chrome patch versions, so the original failure's cause remains unproven.
-
-**Historical version 0.1:** [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) passed 156 non-browser checks and 22 real-browser groups on 2026-10-19. Its 40,716-byte HTML has SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`.
-
-Browser results are scoped to automated Linux Chrome and desktop/phone-sized viewport and touch emulation. They do not establish physical-device support, Safari support, ordinary OS file-opening/chooser usability, full accessibility, medical safety, or efficacy. Keep failures and environment blockers in the [test report](imagery-app/test-results/TEST-REPORT.md); see also the [source review](imagery-app/review.md) and [artifact manifest](imagery-app/SHA256-MANIFEST.json).
-
-## Development
-
-From the repository root, using an existing Node installation:
-
-```sh
-node imagery-app/src/assemble.cjs
-node --test imagery-app/tests/*.test.cjs
-```
-
-The dependency-free real-browser suite requires Node 22+ and an already installed permitted Chrome. CI uses preinstalled Node/Chrome with normal sandboxing, read-only repository permission, and no deployment or package-install step. See the [browser procedure](imagery-app/tests/BROWSER-TEST-PROCEDURE.md) for commands and outstanding checks. Never disable browser security to make a test pass.
-
-## Project map
-
-- [Architecture and exact data contracts](docs/architecture.md)
-- [Scene and sequence interaction design](docs/editor-redesign.md)
-- [Item appearance and finite timeline specification](docs/item-timeline.md)
-- [One-pass sequence specification](docs/sequence-spec.md)
-- [Timed-presentation boundaries](docs/timing-boundaries.md)
-- [Portable runtime rationale](docs/portable-runtime.md)
-- [Scientific limits and research leads](docs/scientific-limitations.md)
-- [Implementation and verification plan](docs/plan.md)
-- [Public project queue](project-queue.json)
-- [Contributor/agent guidance](AGENTS.md)
-- [Security and private reporting](SECURITY.md)
-
-Scene, sequence, and optional observation-note files are separate downloads. There is no durable autosave, backend, telemetry, browser storage, or account system. Use synthetic data in public examples; personal exports do not belong in this repository. The finite item timeline is specified separately; unrestricted flashing, arbitrary effect curves and offscreen flash-risk analysis remain outside the implemented scope. Hosted deployment is outside this increment.
+The merged v0.7 runtime passed **457 code checks, 98 native Chrome groups, and review of 78 rendered captures** in the [final integration run](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917) on 20 October 2026. This is automated Linux Chrome evidence, including phone-sized touch emulation, not proof of physical-phone, other-browser, full-accessibility, or clinical readiness. The [compatibility record](docs/compatibility.md) explains what was and was not tested; the [test report](imagery-app/test-results/TEST-REPORT.md) preserves exact artifacts and failed attempts.
 
 ## License
 
-No license has been selected. Do not add one or represent the project as having a particular license without a maintainer decision.
+Repository-authored code, documentation and examples are available under the [MIT License](LICENSE), copyright © 2026 woodkill00. Reuse, modification, redistribution and commercial use are permitted subject to retaining the copyright and license notices; the software is provided without warranty.
+
+Third-party research, linked publications and any separately attributed material retain their own rights and terms. A citation does not relicense its source. The license is not a claim of medical suitability or sensory safety.

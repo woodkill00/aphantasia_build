@@ -1,6 +1,6 @@
 {
   "date": "2026-10-20",
-  "status": "V07_SCOPED_CHROME_CI_PASS",
+  "status": "PUBLIC_REPOSITORY_ONBOARDING_MIT_LOCAL_PASS_PRIOR_NATIVE_PASS",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.7.0",
@@ -897,6 +897,104 @@
     },
     "integrationGate": "Later documentation-only commits retain this exact runtime. Their full CI must also pass before merge; consult the current pull-request checks rather than treating this source run as an exact-head result."
   },
-  "integrationGate": "Later documentation-only integration retains this exact runtime and tests. Its full exact-head CI must pass before maintainer merge; consult PR5 checks, not only the earlier source run.",
-  "candidateCommit": "33bca8b59e52596f0784529b9162ea5240d1a7fb"
+  "integrationGate": {
+    "status": "PASS_MERGED_V07_BASELINE",
+    "runId": 39378606917,
+    "jobId": 118482264215,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917",
+    "sourceCommit": "db7c84baa1f4fda32dfaea4dd3781c16f4adc509",
+    "testMergeCheckout": "937a7ddd7808270557716b4b3979ac6d2249116a",
+    "mergedCommit": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
+    "tree": "0f17e003ffe44b916fb67a441c5d2934e83d38d7",
+    "nonBrowserPassed": 457,
+    "nativeGroupsPassed": 98,
+    "capturesVerifiedAndInspected": 78,
+    "captureBytes": 1396276,
+    "node": "22.23.3",
+    "chrome": "155.0.8059.39",
+    "durationSeconds": 455.236,
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    }
+  },
+  "candidateCommit": "5fd67d4b65c31aeef1b5d955a7c84b641b5fb815",
+  "publicRepositoryPreparation": {
+    "status": "LOCAL_PASS_PRIOR_EXACT_SOURCE_CI_PASS_FINAL_HEAD_GATE_SEPARATE",
+    "baseCommit": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
+    "runtimeChanged": false,
+    "scope": "Task-based documentation, synthetic examples, reviewed static screenshots, contributor/support forms, offline release preparation, MIT license and related checks. No Release/tag/deployment or repository-security-setting change.",
+    "license": {
+      "spdx": "MIT",
+      "copyright": "Copyright (c) 2026 woodkill00",
+      "sha256": "e787f2e2f0ecac57514b7d4ad51b6b5f737b042b42ce38ea73dd2ce88b5c6d0c",
+      "scope": "Repository-authored code, documentation and examples; third-party material retains its own terms."
+    },
+    "local": {
+      "node": "24.19.0",
+      "testsPassed": 498,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "documentationTests": 20,
+      "packagingTests": 21,
+      "markdownFiles": 25,
+      "localLinksAndFragments": 155,
+      "syntax": "PASS",
+      "fixtureValidAccepted": 3,
+      "fixtureInvalidRejected": 14,
+      "independentArchiveRead": "PASS: independent Python stdlib ZIP reader verifies 14 MIT-package entries, CRCs, timestamps, modes, exact HTML/LICENSE and checksums from clean synthetic Git fixtures; not actual release provenance."
+    },
+    "firstExactSourceCI": {
+      "runId": 39386135529,
+      "jobId": 118506311402,
+      "sourceCommit": "5fd67d4b65c31aeef1b5d955a7c84b641b5fb815",
+      "testMergeCheckout": "921ed9ed5a96ff876979e05bce5a2861ec34c05b",
+      "status": "PASS",
+      "node": "v22.23.3",
+      "browser": "Chrome/155.0.8059.39",
+      "artifactSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
+      "groups": 98,
+      "passed": 98,
+      "started": "2026-10-20T07:23:13.440Z",
+      "finished": "2026-10-20T07:30:49.701Z",
+      "durationSeconds": 456.261,
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      },
+      "packageSmoke": {
+        "status": "PASS",
+        "zipSha256": "6a3c14961b686514ed32ea7e6b7b597b9eebf867fe7c956ad002eb244ca844ac",
+        "license": "Not selected in this historical first commit",
+        "note": "Historical pre-license kit; source was tested before the owner-approved MIT integration."
+      },
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39386135529",
+      "nodeTestsPassed": 494,
+      "capturesVerified": 78,
+      "captureBytes": 1396262,
+      "visualComparison": {
+        "byteIdenticalToAcceptedBaseline": 66,
+        "differentFrames": 12,
+        "review": "Independent visual inspection accepted all 12 differing actual JPEGs; no new layout or control blocker was found. Runtime is unchanged."
+      },
+      "newLicenseCovered": false
+    },
+    "finalHeadGate": {
+      "pullRequest": "https://github.com/woodkill00/aphantasia_build/pull/6/checks",
+      "requirement": "Require the final commit full workflow, including native Chrome and real-checkout MIT packaging smoke, to pass before merge. Consult current PR checks for that exact-head outcome; the historical first run does not cover the later license/tooling changes."
+    },
+    "publicScreenshots": {
+      "count": 4,
+      "sourceRunId": 39378606917,
+      "record": "docs/images/capture-manifest.json",
+      "status": "Exact original synthetic bytes verified and independently visually inspected."
+    },
+    "remainingLimits": [
+      "Physical-device and ordinary OS file-opening workflows are not verified.",
+      "Other browser engines and complete manual accessibility remain unverified.",
+      "No sensory-safety or clinical efficacy certification.",
+      "No public Release, tag, asset upload or hosting performed.",
+      "Repository settings are managed separately and are not changed or certified by this source commit."
+    ]
+  }
 }

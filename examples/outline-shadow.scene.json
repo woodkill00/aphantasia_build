@@ -1,0 +1,100 @@
+{
+  "format": "imagery-static-scene",
+  "version": 3,
+  "sampler": "styled-objects-3",
+  "scene": {
+    "name": "Outline and shadow",
+    "background": {
+      "h": 4,
+      "s": 60,
+      "l": 4
+    },
+    "pulsePeriodMs": 4000,
+    "objects": [
+      {
+        "id": "object-1",
+        "shape": "circle",
+        "x": 40,
+        "y": 50,
+        "size": 18,
+        "color": {
+          "h": 210,
+          "s": 35,
+          "l": 55
+        },
+        "outline": {
+          "enabled": true,
+          "width": 0.6,
+          "color": {
+            "h": 40,
+            "s": 35,
+            "l": 60
+          }
+        },
+        "shadow": {
+          "enabled": true,
+          "offsetX": 2,
+          "offsetY": 2,
+          "blur": 2,
+          "color": {
+            "h": 240,
+            "s": 20,
+            "l": 20
+          }
+        },
+        "timing": {
+          "startMs": 0,
+          "fadeInMs": 0,
+          "holdMs": 3000,
+          "fadeOutMs": 0,
+          "pulse": {
+            "enabled": false,
+            "minOpacity": 0.8
+          }
+        }
+      },
+      {
+        "id": "object-2",
+        "shape": "square",
+        "x": 65,
+        "y": 50,
+        "size": 18,
+        "color": {
+          "h": 130,
+          "s": 30,
+          "l": 50
+        },
+        "outline": {
+          "enabled": false,
+          "width": 1,
+          "color": {
+            "h": 0,
+            "s": 0,
+            "l": 30
+          }
+        },
+        "shadow": {
+          "enabled": false,
+          "offsetX": 1,
+          "offsetY": 1,
+          "blur": 2,
+          "color": {
+            "h": 0,
+            "s": 0,
+            "l": 0
+          }
+        },
+        "timing": {
+          "startMs": 0,
+          "fadeInMs": 0,
+          "holdMs": 3000,
+          "fadeOutMs": 0,
+          "pulse": {
+            "enabled": false,
+            "minOpacity": 0.8
+          }
+        }
+      }
+    ]
+  }
+}
