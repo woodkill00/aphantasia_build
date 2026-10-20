@@ -1,3 +1,11 @@
+# Feature 014 release-correlation correction, 20 October 2026
+
+18:54 UTC. Fourth run 39474571566 is terminal 223/224 FAIL, package SKIPPED, in 1263.269 seconds. Mobile 112/112 and all 200 inherited cases pass; the single desktop failure is independently confirmed test event correlation, not new runtime overlap behavior. All 351 payloads verify; 95 emitted group frames are covered by 93 exact previously inspected matches and two newly inspected mobile originals. One desktop singleton Undo/frame is absent. The exact one-predicate correction plus regression passes 51/51 targeted checks; runtime 987a is unchanged. Final local aggregate passes 1424/1424 in 19640.428383 ms; complete fresh corrected-head gates remain pending. See the [dated report](test-results/TEST-REPORT.md); passing subsets are not stitched into acceptance.
+
+---
+
+## Historical touch-placement source preparation
+
 # Feature 014 touch-placement source repair, 20 October 2026
 
 18:19 UTC. Narrow source 987a2b20 / 421345 bytes and strengthened singleton/group native helper are independently accepted. 107 relevant placement/direct/observer and 50 browser-helper checks pass. Final complete local aggregate is 1423/1423 PASS (18600.893153 ms, Node v24.19.0), docs 58/402 and 90 manifest entries verify. Exact repaired native/visual/performance/CI package gates remain NOT RUN. Three earlier native runs remain failed; the latest 223/224 trace confirmed successful canvas placement followed by inspector reopen and same-touch compatibility-click Delete. All 349 payloads and 93 emitted group frames were reviewed, with one frame absent; scoped timing passes do not accept the failed run or new source. The [dated report](test-results/TEST-REPORT.md) retains exact evidence and limits.

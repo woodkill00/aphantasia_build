@@ -1,3 +1,35 @@
+# Feature 014 native release-correlation correction preparation
+
+20 October 2026, 18:54 UTC. Runtime remains **421345 bytes**, SHA-256 `987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9`. The only native-code change is one canvas-target predicate in release-event correlation, with one regression. Exact helper `1f7730de1c768a53c31609ef0c6efd5216a9c450c4b0593839765f01d69023a5` and tests `eba9d203cc53043a145832180e4faa9a37a89ce058629f0ec1aa2cbc5f3be83e` are independently accepted; **51/51 targeted helper checks PASS**. **Final complete local aggregate passes 1424/1424 in 19640.428383 ms; corrected-head native, actual visual, measured performance and clean-checkout CI package gates are NOT RUN.** Runtime, runner, transport, workflow, assertions, capture plan and budgets are unchanged.
+
+## Fourth complete native run: one desktop test failure, not acceptance
+
+[Run 39474571566](https://github.com/woodkill00/aphantasia_build/actions/runs/39474571566), PR source `dceaebbf9f6e83b2cbb483305420387f0d335490`, clean CI checkout `0ec43a982f3859b5a70d2e07769bd9e5aa95da3b`, tree `b675948f59e456db8c6e742f8a41dea496115998`, is terminal **223/224 FAIL**, native FAIL, package **SKIPPED**. Desktop passed **111/112**, mobile emulation **112/112**; all **200 inherited cases** and **23/24 group cases** passed. Native execution was **18:26:07.912–18:47:11.181 UTC, 1263.269 seconds**, Node v22.23.3 / Chrome 155.0.8059.39. Browser closure, profile removal and normal sandbox are retained. That run's CI Node suite passed 1423/1423 in 40814.698767 ms before the new correlation regression.
+
+The mouse reused `pointerId:1`. The faulty helper selected the earlier Place-button pointerup at **6931.4 ms**, not the canvas pointerup at **6939.1 ms**. The actual canvas release has `target=scene-canvas`, `hit=delete-object`, point `(1147,527.09375)`, and valid reopened Delete bounds `(975.5,505.09375,343,44)`. The independently accepted repair adds `target===scene-canvas` to the release lookup and tests both reused IDs and genuinely incorrect overlap. Geometry, trust, command, ownership and state assertions remain intact. **Desktop singleton first Undo and its capture were not reached** before the old helper assertion failed; corrected source is not execution evidence for that missing tail.
+
+Mobile grouped and deliberate singleton Remove-overlap placement both pass: trusted canvas touch ownership, one preflight plus one completion, no click/Delete command, no dropped records, exact document/group/selection/accepted-history checks, and first next trusted one-entry Undo. This verifies those mobile paths on 987a within the failed run. It does not combine with other failed runs to establish a complete pass.
+
+## Complete delivery and precisely scoped visual/timing evidence
+
+The complete envelope has **32 blocks, 1196 records, 11,743,385 raw bytes and 351 captures**, including **95 emitted group frames**. Transcript SHA-256 `d3662991b96016ad1339404b0230eaf2a46663df8a225a55ebb31e62e38f444a`; capture manifest `ac0384196b95b7f366b336013d3eea84c12c6e91afce12f4258b50aa32706f20`; report `ac5aad8170fb0620ac6a1e5e5a45abb5120eef85d2c6bf4eaa3def1e86eed4c5`. Native own output is **7,178,562 bytes**, below the fixed 7,350,000-byte cap; the distinct full connector response has **7,779,284 characters**. Strict decoding bound to verified identity and external failure is complete but not accepted. Complete delivery of failure is not acceptance or guaranteed future capacity.
+
+All **351 JPEG payloads** are length/hash/PIL-verified. All **95 emitted group frames** have scoped visual review through **93 byte-identical matches to previously actually inspected originals plus two newly inspected mobile originals**, the rapid result and singleton first-Undo frame. No additional visual blocker was found. **One planned desktop singleton first-Undo frame is absent** and is not accepted. Byte comparison is explicitly distinguished from new image inspection.
+
+All twelve alternating raw records per profile independently pass the existing paired gates. Nudge/drag/Hide p95 deltas: desktop **0.0/+4.5/+3.4 ms**, mobile **+2.9/+4.5/+2.4 ms**. Candidate-only group handlers remain below 50 ms, maximum metadata **13.9 ms**. Center has **one mutating sample separately from five no-op samples**. These are scoped handler-plus-forced-layout measurements, not physical latency or a complete native pass; fresh corrected-head gates remain required.
+
+## Final correction and remaining gates
+
+Prepared coverage is unchanged: **224 cases, 96 new group frames, 352 total captures**. No new wait, retry, reveal route, timing-threshold change, screenshot reduction or budget change is added. The fixed 7,350,000-byte transport cap and uncertain projections remain. The final local aggregate passes 1424/1424 in 19640.428383 ms. Offline documentation checks pass for 58 Markdown files and 403 local links; the manifest covers 90 files including all three recursive fixtures. Independent outgoing review and fresh exact corrected-head native/visual/performance/package evidence remain required. The verified Feature 013 exact-main prerequisite remains separately accepted, not transferred to group acceptance.
+
+All three older failed native runs, the genuine third-run touch-click-through diagnosis, the source-fix preparation and earlier local failures remain verbatim below and in JSON history. A passing mobile subset or corrected test source cannot retroactively pass any failed run. No release, hosting, collection, dependency, permission or security changes are included.
+
+---
+
+## Historical 18:19 touch-placement source repair preparation
+
+The following dated source/local record is retained verbatim. Its then-unrun statements describe that snapshot rather than the completed fourth failed run.
+
 # Feature 014 touch-placement source repair preparation
 
 20 October 2026, 18:19 UTC. The independently reviewed repaired runtime is **421345 bytes**, SHA-256 `987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9`; app `d79d2838a4b44d8e6cd5cb5c98fce2ee708e3776cbd26356ac4ee684ef71dd72`. The final strengthened native helper is `cafa3213aab9ec51a2b4bdd568c0ac0acce02fab1ff98756509dadd913f81753`, observer/regression test file `ebb97ae466f2788f7b543814002dc9010f6729d1dfc859a3f96ea7a7a1ea3901`. **107 relevant placement/direct/observer checks** (including 54 new placement DOM tests) and **50 browser-helper checks** pass. Complete local `node --test imagery-app/tests/*.test.cjs`: **1423/1423 PASS**, zero failures/cancelled/skipped, Node v24.19.0, **18600.893153 ms**, after exact metadata/runtime pin refresh. Offline docs **58 files / 402 links**, **90 manifest entries / three recursive fixtures**, accepted source/native and unchanged transport hashes, exact historical-record preservation and whitespace all verify. **Current repaired native, actual visual, paired/group performance and clean-checkout CI package gates are NOT RUN.** Earlier source/local passes do not accept this changed runtime.

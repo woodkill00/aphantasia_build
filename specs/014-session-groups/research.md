@@ -91,3 +91,8 @@ Final observer/diagnostic source review is accepted: 47 targeted checks, includi
 ## Confirmed placement defect and source repair,20 October2026
 
 Diagnostic run39468802272 completed223/224 and causally confirmed valid canvas placement followed by inspector reopen and the same touch's compatibility-click Delete. All349 payloads and93 emitted group frames were reviewed; one planned mobile rapid-result frame is absent. The narrow accepted source consumes only a validated, one-shot owned placement touchstart default, with no preflight staging/history/reveal. It retains all existing planner/lock/geometry validation and cancellation rules.54 new DOM regressions and strengthened singleton/group native assertions are separate from real repaired-browser acceptance. Current prepared coverage remains224 cases with96 new group/352 total captures; no extra reveal wait or timing-threshold change. The genuine pre-refresh1415/1423 integrity failure and every earlier native failure remain in the report.
+
+
+## Native release-correlation correction, 20 October 2026
+
+The fourth run completed 223/224 with scoped mobile placement/first-Undo success and one desktop trace-correlation failure. Mouse pointerId 1 was reused; the helper selected an earlier Place-button release instead of the actual canvas release, which correctly overlapped Delete. The accepted correction adds target===scene-canvas to event selection and a reused-ID regression; no assertion, runtime, capture plan, wait or threshold is weakened. The desktop singleton first Undo/frame was unreached. All 351 payloads verify, with 95 group frames covered by 93 prior inspected exact matches plus two new mobile originals. Full corrected-head native acceptance remains required.

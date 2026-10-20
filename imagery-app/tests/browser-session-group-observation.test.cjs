@@ -192,6 +192,15 @@ test('placement gate distinguishes pure touchstart preflight from one completion
   for(const touch of [false,true])assert.doesNotThrow(()=>assertPlacementEvidence(placementTrace(touch),touch,{removeOverlap:true}));
   const trace=placementTrace(true);trace.commands.shift();assert.doesNotThrow(()=>assertPlacementEvidence(trace,true,{removeOverlap:true}));
 });
+test('placement overlap uses the canvas release when a prior Place activation reuses the mouse pointer ID',()=>{
+  const trace=placementTrace(false),release=trace.events.find(row=>row.type==='pointerup'&&row.phase==='bubble');
+  trace.events.unshift(...['pointerdown','pointerup','click'].flatMap(type=>['capture','bubble'].map(phase=>({
+    ...copy(release),type,phase,target:'place-object',hit:'place-object',time:0
+  }))));
+  assert.doesNotThrow(()=>assertPlacementEvidence(trace,false,{removeOverlap:true}));
+  release.hit='editor-scroll';
+  assert.throws(()=>assertPlacementEvidence(trace,false,{removeOverlap:true}),/reopened Remove control/);
+});
 test('placement gate rejects click-through, extra commands, missing ownership, untrusted input and dropped evidence',()=>{
   const mutations=[
     trace=>trace.commands.push({command:{type:'delete'},event:{type:'click',target:'delete-object',trusted:true}}),

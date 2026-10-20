@@ -167,7 +167,7 @@ function assertPlacementEvidence(trace,touch,{removeOverlap=false}={}) {
     assert.equal(starts.length,1);assert.ok(starts[0].trusted&&starts[0].defaultPrevented,'only the owned placement touch suppresses its compatibility click');
   }
   if(removeOverlap){
-    const reopened=trace.events.find(row=>row.phase==='bubble'&&row.type==='pointerup'&&row.pointerId===down[0].pointerId),r=reopened.remove,p=reopened.point;
+    const reopened=trace.events.find(row=>row.phase==='bubble'&&row.type==='pointerup'&&row.target==='scene-canvas'&&row.pointerId===down[0].pointerId),r=reopened.remove,p=reopened.point;
     assert.equal(reopened.editorHidden,false);assert.equal(reopened.hit,'delete-object','the regression must exercise the reopened Remove control, not an empty spot');
     assert.ok(r.width>=44&&r.height>=44&&p.x>=r.left&&p.x<=r.left+r.width&&p.y>=r.top&&p.y<=r.top+r.height);
   }
