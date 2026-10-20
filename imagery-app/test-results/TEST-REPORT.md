@@ -10,6 +10,12 @@ The exact current runtime is recorded in `summary.json`. The prepared native sui
 
 The preceding P1 candidate's CI findings and fixes remain traceable in PR 11. Its evidence does not verify this larger runtime. Current documentation screenshots remain explicitly historical v0.7 and must not be presented as new-feature acceptance.
 
+## Observed native attempt and reviewed repair candidate
+
+[Run 39409429924](https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924) at head `198b0fcef2ee3919e556bb930f4afc778f543564` passed 737 Node checks and 117/118 native groups; packaging was skipped. All 98 synthetic captures were hash verified and individually inspected. One mobile drag-to-Undo trusted click was not generated, and screenshot review found clipped labels in narrow action rows. No additional rendering/privacy visual blocker was found in those captured frames, which is not universal visual or accessibility acceptance.
+
+The current candidate preserves all assertions, includes the reviewed pointer-release default experiment and isolated tap diagnostics from P1, wraps narrow action buttons, and checks actual text ranges plus inspector aperture/corner visibility. Separate taller narrow captures document the whole note and layer group; short-viewport target checks remain. New exact-head native/visual evidence is pending. Prepared counts are 124 groups and 104 captures, not observed passes.
+
 ## Independent review details and limits
 
 - Legacy differential checks: 15,000 scene-validation cases (8,150 accepted outputs at four viewports) and 3,000 sequence cases matched the old model. 18,000 extreme authored translations passed after inward edge quantization.

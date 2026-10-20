@@ -384,20 +384,20 @@
     try{if(typeof canvas.setPointerCapture==='function')canvas.setPointerCapture(event.pointerId);}catch(e){hide('Move canceled because pointer capture is unavailable. Use position controls.');return;}
     event.preventDefault();canvas.focus();
   });
-  function updateDirectGesture(event){
+  function updateDirectGesture(event,cancelDefault=true){
     const active=gesture;if(!active||active.selectionOnly||event.pointerId!==active.pointerId||!isLive())return;
     if(selectedId!==active.id){hide('Move canceled because the selected item changed.');return;}
     if(!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return;
     const current=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>current[key]!==active.rect[key])){hide('Move canceled because the preview layout changed.');return;}
     const dx=event.clientX-active.startX,dy=event.clientY-active.startY;
     if(!active.moved&&Math.hypot(dx,dy)<E.DRAG_THRESHOLD)return;
-    active.moved=true;event.preventDefault();
+    active.moved=true;if(cancelDefault)event.preventDefault();
     try{if(!stageMove(E.translate(active.before,active.id,dx,dy,active.rect.width,active.rect.height)))hide('Move canceled because the position is invalid.');}catch(e){hide('Move canceled. '+e.message);}
   }
   canvas.addEventListener('pointermove',updateDirectGesture);
   canvas.addEventListener('pointerup',event=>{
     const active=gesture;if(!active||event.pointerId!==active.pointerId)return;
-    updateDirectGesture(event);if(gesture!==active)return;
+    updateDirectGesture(event,false);if(gesture!==active)return;
     gesture=null;releaseCapture(active);
     if(active.moved)recordMove(active.before,working,active.id);
     selectAtEnd();

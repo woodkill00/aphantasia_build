@@ -4,14 +4,19 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 276388,
-    "sha256": "eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa"
+    "bytes": 276755,
+    "sha256": "bca1887a7e95694a38a96f4094f6ab96a3ff6241571e9460f2a6809a88b29953"
   },
   "browser": {
-    "status": "NOT_RUN_CURRENT_RUNTIME",
-    "preparedGroups": 118,
-    "expectedCaptures": 98,
-    "note": "Exact-head CI and independent visual inspection required; local browser startup blocked."
+    "status": "REPAIR_CANDIDATE_NATIVE_VISUAL_PENDING",
+    "preparedGroups": 124,
+    "expectedCaptures": 104,
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
+    "previousHead": "198b0fcef2ee3919e556bb930f4afc778f543564",
+    "previousPassed": 117,
+    "previousFailed": 1,
+    "previousCapturesInspected": 98,
+    "findings": "Mobile drag-to-Undo compatibility click missing; actual narrow action labels clipped. Current shared input experiment and readable wrapping plus stronger aperture/text checks require exact-head native and visual review."
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1016,8 +1021,8 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 737,
-    "passed": 737,
+    "total": 738,
+    "passed": 738,
     "failed": 0,
     "skipped": 0,
     "node": "24.19.0"
