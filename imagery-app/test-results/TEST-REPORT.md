@@ -1,8 +1,10 @@
 # Version 0.5 live-edit candidate
 
-2026-10-20. Actual-scene live draft editing and responsive split preview are implemented and independently source-reviewed. All **349 non-browser checks pass**; the full **82 native browser groups and 36 captures are prepared, not yet run**.
+2026-10-20. Actual-scene live draft editing and responsive split preview are implemented and independently source-reviewed. All **349 non-browser checks pass**; the full **82 native browser groups and 36 captures require an exact repaired-artifact retry**.
 
-Artifact: 117309 bytes; SHA-256 `0aa93926dfec1e1f4058759c9c21ec13dbea35eac9ddeb623e9d2f2379e28fdf`. No native or rendered acceptance is claimed for this candidate until its exact run is inspected. Physical-device, full accessibility and sensory/clinical gates remain separate.
+First native run [39356071107](https://github.com/woodkill00/aphantasia_build/actions/runs/39356071107) passed 78/82 groups, with four failures in two cases on both profiles. An older color-semantics test waited only for initial lifecycle settling, not the repeat-action interval after its edits. The new rejected-export test expected concealment although the handler rejects an unapplied draft before hiding; it now checks no download, explicit Apply/discard guidance and unchanged visible draft pixels. The harness now waits the real reveal interval before the explicit Show. Visual inspection also found the focused slider clipped at 320×568 despite passing center hit-testing. Compact live-inspector spacing and a 25% preview / 75% inspector split at short portrait sizes repair that layout; the native test now requires the full slider inside a scrollport at least 80 pixels high. Runtime CSS changed and the full retry is pending.
+
+Artifact: 118362 bytes; SHA-256 `8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326`. No native or rendered acceptance is claimed for this candidate until its exact run is inspected. Physical-device, full accessibility and sensory/clinical gates remain separate.
 
 The historical results below belong to prior artifacts.
 

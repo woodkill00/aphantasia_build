@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T01:53:00Z",
+  "updated": "2026-10-20T02:15:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1443,12 +1443,12 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version0.5 live-edit candidate passes349 non-browser checks;native82-group run and visual acceptance pending.",
+  "currentStatus": "Version 0.5 live-edit candidate passes 349 non-browser checks. First native run passed 78/82; reviewed test-contract and compact-layout repairs await a complete retry.",
   "currentIteration": {
     "base": "fee5b718abf6a31433be9f46900b7e342753fa17",
     "remoteBranch": "feat/live-scene-preview",
-    "htmlSha256": "0aa93926dfec1e1f4058759c9c21ec13dbea35eac9ddeb623e9d2f2379e28fdf",
+    "htmlSha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326",
     "sourceHead": null,
-    "nativeStatus": "NOT_RUN"
+    "nativeStatus": "RETRY_PENDING"
   }
 }

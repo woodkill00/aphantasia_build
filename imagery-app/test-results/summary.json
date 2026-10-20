@@ -1,11 +1,11 @@
 {
   "date": "2026-10-20",
-  "status": "V05_NONBROWSER_PASS_NATIVE_PENDING",
+  "status": "V05_NONBROWSER_PASS_NATIVE_RETRY_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.5.0",
-    "bytes": 117309,
-    "sha256": "0aa93926dfec1e1f4058759c9c21ec13dbea35eac9ddeb623e9d2f2379e28fdf"
+    "bytes": 118362,
+    "sha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326"
   },
   "candidateCommit": null,
   "nonBrowser": {
@@ -16,9 +16,18 @@
     "command": "node --test imagery-app/tests/*.test.cjs"
   },
   "browser": {
-    "status": "NOT_RUN",
+    "status": "RETRY_PENDING",
     "preparedGroups": 82,
-    "expectedCaptures": 36
+    "expectedCaptures": 36,
+    "failedAttempts": [
+      {
+        "run": 39356071107,
+        "sourceCommit": "604eec3a4496830c46a07fde3b127d766a355bc0",
+        "passed": 78,
+        "failed": 4,
+        "repairs": "Two test-contract corrections plus a compact-layout repair after visual review found the focused slider clipped at 320x568; strengthened full-field scrollport assertions. Full exact-artifact retry required."
+      }
+    ]
   },
   "limits": [
     "Physical devices, other browser engines, OS file dialogs, full accessibility, and sensory/clinical validation are not established."

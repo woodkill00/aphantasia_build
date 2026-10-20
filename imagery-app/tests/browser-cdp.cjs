@@ -689,7 +689,7 @@ async function run() {
           await page.file('color-semantics.json',scene({background:{h:210,s:40,l:25}}));
           await page.focus('#object-saturation');await page.key('Home');const gray=await page.assertSwatch('object');assert.equal(gray.values.s,0);await page.focus('#object-hue');await page.key('End');assert.equal((await page.assertSwatch('object')).rgb,gray.rgb,'hue must not change gray at zero saturation');
           await page.focus('#background-lightness');await page.key('Home');const black=await page.assertSwatch('background');assert.equal(black.values.l,0);assert.equal(black.rgb,'rgb(0, 0, 0)');await page.focus('#background-hue');await page.key('End');assert.equal((await page.assertSwatch('background')).rgb,black.rgb);await page.hidden();
-          assert.equal(await page.property('#draft-label','textContent'),'Changes staged');await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
+          assert.equal(await page.property('#draft-label','textContent'),'Changes staged');await sleep(M.REVEAL_GAP_MS+100);await page.hidden();await page.click('#show-scene');await page.visible();
         });
         await runCase(page,'v3 clean fullscreen removes chrome and exposes keyboard Show and focused Exit',async()=>{
           await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','keyboard clean entry');
