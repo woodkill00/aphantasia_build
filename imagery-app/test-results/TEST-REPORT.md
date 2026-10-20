@@ -1,3 +1,84 @@
+# Version 0.4 verified software preview
+
+Date: 2026-10-20. **324/324 non-browser checks and 74/74 native Chrome groups PASS.** [Successful full run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), job 118401068686, tested source `13cfac66e80b55d401b454dc99c8e6c690f09962` through PR test-merge checkout `7dc3a5663548e1275d34f8f611807d44fdc9f19e`.
+
+HTML: **114,116 bytes**, SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. CI used Node **22.23.3**, Linux and sandbox-enabled Chrome **155.0.8059.39**. Browser closure and temporary-profile removal both passed. No package-install, security-bypass or deployment step was added. This is a local software preview, not medical or comprehensive accessibility clearance.
+
+## Executed checks
+
+The dependency-free suite passed 113 static-model/controller, 25 sequence-engine, 153 DOM/Canvas/clock-double, 11 static-artifact and 22 CDP transport/fixture/oracle checks. Browser-helper syntax and synthetic fixture checks passed. Commands:
+
+```sh
+node --test imagery-app/tests/*.test.cjs
+node --check imagery-app/tests/browser-cdp.cjs
+node imagery-app/tests/browser-cdp.cjs --check-fixtures
+node imagery-app/tests/browser-cdp.cjs
+```
+
+All 74 native scenario groups passed, 37 per desktop and phone-sized touch-emulation profile. Coverage includes immediate draft HSL swatches; static and manual fullscreen with explicit Show/Exit; atomic scene-to-step capture and separate file round trips; controlled-clock native RGB at hold/crossfade/cut boundaries; 12+12 overlapping objects; genuine real-time Play/Pause/Resume/Stop and one-pass completion; native focus recovery; stale callback/mode/lifecycle concealment; reduced-motion changes; and fixed actions/focus/hit targets in narrow/short layouts, including 44-pixel Stop/Show targets at 320×180. The 320×180 assertion is native geometry/hit-testing evidence, not a screenshot claim.
+
+Each native case reloads the document. Controlled test clocks do not leak into the separate unmodified real-time journeys. Event waits observe delivery only: immutable trusted fullscreen and media-event snapshots must already report the required hidden state and black raster. The tests do not poll until application concealment eventually succeeds. All previously unexecuted tails now ran and passed in the complete successful run.
+
+The independent engine suite includes 8,000 seeded timing-oracle samples. Earlier isolated sequence-engine coverage was 99.10% lines, 93.37% branches and 100% functions for the unchanged engine only; it is not whole-app or native/device coverage.
+
+## Actual visual and user-flow review
+
+The final run captured 28 compact synthetic JPEG checkpoints, totaling 312,207 bytes. Every decoded byte count and SHA-256 was verified. Actual pixels were inspected in four contact sheets, with full-size desktop circle-hold and desktop/mobile hue/action-strip rechecks; no new visual blocker was found. This is consistent with the independent review of all 28 preceding-run frames for the exact unchanged runtime hash. The current artifact shows color samples and reachable Apply/capture actions, a source-scene caption with separate Applied/Staged status, correctly separated static and snapshot edits, clean shown fullscreen, explicit hidden Show, the expected circle hold and blended paused frame, and black fields after Stop/Exit. Native independent journeys exercised authoring, replacement/reorder/timing edits, save/reload, manual preview and unmodified real-time playback.
+
+These are automated user-perspective engineering checks, not a human usability study. JPEGs are reduced/compressed; exact colors and concealment use separate native Canvas pixel assertions. Long-name behavior is covered in source/regression tests; canonical-name screenshots do not prove every possible layout.
+
+## Preserved failures and repairs
+
+1. [First v0.4 run 39350355646](https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646), source `6c0e73e99b67b410569261880ce42f8403354725`, original HTML `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e`: 319 non-browser checks passed, 66/74 native groups passed and 8 failed. Native auto-blur exposed focus recovery reading activeElement too late; tiny Stop targets were below the unchanged 44-pixel requirement; media assertions ran before observed native delivery. Repairs preserve focus before hiding/disabling, reserve minimum target size and observe immutable native-event snapshots. Source/target capture context was also clarified. Failed groups' unexecuted tails were not counted as passes.
+2. [Second run 39352036226](https://github.com/woodkill00/aphantasia_build/actions/runs/39352036226), source `551b9800680145ae398dda47b9bfdfec024e6938`, current runtime hash: 323 non-browser checks passed; 67/74 native groups passed and 7 failed waiting for the separate media-query observer. The original focus/target failures and all six independent sequence journeys passed. The app's diagnostics showed its motion handler had concealed, but the observer did not record the expected event. This was still an overall failed run.
+3. Independently reviewed **harness-only** repair removed the observer's live MediaQueryList.matches read between emulation invalidation and native change delivery. It waits only on event-record count, then checks trusted event, expected preference, Hidden description, every-pixel black raster and final live preference. A two-direction regression rejects reads during pending delivery. No timeout was increased and no behavior assertion was removed. The cache/getter causal explanation remains a hypothesis; the observed timeouts resolved in the full successful rerun with unchanged production HTML.
+
+Both failed runs remain failures, not retroactive passes. The successful run supplies the current acceptance evidence. The previous local sandbox-enabled browser launch blocker was not bypassed; existing GitHub CI supplied native execution.
+
+## Remaining gates
+
+Physical Android/iOS devices, ordinary OS file choosers/opening/download locations, other browser engines, full screen-reader/keyboard/zoom/forced-color accessibility, calibrated display/color/timing, qualified sensory assessment and clinical efficacy remain unverified. Timed playback is windowed, single-pass and has no autoplay, replay loop or flash/pulse oscillator. Wider effect analysis/authoring remains a proposal. No hosted deployment is included.
+
+---
+
+# Version 0.3 candidate verification
+
+Date: 2026-10-20. Current status: **241 non-browser checks and all 54 native Chrome groups PASS on the exact v0.3 artifact.**
+
+Candidate HTML: 65,152 bytes; SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Repository baseline: `f614c2733ac6c8df838e9dd3d7ffdf6dd746745a`. First tested source head: `b16cc2683145389abe53e30ae201d978d26c99c9`; PR test-merge checkout: `61570e66e0e7258af20fe9728a72e147faa58e46`. The baseline rerun passed 216/216 on Node v24.19.0 before test changes.
+
+## Executed non-browser checks
+
+On Linux with Node v24.19.0, the frozen candidate passed 241/241 after the harness repair: 113 model, 100 DOM/Canvas-double, 11 static, and 17 CDP harness/fixture/oracle checks. Browser suite syntax and separate fixtures passed (3 valid accepted; 14 invalid rejected). Commands:
+
+```sh
+node --test imagery-app/tests/model.test.cjs imagery-app/tests/ui.test.cjs imagery-app/tests/static.test.cjs imagery-app/tests/browser-cdp.test.cjs
+node --check imagery-app/tests/browser-cdp.cjs
+node imagery-app/tests/browser-cdp.cjs --check-fixtures
+```
+
+The first expanded development run passed 235/236. Its sole failure was a capitalization assumption in the test: the actual fullscreen error said “Exit fullscreen to apply or discard…” while the assertion expected capitalized “Apply.” A case-insensitive assertion now retains the required actionable error. No runtime behavior assertion was removed. The exact developing artifact hash was not captured for that first attempt; it is not used as acceptance evidence.
+
+New tests cover per-input object/background HSL samples without Apply or full-field painting, gray/black semantics, selection/history/import synchronization, missing-object samples, hidden fullscreen controls, draft/repeat guards, focus recovery, rejected Exit, lifecycle concealment and stale callbacks. The implementation adds no fullscreen timer. The existing download cleanup timer cannot draw, reveal, or restore fullscreen UI.
+
+## Real-browser and visual gates
+
+The expanded suite prepares 54 real-Chrome groups (27 per desktop and phone-sized viewport/touch-emulation configuration). It adds an independent HSL-to-RGB oracle; native range input observations before change; actual computed swatches; hidden studio/tab-order checks; keyboard Show/Exit; pointer-idle and first-touch Exit; short fullscreen controls; injected Exit denial; and native fullscreen entry/Exit/Escape. The prior trusted fullscreenchange assertions are unchanged: the app must synchronously leave Hidden state, all-black canvas pixels, and correct mode-control focus at the observed native event. Polling only waits for event delivery, never for expected concealment.
+
+[First v0.3 CI run 39347872671](https://github.com/woodkill00/aphantasia_build/actions/runs/39347872671), on sandbox-enabled Chrome 155.0.8059.39 and Node v22.23.3, passed 240 non-browser checks and 52/54 browser groups. The two short-fullscreen groups failed because the test required “Exit fullscreen” to precede “apply or discard,” while the correct displayed guidance supplied those directions in the opposite order. This is a verified test-order assumption, not a missing direction. The repaired helper now separately requires both directions; its regression rejects a message missing either. Runtime sources and HTML are unchanged. The groups stopped before injected Exit denial, so that remaining tail was NOT RUN on the first attempt; the complete rerun below subsequently executed and passed it.
+
+All 14 requested shared-reference JPEG frames were captured, decoded, hash verified, and inspected by the tester (154,158 total JPEG bytes). The actual frames show the purple H260/S30/L50 sample and color-gradient tracks, a purple-only middle-square change, consistent outline geometry, clean fullscreen with just upper-right Exit, hidden fullscreen with explicit Show, and black scene after Exit. Desktop and phone-sized touch emulation were inspected; images are reduced/compressed, and exact Canvas RGB/black pixels are checked separately. Real scripted scroll observations show about 740 CSS pixels between object hue and Apply, a concrete future UI-placement opportunity. This is not a human usability study.
+
+The first run recorded zero page runtime errors, unexpected dialogs, or remote app requests. Browser closure and profile removal passed. No new local browser launch was attempted because the previous sandbox-enabled launch blocker remains; no package, workflow, or browser-security workaround was used. [Complete v0.3 rerun 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905) passed 241 non-browser checks and all 54 native groups on Chrome 155.0.8059.39 / Node v22.23.3. Source head: `57b8f2c2811dc246abca55d9630c0581551d448d`; PR test-merge checkout: `345a041818b452f8da648d30834817e1c6a43598`. Both injected-Exit-denial tails now executed and passed. Cleanup, runtime/dialog/request checks passed. The runtime HTML was unchanged between runs.
+
+Computed swatch checks establish CSS color and sample dimensions. They do not by themselves establish that a sample remains within the editor scrollport during every mobile slider gesture. The slider gradients are additional immediate feedback. Real pixels and user-perspective interaction review remain necessary.
+
+Physical devices, ordinary OS dialogs, Safari, full screen-reader/zoom/manual accessibility, calibrated color, qualified sensory review and efficacy remain unverified. Historical v0.2/v0.1 results below belong to their recorded artifacts only.
+
+The separate independently authored browser-user module adds two groups per configuration: construction of the exact shared three-outline scene through trusted native controls, and draft/discard/apply/view flows with its own painted-pixel RGB oracle. Its synthetic fixture and three RGB expectations pass without launching a browser. These scripted interactions are not a human usability study.
+
+---
+
 # Software verification report
 
 ## Current v0.2 result: scoped Chrome CI PASS

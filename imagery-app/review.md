@@ -1,6 +1,14 @@
+# Current source and native-browser acceptance: version 0.4
+
+The exact 114,116-byte artifact `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda` passed 324 non-browser checks and all 74 native Chrome groups in [run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), source `13cfac66e80b55d401b454dc99c8e6c690f09962`. Production fixes and the final harness-only observation repair were independently reviewed. The native run confirms repaired focus recovery, 44-pixel short-layout controls, capture-source context, sequence boundaries/composition, genuine real-time playback and cancellation, separate downloads, static color feedback and clean fullscreen. Independent inspection of 28 actual frames from the preceding run accepted this same unchanged runtime; final-run capture evidence is reconciled in the [test report](test-results/TEST-REPORT.md) and summary.
+
+The first two failed v0.4 runs are retained, including native auto-blur/target failures and media observer timeouts. The final harness reads event records before live preference state, retaining trusted synchronous Hidden/black assertions. The live-getter cache explanation remains a hypothesis, not a proven browser defect. No production code changed for that final harness repair.
+
+This is scoped software acceptance. Physical devices, other engines, full accessibility, qualified sensory review and clinical efficacy are not established. Merge status is separate from test acceptance; nothing here claims hosted deployment. Earlier version-specific findings below are historical.
+
 # Source and browser-repair review
 
-Current reviewed artifact: Imagery Field 0.1.0, 2026-10-19; **40,716 bytes**, SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) subsequently passed 156 non-browser checks and all 22 scoped real-Chrome scenario groups.
+Historical reviewed artifact: Imagery Field 0.1.0, 2026-10-19; **40,716 bytes**, SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`. [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608) subsequently passed 156 non-browser checks and all 22 scoped real-Chrome scenario groups.
 
 ## Baseline source findings
 
@@ -44,3 +52,17 @@ Browser fullscreen, zoom/reflow, physical devices, assistive technology and qual
 The first v0.2 run passed 36/38 browser groups, with fullscreen Escape assertions failing before the harness observed native event delivery. The independently reviewed harness correction observes the event and asserts its immutable synchronous snapshot; it does not poll for eventual Hidden success. The first run used Chrome 155.0.8059.84, while the passing run used Chrome 155.0.8059.39, so the historical failure's exact cause is not conclusively isolated. Both results are retained in the test report.
 
 This supports a scoped engineering preview. Physical devices, other browser engines, OS dialogs, comprehensive accessibility, calibrated display/sensory review and clinical efficacy remain unestablished. Nothing has been merged or deployed.
+
+## Version 0.3 source candidate — 2026-10-20
+
+Independent source review accepted HTML `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a` (65,152 bytes) for native browser testing. The source and generated HTML match. Bounded live color swatches and range gradients do not reveal the full-field scene; fullscreen suppresses normal chrome and retains an accessible Exit plus explicit Show while hidden. No idle timer or scene animation was introduced.
+
+Review repairs clarified rejected-exit recovery while fullscreen remains active and added a dark-backed focus indicator against variable scene colors. Actual browser and screenshot acceptance remains pending for this candidate; earlier v0.2 results do not transfer automatically.
+
+## Version 0.4 sequence candidate — 2026-10-20
+
+Independent source review accepted candidate `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e` (111,934 bytes) for native verification. Generated HTML matches the source parts and the static model remains unchanged. The pure sequence engine independently passed 25 tests including 8,000 seeded timing-oracle samples; the current aggregate non-browser suite passed 319 checks.
+
+Review found and closed visible mode-switch guard bypass, focus recovery and clock-fault issues. Single visibility authority, generation/epoch cancellation, painted-frame Pause, opaque-frame blending and aggregate two-buffer allocation were reviewed. Actual native temporal pixels, responsive controls, and user journeys remain acceptance gates for this candidate.
+
+The earlier v0.3 candidate independently passed 241 non-browser and 54 native groups in run 39348407905. Two independent scripted user journeys and actual inspection of 14 screenshots identified excessive color-to-Apply scrolling and an ambiguous decorative hidden-state ring. The sequence UI implements compact section selection, reachable actions and removal of that ring. This is engineering QA, not a human usability study or medical clearance.

@@ -5,22 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Imagery Field · Static exploration</title>
+<title>Imagery Field · Scene & sequence studio</title>
 <style>/*__STYLE__*/</style>
 </head>
 <body>
 <div id="stage-root" class="stage-root">
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
-  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span class="quiet-mark">○</span><span>The field is hidden</span><small>Compose, apply, then show when you choose.</small></div>
+  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Compose, apply, then show when you choose.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
-  <header class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">STATIC STUDIO / 0.2</span></div><span id="visibility-label" class="pill">Hidden</span></div>
-    <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button><button id="exit-fullscreen" type="button" hidden>Exit fullscreen</button></nav>
+  <header id="masthead" class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">SCENE + SEQUENCE / 0.4</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
-  <main class="stage-body">
-    <aside id="editor-panel" class="editor-panel" aria-label="Scene editor">
+  <main id="stage-body" class="stage-body">
+    <aside id="editor-panel" class="editor-panel" aria-label="Scene and sequence editor">
+      <nav class="section-selector" aria-label="Editor section"><button id="workspace-scene" type="button" aria-pressed="true" aria-controls="scene-panel">Scene</button><button id="workspace-sequence" type="button" aria-pressed="false" aria-controls="sequence-panel">Sequence <span id="sequence-count">0</span></button></nav>
+      <div id="editor-scroll" class="editor-scroll">
+      <div id="scene-panel">
       <section id="controls" tabindex="-1" aria-labelledby="controls-title">
-        <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Make room<br>for your own design.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
+        <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Build a scene.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
         <p class="lede">Place individual dots, pixels and outlines across the whole field. Adjust its background to describe what you want to represent.</p>
         <p class="scope">Engineering preview. Not a treatment or diagnostic test; it does not establish imagery gains.</p>
         <label for="preset">Start with a preset</label>
@@ -40,27 +43,55 @@
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Place on field lets you click or tap a new position while hidden. Position inputs work with a keyboard.</p>
-            <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" type="range" min="0" max="359" step="1" value="208">
-            <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" type="range" min="0" max="70" step="1" value="11">
-            <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" type="range" min="10" max="70" step="1" value="48">
+            <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
+            <p id="object-color-hint" class="hint">This small sample updates as you edit. The full field stays hidden until you Apply changes, then Show scene.</p>
+            <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="359" step="1" value="208">
+            <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="70" step="1" value="11">
+            <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="10" max="70" step="1" value="48">
           </fieldset>
           <fieldset class="group"><legend>Background field</legend>
             <p class="hint">Choose a color to represent your subjective visual field. It is your description, not a measurement of internal vision.</p>
-            <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" type="range" min="0" max="359" step="1" value="0">
-            <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" type="range" min="0" max="60" step="1" value="0">
-            <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" type="range" min="0" max="40" step="1" value="0">
+            <div class="color-preview"><span id="background-color-swatch" class="color-swatch" role="img" aria-label="Background color sample"></span><div><span class="color-preview-label">Background color sample</span><span id="background-color-text" class="color-preview-value"></span></div></div>
+            <p id="background-color-hint" class="hint">Only this small sample updates immediately. Apply changes, then Show scene to display the full field.</p>
+            <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="359" step="1" value="0">
+            <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="60" step="1" value="0">
+            <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="40" step="1" value="0">
             <p class="hint">At 0% lightness, the background is black. At 0% saturation, hue has no visible effect. Color lightness does not set your screen’s brightness.</p>
           </fieldset>
-          <div class="apply-row"><button id="apply-changes" class="primary" type="submit">Apply changes</button><button id="discard" type="button">Discard</button></div>
+  
         </form>
-        <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step session history</span></div>
-        <p class="hint">Edits hide the field immediately. Apply them, then choose Show. Nothing moves or advances automatically.</p>
+        <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step scene history</span></div>
+        <p class="hint">Edits hide the full field immediately; only the small color samples update live. Apply changes, then choose Show. Nothing is shown automatically.</p>
         <details class="description"><summary>Applied scene description</summary><p id="scene-description"></p></details>
       </section>
       <section class="portable-card" aria-labelledby="portable-title">
         <p class="eyebrow">Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p class="hint">No autosave, account, browser storage or network. Download work before closing or reloading this page.</p>
         <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label></div>
         <p class="hint">Opens version 1 or 2, up to 1 MiB. Downloads use version 2. Version 1 colors are approximated in HSL. Notes are never included.</p>
+      </section>
+      </div>
+      <section id="sequence-panel" aria-labelledby="sequence-title" hidden>
+        <p class="eyebrow">Ordered snapshots</p><h1 id="sequence-title">One pass, your pace.</h1>
+        <p class="lede">Capture scene copies, set each hold and transition, then step manually or play once.</p>
+        <p class="scope">Presentation authoring, not a treatment. Timing and capacity limits are engineering choices, not medically safe thresholds.</p>
+        <button id="sequence-example" type="button">Load 11-second example</button>
+        <p class="hint">Circle → square → triangle. Loading replaces this sequence, stays hidden and never starts playback.</p>
+        <label for="sequence-name">Sequence name</label><input id="sequence-name" type="text" maxlength="64" autocomplete="off" value="My sequence" aria-describedby="sequence-error">
+        <p id="sequence-summary" class="hint">No steps yet. Add the scene, or load the example.</p>
+        <label for="sequence-step-select">Selected snapshot</label><select id="sequence-step-select" aria-describedby="sequence-summary"></select>
+        <div id="sequence-inspector">
+          <label for="sequence-step-name">Step name</label><input id="sequence-step-name" type="text" maxlength="64" autocomplete="off" aria-describedby="sequence-error">
+          <div class="control-grid"><div><label for="sequence-hold">Hold · seconds</label><input id="sequence-hold" type="number" min="1" max="600" step="0.5" inputmode="decimal" value="3" aria-describedby="sequence-timing-hint sequence-error"></div><div><label for="sequence-transition">Transition · seconds</label><input id="sequence-transition" type="number" min="0" max="60" step="0.5" inputmode="decimal" value="0" aria-describedby="sequence-timing-hint sequence-final-hint sequence-error"></div></div>
+          <p id="sequence-timing-hint" class="hint">Hold 1–600 seconds, plus the outgoing transition of 0–60 seconds, in 0.5-second increments. Hold excludes the transition. A zero transition is a direct cut.</p>
+          <p id="sequence-final-hint" class="hint">The final step ends hidden; its transition is zero.</p>
+          <div class="small-actions"><button id="sequence-move-up" type="button">Move earlier</button><button id="sequence-move-down" type="button">Move later</button><button id="sequence-delete" type="button">Delete step</button></div>
+          <button id="sequence-load" type="button">Load step into scene editor</button>
+          <p class="hint">Snapshots are independent copies. Scene edits change a step only when you choose Replace. Every step shares the background captured first.</p>
+          <details class="description"><summary>Selected step description</summary><p id="sequence-description"></p></details>
+        </div>
+        <p id="sequence-error" class="inline-error" role="status" aria-live="polite" hidden></p>
+        <button id="sequence-discard" type="button" hidden>Discard invalid sequence fields</button>
+        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate version 1 sequence files, up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
@@ -80,15 +111,30 @@
     </details>
   </section>
       <p class="footnote">Object, geometry, color and resource bounds keep this prototype reviewable. They are engineering choices, not medically established safety thresholds. Static displays can still cause symptoms.</p>
+      </div>
+      <div id="editor-actions" class="editor-actions">
+        <div id="scene-apply-actions" class="apply-row"><button id="apply-changes" class="primary" type="submit" form="scene-form">Apply changes</button><button id="discard" type="button">Discard</button></div>
+        <div class="capture-caption"><span id="capture-source">From scene: A small constellation</span><span id="capture-source-state">Applied</span></div>
+        <span id="capture-replace-context" class="sr-only">Add a scene before replacing a step.</span>
+        <div class="capture-actions"><button id="capture-add" type="button" aria-describedby="capture-source capture-source-state">Add scene as step</button><button id="capture-replace" type="button" aria-describedby="capture-replace-context" disabled>Replace selected step</button></div>
+      </div>
     </aside>
   </main>
-  <section class="viewing-bar" aria-label="Viewing controls">
-    <div class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
+  <section id="viewing-bar" class="viewing-bar" aria-label="Viewing controls">
+    <div id="sequence-view-actions" class="sequence-view-actions" hidden><div class="manual-actions"><button id="sequence-previous" type="button" aria-label="Select previous step">Previous</button><button id="sequence-show" type="button" class="primary">Show step</button><button id="sequence-next" type="button" aria-label="Select next step">Next</button></div><div class="playback-actions"><button id="sequence-play" type="button">Play once</button><button id="sequence-pause" type="button" hidden>Pause</button><button id="sequence-resume" type="button" hidden>Resume</button><button id="sequence-stop" type="button" class="hide-button">Stop / Hide</button></div><span id="sequence-progress" class="hint">Stopped</span><p id="reduced-motion-note" class="hint" hidden>Reduced motion is on. Select Previous or Next, then Show step.</p></div>
+    <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
     <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
   </section>
+  <section id="fullscreen-start" class="fullscreen-start" aria-labelledby="fullscreen-title" hidden>
+    <h2 id="fullscreen-title">The field is hidden</h2>
+    <button id="fullscreen-show" class="primary" type="button" aria-describedby="fullscreen-status">Show scene</button>
+    <p id="fullscreen-status" role="status" aria-live="polite" aria-atomic="true">Choose Show scene when you want to display it.</p>
+  </section>
+  <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>
 </div>
 <noscript><div class="noscript">JavaScript is required for this local editor. The scene is hidden.</div></noscript>
 <script>/*__MODEL__*/</script>
+<script>/*__SEQUENCE__*/</script>
 <script>/*__APP__*/</script>
 </body>
 </html>

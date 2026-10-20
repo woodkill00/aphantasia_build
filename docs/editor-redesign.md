@@ -1,32 +1,65 @@
-# Full-window scene editor, version 0.2
+# Scene and sequence editor design
 
-Implementation has passed current non-browser and scoped headless Chrome checks. Physical-device, Safari, manual accessibility, and qualified sensory/clinical acceptance remain unverified. Updated 2026-10-19.
+Version 0.4 candidate, updated 2026-10-20. Controls are implemented in the candidate source; independent verification is in progress. This document describes the source interaction and structure; it is not a claim that browser, physical-device, accessibility, or qualified sensory acceptance has passed. The [final sequence specification](sequence-spec.md) governs the increment.
 
 ## Product scope
 
-A static, local visual-design workspace with a window-filling field, optional browser fullscreen, 0–12 individually editable objects, and background hue/saturation/lightness sliders. It can express a user's chosen reconstruction or description; it does not measure internal vision or establish imagery improvement.
+A local visual-design workspace with a window-filling field, 0–12 individually editable static objects, background/object HSL controls, immediate editor-only color samples, and optional clean fullscreen static/manual preview. The extension adds 1–32 ordered nonempty snapshots, editable finite holds and adjacent crossfades/cuts, manual stepping, and explicitly started single-pass playback.
 
-## Implemented interaction
+This can express a user's chosen external composition or description. It does not measure internal vision, diagnose aphantasia, or establish imagery improvement. Duration, object, color, and resource limits are product-engineering choices, not medically safe settings. No autoplay/replay loop, strobe/pulse oscillator, intensity escalation, or exposure prescription is added.
 
-- The field fills the window behind a collapsible editor and persistent controls. **Close editor**, then **Show scene**, gives more room to the composition. **Enter fullscreen** is a separate action; unavailable/rejected fullscreen leaves the full-window layout usable.
-- Fullscreen uses the common root containing Hide and End. Entry/exit/error, editor toggles, Escape, and relevant lifecycle changes conceal. Hidden rendering removes the chosen background and objects, leaving black behind the controls and hidden-state message.
-- Add dots, pixels, or circle/square/triangle outlines; select each through the object selector; remove any object. Removing all objects leaves a valid background-only scene.
-- Change shape, position, size, and per-object HSL color. **Place on field** closes the editor for one click/tap on the hidden field, then reopens it. Numeric x/y controls provide a keyboard alternative. Placement is canceled by Escape, Hide, or End.
-- Positions use field-width/height percentages. Object dimensions use the shorter side so circles/squares are not stretched. Shape sizes and placement are validated with a conservative inset; a click/tap is clamped to that inset.
-- Background and object color sliders show their numeric values. Background lightness changes CSS color, not hardware brightness or calibrated luminance. Lightness 0 is black; saturation 0 makes hue irrelevant.
-- Presets and scene edits are staged while hidden. **Apply changes** validates/accepts them; **Discard** returns to the accepted scene. Show/export requires resolving the draft. Undo/redo handles accepted scenes within 40-step session history.
-- **Show scene** always requires a fresh explicit action. A 3,000 ms repeat-action guard never schedules a later reveal and is not a suggested exposure/recovery interval. There is no live scene preview, animation, flicker, automatic progression, or exposure prescription.
+## What the v0.3 visual review found
+
+Two independent scripted native-browser journeys used synthetic circle/square/triangle compositions. Fourteen actual captured frames were inspected. The review found roughly 730 px of scrolling between hue and Apply, and a decorative hidden-state circle that could resemble lingering scene content. These are specific engineering usability observations, not participant data or a human usability study.
+
+The candidate addresses those findings with:
+
+- Compact **Scene** and **Sequence** section selectors.
+- One **Selected snapshot** inspector rather than many expanded step cards.
+- Apply/capture actions outside the scrolling editor content, reachable alongside either section.
+- Removal of the decorative hidden-state circle, while retaining clear hidden-state text.
+- The existing labeled live color samples and gradient slider tracks next to HSL inputs.
+
+These changes are implemented in the candidate source and require fresh actual-frame, focus, and small-window checks. The old screenshots cannot verify the new layout.
+
+## Static editing retained
+
+Scene edits and presets remain drafts while hidden. **Apply changes** validates/accepts; **Discard** restores the accepted scene. **Show scene** is a separate explicit action. Undo/redo covers 40 accepted scene-history entries; sequence edits and notes do not enter that history.
+
+Objects are dots, pixels, or circle/square/triangle outlines. Use the object selector and numeric shape/size/position/color inputs, or **Place on field** for a single hidden-field click/tap. There is no drag animation or full-field draft preview. Positions use width/height percentages; dimensions use the shorter side to preserve shape proportions. Empty static scenes can represent only a background.
+
+Small labeled object/background samples update immediately from raw slider values without applying or revealing the scene. HSL is CSS color, not measured internal vision, calibrated luminance, or hardware brightness. Lightness 0 is black; saturation 0 makes hue irrelevant.
+
+## Reduced-click scene → snapshot workflow
+
+**Add scene as step** creates a copy. If the static scene has edits, the button reads **Apply scene and add step** and applies/captures after preflighting both documents. **Replace selected step** explicitly updates an existing snapshot using the same process; with edits its label is **Apply scene and replace step**. Invalid geometry, empty objects, incompatible backgrounds, timing/total limits, or unresolved sequence fields must not partially update the accepted scene, sequence, or history. Rejection still conceals.
+
+The first capture seeds the shared background. Later snapshots must match it; valid nonblack backgrounds remain supported. Snapshots are immutable independent copies, so editing the scene afterward does not change a stored step. **Load step into scene editor** makes another copy and blocks unresolved scene drafts.
+
+The **Sequence** inspector edits name, hold, and outgoing transition. Valid changes commit immediately while stopped/hidden, with no Apply sequence button. Invalid raw input preserves accepted data and displays a precise error, blocking Play, sequence export, capture, and structural edits until corrected or discarded. Reorder/delete updates only boundary transitions: the new final becomes zero; a former final moved earlier gets the default 1-second transition; other values remain. Validate and accept the entire normalized candidate atomically.
+
+Supported capacity is 1–32 steps, each with 1–12 objects, holds of 1–600 seconds, transitions of 0–60 seconds in 0.5-second increments, and at most one hour total. The final transition is zero. Zero means a cut without an inserted blank frame. A crossfade temporarily combines up to 24 objects from adjacent snapshots. These are product bounds, not physiological thresholds.
+
+## Display and playback
+
+The field starts hidden. **Previous**/**Next** select a step while hidden; **Show step** explicitly displays it. **Load 11-second example** replaces the sequence with 3-second circle, square, and triangle holds plus two 1-second fades; it stays hidden and never starts. Defaults/examples are editable authoring aids, not viewing recommendations.
+
+**Play once** starts at the beginning, in the ordinary window, only with valid accepted data and resolved drafts. **Pause** keeps the exact last actually painted frame visible, including a partial blend. **Resume** is explicit and continues from that frame without catch-up. **Stop / Hide** and natural completion conceal and reset elapsed time. There is no automatic replay.
+
+All display routes use the existing explicit visibility gate and repeat-action guard. No deferred callback can open that gate. Edits, imports, selections, section changes, fullscreen, resize, blur, hidden tabs, suspension/restoration, and reduced-motion changes stop/conceal. Invalidated callbacks cannot resume. Reduced-motion preference uses manual stepping instead of automatic cuts.
+
+Timed Play/Resume is windowed-only so Pause and Stop stay reachable. Static scenes and manual previews may enter clean fullscreen: workspace chrome disappears, hidden fullscreen has a Show route, and a small keyboard/touch Exit remains while visible. Fullscreen changes conceal; Escape retains native browser exit behavior. Unsupported/rejected fullscreen leaves the full-window layout available.
 
 ## Data and privacy
 
-[The exact data contract](architecture.md) defines version 2 (`static-objects-2`), bounded object geometry, and distinct object/background HSL ranges. Count, color, buffer, and geometry limits make the implementation reviewable; they are not medically safe settings.
+[The architecture](architecture.md) defines unchanged static version 2, validated legacy static version 1 migration, and separate `imagery-field-sequence` version 1. They are different formats even when version numbers match. Sequence JSON stores the fixed background, ordered object snapshots, names, and times; it omits notes, playback state, URLs, expressions, and loop capabilities. Imports stop/hide; invalid data retains the accepted document.
 
-Legacy version 1 files are validated against their original schema and geometry before conversion, then validated again as version 2. Fixed-offset dots become independent objects; a contour remains one object; the background becomes black. Palette colors are approximated in whole-number HSL. Full-window layout preserves logical positions, not pixel-identical old screenshots. New downloads use version 2.
-
-Only explicitly exported local files persist by design. Optional notes remain independent and require their own exact preview and selection before export. Scene exports omit them. No network resources, accounts, telemetry, or browser storage are added. Browser/device retention or syncing is outside the app's control; closing is not secure deletion. Public tests use synthetic data.
+Only explicitly exported local files persist by design. Optional notes remain independent and require their own exact preview and selection before download. Scene/sequence exports omit them. No network resources, accounts, telemetry, or browser storage are added. Browser/device retention or syncing is outside app control; closing is not secure deletion. Public tests/examples remain synthetic.
 
 ## Verification and remaining acceptance
 
-Recorded checks cover the closed validator, malformed nested/duplicate JSON keys, migration, history, import invalidation, explicit visibility, hidden backgrounds, object operations, fullscreen exit/injected denial fallback, aspect-correct geometry, semantic labels, selected narrow-screen/keyboard controls, file round trips, and offline operation.
+The separate v0.3 artifact passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), Chrome 155.0.8059.39. The [root README](../README.md) identifies its source and HTML hash. Its software pass and 14-frame visual review do not verify this sequence candidate.
 
-The current artifact passed 216 non-browser checks and all 38 headless Chrome groups in [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180). The first browser run passed 36/38; a harness-only fullscreen-event observation repair retained same-event hiding/black-pixel/focus assertions, and the app was unchanged for the successful rerun. See the [root README](../README.md) for the exact artifact hash. Physical fullscreen behavior, phone file-launch/download routes, Safari, and manual accessibility require separate testing. Qualified sensory review and clinical efficacy remain unverified. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) for evidence and remaining gates.
+The candidate needs independent source review, atomic editing regressions, deterministic timeline checks, controlled-clock composited pixel checks, natural scheduling checks, all cancellation routes, reduced-motion behavior, separate export/import tests, and fresh screenshots of reachable controls. Physical devices, Safari, ordinary OS file workflows, full manual accessibility, and qualified sensory review remain separate unverified gates. Software tests are not clinical clearance or efficacy evidence. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
+
+Broader effect-curve authoring and offscreen output analysis remain proposals. Advanced live flash/pulse controls are unavailable; warnings alone do not establish sensory safety. Hosted deployment and new participant/research systems are outside this increment.

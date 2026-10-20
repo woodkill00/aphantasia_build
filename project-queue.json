@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-19T23:49:00Z",
+  "updated": "2026-10-20T01:30:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -685,8 +685,8 @@
         "Evidence tied to actual artifact",
         "Independent acceptance required for source changes"
       ],
-      "authority": "Owner requested expanded static scene editor, full-window/fullscreen and background sliders; no deployment/security/account changes.",
-      "status": "in_progress",
+      "authority": "Owner authorized merge after passing final checks. No hosted deployment.",
+      "status": "accepted_used",
       "next": {
         "pass": "Consumer reviews and integrates",
         "fail": "Owner repairs own writable files and retests",
@@ -704,7 +704,13 @@
         "tokens": null,
         "cost": null
       },
-      "nextAction": "Run final documentation-only CI, package explicit public files, deliver local test ZIP"
+      "nextAction": "Await user trial feedback",
+      "evidence": [
+        "Main merge f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+        "Final PR run39344031289 success",
+        "Main push run39344366290 success",
+        "ZIP SHA256 558ddb89e23b30c3d7e390db01dd995842277adfd51c04d2ed2b8db546cab1d3 delivered"
+      ]
     },
     {
       "id": "IF-024",
@@ -758,19 +764,592 @@
         "cost": null
       },
       "nextAction": "No open documentation repair; preserve exact test provenance"
+    },
+    {
+      "id": "IF-030",
+      "title": "Add immediate color swatches and clean fullscreen",
+      "goal": "Add immediate color swatches and clean fullscreen",
+      "priority": "P0",
+      "owner": "build_live_color_fullscreen",
+      "consumer": "independent tester and reviewer",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+      "expectedOutputs": [
+        "imagery-app/src/**",
+        "imagery-app/index.html"
+      ],
+      "dependencies": [],
+      "writeBoundary": [
+        "imagery-app/src/**",
+        "imagery-app/index.html"
+      ],
+      "acceptanceChecks": [
+        "Immediate correct color feedback without full-field repaint",
+        "Minimal fullscreen chrome with usable keyboard/touch exit and explicit reveal",
+        "Existing privacy, schema and concealment regressions pass",
+        "Independent acceptance and native browser evidence"
+      ],
+      "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews, integrates and tests",
+        "fail": "Responsible owner repairs its writable files",
+        "missingInput": "Name missing dependency and continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
+    },
+    {
+      "id": "IF-031",
+      "title": "Independently test swatches and clean fullscreen",
+      "goal": "Independently test swatches and clean fullscreen",
+      "priority": "P0",
+      "owner": "test_live_color_fullscreen",
+      "consumer": "coordinator",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+      "expectedOutputs": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "dependencies": [
+        "IF-030"
+      ],
+      "writeBoundary": [
+        "imagery-app/tests/**",
+        "imagery-app/test-results/**"
+      ],
+      "acceptanceChecks": [
+        "Immediate correct color feedback without full-field repaint",
+        "Minimal fullscreen chrome with usable keyboard/touch exit and explicit reveal",
+        "Existing privacy, schema and concealment regressions pass",
+        "Independent acceptance and native browser evidence"
+      ],
+      "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews, integrates and tests",
+        "fail": "Responsible owner repairs its writable files",
+        "missingInput": "Name missing dependency and continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ],
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects."
+    },
+    {
+      "id": "IF-032",
+      "title": "Review live feedback and minimal controls",
+      "goal": "Review live feedback and minimal controls",
+      "priority": "P0",
+      "owner": "review_live_color_fullscreen",
+      "consumer": "coordinator",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+      "expectedOutputs": [
+        "Independent acceptance review"
+      ],
+      "dependencies": [
+        "IF-030"
+      ],
+      "writeBoundary": [],
+      "acceptanceChecks": [
+        "Immediate correct color feedback without full-field repaint",
+        "Minimal fullscreen chrome with usable keyboard/touch exit and explicit reveal",
+        "Existing privacy, schema and concealment regressions pass",
+        "Independent acceptance and native browser evidence"
+      ],
+      "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Consumer reviews, integrates and tests",
+        "fail": "Responsible owner repairs its writable files",
+        "missingInput": "Name missing dependency and continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
+    },
+    {
+      "id": "IF-033",
+      "title": "Integrate and deliver verified iteration",
+      "goal": "Integrate and deliver verified iteration",
+      "priority": "P0",
+      "owner": "coordinator",
+      "consumer": "coordinator",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+      "expectedOutputs": [
+        "project-queue.json",
+        "docs/**",
+        "README.md",
+        "AGENTS.md",
+        "imagery-app/README.md",
+        "imagery-app/review.md",
+        "imagery-app/SHA256-MANIFEST.json"
+      ],
+      "dependencies": [
+        "IF-031",
+        "IF-032",
+        "IF-037",
+        "IF-038"
+      ],
+      "writeBoundary": [
+        "project-queue.json",
+        "docs/**",
+        "README.md",
+        "AGENTS.md",
+        "imagery-app/README.md",
+        "imagery-app/review.md",
+        "imagery-app/SHA256-MANIFEST.json"
+      ],
+      "acceptanceChecks": [
+        "Immediate correct color feedback without full-field repaint",
+        "Minimal fullscreen chrome with usable keyboard/touch exit and explicit reveal",
+        "Existing privacy, schema and concealment regressions pass",
+        "Independent acceptance and native browser evidence"
+      ],
+      "authority": "Owner explicitly requested continued work until implemented, tested and merged with main; no hosted deployment.",
+      "status": "in_progress",
+      "next": {
+        "pass": "Consumer reviews, integrates and tests",
+        "fail": "Responsible owner repairs its writable files",
+        "missingInput": "Name missing dependency and continue independent preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "root"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Review final documentation/outgoing tree, verify its CI, then merge and confirm main."
+    },
+    {
+      "id": "IF-034",
+      "title": "Research temporal visual risks and bounded controls",
+      "goal": "Research temporal visual risks and bounded controls",
+      "priority": "P0",
+      "owner": "research_timed_visual_safety",
+      "consumer": "coordinator, implementation author and independent testers",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a plus current reviewed v0.3 candidate",
+      "expectedOutputs": [
+        "Evidence-backed proposal, common fixture or independent browser report as applicable"
+      ],
+      "dependencies": [],
+      "writeBoundary": "Separate working deliverable only; no overlapping app/test/queue files",
+      "acceptanceChecks": [
+        "Sources or actual rendered/browser evidence identified",
+        "No unsupported medical claims",
+        "Comparable common scene and test tasks",
+        "Explicit scope decision before temporal implementation"
+      ],
+      "authority": "Owner requested timed scenes, ordered shapes, fades, flash/pulse consideration, independent user/visual testing and designer/coder discussion. Risk research and design authorized; no unrestricted flash/pulse implementation or external deployment.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Coordinator resolves proposal and authorized implementation scope",
+        "fail": "Owner repairs analysis or names evidence limitation",
+        "missingInput": "Name precise missing access or consequential decision; continue other work"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Scope ordinary one-pass presentation; defer flash/pulse generators",
+      "evidence": [
+        "docs/timing-boundaries.md"
+      ]
+    },
+    {
+      "id": "IF-035",
+      "title": "Design sequences and common visual reference",
+      "goal": "Design sequences and common visual reference",
+      "priority": "P0",
+      "owner": "design_visual_sequence_workflow",
+      "consumer": "coordinator, implementation author and independent testers",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a plus current reviewed v0.3 candidate",
+      "expectedOutputs": [
+        "Evidence-backed proposal, common fixture or independent browser report as applicable"
+      ],
+      "dependencies": [],
+      "writeBoundary": "Separate working deliverable only; no overlapping app/test/queue files",
+      "acceptanceChecks": [
+        "Sources or actual rendered/browser evidence identified",
+        "No unsupported medical claims",
+        "Comparable common scene and test tasks",
+        "Explicit scope decision before temporal implementation"
+      ],
+      "authority": "Owner requested timed scenes, ordered shapes, fades, flash/pulse consideration, independent user/visual testing and designer/coder discussion. Risk research and design authorized; no unrestricted flash/pulse implementation or external deployment.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Coordinator resolves proposal and authorized implementation scope",
+        "fail": "Owner repairs analysis or names evidence limitation",
+        "missingInput": "Name precise missing access or consequential decision; continue other work"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
+    },
+    {
+      "id": "IF-036",
+      "title": "Exercise editor as independent second user",
+      "goal": "Exercise editor as independent second user",
+      "priority": "P0",
+      "owner": "exercise_visual_editor_independently",
+      "consumer": "coordinator, implementation author and independent testers",
+      "sourceBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a plus current reviewed v0.3 candidate",
+      "expectedOutputs": [
+        "Evidence-backed proposal, common fixture or independent browser report as applicable"
+      ],
+      "dependencies": [],
+      "writeBoundary": "Separate working deliverable only; no overlapping app/test/queue files",
+      "acceptanceChecks": [
+        "Sources or actual rendered/browser evidence identified",
+        "No unsupported medical claims",
+        "Comparable common scene and test tasks",
+        "Explicit scope decision before temporal implementation"
+      ],
+      "authority": "Owner requested timed scenes, ordered shapes, fades, flash/pulse consideration, independent user/visual testing and designer/coder discussion. Risk research and design authorized; no unrestricted flash/pulse implementation or external deployment.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Coordinator resolves proposal and authorized implementation scope",
+        "fail": "Owner repairs analysis or names evidence limitation",
+        "missingInput": "Name precise missing access or consequential decision; continue other work"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        },
+        {
+          "status": "prepared",
+          "scope": "Independent native sequence user journeys, awaiting first sequence CI",
+          "base": "docs/sequence-spec.md"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
+    },
+    {
+      "id": "IF-037",
+      "title": "Implement pure one-pass timeline engine",
+      "goal": "Implement pure one-pass timeline engine",
+      "priority": "P0",
+      "owner": "build_sequence_timeline_engine",
+      "consumer": "independent tester, reviewer and coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d; final scope docs/sequence-spec.md",
+      "expectedOutputs": [
+        "imagery-app/src/sequence-model.js"
+      ],
+      "dependencies": [
+        "IF-034",
+        "IF-035",
+        "IF-036"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/sequence-model.js"
+      ],
+      "acceptanceChecks": [
+        "Closed schema and deterministic timeline",
+        "Atomic snapshots and independent exports",
+        "Single explicit visibility gate with stale-callback cancellation",
+        "Correct blended pixels and aggregate resource bound",
+        "Pause last painted frame; Stop immediate black; no replay",
+        "Independent native and visual acceptance"
+      ],
+      "authority": "Owner requested ordered timed scenes and fades, independent visual/designer/coder review and implementation. Review completed; final one-pass scope documented. Owner now authorizes merge after all checks pass.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Independent test/review and integrate",
+        "fail": "Owner repairs its source files",
+        "missingInput": "Coordinate exact API and continue independent source/test preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "sequence-model.js SHA256 b8070fac8acc2355b768abf3de435d9a1bcfcfbaa2c202debba5d529e2fa4197",
+        "25 independent model tests,8000 seeded oracle samples,independent source review"
+      ],
+      "nextAction": "Repair only integration defects evidenced by tester/reviewer"
+    },
+    {
+      "id": "IF-038",
+      "title": "Implement sequence editor and playback UI",
+      "goal": "Implement sequence editor and playback UI",
+      "priority": "P0",
+      "owner": "build_sequence_playback_ui",
+      "consumer": "independent tester, reviewer and coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d; final scope docs/sequence-spec.md",
+      "expectedOutputs": [
+        "imagery-app/src/app.js",
+        "imagery-app/src/shell.html",
+        "imagery-app/src/style.css",
+        "imagery-app/src/assemble.cjs",
+        "imagery-app/index.html"
+      ],
+      "dependencies": [
+        "IF-037",
+        "IF-035",
+        "IF-036"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/app.js",
+        "imagery-app/src/shell.html",
+        "imagery-app/src/style.css",
+        "imagery-app/src/assemble.cjs",
+        "imagery-app/index.html"
+      ],
+      "acceptanceChecks": [
+        "Closed schema and deterministic timeline",
+        "Atomic snapshots and independent exports",
+        "Single explicit visibility gate with stale-callback cancellation",
+        "Correct blended pixels and aggregate resource bound",
+        "Pause last painted frame; Stop immediate black; no replay",
+        "Independent native and visual acceptance"
+      ],
+      "authority": "Owner requested ordered timed scenes and fades, independent visual/designer/coder review and implementation. Review completed; final one-pass scope documented. Owner now authorizes merge after all checks pass.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Independent test/review and integrate",
+        "fail": "Owner repairs its source files",
+        "missingInput": "Coordinate exact API and continue independent source/test preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ],
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects."
+    },
+    {
+      "id": "IF-039",
+      "title": "Document sequence editor usage",
+      "goal": "Document sequence editor usage",
+      "priority": "P1",
+      "owner": "document_sequence_editor_usage",
+      "consumer": "coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d plus docs/sequence-spec.md implementation",
+      "expectedOutputs": [
+        "README.md",
+        "imagery-app/README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/portable-runtime.md",
+        "docs/editor-redesign.md"
+      ],
+      "dependencies": [
+        "IF-037",
+        "IF-038"
+      ],
+      "writeBoundary": [
+        "README.md",
+        "imagery-app/README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/portable-runtime.md",
+        "docs/editor-redesign.md"
+      ],
+      "acceptanceChecks": [
+        "Exact source and evidence reconciled",
+        "No sensitive data in public artifacts",
+        "No unsupported clinical or verification claims"
+      ],
+      "authority": "Requested implementation documentation and public-repository privacy verification",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Integrate final reviewed evidence",
+        "fail": "Owner repairs own output or source owner fixes finding",
+        "missingInput": "Await frozen candidate and exact outgoing allowlist"
+      },
+      "attempts": [
+        {
+          "status": "received",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Preserve the verified scope; repair only newly evidenced defects.",
+      "evidence": [
+        "324 non-browser checks passed; all 74 native Chrome groups passed in run 39352924875.",
+        "Exact runtime 3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda.",
+        "Independent actual-frame review accepted 28 images for this unchanged runtime; physical-device and comprehensive accessibility gates remain separate.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ]
+    },
+    {
+      "id": "IF-040",
+      "title": "Review sequence export privacy",
+      "goal": "Review sequence export privacy",
+      "priority": "P1",
+      "owner": "review_sequence_export_privacy",
+      "consumer": "coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d plus docs/sequence-spec.md implementation",
+      "expectedOutputs": [
+        "Hash-bound privacy assessment"
+      ],
+      "dependencies": [
+        "IF-037",
+        "IF-038"
+      ],
+      "writeBoundary": [
+        "Separate working review only"
+      ],
+      "acceptanceChecks": [
+        "Exact source and evidence reconciled",
+        "No sensitive data in public artifacts",
+        "No unsupported clinical or verification claims"
+      ],
+      "authority": "Requested implementation documentation and public-repository privacy verification",
+      "status": "done",
+      "next": {
+        "pass": "Integrate final reviewed evidence",
+        "fail": "Owner repairs own output or source owner fixes finding",
+        "missingInput": "Await frozen candidate and exact outgoing allowlist"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "No remaining scoped outgoing privacy blocker; integration/merge and broader acceptance gates remain separate.",
+      "finalEvidence": {
+        "date": "2026-10-20",
+        "sourceCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
+        "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+        "result": "Reviewed source/test deltas and explicit eight-file documentation allowlist. Synthetic data only; no raw logs, user notes, private paths or unsupported acceptance claims included."
+      }
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
-    "targetBranch": "feat/portable-imagery-preview",
+    "repositoryBaseCommit": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+    "targetBranch": "feat/live-colors-clean-fullscreen",
     "appPath": "imagery-app/index.html",
-    "appSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec",
-    "appBytes": 40716,
-    "note": "This is the reviewed source head whose exact app artifact passed sandboxed Chrome CI run 39333956608. Documentation-only integration follows."
+    "appSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+    "appBytes": 114116,
+    "note": "Current tested source head 13cfac66e80b55d401b454dc99c8e6c690f09962; successful native run 39352924875. Documentation-only integration follows."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
-    "limits": "Task entries do not authorize publication, deployment, data sharing, package installation, security changes, human-participant research, or features outside the documented static scope. Those actions require appropriate explicit authorization.",
+    "limits": "Task entries do not authorize publication, deployment, data sharing, package installation, security changes, human-participant research, or features outside the documented scene/sequence scope. Those actions require appropriate explicit authorization.",
     "evidencePolicy": "Keep passed, failed, blocked, and not-run work distinct. Never infer browser, device, clinical, or accessibility acceptance from synthetic checks.",
     "privacyPolicy": "Use synthetic fixtures only. Do not add personal observations, credentials, private identifiers, or unreviewed process output.",
     "writePolicy": "Each task may change only its declared public paths. A single writer must own a shared path at a time; coordinate a handoff before overlap. Generated local browser output remains untracked pending review.",
@@ -800,7 +1379,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current static implementation complete; future features deferred."
+      "currentStatus": "Authorized version 0.4 scene/sequence implementation complete in scoped software verification; broader features deferred."
     },
     {
       "role": "tester",
@@ -817,7 +1396,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "156 non-browser and 22 headless Chrome scenario groups passed; physical-device and manual accessibility checks remain pending."
+      "currentStatus": "324 non-browser and 74 native Chrome groups passed; physical-device and full manual accessibility checks remain pending."
     },
     {
       "role": "reviewer",
@@ -853,17 +1432,19 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Browser-tested engineering preview; final documentation integration and CI verification pending. Not clinical or physical-device clearance.",
+  "currentStatus": "Version 0.4 passes 324 non-browser checks and 74 native Chrome groups on the exact recorded runtime. Final documentation/outgoing-tree integration and merge verification remain; physical-device, full accessibility and qualified sensory/clinical gates remain open.",
   "currentIteration": {
-    "base": "ece81bf045afcd3045622fdad625271b717bde3e",
+    "base": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
     "concurrencySlots": 7,
     "coordinatorCounts": true,
-    "activeWorkerLanes": 0,
-    "remainingLanes": "No additional independent bottleneck task yet; refill for review/integration as outputs arrive",
-    "remoteBranch": "feat/portable-imagery-preview",
-    "recovery": "All implementation/test/review/docs returns accepted. Final documentation-only commit and CI gate pending; packaging follows. No merge/deploy.",
-    "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
-    "passingRun": 39343535180,
-    "htmlSha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
+    "requestedModel": "gpt-6-astra",
+    "requestedReasoning": "xhigh",
+    "remoteBranch": "feat/live-colors-clean-fullscreen",
+    "recovery": "All 324 non-browser and 74 native groups pass. Reviewed runtime and source context fixes accepted in scoped software verification. Final documentation/outgoing-tree review and merge remain distinct. No deployment or physical-device/clinical acceptance claimed.",
+    "sourceHead": "13cfac66e80b55d401b454dc99c8e6c690f09962",
+    "pullRequest": 2,
+    "candidateRun": 39352924875,
+    "htmlSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+    "visualReview": "All 28 final-run JPEG byte counts/hashes verified; actual contact-sheet pixels and selected full-size frames inspected, consistent with earlier independent exact-runtime visual acceptance."
   }
 }

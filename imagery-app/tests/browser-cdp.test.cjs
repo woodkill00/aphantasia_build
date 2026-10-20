@@ -2,7 +2,7 @@
 // Transport/fixture checks only. These never launch Chrome or establish browser compatibility.
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot} = require('./browser-cdp.cjs');
+const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb} = require('./browser-cdp.cjs');
 class FakeSocket extends EventTarget {
   sent=[];
   send(value) { this.sent.push(JSON.parse(value)); }
@@ -86,4 +86,45 @@ test('Fullscreen delivery snapshot accepts only a synchronously concealed, focus
 test('Fullscreen delivery snapshot rejects missing event, visible scene or incorrect focus',()=>{
  const valid={trusted:true,coloredPixels:0,element:null,visibility:'Hidden',canvasLabel:'Scene hidden.',focus:'fullscreen'};
  for(const snapshot of [undefined,{...valid,trusted:false},{...valid,coloredPixels:1},{...valid,visibility:'Visible'},{...valid,canvasLabel:'Scene shown.'},{...valid,focus:'show-scene'},{...valid,element:'stage-root'}])assert.throws(()=>assertFullscreenSnapshot(snapshot,null));
+});
+
+
+test('Independent HSL swatch oracle covers hue sectors, achromatic gray and zero lightness',()=>{
+ for(const [h,rgb]of [[0,[255,0,0]],[60,[255,255,0]],[120,[0,255,0]],[180,[0,255,255]],[240,[0,0,255]],[300,[255,0,255]]])assert.deepEqual(hslRgb({h,s:100,l:50}),rgb);
+ assert.deepEqual(hslRgb({h:359,s:0,l:50}),[128,128,128]);assert.deepEqual(hslRgb({h:359,s:70,l:0}),[0,0,0]);assert.deepEqual(hslRgb({h:300,s:40,l:100}),[255,255,255]);
+});
+
+test('Independent native-user fixture and separate RGB oracle remain deterministic',()=>{
+ const {referenceScene,rgb}=require('./independent-user-scenarios.cjs'),M=require('../src/model.js');assert.deepEqual(M.parseScene(JSON.stringify(referenceScene)),referenceScene);
+ for(const [color,want]of [[{h:0,s:0,l:0},[0,0,0]],[{h:0,s:0,l:50},[128,128,128]],[{h:260,s:30,l:50},[115,89,166]]])assert.deepEqual(rgb(color),want);
+});
+
+test('Fullscreen draft message requires both editor directions without requiring sentence order',()=>{
+ for(const text of ['Exit fullscreen to apply or discard staged changes before showing the scene.','Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.'])assert.doesNotThrow(()=>assertFullscreenDraftMessage(text));
+ for(const text of ['Apply or discard staged changes.','Exit fullscreen.','Changes staged.'])assert.throws(()=>assertFullscreenDraftMessage(text));
+});
+
+test('independent sequence user fixture and temporal/color oracle are valid without launching a browser',()=>{
+ const {referenceSequence,referenceWeights,rgb}=require('./independent-sequence-user-scenarios.cjs'),S=require('../src/sequence-model.js');assert.deepEqual(S.parseSequence(JSON.stringify(referenceSequence)),referenceSequence);for(const [t,w]of [[0,[1,0,0]],[2999,[1,0,0]],[3500,[.5,.5,0]],[4000,[0,1,0]],[7500,[0,.5,.5]],[8000,[0,0,1]],[11000,null]])assert.deepEqual(referenceWeights(t),w);assert.deepEqual(rgb({h:210,s:30,l:50}),[89,128,166]);assert.deepEqual(rgb({h:359,s:0,l:50}),[128,128,128]);assert.deepEqual(rgb({h:240,s:50,l:0}),[0,0,0]);
+});
+test('native sequence pixel blend oracle uses independent RGB arithmetic',()=>{
+ const {rgb,mix}=require('./browser-sequence.cjs');assert.deepEqual(rgb({h:210,s:30,l:50}),[89,128,166]);assert.deepEqual(mix([0,10,200],[200,110,0],.5),[100,60,100]);assert.deepEqual(mix([0,10,200],[200,110,0],0),[0,10,200]);assert.deepEqual(mix([0,10,200],[200,110,0],1),[200,110,0]);
+});
+
+test('Native motion event snapshot accepts both preference directions only when synchronously concealed',()=>{
+ for(const matches of [false,true])assert.doesNotThrow(()=>assertMotionSnapshot(Object.freeze({trusted:true,matches,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0}),matches));
+});
+test('Native motion event snapshot rejects missing, untrusted, wrong-preference, visible or colored snapshots',()=>{
+ const valid={trusted:true,matches:true,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0};for(const snapshot of [undefined,{...valid,trusted:false},{...valid,matches:false},{...valid,visibility:'Visible'},{...valid,canvasLabel:'Scene shown.'},{...valid,coloredPixels:1}])assert.throws(()=>assertMotionSnapshot(snapshot,true));
+});
+
+
+test('Motion harness never reads live matches between emulation invalidation and native event delivery',async()=>{
+ const {Page}=require('./browser-cdp.cjs'),vm=require('node:vm');
+ for(const expected of [true,false]){
+  let phase='before',reads=0;const records=[];
+  const context={window:{__testMotionTransitions:records,__testMotionQuery:{get matches(){reads++;assert.notEqual(phase,'pending','live matches read before native event');return phase==='before'?!expected:expected;}}}};
+  const fake={device:{name:'synthetic-harness-order'},evaluate:async(fn,...args)=>vm.runInNewContext('('+fn.toString()+')',context)(...args),send:async()=>{phase='pending';setTimeout(()=>{records.push({trusted:true,matches:expected,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0});phase='delivered';},5);}};
+  await Page.prototype.motionPreference.call(fake,expected?'reduce':'no-preference');assert.equal(phase,'delivered');assert.equal(reads,2);
+ }
 });

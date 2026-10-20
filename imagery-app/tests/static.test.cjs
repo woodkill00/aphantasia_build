@@ -20,15 +20,16 @@ test('PORTABLE: executable scripts are inline classic JavaScript and parse',()=>
  for(const [i,s] of scripts.entries()){ assert.doesNotMatch(s[1],/\bsrc\s*=|type\s*=\s*["']module/i); new vm.Script(s[2],{filename:`index-inline-${i}.js`}); }
 });
 test('PORTABLE: production model and UI sources are embedded verbatim in delivered file',()=>{
- for(const name of ['model.js','app.js']) {const source=fs.readFileSync(path.join(ROOT,'src',name),'utf8').trim(); assert.ok(html.includes(source),`${name} absent/mismatched in HTML`);}
+ for(const name of ['model.js','sequence-model.js','app.js']) {const source=fs.readFileSync(path.join(ROOT,'src',name),'utf8').trim(); assert.ok(html.includes(source),`${name} absent/mismatched in HTML`);}
 });
 test('PRIVACY: no network, dynamic code, service worker, storage dependency, or raw markup sink in runtime',()=>{
  for(const re of [/\bfetch\s*\(/,/\bXMLHttpRequest\b/,/\bWebSocket\b/,/\bsendBeacon\s*\(/,/serviceWorker\s*\./,/\beval\s*\(/,/new\s+Function\b/,/\bimport\s*\(/,/\bimportScripts\b/,/\.innerHTML\s*=/,/\.outerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\blocalStorage\b/,/\bsessionStorage\b/,/\bindexedDB\b/]) assert.doesNotMatch(code,re);
 });
-test('STATIC: no repeating timers, animation loops, animated CSS, or media playback',()=>{
- for(const re of [/\bsetInterval\s*\(/,/\brequestAnimationFrame\s*\(/,/\.play\s*\(/]) assert.doesNotMatch(code,re);
+test('STATIC: no repeating timers, CSS animation or media playback; one explicitly guarded RAF scheduler',()=>{
+ for(const re of [/\bsetInterval\s*\(/,/\.play\s*\(/]) assert.doesNotMatch(code,re);
  assert.doesNotMatch(css,/@keyframes\b|animation\s*:\s*(?!none\b)/i);
  assert.doesNotMatch(html,/<(?:video|audio|iframe|object|embed)\b/i);
+ assert.equal((code.match(/\brequestAnimationFrame\s*\(/g)||[]).length,1);assert.match(code,/capturedEpoch/);assert.match(code,/capturedGeneration/);assert.match(code,/cancelAnimationFrame/);
 });
 test('PORTABLE: no external runtime assets or style fetches',()=>{
  assert.doesNotMatch(html,/<(?:script|img|iframe|source|video|audio)[^>]+src\s*=/i);
@@ -64,4 +65,14 @@ test('FULLWINDOW: fullscreen stage owns Show, Hide, End and Exit controls',()=>{
  let depth=1,stop=-1;for(const match of shell.slice(start).matchAll(/<\/?div\b[^>]*>/gi)){depth+=match[0].startsWith('</')?-1:1;if(depth===0){stop=start+match.index;break;}}assert.ok(stop>start);
  const stage=shell.slice(start,stop);for(const id of ['scene-canvas','show-scene','hide-scene','end-viewing','fullscreen','exit-fullscreen'])assert.ok(stage.includes(`id="${id}"`),`${id} must be within fullscreen stage`);
  assert.match(code,/fullscreenchange/);assert.match(code,/fullscreenerror/);
+});
+
+
+test('V3 STATIC: color previews have text equivalents and both fullscreen controls belong to the stage',()=>{
+ const shell=fs.readFileSync(path.join(ROOT,'src','shell.html'),'utf8');
+ for(const prefix of ['object','background']){assert.match(shell,new RegExp('id="'+prefix+'-color-swatch"[^>]*role="img"[^>]*aria-label='));assert.ok(shell.includes('id="'+prefix+'-color-text"'));}
+ for(const id of ['fullscreen-start','fullscreen-show','fullscreen-status','exit-fullscreen'])assert.ok(shell.includes('id="'+id+'"'));
+ assert.equal((code.match(/\bsetTimeout\s*\(/g)||[]).length,1,'only the pre-existing one-shot download cleanup timer is allowed; fullscreen needs no timers');
+ assert.match(css,/\.fullscreen-exit[^}]*min-width:44px[^}]*min-height:44px/);
+ assert.match(css,/\.fullscreen-exit:(?:focus-visible|focus)/);
 });

@@ -1,34 +1,49 @@
 # Implementation and verification plan
 
-Updated 2026-10-19. The single public work register is [`project-queue.json`](../project-queue.json). Planned work is not clinical approval or authorization for new scope.
+Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current iteration: version 0.2
+## Current increment: verified version 0.4 software preview
 
-The [full-window scene editor](editor-redesign.md) implements individual static objects, background HSL controls, optional browser fullscreen, validated version 1 migration, and version 2 exports. It retains manual reveal, immediate concealment, draft/apply separation, history, import invalidation, and independently previewed notes.
+Implemented the [final one-pass sequence contract](sequence-spec.md): independent scene snapshots, atomic apply/capture, immediate valid sequence edits, 1–32 steps, finite holds, adjacent crossfades/direct cuts against one shared background, manual step preview, windowed one-pass playback, exact painted-frame Pause/Resume, immediate cancellation/concealment, reduced-motion handling, and separate sequence JSON.
 
-The current artifact passed 216 non-browser checks and all 38 real-browser scenario groups in [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), source head `f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b`. A separate synthetic fixture check accepted 3 valid inputs and rejected 14 invalid inputs. See the [root README](../README.md) for the exact HTML hash.
+The exact version 0.4 artifact passed 324 non-browser checks and 74 native Chrome groups in [run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875). Compact Scene/Sequence sections, a selected-step inspector, reachable Apply/capture actions, visible capture-source context and removal of the decorative hidden-state circle were reviewed using actual native flows and rendered frames. This is scoped engineering acceptance, not inherited v0.3 evidence or physical-device/clinical clearance.
 
-The first browser run passed 36/38; a harness-only repair synchronized observation with the native fullscreen event while retaining same-event Hidden/black-pixel/focus assertions. The app was unchanged for the successful rerun. The two runs used different Chrome patch versions, so the original failure’s cause remains unproven. Preserve that failed attempt and the local launch blocker alongside the passing CI evidence. This closes the recorded headless Chrome scope, not physical-device, Safari, manual accessibility, or qualified sensory/clinical acceptance.
+The supported hold/transition/count/total capacities are engineering limits, not medical thresholds. The 11-second circle/square/triangle example is an editable authoring fixture, not a prescription. No autoplay, replay loop, strobe/pulse oscillator, exposure escalation, or automatic reduced-motion cuts are included. Timed playback stays windowed; static/manual preview may use clean fullscreen. No hosted deployment is authorized for this increment.
 
-## Historical verified baseline
+## Verified historical baselines
 
-Version 0.1's narrow dot/contour editor passed [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608): 156 non-browser checks and 22 headless Chrome scenario groups, after a scoped CSS reflow repair and browser-harness hardening. That result belongs to HTML SHA-256 `3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec`, not the version 0.2 redesign. The first failed run and later successful rerun remain part of the evidence.
+- **v0.3:** [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), 241 non-browser checks and 54 native-browser groups, sandbox-enabled headless Chrome 155.0.8059.39 on Linux, source head `57b8f2c2811dc246abca55d9630c0581551d448d`. Its HTML is 65,152 bytes, SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`.
+- **v0.3 visual/user-journey review:** two independent scripted native-browser journeys and 14 inspected actual frames. Observations included roughly 730 px of scrolling between hue and Apply and a hidden-state decorative circle that could resemble residual scene content. This is engineering usability evidence, not a human usability study or safety assessment.
+- **v0.2:** [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), 216 non-browser checks and 38 browser groups. The initial run passed 36/38; a harness-only fullscreen-event observation repair preceded the complete rerun with unchanged app source. Chrome patch versions differed, so the first failure's cause remains unproven. Preserve the failure and local launch blocker.
+- **v0.1:** [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608), 156 non-browser checks and 22 browser groups after the recorded layout/harness repairs.
 
-## Acceptance work
+The [root README](../README.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) distinguish artifact hashes, environments, attempts, and limits. The separate version 0.4 run supplies current sequence evidence; older runs remain historical.
 
-1. Preserve independent source/data-contract review and the passing synthetic checks; rerun all affected checks whenever source changes. Cover version 2 ranges, malformed nested/duplicate keys, version 1 validation/migration, object operations, history, import races, note isolation, and no delayed reveal.
-2. Preserve and rerun the real-browser suite after relevant changes, using a permitted environment with normal sandboxing. Its recorded scope covers direct-file/offline behavior; real downloads/reimports; object operations; hidden backgrounds; fullscreen transitions and injected denial fallback; aspect-correct rendering; narrow-screen controls; and selected keyboard/focus checks. Record environment blockers separately from app/test failures.
-3. Tie every result to its exact source/artifact hash. Reassemble and rerun after source changes; investigate failures without weakening assertions, browser security, or static-only scope. Any remote run/publication needs its required authorization.
-4. Check physical-device and ordinary OS workflows: opening downloaded HTML, file choosers, download locations, app switching, sleep/wake, touch, virtual keyboards, fullscreen entry/exit, and each claimed browser. Phone-sized touch emulation cannot close this gate.
-5. Complete manual accessibility evaluation: keyboard-only object editing/placement alternatives, focus recovery, screen readers/text descriptions, zoom/reflow, forced colors, and reachable Hide/End controls in ordinary and fullscreen layouts. Automated checks are partial evidence, not conformance.
-6. Obtain qualified review of the actual displayed patterns, larger field, editable colors, display conditions, and guidance before broader viewing/research claims. Software checks do not establish sensory safety or efficacy.
+## Sequence acceptance checks completed in the recorded software scope
+
+1. **Closed data contract:** independently review static/sequence separation, canonical validation on every path, unknown/duplicate keys, accessors/holes/depth/UTF-8 bounds, names/IDs, nonempty snapshots, timing increments, total duration, and immutable accepted data. Keep legacy static migration unchanged.
+2. **Atomic reduced-click editing:** test Add/Replace with valid and invalid scene drafts, mismatched backgrounds, full capacity, excessive totals, invalid sequence raw fields, reorder/delete normalization, no partial commit/history change on failure, and load-step copy behavior. Confirm sequence edits do not change scene undo history or notes.
+3. **Pure timeline:** use injected clocks for exact half-open boundaries, 50% blends, zero-transition cuts, maximum bounds, completion/reset, Pause at the last acknowledged painted frame, explicit Resume without catch-up, generation invalidation, and backward/nonfinite clock behavior.
+4. **Real composited pixels:** on the exact built artifact inspect circle/square/triangle reference frames, overlap, 12 + 12 objects, nonblack shared backgrounds, direct cuts without blank intermediates, paused blend identity, and aspect-correct geometry. Verify main + offscreen allocation caps, including resize. Controlled-clock pixels and natural RAF scheduling are separate evidence.
+5. **Display authority and lifecycle:** independently test all Stop/Hide/End/Escape paths; scene/sequence edits, imports, selections, section changes, fullscreen entry/exit/error, resize, blur, hidden tab, freeze, pagehide/restoration, and reduced-motion changes. Invoke stale callbacks after cancellation. No callback may reveal content; at most one RAF may remain pending.
+6. **Portable files and isolation:** exercise direct-file/offline launch, actual scene/sequence/note downloads, reimports, malformed and superseded files, separate schema/version handling, and no persistence/network additions. Confirm selected exact note preview remains required.
+7. **Actual interaction and visual review:** repeat independent synthetic scripted journeys, inspect actual screenshots, and check reachable Apply/capture/Pause/Stop, selected-step focus, keyboard alternatives, clean static/manual fullscreen, narrow windows, zoom, and reduced-motion manual stepping. Do not label agent journeys a human study.
+8. **Release evidence:** reassemble, run every affected non-browser and native-browser check, review source/delta independently, and tie outcomes to the final source/artifact. Refresh documentation, queue, report, and manifest only with verified current results. Preserve failures; do not weaken assertions or browser security to obtain a pass.
+
+## Separate acceptance gates
+
+Physical-device and ordinary OS workflows need their own evidence: downloaded-file opening, file choosers and download locations, app switching, sleep/wake, touch/virtual keyboards, fullscreen, and each claimed browser. Phone-sized touch emulation cannot close this gate.
+
+Complete manual accessibility evaluation separately: keyboard-only editing, focus recovery, screen readers and text descriptions, zoom/reflow, forced colors, and reachable concealment controls. Automated checks are partial evidence, not conformance.
+
+Qualified review of actual displayed patterns, colors, transitions, display conditions, and final guidance remains outstanding before broader viewing/research claims. Software checks do not establish sensory safety, clinical readiness, or efficacy. See [timed-presentation boundaries](timing-boundaries.md) and [scientific limitations](scientific-limitations.md).
 
 ## Evidence contract
 
-Record command/procedure, tool/browser versions, artifact hash, fixture, expected/actual behavior, and PASS/FAIL/BLOCKED/NOT RUN. Distinguish synthetic doubles, automated real browsers, emulation, and physical devices. Preserve failed attempts and explain repairs; missing evidence stays missing.
+Record command/procedure, tool/browser versions, source and artifact hash, fixture, expected/actual behavior, and PASS/FAIL/BLOCKED/NOT RUN. Distinguish model/DOM doubles, controlled-clock browser pixels, real scheduling, automated user journeys, screenshot inspection, emulation, and physical devices. Preserve failed attempts and explain repairs; missing evidence stays missing.
 
-The passing CI workflow uses preinstalled tools, normal Chrome sandboxing, read-only repository permission, and no deployment. A passing run does not certify clinical or physical-device readiness. See the [test report](../imagery-app/test-results/TEST-REPORT.md) and [browser procedure](../imagery-app/tests/BROWSER-TEST-PROCEDURE.md).
+CI uses preinstalled tools, normal Chrome sandboxing, read-only repository permission, and no deployment. Merge authorization is contingent on the required checks/review passing; merge is not hosted deployment or a medical-readiness claim. See the [browser procedure](../imagery-app/tests/BROWSER-TEST-PROCEDURE.md).
 
 ## Deferred decisions
 
-A license remains a maintainer decision. Arbitrary object groups/freeform geometry, durable storage, hosted delivery, accounts, telemetry, timing protocols, participant management, and efficacy measures require separate specification and review. Public source availability is not a launch or medical-readiness claim.
+A license remains a maintainer decision. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, live flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.

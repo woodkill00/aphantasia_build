@@ -28,5 +28,6 @@ exports/
 local-notes/
 imagery-field-note*.json
 imagery-field-scene*.json
+imagery-field-sequence*.json
 *.zip
 *.log

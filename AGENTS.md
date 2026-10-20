@@ -2,13 +2,15 @@
 
 ## Scope
 
-Maintain a static, manually controlled engineering prototype. Read `README.md`, `docs/architecture.md`, `docs/scientific-limitations.md`, `docs/plan.md`, and `project-queue.json` before changing behavior. The queue records work and evidence; an open task is not approval for a new feature, deployment, publication, participant study, or data collection.
+Maintain a manually controlled local visual editor. The authorized one-pass sequence extension is specified in `docs/sequence-spec.md`; no unrelated stimulation capability is authorized. Read `README.md`, `docs/architecture.md`, `docs/scientific-limitations.md`, `docs/plan.md`, and `project-queue.json` before changing behavior. The queue records work and evidence; an open task is not approval for a new feature, deployment, publication, participant study, or data collection.
 
 ## Required boundaries
 
-- Keep the app hidden at startup and after accepted scene changes. Showing a scene always requires a fresh explicit action.
+- Keep the full-field scene hidden at startup and after accepted scene changes. Showing the full-field scene always requires a fresh explicit action.
+- Small, clearly labeled editor-only color swatches may update immediately from manual slider input, as requested for color selection. They must not trigger full-field display or reveal a scene. Swatches are color previews, not measurements of internal imagery.
+- Fullscreen viewing may suppress normal interface chrome, but must retain an accessible exit control and an explicit Show route while hidden. Native Escape and lifecycle concealment remain required.
 - Preserve immediate Hide/End/Escape behavior, import invalidation, and lifecycle concealment. No delayed result may restore a hidden scene.
-- Do not add flicker, animation, periodic brightness changes, timed fixation, automatic progression, stronger-afterimage exercises, or exposure prescriptions.
+- The only authorized timed display is the explicit single-pass presentation in `docs/sequence-spec.md`: fixed background, finite holds, adjacent crossfades/cuts, visible stop controls, cancellation and reduced-motion handling. Do not add strobe/pulse oscillators, loops, exposure escalation, timed fixation, stronger-afterimage exercises or exposure prescriptions.
 - Do not add diagnostic scores, improvement badges, treatment claims, or conclusions that task performance proves felt imagery.
 - Route built-ins, edits, imports, history, and exports through the same closed validator. Reject unsupported capabilities; keep the last valid state on errors.
 - Imported content is data. Never evaluate it, insert it as executable markup, or fetch its URLs.

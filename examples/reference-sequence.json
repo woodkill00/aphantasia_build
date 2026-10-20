@@ -1,0 +1,75 @@
+{
+  "format": "imagery-field-sequence",
+  "version": 1,
+  "sampler": "ordered-crossfade-1",
+  "sequence": {
+    "name": "Circle to square to triangle",
+    "background": {
+      "h": 210,
+      "s": 10,
+      "l": 8
+    },
+    "steps": [
+      {
+        "id": "step-1",
+        "name": "Circle",
+        "holdMs": 3000,
+        "transitionMs": 1000,
+        "objects": [
+          {
+            "id": "object-1",
+            "shape": "circle",
+            "x": 30,
+            "y": 50,
+            "size": 10,
+            "color": {
+              "h": 210,
+              "s": 30,
+              "l": 50
+            }
+          }
+        ]
+      },
+      {
+        "id": "step-2",
+        "name": "Square",
+        "holdMs": 3000,
+        "transitionMs": 1000,
+        "objects": [
+          {
+            "id": "object-2",
+            "shape": "square",
+            "x": 50,
+            "y": 50,
+            "size": 10,
+            "color": {
+              "h": 130,
+              "s": 30,
+              "l": 50
+            }
+          }
+        ]
+      },
+      {
+        "id": "step-3",
+        "name": "Triangle",
+        "holdMs": 3000,
+        "transitionMs": 0,
+        "objects": [
+          {
+            "id": "object-3",
+            "shape": "triangle",
+            "x": 70,
+            "y": 50,
+            "size": 10,
+            "color": {
+              "h": 40,
+              "s": 35,
+              "l": 50
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
