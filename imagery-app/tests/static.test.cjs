@@ -20,7 +20,7 @@ test('PORTABLE: executable scripts are inline classic JavaScript and parse',()=>
  for(const [i,s] of scripts.entries()){ assert.doesNotMatch(s[1],/\bsrc\s*=|type\s*=\s*["']module/i); new vm.Script(s[2],{filename:`index-inline-${i}.js`}); }
 });
 test('PORTABLE: production model and UI sources are embedded verbatim in delivered file',()=>{
- for(const name of ['model.js','sequence-model.js','item-model.js','editor-model.js','app.js']) {const source=fs.readFileSync(path.join(ROOT,'src',name),'utf8').trim(); assert.ok(html.includes(source),`${name} absent/mismatched in HTML`);}
+ for(const name of ['geometry-model.js','model.js','sequence-model.js','item-model.js','editor-model.js','preset-model.js','image-file.js','image-model.js','image-ui.js','journal-model.js','journal-ui.js','app.js']) {const source=fs.readFileSync(path.join(ROOT,'src',name),'utf8').trim(); assert.ok(html.includes(source),`${name} absent/mismatched in HTML`);}
 });
 test('PRIVACY: no network, dynamic code, service worker, storage dependency, or raw markup sink in runtime',()=>{
  for(const re of [/\bfetch\s*\(/,/\bXMLHttpRequest\b/,/\bWebSocket\b/,/\bsendBeacon\s*\(/,/serviceWorker\s*\./,/\beval\s*\(/,/new\s+Function\b/,/\bimport\s*\(/,/\bimportScripts\b/,/\.innerHTML\s*=/,/\.outerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\blocalStorage\b/,/\bsessionStorage\b/,/\bindexedDB\b/]) assert.doesNotMatch(code,re);
@@ -37,7 +37,8 @@ test('PORTABLE: no external runtime assets or style fetches',()=>{
  assert.doesNotMatch(css,/@import\b|url\s*\(/i);
 });
 test('HTML: all id attributes unique, associated labels and aria references resolve',()=>{
- const ids=[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(x=>x[1]);
+ const markup=html.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,'');
+ const ids=[...markup.matchAll(/\bid=["']([^"']+)["']/g)].map(x=>x[1]);
  assert.equal(new Set(ids).size,ids.length,'duplicate IDs');
  for(const x of html.matchAll(/\b(?:for|aria-describedby|aria-labelledby)=["']([^"']+)["']/g))for(const id of x[1].split(/\s+/)) assert.ok(ids.includes(id),`missing reference ${id}`);
  for(const x of html.matchAll(/<(?:input|select|textarea)\b[^>]*>/g)){
@@ -72,7 +73,9 @@ test('V3 STATIC: color previews have text equivalents and both fullscreen contro
  const shell=fs.readFileSync(path.join(ROOT,'src','shell.html'),'utf8');
  for(const prefix of ['object','background']){assert.match(shell,new RegExp('id="'+prefix+'-color-swatch"[^>]*role="img"[^>]*aria-label='));assert.ok(shell.includes('id="'+prefix+'-color-text"'));}
  for(const id of ['fullscreen-start','fullscreen-show','fullscreen-status','exit-fullscreen'])assert.ok(shell.includes('id="'+id+'"'));
- assert.equal((code.match(/\bsetTimeout\s*\(/g)||[]).length,1,'only the pre-existing one-shot download cleanup timer is allowed; fullscreen needs no timers');
+ const editorSource=fs.readFileSync(path.join(ROOT,'src','app.js'),'utf8');
+ assert.equal((editorSource.match(/\bsetTimeout\s*\(/g)||[]).length,1,'editor/fullscreen retains only the pre-existing download cleanup timer');
+ assert.equal((code.match(/\bsetTimeout\s*\(/g)||[]).length,4,'additional timers are only bounded image slices and private export cleanup, never timed reveal');
  assert.match(css,/\.fullscreen-exit[^}]*min-width:44px[^}]*min-height:44px/);
  assert.match(css,/\.fullscreen-exit:(?:focus-visible|focus)/);
 });

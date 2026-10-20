@@ -17,14 +17,14 @@
   }
   function hits(scene,width,height,x,y,tolerance=6){
     if(![width,height,x,y,tolerance].every(Number.isFinite)||width<=0||height<=0||tolerance<0||tolerance>24)return [];
-    if(x<0||y<0||x>width||y>height)return [];
+    const rect=M.contentRect(scene,width,height);if(x<rect.x||y<rect.y||x>rect.x+rect.width||y>rect.y+rect.height)return [];
     return M.geometry(scene,width,height).filter(item=>hit(item,x,y,tolerance)).map(item=>item.id).reverse();
   }
   function translate(scene,id,dx,dy,width,height){
     const result=M.canonicalScene(scene),o=result.scene.objects.find(item=>item.id===id);
     if(!o||![dx,dy,width,height].every(Number.isFinite)||width<=0||height<=0)throw new Error('A valid selected object and field are required.');
-    const extent=M.objectExtent(o),min=1+extent,max=99-extent,clamp=value=>Math.round(Math.max(min,Math.min(max,value))*100)/100;
-    o.x=clamp(o.x+dx*100/width);o.y=clamp(o.y+dy*100/height);return M.canonicalScene(result);
+    const extent=M.objectExtent(o),min=Math.ceil((1+extent)*100)/100,max=Math.floor((99-extent)*100)/100,clamp=value=>Math.round(Math.max(min,Math.min(max,value))*100)/100;
+    const rect=M.contentRect(result,width,height);o.x=clamp(o.x+dx*100/rect.width);o.y=clamp(o.y+dy*100/rect.height);return M.canonicalScene(result);
   }
   return Object.freeze({DRAG_THRESHOLD,HISTORY_LIMIT,point,hits,translate});
 }));

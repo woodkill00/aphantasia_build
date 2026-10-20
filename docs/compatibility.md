@@ -2,7 +2,15 @@
 
 **Evidence date: 20 October 2026.** Imagery Field is an engineering preview. “Designed to work offline” is not a claim that every browser, phone or file manager has been tested. A narrow viewport is not a physical phone; automated checks are not full accessibility or clinical assessment.
 
-## Current verified runtime
+## Current development candidate: 0.8, unreleased
+
+The expanded source includes direct editing, authored scene-v4/sequence-v3, four editable examples, local raster approximation and optional session journaling. **Exact-head native-browser and inspected visual acceptance are pending.** Scoped model, adversarial and DOM-double checks are not a whole-candidate browser pass. Current attempts, including failed/blocked runs, belong in the [test report](../imagery-app/test-results/TEST-REPORT.md) and [public work register](../project-queue.json).
+
+New native scenarios include a real browser decoding a synthetic PNG and verifying an explicitly approved journal Blob download, plus authored geometry, letterbox input, cancellation, focus and narrow/short layouts. Their presence in test code does not mean they ran successfully. `createImageBitmap`, Canvas 2D, file reads and Blob downloads are required for the corresponding optional workflow; if decoding is unavailable, the tool reports an error rather than uploading or falling back to a remote service.
+
+All v0.8 physical-device, cross-engine, OS-dialog, assistive-technology, actual zoom, empirical-usability and clinical/sensory gates remain unestablished unless an exact-source report explicitly closes that specific gate. Image allocation caps do not establish representative-device memory/latency acceptance. The [feature guide](roadmap-features.md) lists further deferrals. No 0.8 publication or hosting is claimed.
+
+## Historical verified runtime: v0.7
 
 The v0.7 runtime merged in `1b67f86ede76e176fe8a6f9b801bc8023c3f481e` is the same runtime exercised by the [final integration run 39378606917](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917).
 
@@ -16,7 +24,7 @@ The v0.7 runtime merged in `1b67f86ede76e176fe8a6f9b801bc8023c3f481e` is the sam
 
 This record identifies that runtime, not an assertion that every later documentation or packaging commit has passed CI. See the [test report](../imagery-app/test-results/TEST-REPORT.md) and [summary](../imagery-app/test-results/summary.json) for exact attempts. Failures remain recorded and are not recategorized as passes after a repair.
 
-## Scope matrix
+## Historical v0.7 scope matrix
 
 | Environment or workflow | Status | What the evidence means |
 | --- | --- | --- |
@@ -36,7 +44,20 @@ This record identifies that runtime, not an assertion that every later documenta
 
 ## File compatibility
 
-The current app exports **scene-v3** and **sequence-v2** JSON. It imports supported older scenes and sequence-v1 only after their original validation succeeds, then migrates them. Current background saturation ranges from 0–100%; legacy scene-v2/sequence-v1 validation retains 0–60%. No legacy-version export or silent invalid-file repair is provided. Notes use a separate export-only format. See [Keep your work](../imagery-app/README.md#keep-your-work).
+The published v0.7 app uses scene-v3 and sequence-v2 only. The unreleased 0.8 source preserves those viewport-relative formats and adds explicit authored scene-v4 and sequence-v3. V0.7 cannot open the new authored formats.
+
+| Document | Development import/export behavior |
+| --- | --- |
+| Scene-v1/v2 | Validate their original bounds first, then migrate to scene-v3. Never silently convert to fixed ratio. |
+| Scene-v3 | Retain legacy viewport semantics and export v3 unless explicitly converted. |
+| Scene-v4 | Retain fixed canvas, geometry/effects/timing and export v4. |
+| Sequence-v1 | Validate original bounds, then migrate to sequence-v2. |
+| Sequence-v2 | Retain viewport snapshots and export v2. |
+| Sequence-v3 | Require the same authored canvas for the sequence and every snapshot; export v3. Mixed-format or mismatched-ratio captures fail atomically. |
+| Note-v1 / private-journal-v1 | Separate, previewed, opt-in export-only files; neither is imported or included in scene/sequence JSON. |
+| Local PNG/JPEG | Optional still-image input only, not a scene import. At most 8 MiB, 4096 per side and 8,388,608 decoded pixels. No original/metadata export; derived shapes remain potentially identifying. |
+
+Scene/sequence JSON is limited to 1 MiB. Current scene-v3/v4 and sequence-v2/v3 background saturation is 0–100%; original scene-v2/sequence-v1 validation retains 0–60%. Invalid legacy values are rejected, not silently repaired. No downgrade export is provided. GIF, SVG, animated PNG and other raster formats are not supported by the approximation UI. See [Keep your work](../imagery-app/README.md#keep-your-work) and the [architecture](architecture.md).
 
 ## Report a new environment accurately
 

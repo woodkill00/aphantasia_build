@@ -1,25 +1,29 @@
 {
   "date": "2026-10-20",
-  "status": "V08_DIRECT_EDITOR_LOCAL_TESTS_NATIVE_PENDING",
+  "status": "SCOPED_TOUCHSTART_PORT_NODE_PASS_NATIVE_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 179635,
-    "sha256": "451729a15993d51fcc5c432b4c18849884ff0f4904d98c1f095b606c0e2156c1"
+    "bytes": 277594,
+    "sha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23"
   },
   "browser": {
-    "status": "SCOPED_TOUCHSTART_REPAIR_NATIVE_PENDING",
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39416525048",
-    "previousHead": "8fef7dd862dc7e33e0f3f171ab88c1cbd60bb2f2",
-    "passed": 113,
-    "failed": 1,
-    "findings": "Native trace directly observed browser fling activation consuming the original Undo tap at74.6ms release. Other releases exceeded80ms and passed. Scoped canvas touchstart cancellation and explicit rapid-release (<80ms) first-tap/trace gate require fresh native execution. No physical-device claim.",
-    "preparedGroups": 116,
-    "timeoutBudget": {
-      "nativeStepMinutes": 15,
-      "jobMinutes": 18,
-      "measuredExpandedBaselineSeconds": 585.313,
-      "rationale": "Same required single job and sandbox; two new diagnostic cases plus bounded tracing/runner headroom. See browser procedure."
+    "status": "NOT_RUN_CURRENT_HEAD",
+    "preparedGroups": 128,
+    "expectedCaptures": 108,
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39412858934",
+    "previousHead": "08d4bf9d453604116b2b9e1a33bdd94dac7993b8",
+    "previousPassed": 120,
+    "previousFailed": 4,
+    "previousCapturesInspected": 98,
+    "findings": "All new aperture/text assertions passed; four mobile drag-to-Undo variants failed. Touch-default experiment and focused Undo capture correction require fresh exact-head native and visual evidence.",
+    "previousCapturesVerified": 104,
+    "note": "Scoped guarded canvas touchstart repair from independently accepted P1 is ported. Current larger runtime requires its own exact-head native, visual and packaging gates. Prior failures remain historical.",
+    "p1Reference": {
+      "head": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824",
+      "nativePassed": 116,
+      "status": "PASS_SEPARATE_SMALLER_RUNTIME"
     }
   },
   "historicalV07": {
@@ -1025,8 +1029,14 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 591,
-    "passed": 591,
-    "failed": 0
+    "total": 764,
+    "passed": 764,
+    "failed": 0,
+    "skipped": 0
+  },
+  "documentation": {
+    "status": "PASS",
+    "markdownFiles": 34,
+    "localLinks": 220
   }
 }
