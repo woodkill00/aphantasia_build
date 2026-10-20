@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T02:24:00Z",
+  "updated": "2026-10-20T04:02:48Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1341,23 +1341,38 @@
     {
       "id": "IF-041",
       "title": "Show actual scene edits live",
-      "status": "scoped_checks_pass",
+      "status": "complete_for_scoped_software_release",
       "scope": "Explicit live preview of valid manual object and background edits without repeated Apply/Show; visible responsive preview; cancellation and snapshot isolation retained.",
       "evidence": [
-        "349 non-browser checks;82/82 native groups;36 actual captures reviewed.",
-        "Full report/cleanup passed but six-minute CI step timed out; budget-only retry required.",
+        "349 non-browser checks,82/82 native groups,36 reviewed captures.",
+        "Final clean-exit CI https://github.com/woodkill00/aphantasia_build/actions/runs/39358880818 passed.",
+        "Merged as95e0483905b8aa5845127a3f9ac637720e8ad380."
+      ],
+      "nextAction": "No remaining implementation action; device, accessibility and qualified sensory validation are separate unclaimed scopes."
+    },
+    {
+      "id": "IF-042",
+      "title": "Add precise styling and finite item timelines",
+      "status": "verified_pending_documentation_integration",
+      "scope": "Typed range values and fine steps; HSL4/60/4 new-scene background; independent outline/shadow colors; per-item starts/fades/holds, shared slow opacity pulse, overlapping finite preview, duplicate and sequencing helpers; old files migrate without replacing saved appearance.",
+      "evidence": [
+        "424/424 non-browser checks pass.",
+        "96/96 native Chrome groups pass in https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160.",
+        "Exact HTML SHA256 920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97.",
+        "All 52 actual rendered captures hash/byte verified and independently inspected; no visual blocker.",
+        "First run 39365150191 failed two fixture imports; complete retry passed all formerly unexecuted tails without runtime/assertion changes.",
         "imagery-app/test-results/TEST-REPORT.md"
       ],
-      "nextAction": "Verify exact-head clean-exit CI before merging. Physical-device and full accessibility validation remain separate."
+      "nextAction": "Require green full CI for documentation-only integration, then maintainer merge. Broader physical-device, accessibility and qualified sensory gates remain separate."
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
-    "targetBranch": "feat/live-colors-clean-fullscreen",
+    "repositoryBaseCommit": "95e0483905b8aa5845127a3f9ac637720e8ad380",
+    "targetBranch": "feat/item-style-timeline",
     "appPath": "imagery-app/index.html",
-    "appSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
-    "appBytes": 114116,
-    "note": "Current tested source head 13cfac66e80b55d401b454dc99c8e6c690f09962; successful native run 39352924875. Documentation-only integration follows."
+    "appSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
+    "appBytes": 162947,
+    "note": "Exact source 3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79 passed full native run 39366282160. Documentation-only integration retains this runtime and requires its own complete CI result."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
@@ -1391,7 +1406,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Authorized version 0.4 scene/sequence implementation complete in scoped software verification; broader features deferred."
+      "currentStatus": "Version 0.6 item styles, precise controls and finite item timeline implemented under the documented contract."
     },
     {
       "role": "tester",
@@ -1408,7 +1423,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "324 non-browser and 74 native Chrome groups passed; physical-device and full manual accessibility checks remain pending."
+      "currentStatus": "424 non-browser checks, 96 native Chrome groups and 52 independently inspected actual frames passed for the exact recorded v0.6 runtime; broader acceptance gates remain separate."
     },
     {
       "role": "reviewer",
@@ -1423,7 +1438,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Source, privacy and software evidence reviewed; qualified sensory/clinical review remains pending."
+      "currentStatus": "Current source, strict migrations, scoped software evidence, public data and documentation independently reviewed; full accessibility and qualified sensory/clinical review remain unclaimed."
     },
     {
       "role": "integrator",
@@ -1440,18 +1455,20 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Documentation integration and final CI rerun active; no merge or deployment performed."
+      "currentStatus": "Current source and full retry verified; documentation-only evidence integration and exact-head CI remain before maintainer merge. No deployment."
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version 0.5 scoped checks pass: 349 non-browser, 82 native groups and 36 reviewed captures. Workflow run hit six-minute deadline after full report/cleanup. Budget-only repair requires clean-exit CI before merge.",
+  "currentStatus": "Version 0.6 scoped software verification passed: 424 non-browser checks, 96 native Chrome groups, 52 verified/independently inspected actual frames. Final documentation-only integration requires exact-head green CI before merge. Physical-device, full accessibility and qualified sensory/clinical gates remain unclaimed.",
   "currentIteration": {
-    "base": "fee5b718abf6a31433be9f46900b7e342753fa17",
-    "remoteBranch": "feat/live-scene-preview",
-    "htmlSha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326",
-    "sourceHead": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
-    "nativeStatus": "REPORT_PASS_WORKFLOW_TIMEOUT",
-    "candidateRun": 39358013657,
-    "pullRequest": 3
+    "base": "95e0483905b8aa5845127a3f9ac637720e8ad380",
+    "remoteBranch": "feat/item-style-timeline",
+    "htmlSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
+    "sourceHead": "3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79",
+    "nativeStatus": "PASS",
+    "runId": 39366282160,
+    "visualCaptures": 52,
+    "visualReview": "PASS",
+    "integrationStatus": "DOCUMENTATION_ONLY_EXACT_HEAD_CI_REQUIRED"
   }
 }

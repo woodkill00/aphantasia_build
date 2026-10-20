@@ -1,4 +1,4 @@
-# One-pass sequence editor specification
+# One-pass snapshot sequence editor specification
 
 Status: authorized implementation after independent scripted user journeys, actual screenshot review, design/coding discussion, and risk research on 2026-10-20. No claim of human-study, clinical or physiological acceptance.
 
@@ -8,11 +8,15 @@ Add ordered scene snapshots, configurable hold times and adjacent crossfades, si
 
 Prototype capacity: 1–32 nonempty steps, each 1–12 objects validated by the existing static model. Hold 1,000–600,000 ms; nonfinal transition 0–60,000 ms; both in 500 ms increments. Final transition is exactly zero. Total equals sum of holds and nonfinal transitions, at most 3,600,000 ms. Defaults: hold 3,000 ms and outgoing crossfade 1,000 ms. Zero transition is a direct cut with no intermediate blank frame. These are current supported engineering bounds, not medical thresholds. A crossfade may temporarily include two 12-object snapshots, up to 24 objects.
 
-One shared background, including existing validated nonblack backgrounds, stays constant through playback. The first/last display change and composite patterns still need risk consideration. No automatic replay, strobe/pulse oscillator, contrast-inversion or exposure escalation in this increment. Broader effect-curve authoring and output analysis remain separate future work; a warning is not medical clearance.
+One shared background, including existing validated nonblack backgrounds, stays constant through playback. The first/last display change and composite patterns still need risk consideration. Snapshot playback has no automatic replay, nested item-pulse oscillator, strobe, contrast inversion or exposure escalation. The separate item timeline supports only the finite shared-clock opacity pulse specified in its own contract. Broader effect-curve authoring and output analysis remain separate future work; a warning is not medical clearance.
 
 Timed playback is windowed-only with Pause and Stop kept reachable. Static/manual previews may use clean fullscreen. Fullscreen transitions conceal and cancel. Reduced-motion preference uses manual stepping; preference changes stop playback, never resume it.
 
-## Closed portable schema
+## Current migration extension
+
+Version 0.6 uses sequence version 2 to retain styled scene-version-3 objects and each step's `pulsePeriodMs`. Version 1 inputs are validated before migration with disabled effects/default item timing and a 4,000 ms period. Snapshot playback keeps its original single clock and renders items at static full opacity: per-item timing and pulse are preserved for loading a snapshot into the scene editor, not nested inside snapshot playback. See [the item specification](item-timeline.md).
+
+## Historical version 1 portable schema
 
 Root: format `imagery-field-sequence`, version `1`, sampler `ordered-crossfade-1`, sequence.
 Sequence exact keys: name, background, steps.

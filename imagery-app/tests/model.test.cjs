@@ -8,44 +8,44 @@ const stateScene=c=>c.getState().current;
 function rejects(s){assert.equal(m.validateScene(s).ok,false);assert.throws(()=>m.canonicalScene(s));}
 function accepts(s){const got=m.canonicalScene(s);assert.equal(m.validateScene(s).ok,true);assert.deepEqual(m.parseScene(JSON.stringify(got)),got);return got;}
 
-test('MODEL V2: presets valid, fresh, versioned, frozen constants',()=>{
- assert.ok(m.presets().length>=5);for(const s of m.presets()){assert.equal(s.version,2);accepts(s)}
- assert.equal(m.VERSION,2);assert.equal(m.SAMPLER,'static-objects-2');assert.ok(Object.isFrozen(m));assert.ok(Object.isFrozen(m.SHAPES));
+test('MODEL V3: presets valid, fresh, versioned, frozen constants',()=>{
+ assert.ok(m.presets().length>=5);for(const s of m.presets()){assert.equal(s.version,3);accepts(s)}
+ assert.equal(m.VERSION,3);assert.equal(m.SAMPLER,'styled-objects-3');assert.ok(Object.isFrozen(m));assert.ok(Object.isFrozen(m.SHAPES));
  assert.deepEqual([...m.SHAPES].sort(),['circle','dot','pixel','square','triangle']);const p=m.presets();p[0].scene.name='changed';assert.notEqual(m.presets()[0].scene.name,'changed');
 });
-test('MODEL V2: canonical copies stable, independent and closed',()=>{
+test('MODEL V3: canonical copies stable, independent and closed',()=>{
  const p=base(),c=m.canonicalScene(p);assert.deepEqual(c,p);assert.notEqual(c,p);c.scene.objects[0].color.h=1;assert.equal(p.scene.objects[0].color.h,200);
  assert.deepEqual(m.parseScene(JSON.stringify(p,null,2)),p);assert.deepEqual(m.canonicalScene(Object.assign(Object.create(null),p)),p);
 });
-for(const field of ['format','version','sampler','scene'])test(`VALIDATE V2: missing root ${field}`,()=>{const s=base();delete s[field];rejects(s)});
-for(const field of ['name','background','objects'])test(`VALIDATE V2: missing scene ${field}`,()=>{const s=base();delete s.scene[field];rejects(s)});
-for(const field of ['id','shape','x','y','size','color'])test(`VALIDATE V2: missing object ${field}`,()=>{const s=base();delete s.scene.objects[0][field];rejects(s)});
-for(const loc of ['background','color'])for(const field of ['h','s','l'])test(`VALIDATE V2: missing ${loc} ${field}`,()=>{const s=base();delete (loc==='background'?s.scene.background:s.scene.objects[0].color)[field];rejects(s)});
-for(const bad of [null,[],true,42,'scene',new Date()])test(`VALIDATE V2: rejects root ${String(bad)}`,()=>rejects(bad));
-for(const bad of [null,[],true,42,'scene',new Date()])test(`VALIDATE V2: rejects nested objects ${String(bad)}`,()=>{for(const location of ['scene','background','object','color']){const s=base();if(location==='scene')s.scene=bad;else if(location==='background')s.scene.background=bad;else if(location==='object')s.scene.objects[0]=bad;else s.scene.objects[0].color=bad;rejects(s)}});
-for(const [key,value]of [['format','other'],['version',0],['version',3],['version','2'],['sampler','unknown'],['sampler',1],['sampler','sparse-fixed-1']])test(`VALIDATE V2: rejects ${key} ${value}`,()=>{const s=base();s[key]=value;rejects(s)});
-for(const key of ['animation','url','html','script','__proto__','constructor','prototype','preferences','notes','timeline','density','seed'])test(`VALIDATE V2: rejects unsupported field ${key} at every object level`,()=>{
+for(const field of ['format','version','sampler','scene'])test(`VALIDATE V3: missing root ${field}`,()=>{const s=base();delete s[field];rejects(s)});
+for(const field of ['name','background','objects'])test(`VALIDATE V3: missing scene ${field}`,()=>{const s=base();delete s.scene[field];rejects(s)});
+for(const field of ['id','shape','x','y','size','color'])test(`VALIDATE V3: missing object ${field}`,()=>{const s=base();delete s.scene.objects[0][field];rejects(s)});
+for(const loc of ['background','color'])for(const field of ['h','s','l'])test(`VALIDATE V3: missing ${loc} ${field}`,()=>{const s=base();delete (loc==='background'?s.scene.background:s.scene.objects[0].color)[field];rejects(s)});
+for(const bad of [null,[],true,42,'scene',new Date()])test(`VALIDATE V3: rejects root ${String(bad)}`,()=>rejects(bad));
+for(const bad of [null,[],true,42,'scene',new Date()])test(`VALIDATE V3: rejects nested objects ${String(bad)}`,()=>{for(const location of ['scene','background','object','color']){const s=base();if(location==='scene')s.scene=bad;else if(location==='background')s.scene.background=bad;else if(location==='object')s.scene.objects[0]=bad;else s.scene.objects[0].color=bad;rejects(s)}});
+for(const [key,value]of [['format','other'],['version',0],['version',4],['version','2'],['sampler','unknown'],['sampler',1],['sampler','sparse-fixed-1']])test(`VALIDATE V3: rejects ${key} ${value}`,()=>{const s=base();s[key]=value;rejects(s)});
+for(const key of ['animation','url','html','script','__proto__','constructor','prototype','preferences','notes','timeline','density','seed'])test(`VALIDATE V3: rejects unsupported field ${key} at every object level`,()=>{
  for(const location of ['root','scene','object','background','color']){const s=base(),at={root:s,scene:s.scene,object:s.scene.objects[0],background:s.scene.background,color:s.scene.objects[0].color}[location];Object.defineProperty(at,key,{value:'test',enumerable:true});rejects(s)}
 });
-test('VALIDATE V2: symbols, accessors, exotic prototypes rejected without execution',()=>{
+test('VALIDATE V3: symbols, accessors, exotic prototypes rejected without execution',()=>{
  let invoked=0;for(const location of ['root','scene','object','background','color']){const s=base(),at={root:s,scene:s.scene,object:s.scene.objects[0],background:s.scene.background,color:s.scene.objects[0].color}[location];const key=Object.keys(at)[0];Object.defineProperty(at,key,{get(){invoked++;throw Error('getter executed')},enumerable:true});rejects(s)}assert.equal(invoked,0);
  for(const mutate of [s=>s.scene.objects[0][Symbol('x')]=1,s=>Object.setPrototypeOf(s.scene.background,{a:1})]){const s=base();mutate(s);rejects(s)}
 });
-test('VALIDATE V2: object arrays are dense, closed, bounded and ordinary',()=>{
+test('VALIDATE V3: object arrays are dense, closed, bounded and ordinary',()=>{
  accepts(scene({objects:[]}));accepts(scene({objects:Array.from({length:12},(_,i)=>({...base().scene.objects[0],id:`object-${i+1}`}))}));
  for(const value of [null,{},'objects',Array.from({length:13},(_,i)=>({...base().scene.objects[0],id:`object-${i+1}`}))])rejects(scene({objects:value}));
  let invoked=0;for(const mutate of [a=>delete a[0],a=>a.extra=true,a=>a[Symbol('x')]=true,a=>Object.defineProperty(a,'0',{get(){invoked++;return base().scene.objects[0]}}),a=>Object.setPrototypeOf(a,{})]){const s=base();mutate(s.scene.objects);rejects(s)}assert.equal(invoked,0);
 });
-test('VALIDATE V2: unique bounded stable IDs',()=>{
+test('VALIDATE V3: unique bounded stable IDs',()=>{
  for(const id of ['object-1','object-999999'])accepts(object({id}));
  for(const id of ['',1,null,'object-0','object-01','object-1000000','dot-1','object-1\n','__proto__','constructor'])rejects(object({id}));
  const s=base();s.scene.objects.push(copy(s.scene.objects[0]));rejects(s);
 });
-for(const field of ['x','y'])test(`VALIDATE V2: ${field} finite positions and precision`,()=>{
+for(const field of ['x','y'])test(`VALIDATE V3: ${field} finite positions and precision`,()=>{
  for(const value of [25,75,50.25])accepts(object({[field]:value}));
  for(const value of [-1,101,50.001,NaN,Infinity,-Infinity,'50',null,false,{},[]])rejects(object({[field]:value}));
 });
-test('VALIDATE V2: shape size ranges and inset enforced including contour stroke',()=>{
+test('VALIDATE V3: shape size ranges and inset enforced including contour stroke',()=>{
  for(const shape of ['dot','pixel','circle','square','triangle']){
   const max=['dot','pixel'].includes(shape)?8:28;for(const size of [1,max])accepts(object({shape,size}));
   for(const size of [0,max+1,1.5,NaN,Infinity,'1',null,false,{},[]])rejects(object({shape,size}));
@@ -54,10 +54,10 @@ test('VALIDATE V2: shape size ranges and inset enforced including contour stroke
  }
  for(const shape of ['','dots','stripes','animated',null,0,{},[]])rejects(object({shape}));
 });
-for(const [location,field,min,max]of [['background','h',0,359],['background','s',0,60],['background','l',0,40],['color','h',0,359],['color','s',0,70],['color','l',10,70]])test(`VALIDATE V2: ${location}.${field} boundaries and types`,()=>{
+for(const [location,field,min,max]of [['background','h',0,359],['background','s',0,60],['background','l',0,40],['color','h',0,359],['color','s',0,70],['color','l',10,70]])test(`VALIDATE V3: ${location}.${field} boundaries and types`,()=>{
  for(const v of [min,max,min-1,max+1,NaN,Infinity,-Infinity,1.5,String(min),null,false,{},[]]){const s=base();(location==='background'?s.scene.background:s.scene.objects[0].color)[field]=v;if(v===min||v===max)accepts(s);else rejects(s)}
 });
-test('VALIDATE V2: name boundaries, controls, markup remains inert text',()=>{
+test('VALIDATE V3: name boundaries, controls, markup remains inert text',()=>{
  for(const name of ['', ' ', '\t', 'a'.repeat(65),1,null,{},[],'x\u0000','x\u007f','\u202eabc','a\u2069'])rejects(scene({name}));
  for(const name of ['x','x'.repeat(64),'⚪ synthetic','<img src=x onerror=alert(1)>','https://example.invalid'])accepts(scene({name}));
 });
@@ -71,8 +71,8 @@ test('MIGRATE V1: original closed objects and unsupported enums still rejected',
  for(const shape of ['dot','pixel','stripes','__proto__',null])rejects(legacy({shape}));for(const palette of ['','__proto__','constructor',0,null])rejects(legacy({palette}));
  accepts(legacy({size:14,dotCount:5,dotRadius:2})); // This boundary was valid in v1.
 });
-test('MIGRATE V1: dots and contours preserve logical geometry and canonical v2 re-export',()=>{
- const migrated=m.parseScene(JSON.stringify(legacy({size:20,dotCount:5})));assert.equal(migrated.version,2);assert.equal(migrated.sampler,'static-objects-2');assert.deepEqual(migrated.scene.background,{h:0,s:0,l:0});
+test('MIGRATE V1: dots and contours preserve logical geometry and canonical v3 re-export',()=>{
+ const migrated=m.parseScene(JSON.stringify(legacy({size:20,dotCount:5})));assert.equal(migrated.version,3);assert.equal(migrated.sampler,'styled-objects-3');assert.deepEqual(migrated.scene.background,{h:0,s:0,l:0});
  assert.deepEqual(migrated.scene.objects.map(o=>({shape:o.shape,x:o.x,y:o.y,size:o.size})),[{shape:'dot',x:50,y:50,size:2},{shape:'dot',x:40.4,y:43,size:2},{shape:'dot',x:60,y:44,size:2},{shape:'dot',x:45,y:60,size:2},{shape:'dot',x:59,y:60,size:2}]);
  for(const shape of ['circle','square','triangle']){const got=m.canonicalScene(legacy({shape,size:20}));assert.equal(got.scene.objects.length,1);assert.equal(got.scene.objects[0].shape,shape);assert.equal(got.scene.objects[0].size,20);assert.deepEqual(m.parseScene(JSON.stringify(got)),got)}
 });
@@ -84,8 +84,8 @@ test('MIGRATE V1: all 7200 prior boundary combinations remain valid or retain ol
 test('PARSE: malformed/nontext/nested inputs fail without disturbing model',()=>{
  for(const text of ['', '{','null','[]','true','42','"string"','{"scene":}', '/*comment*/{}','{"a":1,}',undefined,null,{},Buffer.from('{}'),'['.repeat(2000)+'0'+']'.repeat(2000)])assert.throws(()=>m.parseScene(text));accepts(base());
 });
-test('PARSE V2: duplicates rejected at every object depth and escaped spelling',()=>{
- const raw=JSON.stringify(base());for(const text of [raw.replace('"version":2','"version":999,"version":2'),raw.replace('"version":2','"version":2,"\\u0076ersion":2'),raw.replace('"x":50','"x":25,"x":50'),raw.replace('"scene":','"scene":null,"scene":'),raw.replace('"h":0','"h":1,"h":0'),raw.replace('"h":200','"h":1,"\\u0068":200')])assert.throws(()=>m.parseScene(text),/Duplicate/);
+test('PARSE V3: duplicates rejected at every object depth and escaped spelling',()=>{
+ const raw=JSON.stringify(base());for(const text of [raw.replace('"version":3','"version":999,"version":3'),raw.replace('"version":3','"version":3,"\\u0076ersion":3'),raw.replace('"x":50','"x":25,"x":50'),raw.replace('"scene":','"scene":null,"scene":'),raw.replace('"h":0','"h":1,"h":0'),raw.replace('"h":200','"h":1,"\\u0068":200')])assert.throws(()=>m.parseScene(text),/Duplicate/);
  const s=base();s.scene.objects.push({...s.scene.objects[0],id:'object-2'});accepts(s);
 });
 test('PARSE: bytes and bounded duplicate errors',()=>{
@@ -95,17 +95,17 @@ test('PARSE: bytes and bounded duplicate errors',()=>{
 });
 test('PARSE: JSON punctuation/escape/surrogate/key-like strings remain data',()=>{for(const name of ['{ }, : [ ]','a "quoted" value','back\\slash','version scene name','é⚪','name,name,name'])accepts(scene({name}));});
 test('PRIVACY: canonical output only scene data; notebooks rejected',()=>{assert.deepEqual(Object.keys(base()),['format','version','sampler','scene']);rejects({...base(),notes:'synthetic note'});rejects({format:'imagery-observations',version:1,notes:'synthetic'});});
-test('GEOMETRY V2: deterministic, pure; viewport shape dimensions are isotropic',()=>{
+test('GEOMETRY V3: deterministic, pure; viewport shape dimensions are isotropic',()=>{
  const s=base(),before=copy(s),oldRandom=Math.random,oldNow=Date.now;try{Math.random=()=>{throw Error('random consulted')};Date.now=()=>{throw Error('clock consulted')};
   for(const [w,h]of [[100,100],[1600,900],[390,844]]){const g=m.geometry(s,w,h)[0];assert.equal(g.x,w/2);assert.equal(g.y,h/2);assert.equal(g.radius,Math.min(w,h)/10);assert.equal(g.lineWidth,Math.min(w,h)/100);assert.equal(g.id,'object-1');assert.equal(g.color,'hsl(200 20% 45%)');assert.deepEqual(m.geometry(s,w,h),m.geometry(s,w,h));}assert.deepEqual(s,before);
  }finally{Math.random=oldRandom;Date.now=oldNow}
 });
-test('GEOMETRY V2: dot/pixel/square/triangle dimensions and distinct viewport coordinates',()=>{
+test('GEOMETRY V3: dot/pixel/square/triangle dimensions and distinct viewport coordinates',()=>{
  const dot=m.geometry(object({shape:'dot',size:8,x:25,y:75}),1000,500)[0];assert.equal(dot.x,250);assert.equal(dot.y,375);assert.equal(dot.radius,20);
  for(const shape of ['pixel','square','triangle']){const g=m.geometry(object({shape,size:8}),1000,500)[0];assert.equal(g.kind,'polygon');const xs=g.points.map(p=>p[0]),ys=g.points.map(p=>p[1]);assert.equal(Math.max(...xs)-Math.min(...xs),40);assert.equal(Math.max(...ys)-Math.min(...ys),40)}
  assert.deepEqual(m.geometry(scene({objects:[]})),[]);for(const p of m.presets())assert.ok(m.describe(p).includes(p.scene.name));
 });
-test('GEOMETRY V2: invalid source and viewport values never reach drawing',()=>{assert.throws(()=>m.geometry(object({shape:'stripes'})));assert.throws(()=>m.describe(object({x:-1})));for(const [w,h]of [[0,100],[100,0],[-1,100],[Infinity,100],[100,NaN],['100',100]])assert.throws(()=>m.geometry(base(),w,h));});
+test('GEOMETRY V3: invalid source and viewport values never reach drawing',()=>{assert.throws(()=>m.geometry(object({shape:'stripes'})));assert.throws(()=>m.describe(object({x:-1})));for(const [w,h]of [[0,100],[100,0],[-1,100],[Infinity,100],[100,NaN],['100',100]])assert.throws(()=>m.geometry(base(),w,h));});
 test('STATE: startup hidden, immutable snapshots, no-op Apply without history',()=>{const {c}=controller();const s=c.getState();assert.equal(s.visible,false);assert.equal(s.dirty,false);assert.equal(s.undoCount,0);s.current.scene.objects[0].x=0;assert.equal(stateScene(c).scene.objects[0].x,50);assert.equal(c.apply().ok,true);assert.equal(c.getState().revision,0);assert.equal(c.getState().undoCount,0);});
 test('STATE: staged object and background edits conceal and need explicit Apply/Show',()=>{const {c,advance}=controller();assert.equal(c.show().ok,true);const p=object({shape:'square'});p.scene.background.l=20;assert.equal(c.stage(p).ok,true);assert.equal(c.getState().visible,false);assert.equal(stateScene(c).scene.objects[0].shape,'circle');assert.equal(c.getState().dirty,true);assert.equal(c.show().ok,false);assert.equal(c.apply().ok,true);assert.equal(c.getState().visible,false);assert.equal(c.show().ok,false);advance();assert.equal(c.getState().visible,false);assert.equal(c.show().ok,true);assert.deepEqual(stateScene(c),p);});
 test('STATE: dirty draft blocks Show; discard restores current; invalid stage/apply retains prior data',()=>{const {c}=controller(),original=stateScene(c);c.stage(scene({name:'valid draft'}));assert.equal(c.show().ok,false);assert.equal(c.stage(object({x:-1})).ok,false);assert.equal(c.getState().draft.scene.name,'valid draft');assert.equal(c.apply(object({shape:'animated'})).ok,false);assert.deepEqual(stateScene(c),original);c.discard();assert.equal(c.getState().dirty,false);assert.equal(c.show().ok,true);});
@@ -122,7 +122,7 @@ test('PROPERTY: seeded 10000 combined commands preserve validation/history/expli
   const s=c.getState();assert.equal(m.validateScene(s.current).ok,true);assert.equal(m.validateScene(s.draft).ok,true);assert.ok(s.undoCount<=m.HISTORY_LIMIT);assert.ok(s.redoCount<=m.HISTORY_LIMIT);assert.ok(s.revision>=before.revision);if(!before.visible&&s.visible)assert.ok(cmd===0&&result.ok);if([1,2,8].includes(cmd))assert.equal(s.visible,false);if(cmd===10)assert.deepEqual(s.current,before.current);
  }
 });
-for(const action of ['invalid-apply','discard','empty-undo','empty-redo'])test(`STATE V2: ${action} conceals and invalidates pending work even without accepted data change`,()=>{
+for(const action of ['invalid-apply','discard','empty-undo','empty-redo'])test(`STATE V3: ${action} conceals and invalidates pending work even without accepted data change`,()=>{
  const {c}=controller();const before=stateScene(c);assert.equal(c.show().ok,true);if(action==='invalid-apply')assert.equal(c.apply(object({x:-1})).ok,false);else c[action.replace('empty-','')]();assert.equal(c.getState().visible,false);assert.deepEqual(stateScene(c),before);assert.equal(c.show().ok,false);
 });
 

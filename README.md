@@ -1,10 +1,10 @@
 # Imagery Field
 
-A local-first scene and sequence editor. Version 0.5 makes the actual scene update live from manual edits after one explicit Live preview action. Version 0.4 added ordered scene snapshots, editable holds and adjacent crossfades, manual step preview, and explicitly started one-pass playback. Static scenes still have individual dots/pixels/outlines, object/background HSL controls, immediate editor-only color samples, and optional clean fullscreen viewing.
+A local-first scene and sequence editor. Version 0.6 adds precise numeric/step controls, independently colored item outlines and shadows, and a finite per-item timeline with overlapping fades. Live actual-scene editing remains separate from timed playback. See the [item editor and timeline contract](docs/item-timeline.md).
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
 
-**Scoped software evidence:** version 0.5 passed 349 non-browser checks and all 82 native Chrome groups, with 36 rendered captures reviewed. Its recorded native run hit the old workflow deadline after reporting success; the exact-head clean-exit CI gate is tracked separately in PR checks. Independent source/user-flow review and actual rendered-frame inspection informed the repairs. Physical-device, full accessibility and clinical acceptance remain separate. See the [sequence contract](docs/sequence-spec.md) and [current test report](imagery-app/test-results/TEST-REPORT.md).
+**Scoped software verification:** version 0.6 passed **424 code checks and 96/96 native Chrome groups** in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), with all 52 actual rendered captures verified and independently inspected. The [test report](imagery-app/test-results/TEST-REPORT.md) records the exact source/runtime, earlier fixture failure, full retry and remaining limits. Documentation-only integration still requires green exact-head CI before merge.
 
 ## Open and use the app
 
@@ -18,13 +18,21 @@ Download and extract the repository, then open `imagery-app/index.html` in a bro
 
 **Load 11-second example** replaces the sequence with circle → square → triangle, stays hidden, and does not start playback. Each shape holds for 3 seconds; the first two outgoing crossfades last 1 second. It is an editable authoring example, not a viewing prescription.
 
-A sequence supports 1–32 nonempty snapshots, 1–12 objects each, holds of 1–600 seconds, and transitions of 0–60 seconds, both in 0.5-second increments. A zero transition is a direct cut, and the final transition is zero. Total duration is at most one hour. These are product-capacity limits, not medical thresholds. One shared background stays constant. There is no autoplay, automatic replay, strobe, or pulse mode.
+A sequence supports 1–32 nonempty snapshots, 1–12 objects each, holds of 1–600 seconds, and transitions of 0–60 seconds, both in 0.5-second increments. A zero transition is a direct cut, and the final transition is zero. Total duration is at most one hour. These are product-capacity limits, not medical thresholds. One shared background stays constant. Snapshot sequence playback has no autoplay, automatic replay, strobe or nested item-pulse mode; the item timeline is separate.
 
 Timed playback is windowed-only so Pause and Stop remain reachable. Static scenes and manual step previews may use clean fullscreen. Fullscreen transitions and handled lifecycle changes cancel/conceal; nothing automatically resumes. Reduced-motion preference uses manual stepping. See [app instructions](imagery-app/README.md) for exact controls, atomic capture failures, file separation, and viewing cautions.
 
+## Item editor increment
+
+New starter scenes use HSL **4°, 60%, 4%**. Imported scenes retain their saved background. Slider values are directly editable numeric controls with fine-step minus/plus actions. Optional outline and shadow effects have independent colors and geometry. Their disabled defaults preserve old imported appearance.
+
+Per-item Start, Fade in, Hold and Fade out determine visibility; items can overlap or follow one another. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and verification contract.
+
 ## Verification: separate artifacts
 
-**Version 0.5 live editing:** see the current test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and distinct workflow-timeout outcome. Earlier results below apply only to their historical artifacts.
+**Version 0.6:** 424 code checks, 96 native groups and 52 independently inspected frames on the exact 162947-byte HTML with SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`. See the linked current test report for full environment, failed-attempt and integration details.
+
+**Historical version 0.5 live editing:** see the test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and final clean-exit CI. The earlier workflow-timeout failure is retained separately. Earlier results below apply only to their historical artifacts.
 
 **Version 0.4 baseline:** [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) passed **324 non-browser checks and 74/74 native Chrome scenario groups**, 37 each for desktop and phone-sized touch emulation. Source head: `13cfac66e80b55d401b454dc99c8e6c690f09962`. The 114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux were used; browser/profile cleanup passed. This covers sequence pixels/timing, atomic edits, reduced-motion events, file flows and revised layout, not untested devices or clinical efficacy. The two earlier failing runs and their repairs remain in the test report.
 
@@ -53,6 +61,7 @@ The dependency-free real-browser suite requires Node 22+ and an already installe
 
 - [Architecture and exact data contracts](docs/architecture.md)
 - [Scene and sequence interaction design](docs/editor-redesign.md)
+- [Item appearance and finite timeline specification](docs/item-timeline.md)
 - [One-pass sequence specification](docs/sequence-spec.md)
 - [Timed-presentation boundaries](docs/timing-boundaries.md)
 - [Portable runtime rationale](docs/portable-runtime.md)
@@ -62,7 +71,7 @@ The dependency-free real-browser suite requires Node 22+ and an already installe
 - [Contributor/agent guidance](AGENTS.md)
 - [Security and private reporting](SECURITY.md)
 
-Scene, sequence, and optional observation-note files are separate downloads. There is no durable autosave, backend, telemetry, browser storage, or account system. Use synthetic data in public examples; personal exports do not belong in this repository. Broader effect-curve authoring and offscreen output analysis are future proposals, not implemented capabilities or clearance for live flashing/pulsing. Hosted deployment is outside this increment.
+Scene, sequence, and optional observation-note files are separate downloads. There is no durable autosave, backend, telemetry, browser storage, or account system. Use synthetic data in public examples; personal exports do not belong in this repository. The version 0.6 item timeline is specified separately; unrestricted flashing, arbitrary effect curves and offscreen flash-risk analysis remain outside the implemented scope. Hosted deployment is outside this increment.
 
 ## License
 

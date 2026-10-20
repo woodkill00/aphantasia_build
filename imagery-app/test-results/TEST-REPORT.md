@@ -1,3 +1,38 @@
+# Version 0.6 verified item styles and finite timelines
+
+2026-10-20. **424/424 non-browser checks and 96/96 native Chrome scenario groups PASS.** [Full successful run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), job 118443770240, tested source `3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79` through PR test-merge checkout `df3e57d63f1cba3d1749e8228f2ef6acb1d046ca`. All **52 actual synthetic rendered captures** were byte/hash verified and independently inspected; no visual blocker remained.
+
+## Exact artifact and environment
+
+- HTML: 162947 bytes; SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`.
+- Node 22.23.3, Linux, sandbox-enabled Chrome 155.0.8059.39.
+- Native duration: 7m13.973s, with successful workflow exit, browser closure and temporary-profile deletion. The eight-minute native step and ten-minute job are unchanged.
+- Commands: `node --test imagery-app/tests/*.test.cjs`; `node --check imagery-app/tests/browser-cdp.cjs`; `node imagery-app/tests/browser-cdp.cjs --check-fixtures`; `node imagery-app/tests/browser-cdp.cjs` using preinstalled Chrome.
+- Synthetic fixtures, direct-file/offline app checks, no package installation, security bypass or deployment. The inspected pages reported no runtime errors, unexpected dialogs or remote app requests.
+
+## Verified software scope
+
+Typed numeric values and fine-step buttons synchronize with ranges, including unit names and fractional validation. New-scene background is HSL 4/60/4; strict old-file migrations preserve stored backgrounds and appearance. Independent outline/shadow colors, all five shape silhouettes and whole-item grouped opacity were checked using native raster samples and actual frames.
+
+Static Live preview remains separate from explicitly started finite item playback. Per-item start/fade/hold/end intervals overlap or follow each other, and the latest end controls automatic completion. Shared-clock opacity pulse, exact painted-frame Pause/Resume, Stop/Hide, reduced-motion handling, stale-callback invalidation and mode changes passed. Item and snapshot clocks do not nest; their renderer reuses the same bounded canvas pair. Compact focused fields and action reachability were checked on narrow/short layouts. All prior live-edit, snapshot-sequence, import/export and cancellation groups were rerun, not inherited from older artifacts.
+
+## Failed attempt and repair
+
+[First run 39365150191](https://github.com/woodkill00/aphantasia_build/actions/runs/39365150191) on source `45882413759a10b5950dd1031d6d009cd585303d` passed 423 code checks and 94/96 native groups. Both legacy swatch groups failed because the test adapter overwrote styled fixture records with incomplete raw objects. The strict runtime correctly rejected the malformed schema, so later swatch/history assertions in those two groups did not execute. This was a real failed CI attempt, not a timeout. Native duration was 7m15.283s and cleanup passed. All 52 first-run frames were verified and inspected, but that did not make the aggregate run pass.
+
+The fixture-only repair passes explicit object overrides through the shared fixture builder and adds a regression for exact swatch composition/defaults plus continued rejection of malformed records. Runtime and strict swatch assertions were unchanged. The full successful retry above exercised all previously unexecuted tails. No test, timeout or security setting was weakened.
+
+## Integration and limits
+
+The recorded run verifies the exact source and runtime above. Later documentation-only integration commits must also pass their full exact-head CI before merge; see [current PR checks](https://github.com/woodkill00/aphantasia_build/pull/4/checks). This report does not assert a merge or deployment.
+
+Physical phones, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy remain unverified. Browser emulation is not physical-device evidence. Compressed screenshots supplement exact raster assertions, not a human study. Shared opacity pulse bounds are engineering restrictions, not medically safe thresholds or WCAG certification of composite output.
+
+## Previous version reconciliation
+
+Version 0.5's later [clean-exit CI run 39358880818](https://github.com/woodkill00/aphantasia_build/actions/runs/39358880818) passed 349 non-browser checks and 82 Chrome groups on source `9e26a832bf0d7e98c46e2f1bd3f24cfe5b91b1ee`; it merged as `95e0483905b8aa5845127a3f9ac637720e8ad380`. The earlier timeout report below is historical, not the final v0.5 release state. Its failures remain recorded.
+
+<!-- PRIOR-EVIDENCE -->
 # Version 0.5 live-edit software evidence
 
 2026-10-20. The exact artifact below passed **349/349 non-browser checks and 82/82 native Chrome scenario groups**. Independent source review and inspection of **36 actual rendered captures** accepted the scoped live-edit behavior and responsive controls.

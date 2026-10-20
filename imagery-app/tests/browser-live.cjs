@@ -18,14 +18,14 @@ async function runLiveScenarios({page,runCase}){
   await page.fill('#position-x','60');await page.visible();value.scene.objects[0].x=60;await pixels([60,50],value.scene.objects[0].color);await pixels([35,50],value.scene.background);
   await page.visualCapture('v5-live-colors-and-moved-item');
   const before=page.downloadsStarted.size;await page.click('#export-scene');assert.equal(page.downloadsStarted.size,before,'unapplied live draft must not export as accepted');assert.match(await page.property('#status','textContent'),/apply or discard.*before downloading/i);await page.visible();await pixels([60,50],value.scene.objects[0].color);
-  await page.click('#apply-changes');value.scene.name='Unapplied live name';const saved=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(saved.json,value);
+  await page.click('#apply-changes');value.scene.name='Unapplied live name';const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);
   console.log('LIVE_PIXEL_EVIDENCE '+JSON.stringify({device:page.device.name,channels:6,source:'trusted keyboard input; actual canvas pixel samples',appliedOnlyAfterPreview:true}));
  });
  await runCase('v5 live object edits and selection preserve preview while Discard restores applied bytes',async()=>{
   const original=fixture();await page.file('live-objects.json',original);await start();await page.nativeSelect('#add-shape','square');await page.visible();await page.click('#add-object');await page.visible();assert.equal(await page.property('#object-count','textContent'),'2 / 12');
   await page.nativeSelect('#object-select','object-1');await page.visible();await page.nativeSelect('#shape','dot');await page.visible();await page.focus('#size');await page.key('ArrowUp');await page.visible();
   await page.click('#delete-object');await page.visible();assert.equal(await page.property('#object-count','textContent'),'1 / 12');await page.nativeSelect('#preset','4');await page.visible();
-  await page.visualCapture('v5-live-preset-composition');await page.click('#discard');await page.hidden();const saved=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(saved.json,original);
+  await page.visualCapture('v5-live-preset-composition');await page.click('#discard');await page.hidden();const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,original);
  });
  await runCase('v5 live portrait and short landscape keep canvas and focused controls separately reachable',async()=>{
   await page.file('live-responsive.json',fixture());
@@ -34,7 +34,7 @@ async function runLiveScenarios({page,runCase}){
  await runCase('v5 invalid edit and explicit Hide end live mode without correction or delayed resurrection',async()=>{
   await page.file('live-invalidation.json',fixture());await start();await page.fill('#position-x','0');await page.hidden();await page.fill('#position-x','40');await page.hidden();await page.focus('#object-hue');await page.key('ArrowRight');await page.hidden();await sleep(100);await page.hidden();
   await start();await pixels([40,50],{h:121,s:40,l:50});await page.click('#hide-scene');await page.hidden();await page.focus('#background-hue');await page.key('ArrowRight');await page.hidden();await start();await page.key('Escape');await page.hidden();await page.focus('#object-saturation');await page.key('ArrowRight');await page.hidden();
-  await page.click('#discard');await page.hidden();const exported=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(exported.json,fixture());
+  await page.click('#discard');await page.hidden();const exported=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(exported.json,fixture());
  });
 }
 module.exports={runLiveScenarios,rgb};

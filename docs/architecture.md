@@ -1,17 +1,18 @@
 # Architecture and data contract
 
-Version 0.5 architecture, updated 2026-10-20. Scoped live-edit source/native/rendered evidence and the separate CI gate are recorded in the test report. The [sequence contract](sequence-spec.md) remains authoritative for sequence presentation; historical passes do not verify new live behavior.
+Version 0.6 architecture, updated 2026-10-20. The [item-timeline specification](item-timeline.md) is authoritative for scene version 3, sequence version 2, appearance effects and finite item playback. The version 2/1 contracts below are historical migration inputs; their old closed-key lists must not be mistaken for the new export formats. Scoped live-edit source/native/rendered evidence and the separate CI gate are recorded in the test report. The [sequence contract](sequence-spec.md) remains authoritative for sequence presentation; historical passes do not verify new live behavior.
 
 ## Components and rendering
 
 - `imagery-app/src/model.js`: closed static validation, canonical serialization, legacy migration, deterministic geometry, presets, and the existing visibility/history/import controller.
 - `imagery-app/src/sequence-model.js`: closed sequence validation/parser/serializer, compiled timeline, deterministic frame sampling, and injected-clock playback state. It has no DOM, canvas, RAF, network, persistence, or visibility authority.
+- `imagery-app/src/item-model.js`: pure finite per-item timeline compilation, sampling and playback state; it has no reveal or DOM authority.
 - `imagery-app/src/app.js`: scene and sequence controls, atomic capture, object selection/placement, Canvas 2D compositing, scheduling, fullscreen/lifecycle handling, local file reads, and Blob downloads.
 - `imagery-app/src/shell.html` and `style.css`: full-window field, compact Scene/Sequence section selection, one selected-step inspector, editor-only color samples, reachable Apply/capture actions, guidance, focus, and responsive rules.
 - `imagery-app/src/assemble.cjs`: developer-only assembler producing the self-contained `index.html`.
 - `imagery-app/tests/`: synthetic model, DOM/Canvas-double, static, CDP transport/fixture, and separately gated real-browser checks.
 
-The runtime uses inline classic scripts/styles, system fonts, and no remote assets. Static/manual displays redraw on relevant events. Only an explicitly started, finite, single-pass sequence schedules animation frames. At most one RAF is pending; no idle playback loop, autoplay, pulse oscillator, or automatic replay is authorized. The download-URL cleanup timer has no display authority.
+The runtime uses inline classic scripts/styles, system fonts, and no remote assets. Static/manual displays redraw on relevant events. Only an explicitly started, finite, single-pass snapshot sequence or item timeline schedules animation frames. The clocks never nest. At most one RAF is pending; no idle loop, autoplay or automatic replay is authorized. Optional item pulse uses the reviewed shared-clock opacity contract and ends with its item. The download-URL cleanup timer has no display authority.
 
 Timed playback remains windowed so Pause and Stop are reachable. Static/manual previews may use clean fullscreen: normal workspace chrome is suppressed, a keyboard/touch Exit remains, and hidden fullscreen provides a separate explicit Show route. Fullscreen entry/exit/failure conceal. Editor toggles preserve an active live draft; other presentation modes conceal. Escape does not suppress native fullscreen exit. The decorative hidden-state circle is removed from the candidate source; hidden canvas pixels stay black behind ordinary interface text/controls.
 
@@ -19,7 +20,7 @@ Object centers use percentages of actual width and height. Size and outline widt
 
 For a transition, render opaque scene A on the main canvas and opaque scene B on the offscreen canvas, each against the same background; composite B over A at the sampled alpha. Reset transform, alpha, and compositing every frame. Never accumulate previous pixels or fade the combined output through an inserted black frame. A direct cut has no transition phase. Crossfades can contain 12 + 12 objects; the validated per-snapshot cap remains 12.
 
-## Version 2 scene schema
+## Historical version 2 scene schema (migration input)
 
 A file has exactly `format`, `version`, `sampler`, and `scene` keys, with values `imagery-static-scene`, `2`, and `static-objects-2`. `scene` has exactly `name`, `background`, and `objects`.
 
@@ -43,11 +44,11 @@ HSL values describe CSS color, not calibrated luminance or hardware brightness. 
 
 Version 1 imports must first satisfy the original `sparse-fixed-1` schema and geometry checks: one legacy contour or 1–5 fixed-offset dots; integer x/y 25–75, size 14–28, radius 1–2, a supported palette, and the original inset/separation/coverage limits. Validation precedes migration; malformed legacy files receive no relaxed route.
 
-Migration preserves the name, gives the scene a black HSL background, and creates ordered `object-1`, `object-2`, … IDs. Each legacy dot becomes an independent dot at its fixed-offset center, with diameter `2 * dotRadius`; a contour keeps its shape, center, and size. Centers are rounded to two decimal places. Legacy slate/sage/sand colors become approximate whole-number HSL values `(208,11,48)`, `(126,8,49)`, and `(40,13,48)` respectively. The migrated result is validated again as version 2.
+Migration preserves the name, gives the scene a black HSL background, and creates ordered `object-1`, `object-2`, … IDs. Each legacy dot becomes an independent dot at its fixed-offset center, with diameter `2 * dotRadius`; a contour keeps its shape, center, and size. Centers are rounded to two decimal places. Legacy slate/sage/sand colors become approximate whole-number HSL values `(208,11,48)`, `(126,8,49)`, and `(40,13,48)` respectively. The intermediate composition is validated under the original version 2 rules, then extended with disabled effects and default timing to the current version 3 document.
 
-This preserves the logical composition, not a pixel-identical old screenshot: colors are approximated, and the full-window rectangular field maps center percentages across its actual dimensions while keeping shapes aspect-correct. Imports are accepted hidden. All new exports use version 2; no version 1 export is offered.
+This preserves the logical composition, not a pixel-identical old screenshot: colors are approximated, and the full-window rectangular field maps center percentages across its actual dimensions while keeping shapes aspect-correct. Imports are accepted hidden. Current exports use scene version 3; the version 2 description here records the earlier migration stage. No legacy-version export is offered.
 
-## Version 1 sequence schema
+## Historical version 1 sequence schema (migration input)
 
 This is separate from static scene version 1/2. The root has exactly `format: "imagery-field-sequence"`, `version: 1`, `sampler: "ordered-crossfade-1"`, and `sequence`. `sequence` has exactly `name`, `background`, and `steps`.
 
@@ -76,7 +77,7 @@ Reorder/delete/append normalize only boundary transitions: the new final step ge
 
 The exact 11-second reference is circle hold [0,3), circle→square crossfade [3,4), square hold [4,7), square→triangle crossfade [7,8), triangle hold [8,11), then hidden. Half-open boundaries mean 4 seconds is square hold and 11 seconds is complete. Halfway blends are sampled at 3.5 and 7.5 seconds. These values define an editable test/example timeline, not an exposure regimen.
 
-One existing scene visibility gate controls explicit draft preview, manual Show step, and timed Play, including the unchanged 3,000 ms repeat-action guard. The field begins hidden; no draft edit, import, selection, frame callback, or delayed completion can call Show on the user's behalf. A blocked explicit reveal never queues a future reveal. The guard is an engineering restriction, not a recovery interval.
+One existing scene visibility gate controls explicit draft preview, manual Show step, and timed Play, including the 3,000 ms repeat-action guard. The field begins hidden; no draft edit, import, selection, frame callback, or delayed completion can call Show on the user's behalf. A blocked explicit reveal never queues a future reveal. The guard is an engineering restriction, not a recovery interval. Manual edits while already hidden still invalidate pending imports and stale display work, but do not extend the reveal deadline. An interruption of a visible display conceals and extends the guard; explicit Hide retains its lock even when already hidden. Existing recent deadlines remain in force. This avoids postponing an explicit preview after every hidden numeric edit without letting edits reveal content.
 
 Play needs a valid sequence and resolved static/sequence fields, runs only in the window, and requires an explicit action. A callback may paint only if the captured scene epoch and sequence generation still match, the visibility gate is open, and playback remains running. It cannot reveal content. Pause cancels pending scheduling and freezes the last frame acknowledged as actually painted, including its exact elapsed position; it does not resample at click time and leaves the image visible. Resume is explicit and rebases the clock without catch-up.
 
@@ -102,4 +103,4 @@ The separate v0.3 artifact passed 241 non-browser checks and 54 native-browser g
 
 Physical devices, Safari, ordinary OS dialogs, complete manual accessibility, and qualified sensory/content review remain separate gates. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md). Software checks do not establish safety or efficacy.
 
-The only authorized timed display is the finite presentation in [the sequence specification](sequence-spec.md). Arbitrary groups/freeform paths, textures/shaders, effect curves, live strobe/pulse modes, durable storage, diagnostics, participant systems, and efficacy measures remain outside the implemented scope. Broader effect-curve authoring and offscreen output analysis are future proposals, not an implemented capability or medical clearance. Hosted deployment is not part of this increment.
+Authorized timed displays are the separate finite snapshot sequence and [per-item timeline](item-timeline.md), including the bounded shared-clock opacity pulse. Arbitrary groups/freeform paths, textures/shaders, unrestricted effect curves, strobe or independent-frequency modulation, durable storage, diagnostics, participant systems, and efficacy measures remain outside the implemented scope. Broader effect-curve authoring and offscreen output analysis are future proposals, not an implemented capability or medical clearance. Hosted deployment is not part of this increment.

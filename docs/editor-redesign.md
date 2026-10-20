@@ -1,18 +1,18 @@
 # Scene and sequence editor design
 
-Version 0.5 live editing, updated 2026-10-20. Controls have scoped source, native-pixel/focus and actual-frame evidence; the separate CI outcome is recorded in the test report. This document describes the source interaction and structure; it is not a claim that browser, physical-device, accessibility, or qualified sensory acceptance has passed. The [final sequence specification](sequence-spec.md) governs the increment.
+Version 0.6, updated 2026-10-20. This document describes the editor interaction and structure. Exact source, native-pixel/focus, actual-frame and CI outcomes are recorded separately in the test report. The [snapshot sequence specification](sequence-spec.md) and [item appearance/timeline specification](item-timeline.md) govern their separate modes; neither software acceptance nor this design establishes physical-device, full accessibility or qualified sensory acceptance.
 
 ## Product scope
 
-A local visual-design workspace with a window-filling field, 0–12 individually editable static objects, background/object HSL controls, immediate editor-only color samples, and optional clean fullscreen static/manual preview. The extension adds 1–32 ordered nonempty snapshots, editable finite holds and adjacent crossfades/cuts, manual stepping, and explicitly started single-pass playback.
+A local visual-design workspace with a window-filling field, 0–12 individually editable static objects, background/object HSL controls, immediate editor-only color samples, and optional clean fullscreen static/manual preview. Snapshot mode provides 1–32 ordered nonempty snapshots, editable finite holds and adjacent crossfades/cuts, manual stepping, and explicitly started single-pass playback. The item inspector adds typed numeric values and fine-step buttons, independently colored outlines/shadows, selectable timeline tracks and finite overlapping per-item fades with an optional shared-clock opacity pulse.
 
-This can express a user's chosen external composition or description. It does not measure internal vision, diagnose aphantasia, or establish imagery improvement. Duration, object, color, and resource limits are product-engineering choices, not medically safe settings. No autoplay/replay loop, strobe/pulse oscillator, intensity escalation, or exposure prescription is added.
+This can express a user's chosen external composition or description. It does not measure internal vision, diagnose aphantasia, or establish imagery improvement. Duration, object, color, and resource limits are product-engineering choices, not medically safe settings. No autoplay/replay loop, unrestricted strobe, independent pulse frequency, intensity escalation or exposure prescription is added. The bounded shared opacity pulse is an authoring feature, not a medically safe setting.
 
 ## What the v0.3 visual review found
 
 Two independent scripted native-browser journeys used synthetic circle/square/triangle compositions. Fourteen actual captured frames were inspected. The review found roughly 730 px of scrolling between hue and Apply, and a decorative hidden-state circle that could resemble lingering scene content. These are specific engineering usability observations, not participant data or a human usability study.
 
-The candidate addresses those findings with:
+The earlier redesign addressed those findings with:
 
 - Compact **Scene** and **Sequence** section selectors.
 - One **Selected snapshot** inspector rather than many expanded step cards.
@@ -28,7 +28,11 @@ Choose **Live preview** once to view the current valid draft. Object/background 
 
 Apply remains an explicit accepted-scene/history commit; Discard restores the accepted scene. Both hide, as do undo/redo. The Live draft/Changes staged indicator distinguishes preview from committed data. Saved sequence snapshots remain independent. Invalid input stops/conceals and reports the error; a later correction cannot reveal until explicit Live preview. Hide/Escape, imports, sequence changes, fullscreen and lifecycle events stop live preview.
 
-Small object/background samples still work while hidden. HSL is CSS color, not measured internal vision, calibrated luminance, or hardware brightness. Lightness 0 is black; saturation 0 makes hue irrelevant.
+Small object/background/outline/shadow samples still work while hidden. Each slider has a unit-labeled editable number and one-step minus/plus controls. Invalid partial values conceal; correction does not resume display. The new-scene HSL 4/60/4 background does not overwrite imported backgrounds. HSL is CSS color, not measured internal vision, calibrated luminance, or hardware brightness. Lightness 0 is black; saturation 0 makes hue irrelevant.
+
+## Finite item playback
+
+**Play items once** captures the valid current draft without applying it to history. Start, Fade in, Hold and Fade out define each item’s active interval; the latest end determines the one-pass preview duration. Optional pulse shares one absolute scene clock and multiplies the entire item’s body, outline and shadow opacity. Duplicate item and Start after previous item are one-time editing helpers, not linked dependencies. Any edit during timed playback cancels and conceals; no edit implicitly restarts it. Reduced-motion preference disables item playback while leaving static Live preview available.
 
 ## Reduced-click scene → snapshot workflow
 
@@ -52,14 +56,14 @@ Timed Play/Resume is windowed-only so Pause and Stop stay reachable. Static scen
 
 ## Data and privacy
 
-[The architecture](architecture.md) defines unchanged static version 2, validated legacy static version 1 migration, and separate `imagery-field-sequence` version 1. They are different formats even when version numbers match. Sequence JSON stores the fixed background, ordered object snapshots, names, and times; it omits notes, playback state, URLs, expressions, and loop capabilities. Imports stop/hide; invalid data retains the accepted document.
+[The architecture](architecture.md) and [item specification](item-timeline.md) define scene version 3, validated legacy scene version 1/2 migration, and separate `imagery-field-sequence` version 2 with version 1 migration. They are different formats even when version numbers match. Sequence JSON stores the fixed background, ordered styled-object snapshots, item timing/shared pulse-period metadata, names, and sequence times. Snapshot playback renders the saved items at full opacity and uses only its own hold/crossfade clock. The JSON omits notes, playback state, URLs, expressions, and loop capabilities. Imports stop/hide; invalid data retains the accepted document.
 
 Only explicitly exported local files persist by design. Optional notes remain independent and require their own exact preview and selection before download. Scene/sequence exports omit them. No network resources, accounts, telemetry, or browser storage are added. Browser/device retention or syncing is outside app control; closing is not secure deletion. Public tests/examples remain synthetic.
 
 ## Verification and remaining acceptance
 
-The separate v0.3 artifact passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), Chrome 155.0.8059.39. The [root README](../README.md) identifies its source and HTML hash. Its software pass and 14-frame visual review do not verify this sequence candidate.
+The [root README](../README.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) identify each tested source/HTML hash and distinguish current evidence from historical software passes and screenshot reviews.
 
-The candidate needs independent source review, atomic editing regressions, deterministic timeline checks, controlled-clock composited pixel checks, natural scheduling checks, all cancellation routes, reduced-motion behavior, separate export/import tests, and fresh screenshots of reachable controls. Physical devices, Safari, ordinary OS file workflows, full manual accessibility, and qualified sensory review remain separate unverified gates. Software tests are not clinical clearance or efficacy evidence. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
+The verification contract requires independent source review, atomic editing regressions, deterministic timeline checks, controlled-clock composited pixel checks, natural scheduling checks, all cancellation routes, reduced-motion behavior, separate export/import tests, and fresh screenshots of reachable controls. Physical devices, Safari, ordinary OS file workflows, full manual accessibility, and qualified sensory review remain separate unverified gates. Software tests are not clinical clearance or efficacy evidence. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
 
-Broader effect-curve authoring and offscreen output analysis remain proposals. Advanced live flash/pulse controls are unavailable; warnings alone do not establish sensory safety. Hosted deployment and new participant/research systems are outside this increment.
+Broader effect-curve authoring and offscreen output analysis remain proposals. Unrestricted strobe and independent pulse-frequency controls are unavailable; the implemented finite shared-clock opacity pulse and warnings do not establish sensory safety. Hosted deployment and new participant/research systems are outside this increment.
