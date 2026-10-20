@@ -2,7 +2,7 @@
 // Transport/fixture checks only. These never launch Chrome or establish browser compatibility.
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,hslRgb} = require('./browser-cdp.cjs');
+const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,hslRgb} = require('./browser-cdp.cjs');
 class FakeSocket extends EventTarget {
   sent=[];
   send(value) { this.sent.push(JSON.parse(value)); }
@@ -97,4 +97,9 @@ test('Independent HSL swatch oracle covers hue sectors, achromatic gray and zero
 test('Independent native-user fixture and separate RGB oracle remain deterministic',()=>{
  const {referenceScene,rgb}=require('./independent-user-scenarios.cjs'),M=require('../src/model.js');assert.deepEqual(M.parseScene(JSON.stringify(referenceScene)),referenceScene);
  for(const [color,want]of [[{h:0,s:0,l:0},[0,0,0]],[{h:0,s:0,l:50},[128,128,128]],[{h:260,s:30,l:50},[115,89,166]]])assert.deepEqual(rgb(color),want);
+});
+
+test('Fullscreen draft message requires both editor directions without requiring sentence order',()=>{
+ for(const text of ['Exit fullscreen to apply or discard staged changes before showing the scene.','Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.'])assert.doesNotThrow(()=>assertFullscreenDraftMessage(text));
+ for(const text of ['Apply or discard staged changes.','Exit fullscreen.','Changes staged.'])assert.throws(()=>assertFullscreenDraftMessage(text));
 });

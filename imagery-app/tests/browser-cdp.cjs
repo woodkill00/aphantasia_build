@@ -40,6 +40,10 @@ function initialGuardRemaining(events, now) {
   if (!guards.length) return 0;
   return Math.max(0, Math.max(...guards.map(event=>event.time)) + M.REVEAL_GAP_MS + 100 - now);
 }
+function assertFullscreenDraftMessage(message) {
+  assert.match(message,/apply or discard/i,'fullscreen draft error must explain how to resolve staged edits');
+  assert.match(message,/exit fullscreen/i,'fullscreen draft error must explain how to reach the editor');
+}
 function assertFullscreenSnapshot(snapshot, expectedElement) {
   assert.ok(snapshot, 'A native fullscreenchange event must be observed after the action');
   assert.equal(snapshot.trusted,true,'fullscreenchange must be a native browser event');
@@ -671,7 +675,7 @@ async function run() {
         await runCase(page,'v3 short fullscreen keeps guarded Show, errors and rejected Exit reachable',async()=>{
           await page.fill('#scene-name','Synthetic staged draft');await page.viewport(320,180);await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','short hidden entry');
           for(const id of ['fullscreen-show','exit-fullscreen']){const r=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height,hit:hit===e||e.contains(hit),innerWidth,innerHeight}},id);assert.ok(r.left>=0&&r.top>=0&&r.right<=r.innerWidth&&r.bottom<=r.innerHeight&&r.width>=44&&r.height>=44&&r.hit,`short fullscreen control unreachable: ${id} ${JSON.stringify(r)}`);}
-          await page.click('#fullscreen-show');await page.hidden();assert.match(await page.property('#fullscreen-status','textContent'),/exit fullscreen.*apply or discard/i);assert.equal(await page.property('#fullscreen-start','hidden'),false);
+          await page.click('#fullscreen-show');await page.hidden();assertFullscreenDraftMessage(await page.property('#fullscreen-status','textContent'));assert.equal(await page.property('#fullscreen-start','hidden'),false);
           await page.evaluate(()=>{window.__testExitFullscreen=document.exitFullscreen;document.exitFullscreen=()=>Promise.reject(Error('Synthetic exit denial'))});await page.click('#exit-fullscreen');await page.hidden();assert.equal(await page.evaluate(()=>document.fullscreenElement?.id),'stage-root');assert.equal(await page.property('#exit-fullscreen','hidden'),false);assert.equal(await page.property('#fullscreen-start','hidden'),false);assert.match(await page.property('#fullscreen-status','textContent'),/fullscreen|exit|escape/i);assert.equal(await page.property('#scene-name','value'),'Synthetic staged draft');
           await page.evaluate(()=>{document.exitFullscreen=window.__testExitFullscreen});await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'recovered native Exit');await page.hidden();
         });
@@ -733,4 +737,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,hslRgb};
+module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,hslRgb};
