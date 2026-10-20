@@ -2,7 +2,11 @@
 
 2026-10-20. The candidate implements precise numeric/range controls, the new HSL 4/60/4 background for new scenes, independently colored outlines/shadows, versioned backward-compatible files, and explicitly started finite overlapping item fades with optional shared-clock opacity pulses.
 
-**423/423 non-browser checks pass.** The **96 native Chrome groups and 52 capture checkpoints are prepared, not yet executed** for this artifact. Source review and test doubles are not rendered-browser acceptance.
+**424/424 non-browser checks pass after a fixture-only repair.** The first native run passed **94/96 groups**, but failed both legacy swatch groups because the test adapter overwrote styled fixture records with incomplete raw objects. The runtime correctly rejected them. Later assertions in those two groups did not run. A complete 96-group rerun remains required.
+
+[First run 39365150191](https://github.com/woodkill00/aphantasia_build/actions/runs/39365150191) tested source `45882413759a10b5950dd1031d6d009cd585303d` using Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39. It finished in 7m15.283s within the unchanged eight-minute native/ten-minute job budgets, with browser closure and profile cleanup passing. All 52 capture byte counts and hashes were verified and every actual frame independently inspected; no visual blocker was found. All 14 new v0.6 groups passed, but the aggregate run is still FAIL.
+
+The test-only repair sends explicit object overrides through the shared fixture builder and adds a regression for exact swatch composition plus continued malformed-record rejection. Runtime and strict swatch assertions are unchanged. No timeout, security or assertion setting was weakened.
 
 - HTML: 162947 bytes; SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`.
 - Current code-check command: `node --test imagery-app/tests/*.test.cjs`.

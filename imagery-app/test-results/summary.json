@@ -1,24 +1,45 @@
 {
   "date": "2026-10-20",
-  "status": "V06_NONBROWSER_PASS_NATIVE_PENDING",
+  "status": "V06_NONBROWSER_PASS_NATIVE_RETRY_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.6.0",
     "bytes": 162947,
     "sha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97"
   },
-  "candidateCommit": null,
+  "candidateCommit": "45882413759a10b5950dd1031d6d009cd585303d",
   "nonBrowser": {
     "status": "PASS",
-    "total": 423,
-    "passed": 423,
+    "total": 424,
+    "passed": 424,
     "failed": 0,
     "command": "node --test imagery-app/tests/*.test.cjs"
   },
   "browser": {
-    "status": "NOT_RUN",
+    "status": "RETRY_PENDING",
     "preparedGroups": 96,
-    "expectedCaptures": 52
+    "expectedCaptures": 52,
+    "failedAttempts": [
+      {
+        "runId": 39365150191,
+        "jobId": 118440181287,
+        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39365150191",
+        "sourceCommit": "45882413759a10b5950dd1031d6d009cd585303d",
+        "artifactSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
+        "nonBrowserPassed": 423,
+        "passed": 94,
+        "failed": 2,
+        "durationSeconds": 435.283,
+        "cleanup": {
+          "browserClosed": true,
+          "profileRemoved": true
+        },
+        "cause": "Both legacy swatch groups imported explicit raw object arrays after the test adapter overwrote the current styled fixture records. The strict runtime correctly rejected their incomplete schema. Later swatch/history assertions in those two groups did not execute.",
+        "repair": "Fixture adapter now passes explicit overrides through the common fixture builder before geometry conveniences. Added a Node regression for exact swatch colors/default records and continued rejection of malformed records. Runtime and strict swatch assertions unchanged. Full native rerun required.",
+        "visualCaptures": 52,
+        "visualReview": "All 52 actual frames hash/byte verified and independently inspected; no visual blocker. All 14 new v0.6 groups passed. This does not convert the aggregate failed run into a pass."
+      }
+    ]
   },
   "limits": [
     "Physical devices, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy are not established.",

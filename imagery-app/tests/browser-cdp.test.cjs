@@ -128,3 +128,7 @@ test('Motion harness never reads live matches between emulation invalidation and
   await Page.prototype.motionPreference.call(fake,expected?'reduce':'no-preference');assert.equal(phase,'delivered');assert.equal(reads,2);
  }
 });
+
+test('Native scene fixture adapter styles explicit object arrays without repairing malformed records',()=>{
+ const {sceneFixture}=require('./browser-cdp.cjs'),M=require('../src/model.js');const base={id:'object-1',shape:'circle',x:35,y:50,size:20,color:{h:30,s:50,l:45}};const value=sceneFixture({background:{h:210,s:40,l:25},objects:[base,{...base,id:'object-2',shape:'pixel',x:65,size:4,color:{h:280,s:60,l:55}}]});assert.deepEqual(M.parseScene(JSON.stringify(value)),value);assert.deepEqual(value.scene.objects.map(o=>o.color),[{h:30,s:50,l:45},{h:280,s:60,l:55}]);assert.ok(value.scene.objects.every(o=>o.outline.enabled===false&&o.shadow.enabled===false&&o.timing.holdMs===3000));assert.throws(()=>M.canonicalScene(sceneFixture({objects:[{...base,outline:{enabled:true}}]})));assert.throws(()=>M.canonicalScene(sceneFixture({objects:[{...base,url:'https://example.invalid'}]})));
+});

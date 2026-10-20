@@ -1356,11 +1356,12 @@
       "status": "native_verification_pending",
       "scope": "Typed range values and fine steps; HSL4/60/4 new-scene background; independent outline/shadow colors; per-item starts/fades/holds, shared slow opacity pulse, overlapping finite preview, duplicate and sequencing helpers; old files migrate without replacing saved appearance.",
       "evidence": [
-        "423 non-browser checks pass;96 native groups and52 captures prepared.",
-        "docs/item-timeline.md",
+        "424 non-browser checks pass after fixture-only repair.",
+        "First native run 39365150191: 94/96 groups; two legacy swatch fixture failures, later tails unexecuted. Runtime unchanged.",
+        "All 52 actual rendered captures hash/byte verified and independently inspected; no visual blocker.",
         "imagery-app/test-results/TEST-REPORT.md"
       ],
-      "nextAction": "Run exact-artifact native checks, review actual captures, repair any failures, and integrate verified evidence before merge."
+      "nextAction": "Run the full exact-artifact native suite with the repaired fixture adapter and reconcile verified evidence before merge."
     }
   ],
   "sourceBase": {
@@ -1456,12 +1457,12 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version0.6 candidate passes423 non-browser checks;96 native groups and52 rendered captures are pending. No current browser/sensory acceptance claimed.",
+  "currentStatus": "Version 0.6 passes 424 non-browser checks. First native run passed 94/96 groups with a test-fixture schema failure; 52 actual captures were verified and independently reviewed. Fixture-only repair awaits a full rerun.",
   "currentIteration": {
     "base": "95e0483905b8aa5845127a3f9ac637720e8ad380",
     "remoteBranch": "feat/item-style-timeline",
     "htmlSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
-    "sourceHead": null,
-    "nativeStatus": "NOT_RUN"
+    "sourceHead": "45882413759a10b5950dd1031d6d009cd585303d",
+    "nativeStatus": "RETRY_PENDING"
   }
 }

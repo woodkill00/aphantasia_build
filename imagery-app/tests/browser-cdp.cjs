@@ -74,7 +74,7 @@ const {runSequenceScenarios}=require('./browser-sequence.cjs');
 const {runLiveScenarios}=require('./browser-live.cjs');
 const {runItemScenarios}=require('./browser-items.cjs');
 const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
-const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
+const scene = changes => { const {shape,x,y,size,...rest}=changes||{}; const value = fixtureScene(rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
   const valid = scene({name:'Synthetic imported scene', shape:'square'});
   return {
@@ -781,4 +781,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,Page,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb};
+module.exports = {CDP,Page,sceneFixture:scene,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb};
