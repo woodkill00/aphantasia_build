@@ -1,8 +1,10 @@
-# Version 0.5 live-draft source review
+# Version 0.5 live-draft review
 
-The actual draft is shown only after explicit Live preview. Valid manual edits repaint synchronously while that live session remains visible; live staging cannot reveal a hidden scene. Invalid inputs, Hide/Escape, lifecycle events, imports and sequence routes cancel/conceal. Drafts remain distinct from accepted history/export and immutable sequence snapshots. A responsive split layout keeps the preview outside the inspector. Independent source review found no scoped blocker; 349 non-browser tests passed. Native pixel, event and responsive visual checks are pending.
+The 118362-byte runtime `8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326` passed 349 non-browser checks and all 82 native Chrome groups. Independent source review and 36-frame inspection accepted the scoped live-draft and compact-layout changes. The actual field repaints synchronously from validated manual inputs; hidden output cannot be revived by an edit. Drafts remain separate from accepted history, exports and sequence snapshots. Native full-field visibility checks replace the insufficient center-only slider test.
 
-Historical reviews below are retained for their respective artifacts.
+The browser report and cleanup passed in run 39358013657, but its GitHub step timed out. This is not a green workflow claim. The native-step budget-only change requires a complete clean-exit rerun; see the [test report](test-results/TEST-REPORT.md) and current PR checks. Physical-device, full accessibility and sensory/clinical gates remain separate.
+
+Historical reviews follow.
 
 ---
 

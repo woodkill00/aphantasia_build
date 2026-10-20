@@ -1,6 +1,6 @@
-# Imagery Field 0.5 candidate
+# Imagery Field 0.5
 
-A local engineering preview for static scene editing and finite, explicitly started sequence presentation. Live actual-scene editing and responsive preview layout are implemented in the candidate source; independent verification is pending. Historical v0.4 passes do not cover the new live behavior. It is not a treatment, diagnostic test, or validated way to develop mental imagery. A lingering afterimage or a reconstruction is not evidence that voluntary imagery improved. Static displays, smooth fades, and the app's restrictions do not guarantee safety.
+A local engineering preview for static scene editing and finite, explicitly started sequence presentation. Live actual-scene editing and responsive preview layout have scoped source, 349-check, 82-group native and 36-frame evidence. The recorded native run hit a workflow deadline after reporting success; see the current test report and PR checks for the separate clean-exit CI gate. It is not a treatment, diagnostic test, or validated way to develop mental imagery. A lingering afterimage or a reconstruction is not evidence that voluntary imagery improved. Static displays, smooth fades, and the app's restrictions do not guarantee safety.
 
 ## Before viewing
 
@@ -32,7 +32,7 @@ Positions range from 0–100% with up to two decimal places, but the entire obje
 
 ## Capture and edit a sequence
 
-The candidate uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. These layout changes respond to the v0.3 screenshot review and remain subject to independent candidate checks.
+The editor uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. These layouts have scoped native focus/raster and actual-frame checks, including repaired short-portrait controls.
 
 - **Add scene as step** appends an independent copy of the scene. With a scene draft, its label becomes **Apply scene and add step**; it applies and captures a valid draft in one action, with no separate Apply click. The scene and proposed sequence are both checked before either is accepted. A rejected capture retains both accepted documents and scene history, and the field stays hidden.
 - The first captured step sets the shared background. Later captures must have the same background; a mismatch is rejected with an explanation. A background-only scene cannot become a step. Later scene edits never silently change snapshots.

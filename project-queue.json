@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T02:15:00Z",
+  "updated": "2026-10-20T02:24:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1341,13 +1341,14 @@
     {
       "id": "IF-041",
       "title": "Show actual scene edits live",
-      "status": "native_verification_pending",
+      "status": "scoped_checks_pass",
       "scope": "Explicit live preview of valid manual object and background edits without repeated Apply/Show; visible responsive preview; cancellation and snapshot isolation retained.",
       "evidence": [
-        "349 non-browser tests pass;82 browser groups and36 captures prepared.",
+        "349 non-browser checks;82/82 native groups;36 actual captures reviewed.",
+        "Full report/cleanup passed but six-minute CI step timed out; budget-only retry required.",
         "imagery-app/test-results/TEST-REPORT.md"
       ],
-      "nextAction": "Run exact-artifact Chrome checks, inspect screenshots, repair failures, and integrate verified evidence."
+      "nextAction": "Verify exact-head clean-exit CI before merging. Physical-device and full accessibility validation remain separate."
     }
   ],
   "sourceBase": {
@@ -1443,12 +1444,14 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version 0.5 live-edit candidate passes 349 non-browser checks. First native run passed 78/82; reviewed test-contract and compact-layout repairs await a complete retry.",
+  "currentStatus": "Version 0.5 scoped checks pass: 349 non-browser, 82 native groups and 36 reviewed captures. Workflow run hit six-minute deadline after full report/cleanup. Budget-only repair requires clean-exit CI before merge.",
   "currentIteration": {
     "base": "fee5b718abf6a31433be9f46900b7e342753fa17",
     "remoteBranch": "feat/live-scene-preview",
     "htmlSha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326",
-    "sourceHead": null,
-    "nativeStatus": "RETRY_PENDING"
+    "sourceHead": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
+    "nativeStatus": "REPORT_PASS_WORKFLOW_TIMEOUT",
+    "candidateRun": 39358013657,
+    "pullRequest": 3
   }
 }

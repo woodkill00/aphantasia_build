@@ -1,10 +1,10 @@
 # Imagery Field
 
-A local-first scene and sequence editor. The version 0.5 candidate makes the actual scene update live from manual edits after one explicit Live preview action. Version 0.4 added ordered scene snapshots, editable holds and adjacent crossfades, manual step preview, and explicitly started one-pass playback. Static scenes still have individual dots/pixels/outlines, object/background HSL controls, immediate editor-only color samples, and optional clean fullscreen viewing.
+A local-first scene and sequence editor. Version 0.5 makes the actual scene update live from manual edits after one explicit Live preview action. Version 0.4 added ordered scene snapshots, editable holds and adjacent crossfades, manual step preview, and explicitly started one-pass playback. Static scenes still have individual dots/pixels/outlines, object/background HSL controls, immediate editor-only color samples, and optional clean fullscreen viewing.
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
 
-**Candidate verification pending:** new live editing and responsive preview layout require fresh checks; the version 0.4 baseline passed 324 non-browser checks and all 74 scoped native Chrome groups. Independent source/user-flow review and actual rendered-frame inspection informed the repairs. Physical-device, full accessibility and clinical acceptance remain separate. See the [sequence contract](docs/sequence-spec.md) and [current test report](imagery-app/test-results/TEST-REPORT.md).
+**Scoped software evidence:** version 0.5 passed 349 non-browser checks and all 82 native Chrome groups, with 36 rendered captures reviewed. Its recorded native run hit the old workflow deadline after reporting success; the exact-head clean-exit CI gate is tracked separately in PR checks. Independent source/user-flow review and actual rendered-frame inspection informed the repairs. Physical-device, full accessibility and clinical acceptance remain separate. See the [sequence contract](docs/sequence-spec.md) and [current test report](imagery-app/test-results/TEST-REPORT.md).
 
 ## Open and use the app
 
@@ -24,7 +24,7 @@ Timed playback is windowed-only so Pause and Stop remain reachable. Static scene
 
 ## Verification: separate artifacts
 
-**Version 0.5 live-editing candidate:** implementation is under independent verification; the results below apply only to the unchanged historical v0.4 artifact, not to this candidate.
+**Version 0.5 live editing:** see the current test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and distinct workflow-timeout outcome. Earlier results below apply only to their historical artifacts.
 
 **Version 0.4 baseline:** [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) passed **324 non-browser checks and 74/74 native Chrome scenario groups**, 37 each for desktop and phone-sized touch emulation. Source head: `13cfac66e80b55d401b454dc99c8e6c690f09962`. The 114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux were used; browser/profile cleanup passed. This covers sequence pixels/timing, atomic edits, reduced-motion events, file flows and revised layout, not untested devices or clinical efficacy. The two earlier failing runs and their repairs remain in the test report.
 

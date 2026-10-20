@@ -1,6 +1,6 @@
 # Scene and sequence editor design
 
-Version 0.5 live-editing candidate, updated 2026-10-20. Controls are implemented in the candidate source; independent verification is in progress. This document describes the source interaction and structure; it is not a claim that browser, physical-device, accessibility, or qualified sensory acceptance has passed. The [final sequence specification](sequence-spec.md) governs the increment.
+Version 0.5 live editing, updated 2026-10-20. Controls have scoped source, native-pixel/focus and actual-frame evidence; the separate CI outcome is recorded in the test report. This document describes the source interaction and structure; it is not a claim that browser, physical-device, accessibility, or qualified sensory acceptance has passed. The [final sequence specification](sequence-spec.md) governs the increment.
 
 ## Product scope
 
@@ -20,7 +20,7 @@ The candidate addresses those findings with:
 - Removal of the decorative hidden-state circle, while retaining clear hidden-state text.
 - The existing labeled live color samples and gradient slider tracks next to HSL inputs.
 
-These changes are implemented in the candidate source and require fresh actual-frame, focus, and small-window checks. The old screenshots cannot verify the new layout.
+These changes have fresh actual-frame, focus and small-window checks for the recorded v0.5 artifact; old screenshots are not used to verify new layout.
 
 ## Live scene editing
 

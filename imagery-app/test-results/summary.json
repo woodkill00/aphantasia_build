@@ -1,13 +1,13 @@
 {
   "date": "2026-10-20",
-  "status": "V05_NONBROWSER_PASS_NATIVE_RETRY_PENDING",
+  "status": "V05_SCOPED_TESTS_PASS_CI_PROCESS_RETRY_REQUIRED",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.5.0",
     "bytes": 118362,
     "sha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326"
   },
-  "candidateCommit": null,
+  "candidateCommit": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
   "nonBrowser": {
     "status": "PASS",
     "total": 349,
@@ -16,7 +16,7 @@
     "command": "node --test imagery-app/tests/*.test.cjs"
   },
   "browser": {
-    "status": "RETRY_PENDING",
+    "status": "TEST_REPORT_PASS_WORKFLOW_TIMEOUT",
     "preparedGroups": 82,
     "expectedCaptures": 36,
     "failedAttempts": [
@@ -26,8 +26,29 @@
         "passed": 78,
         "failed": 4,
         "repairs": "Two test-contract corrections plus a compact-layout repair after visual review found the focused slider clipped at 320x568; strengthened full-field scrollport assertions. Full exact-artifact retry required."
+      },
+      {
+        "run": 39358013657,
+        "sourceCommit": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
+        "browserReport": "82/82 PASS; cleanup passed",
+        "workflow": "FAIL: native step exceeded six minutes at approximately six minutes three seconds",
+        "repair": "Native step budget increased from six to eight minutes within the unchanged ten-minute job. Full suite still required; no assertion weakening."
       }
-    ]
+    ],
+    "passed": 82,
+    "failed": 0,
+    "runId": 39358013657,
+    "jobId": 118417249126,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39358013657",
+    "node": "22.23.3",
+    "chrome": "155.0.8059.39",
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "visualCaptures": 36,
+    "visualReview": "Actual rendered frames independently inspected; compact focused controls and preview accepted.",
+    "note": "The embedded browser report passed, but GitHub marked this run failed on its step deadline. These are separate outcomes. Consult current PR checks for the exact-head CI result; no green CI claim is made for this timeout run."
   },
   "limits": [
     "Physical devices, other browser engines, OS file dialogs, full accessibility, and sensory/clinical validation are not established."

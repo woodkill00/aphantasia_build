@@ -1,6 +1,6 @@
 # Architecture and data contract
 
-Version 0.5 candidate architecture, updated 2026-10-20. Live editing requires fresh verification. The [sequence contract](sequence-spec.md) remains authoritative for sequence presentation; historical passes do not verify new live behavior.
+Version 0.5 architecture, updated 2026-10-20. Scoped live-edit source/native/rendered evidence and the separate CI gate are recorded in the test report. The [sequence contract](sequence-spec.md) remains authoritative for sequence presentation; historical passes do not verify new live behavior.
 
 ## Components and rendering
 

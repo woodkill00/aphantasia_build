@@ -2,9 +2,9 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: version 0.5 live-editing candidate
+## Current increment: version 0.5 live editing
 
-Implement immediate actual-draft preview after one explicit start, valid manual edits without repeated Apply/Show, visible canvas alongside inspector, unchanged accepted history/snapshot semantics, invalid-input concealment, and no restart after Hide or lifecycle interruption. Independent model/UI/browser/visual checks are pending for this new artifact. The recorded v0.4 results below remain historical.
+Implement immediate actual-draft preview after one explicit start, valid manual edits without repeated Apply/Show, visible canvas alongside inspector, unchanged accepted history/snapshot semantics, invalid-input concealment, and no restart after Hide or lifecycle interruption. Independent model/UI/browser/visual checks passed for the exact recorded artifact. The native workflow timeout is a separate failed outcome; a budget-only repair and clean-exit CI gate precede merge. The recorded v0.4 results below remain historical.
 
 ## Verified version 0.4 baseline
 
