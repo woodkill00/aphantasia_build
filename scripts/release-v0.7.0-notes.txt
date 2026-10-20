@@ -1,0 +1,37 @@
+Imagery Field v0.7.0: engineering preview
+
+A self-contained, offline visual scene editor. This is an engineering preview, not a medical tool, treatment, diagnostic test, or validated way to develop mental imagery. Engineering bounds and successful software checks do not guarantee sensory safety.
+
+Downloads
+- Imagery-Field-portable.zip: recommended. Extract the entire ZIP, read START-HERE.txt and open Imagery-Field.html in a modern desktop browser. Includes the short guide, five current synthetic examples, two preserved legacy migration examples, MIT LICENSE, metadata and internal checksums.
+- Imagery-Field.html: standalone runtime. Download and keep the accompanying LICENSE too.
+- LICENSE: MIT License, copyright (c) 2026 woodkill00. Third-party research and attributed material retain their own rights and terms.
+- SHA256SUMS.txt and release-metadata.json: byte checks and exact source/evidence identifiers. Checksums detect changed bytes, not authenticity or software safety.
+
+Highlights
+- Static Live preview appears on first load, and valid item/background edits update it immediately. Startup never starts a timer or pulse.
+- Background defaults to HSL 4 degrees, 60% saturation, 4% lightness. Background saturation supports 0-100%.
+- Editable numeric slider values and fine-step minus/plus buttons.
+- Independently colored outlines and shadows.
+- Steady (no pulse), optional bounded opacity pulse, per-item start/fade/hold timing, overlap and finite automatic completion. Item playback is explicitly started and runs once.
+- Separate one-pass snapshot-sequence playback. It does not run item animation inside snapshots.
+- Revised responsive spacing, canonical user guide, troubleshooting, contribution/support/privacy guidance and synthetic examples.
+
+Use and save
+No installation, account, Node.js, Git, web server or runtime network connection is needed to use the app. Use Hide or Escape to conceal the display. Hidden/imported scenes require an explicit reveal. Apply accepts in-page edits; it does not save a file. Download and verify your scene/sequence before closing, because there is no durable autosave.
+
+Verification
+Source commit: 3561bfbbd652f375531220fd9dcd92f58d5c9366
+Source tree: 8d5288ed1d2a8ec2ef8359cce05f0f383860024a
+Runtime: 167297 bytes
+Runtime SHA-256: c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857
+Exact-source CI: https://github.com/woodkill00/aphantasia_build/actions/runs/39395724138
+PASS: 498/498 Node checks and 98/98 native Chrome groups, with sandboxing and normal browser/profile cleanup. Chrome 155.0.8059.39 on Linux. The exact runtime and a complete set of 78 synthetic rendered captures had already been reviewed. Portable packaging was independently built twice with identical bytes and its archive/CRC, allowlists, license, examples, metadata and internal/external checksums verified. These are scoped engineering checks, not blanket platform, accessibility or clinical acceptance.
+
+Known limits
+Evidence covers automated Linux Chrome, including phone-sized touch emulation, not physical mobile devices or universal browser support. Ordinary native file-opening/download dialogs, Windows/macOS, Safari/Firefox, actual OS/browser zoom, comprehensive accessibility and human/clinical acceptance remain unverified. Reduced-motion preferences restrict timed playback. No hosted website is included in this Release.
+
+Guides and evidence scope
+https://github.com/woodkill00/aphantasia_build/blob/3561bfbbd652f375531220fd9dcd92f58d5c9366/imagery-app/README.md
+https://github.com/woodkill00/aphantasia_build/blob/3561bfbbd652f375531220fd9dcd92f58d5c9366/docs/compatibility.md
+https://github.com/woodkill00/aphantasia_build/blob/3561bfbbd652f375531220fd9dcd92f58d5c9366/LICENSE
