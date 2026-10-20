@@ -20,43 +20,41 @@ const validJob = {GITHUB_ACTIONS: 'true', GITHUB_REPOSITORY: P.F.repo, GITHUB_RE
 const goodRun = {head_sha: P.F.source, head_commit: {id: P.F.source, tree_id: P.F.tree}, workflow_id: P.F.workflow,
   path: '.github/workflows/check.yml', event: 'push', head_branch: 'main', status: 'completed', conclusion: 'success'};
 function fixture(options = {}) {
-  const calls = [], assets = [];
+  const calls = [];
+  const assets = [...files].map(([name, bytes]) => ({id: P.F.assetIds[name], name, state: 'uploaded', size: bytes.length,
+    digest: 'sha256:' + P.sha256(bytes), browser_download_url: 'https://github.com/' + P.F.repo + '/releases/download/' + P.F.draftSlug + '/' + name}));
   const tag = {ref: 'refs/tags/' + P.F.tag, object: {type: 'commit', sha: P.F.source}};
-  const release = {id: 7, tag_name: P.F.tag, target_commitish: P.F.source, name: P.F.title,
-    body: notes, draft: true, prerelease: true, assets: []};
-  let verified = false, downloads = 0;
+  const release = {id: P.F.draft, tag_name: P.F.tag, target_commitish: P.F.source, name: P.F.title,
+    body: notes, draft: true, prerelease: true, assets};
+  let verified = false, downloads = 0, assetReads = 0;
   const api = async (method, suffix, input) => {
     calls.push([method, suffix, input]);
-    if (options.deny === suffix && method !== 'GET') throw new Error('GitHub HTTP 403');
-    if (suffix === '/releases?per_page=100&page=1') return options.existingRelease ? [{tag_name: P.F.tag, draft: options.draft}] : [];
-    if (suffix.startsWith('/git/matching-refs/')) return options.existingTag ? [tag] : [];
-    if (method === 'POST' && suffix === '/git/refs') { assert.deepEqual(input, {ref: tag.ref, sha: P.F.source}); return tag; }
-    if (method === 'POST' && suffix === '/releases') {
-      assert.equal(input.draft, true); assert.equal(input.prerelease, true); assert.equal(input.make_latest, 'false');
-      return {...release, assets: []};
+    if (suffix === '/releases?per_page=100&page=1') {
+      if (options.missingDraft) return [];
+      if (options.duplicateDraft) return [release, {...release, id: 999}];
+      return [{...release, id: options.wrongReleaseID ? 999 : P.F.draft, draft: !options.alreadyPublic}];
     }
-    if (suffix === '/releases/7/assets?per_page=100&page=1') return options.assetMutation ? options.assetMutation(assets) : assets;
-    if (method === 'GET' && suffix === '/releases/7') return {...release, assets};
+    if (suffix === '/releases/' + P.F.draft + '/assets?per_page=100&page=1') {
+      assetReads++;
+      return options.assetMutation ? options.assetMutation(assets) : options.changedAfterDownload && assetReads > 1 ? assets.slice(1) : assets;
+    }
+    if (method === 'GET' && suffix === '/releases/' + P.F.draft) return {...release, ...options.releaseMutation};
     if (suffix === '/git/ref/tags/' + P.F.tag) return options.movedTag ? {...tag, object: {...tag.object, sha: 'b'.repeat(40)}} : tag;
-    if (method === 'PATCH' && suffix === '/releases/7') {
-      assert.equal(verified, true); assert.equal(downloads, 5);
+    if (method === 'PATCH' && suffix === '/releases/' + P.F.draft) {
+      assert.equal(verified, true); assert.equal(downloads, 5); assert.equal(assetReads, 2);
       assert.deepEqual(input, {draft: false, prerelease: true, make_latest: 'false'});
-      return {...release, draft: false, assets};
+      if (options.deniedPatch) throw new Error('GitHub HTTP 403');
+      return {...release, draft: false, assets: assets.map(asset => ({...asset,
+        browser_download_url: 'https://github.com/' + P.F.repo + '/releases/download/' + P.F.tag + '/' + asset.name}))};
     }
     throw new Error('Unexpected fixture API operation: ' + method + ' ' + suffix);
   };
   const io = {api,
-    upload: async (id, name, bytes) => {
-      calls.push(['UPLOAD', id, name]);
-      if (options.uploadDenied) throw new Error('GitHub HTTP 403');
-      assets.push({id: 100 + assets.length, name, state: 'uploaded', size: bytes.length, digest: 'sha256:' + P.sha256(bytes),
-        browser_download_url: 'https://github.com/' + P.F.repo + '/releases/download/' + P.F.tag + '/' + name});
-    },
     download: async asset => { calls.push(['DOWNLOAD', asset.name]); downloads++; return options.badDownload ? Buffer.from('changed') : files.get(asset.name); },
     verify: async result => { calls.push(['VERIFY']); if (options.verifierDenied) throw new Error('Archive verification failed'); assert.deepEqual(result, files); verified = true; },
     checkDefault: async () => { calls.push(['CHECK_DEFAULT']); if (options.defaultMoved) throw new Error('Default branch changed'); }
   };
-  return {io, calls};
+  return {io, calls, assets};
 }
 const mutations = calls => calls.filter(([method]) => ['POST', 'PATCH', 'UPLOAD'].includes(method));
 const published = calls => calls.some(([method]) => method === 'PATCH');
@@ -94,17 +92,17 @@ test('exact-source CI requires final success, identities, tree, event and ordina
 });
 test('request origin checks never send credentials to redirects or arbitrary hosts', () => {
   P.permittedRequest('https://api.github.com/repos/' + P.F.repo + '/releases', true);
-  P.permittedRequest('https://uploads.github.com/repos/' + P.F.repo + '/releases/7/assets?name=LICENSE', true);
   P.permittedRequest('https://release-assets.githubusercontent.com/example', false);
-  for (const [url, auth] of [['https://evil.example/releases', false], ['http://api.github.com/repos/' + P.F.repo + '/releases', true],
+  for (const [url, auth] of [['https://evil.example/releases', false], ['https://uploads.github.com/repos/' + P.F.repo + '/releases/7/assets?name=LICENSE', true], ['http://api.github.com/repos/' + P.F.repo + '/releases', true],
     ['https://api.github.com/repos/other/repo/releases', true], ['https://release-assets.githubusercontent.com/example', true],
     ['https://github.com/' + P.F.repo + '/releases/download/v0.7.0/LICENSE', true], ['https://user:secret@api.github.com/repos/' + P.F.repo + '/releases', true]]) {
     assert.throws(() => P.permittedRequest(url, auth));
   }
 });
-test('existing draft, published version or tag is refused without any mutation', async () => {
-  for (const options of [{existingRelease: true, draft: true}, {existingRelease: true, draft: false}, {existingTag: true}]) {
-    const f = fixture(options); await assert.rejects(P.publish(files, notes, f.io), /Existing version/); assert.equal(mutations(f.calls).length, 0);
+test('recovery accepts only the unique exact pending draft, never another or already public release', async () => {
+  for (const options of [{missingDraft: true}, {duplicateDraft: true}, {wrongReleaseID: true}, {alreadyPublic: true},
+    {releaseMutation: {id: 999}}, {releaseMutation: {target_commitish: 'main'}}, {releaseMutation: {body: 'changed'}}, {releaseMutation: {prerelease: false}}]) {
+    const f = fixture(options); await assert.rejects(P.publish(files, notes, f.io)); assert.equal(mutations(f.calls).length, 0);
   }
 });
 test('all bytes and notes are checked before even a preflight API call', async () => {
@@ -115,25 +113,31 @@ test('all bytes and notes are checked before even a preflight API call', async (
 });
 test('pagination includes later-page releases and assets and fails closed at its bound', async () => {
   const all = await P.listAll(async (method, suffix) => suffix.endsWith('page=1') ? Array.from({length: 100}, (_, id) => ({id})) : [{tag_name: P.F.tag}], '/releases');
-  assert.equal(all.length, 101); assert.throws(() => P.assertAbsent(all, []), /Existing/);
+  assert.equal(all.length, 101); assert.ok(all.some(release => release.tag_name === P.F.tag));
   await assert.rejects(P.listAll(async () => Array(100).fill({}), '/releases'), /pagination bound/);
   await assert.rejects(P.listAll(async () => ({}), '/releases'));
 });
-test('tag, draft and upload denials stop once without publication or permission changes', async () => {
-  for (const options of [{deny: '/git/refs'}, {deny: '/releases'}, {uploadDenied: true}]) {
-    const f = fixture(options); await assert.rejects(P.publish(files, notes, f.io), /403/); assert.equal(published(f.calls), false);
-    assert.equal(f.calls.filter(([method, suffix]) => method === 'POST' && suffix === (options.deny || '/unused')).length, options.deny ? 1 : 0);
-    assert.ok(!f.calls.some(([method]) => ['DELETE', 'PUT'].includes(method)));
+test('a denied publication stops after one PATCH without create, upload, retag, delete or retry', async () => {
+  const f = fixture({deniedPatch: true}); await assert.rejects(P.publish(files, notes, f.io), /403/);
+  assert.equal(mutations(f.calls).length, 1); assert.equal(f.calls.filter(([method]) => method === 'PATCH').length, 1);
+  assert.ok(!f.calls.some(([method]) => ['DELETE', 'PUT', 'POST', 'UPLOAD'].includes(method)));
+});
+test('the API transport itself rejects every mutation other than the fixed publish PATCH before network', async () => {
+  const api = P.makeApi('synthetic-unused-token');
+  for (const [method, suffix, body] of [['POST', '/releases', {}], ['DELETE', '/releases/' + P.F.draft],
+    ['PATCH', '/git/refs/tags/v0.7.0', {}], ['PATCH', '/releases/999', {}], ['PATCH', '/releases/' + P.F.draft, {draft: false, prerelease: false}]]) {
+    await assert.rejects(api(method, suffix, body), /Recovery permits only/);
   }
 });
 test('missing, duplicate, extra, altered and wrong-origin assets prevent publication', async () => {
   const changes = [assets => assets.slice(1), assets => [...assets, assets[0]], assets => [...assets, {...assets[0], name: 'extra.txt', id: 999}],
+    assets => assets.map((a, i) => i ? a : {...a, id: 123}),
     assets => assets.map((a, i) => i ? a : {...a, digest: 'sha256:' + '0'.repeat(64)}),
     assets => assets.map((a, i) => i ? a : {...a, browser_download_url: 'https://evil.example/file'})];
   for (const assetMutation of changes) { const f = fixture({assetMutation}); await assert.rejects(P.publish(files, notes, f.io)); assert.equal(published(f.calls), false); }
 });
 test('download mismatch, archive failure, moved tag or changed default prevent public publication', async () => {
-  for (const options of [{badDownload: true}, {verifierDenied: true}, {movedTag: true}, {defaultMoved: true}]) {
+  for (const options of [{badDownload: true}, {verifierDenied: true}, {movedTag: true}, {defaultMoved: true}, {changedAfterDownload: true}]) {
     const f = fixture(options); await assert.rejects(P.publish(files, notes, f.io)); assert.equal(published(f.calls), false);
   }
 });
@@ -143,7 +147,7 @@ test('successful mocked publication verifies all draft bytes and archive before 
   const methods = f.calls.map(([method]) => method), publishIndex = methods.indexOf('PATCH');
   assert.equal(methods.filter(method => method === 'PATCH').length, 1);
   assert.ok(methods.indexOf('VERIFY') < publishIndex); assert.ok(methods.indexOf('CHECK_DEFAULT') < publishIndex);
-  assert.equal(methods.filter(method => method === 'UPLOAD').length, 5); assert.equal(methods.filter(method => method === 'DOWNLOAD').length, 5);
+  assert.equal(methods.filter(method => ['UPLOAD', 'POST', 'DELETE', 'PUT'].includes(method)).length, 0); assert.equal(methods.filter(method => method === 'DOWNLOAD').length, 5);
 });
 test('temporary workflow has one main-path trigger, one job-only write grant and no saved checkout credentials', () => {
   const text = fs.readFileSync(path.join(root, P.F.publisher), 'utf8');
@@ -153,7 +157,7 @@ test('temporary workflow has one main-path trigger, one job-only write grant and
   assert.doesNotMatch(text, /pull_request:|workflow_dispatch:|workflow_call:|inputs:|write-all|secrets\./);
   assert.match(text, /RELEASE_TOKEN: \$\{\{ github\.token \}\}/);
   const helper = fs.readFileSync(path.join(root, 'scripts/publish-v0.7.0.cjs'), 'utf8');
-  assert.match(helper, /contentType: 'application\/octet-stream'/);
+  assert.doesNotMatch(helper, /io\.upload|method: 'POST'/);
   assert.match(helper, /accept = 'application\/vnd.github\+json', contentType = 'application\/json'/);
 });
 test('readFiles rejects extra paths and nonregular package inputs', t => {
@@ -163,4 +167,13 @@ test('readFiles rejects extra paths and nonregular package inputs', t => {
   assert.deepEqual(P.readFiles(directory), files);
   fs.writeFileSync(path.join(directory, 'extra.txt'), 'x'); assert.throws(() => P.readFiles(directory)); fs.unlinkSync(path.join(directory, 'extra.txt'));
   fs.unlinkSync(path.join(directory, 'LICENSE')); fs.symlinkSync(path.join(directory, 'SHA256SUMS.txt'), path.join(directory, 'LICENSE')); assert.throws(() => P.readFiles(directory));
+});
+
+test('regression: observed draft URLs are pinned and never used for authenticated asset downloads', async () => {
+  const f = fixture(); P.assertAssets(f.assets, true); assert.throws(() => P.assertAssets(f.assets, false));
+  assert.equal(P.F.draft, 418228303); assert.equal(P.F.draftSlug, 'untagged-3479ddf415496b3cb0d7');
+  for (const asset of f.assets) assert.equal(asset.id, P.F.assetIds[asset.name]);
+  const result = await P.publish(files, notes, f.io); P.assertAssets(result.assets, false);
+  const helper = fs.readFileSync(path.join(root, 'scripts/publish-v0.7.0.cjs'), 'utf8');
+  assert.match(helper, /download: asset => request\(base \+ '\/releases\/assets\/' \+ positiveId\(asset.id\)/);
 });

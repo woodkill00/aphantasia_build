@@ -12,6 +12,9 @@ const F = Object.freeze({
   tree: '8d5288ed1d2a8ec2ef8359cce05f0f383860024a',
   run: 39395724138, workflow: 389921369,
   publisher: '.github/workflows/publish-v0.7.0.yml',
+  draft: 418228303, draftSlug: 'untagged-3479ddf415496b3cb0d7',
+  assetIds: Object.freeze({'Imagery-Field-portable.zip': 658875960, 'Imagery-Field.html': 658875970,
+    'LICENSE': 658875986, 'SHA256SUMS.txt': 658876005, 'release-metadata.json': 658876019}),
   title: 'Imagery Field v0.7.0: engineering preview',
   notesSha256: 'b0be60e3c26b70d00a5f1943d065cb32844c2895f12076f22ab56cfe4e62b73d',
   assets: Object.freeze({
@@ -63,38 +66,31 @@ function readFiles(directory) {
     const bytes = fs.readFileSync(file); assertBytes(name, bytes); return [name, bytes];
   }));
 }
-function assertAbsent(releases, refs) {
-  if (!Array.isArray(releases) || !Array.isArray(refs)) fail('Cannot prove version absence.');
-  if (releases.some(release => release.tag_name === F.tag) || refs.some(ref => ref.ref === 'refs/tags/' + F.tag)) {
-    fail('Existing version: do not overwrite, delete or automatically retry. Reconcile manually.');
-  }
-}
 function assertTag(ref) {
   if (ref?.ref !== 'refs/tags/' + F.tag || ref.object?.type !== 'commit' || ref.object?.sha !== F.source) fail('Fixed lightweight tag does not resolve to the tested source.');
 }
 function assertRelease(release, notes, draft) {
-  positiveId(release?.id);
+  if (release?.id !== F.draft) fail('Not the reconciled prepared draft.');
   if (release.tag_name !== F.tag || release.target_commitish !== F.source || release.name !== F.title ||
       release.body !== notes || release.draft !== draft || release.prerelease !== true) fail('Release identity or preview state differs.');
 }
-function assertAssets(assets) {
+function assertAssets(assets, draft = false) {
   if (!Array.isArray(assets) || assets.length !== Object.keys(F.assets).length ||
       new Set(assets.map(asset => asset.name)).size !== assets.length) fail('Unexpected uploaded asset set.');
   for (const asset of assets) {
     const expected = F.assets[asset.name]; positiveId(asset.id);
-    if (!expected || asset.state !== 'uploaded' || asset.size !== expected[0] ||
-        (asset.digest && asset.digest !== 'sha256:' + expected[1])) fail('Uploaded asset metadata differs.');
-    if (asset.browser_download_url !== 'https://github.com/' + F.repo + '/releases/download/' + F.tag + '/' + asset.name) fail('Unexpected public asset URL.');
+    if (!expected || asset.id !== F.assetIds[asset.name] || asset.state !== 'uploaded' || asset.size !== expected[0] ||
+        asset.digest !== 'sha256:' + expected[1]) fail('Uploaded asset metadata differs.');
+    if (asset.browser_download_url !== 'https://github.com/' + F.repo + '/releases/download/' + (draft ? F.draftSlug : F.tag) + '/' + asset.name) fail('Unexpected public asset URL.');
   }
 }
 function permittedRequest(url, auth) {
   const u = new URL(url);
   if (u.protocol !== 'https:' || u.username || u.password || u.port) fail('Unexpected request origin.');
   const api = u.hostname === 'api.github.com' && u.pathname.startsWith('/repos/' + F.repo + '/');
-  const upload = u.hostname === 'uploads.github.com' && /^\/repos\/woodkill00\/aphantasia_build\/releases\/\d+\/assets$/.test(u.pathname);
   const publicDownload = u.hostname === 'github.com' && u.pathname.startsWith('/' + F.repo + '/releases/download/' + F.tag + '/');
   const binaryRedirect = ['release-assets.githubusercontent.com', 'objects.githubusercontent.com'].includes(u.hostname);
-  if (auth ? !api && !upload : !api && !publicDownload && !binaryRedirect) fail('Request outside fixed GitHub services.');
+  if (auth ? !api : !api && !publicDownload && !binaryRedirect) fail('Request outside fixed GitHub services.');
   return u;
 }
 function request(url, {token, method = 'GET', body, accept = 'application/vnd.github+json', contentType = 'application/json', limit = 2 * 1024 * 1024, redirects = 0} = {}) {
@@ -128,6 +124,10 @@ function request(url, {token, method = 'GET', body, accept = 'application/vnd.gi
 function makeApi(token) {
   return async (method, suffix, input) => {
     if (!suffix.startsWith('/') || suffix.includes('..')) fail('Unexpected API path.');
+    if (method !== 'GET' && (method !== 'PATCH' || suffix !== '/releases/' + F.draft ||
+        JSON.stringify(input) !== JSON.stringify({draft: false, prerelease: true, make_latest: 'false'}))) {
+      fail('Recovery permits only the fixed publish PATCH, never create/upload/retag/delete.');
+    }
     const bytes = await request(base + suffix, {token, method, body: input === undefined ? undefined : Buffer.from(JSON.stringify(input))});
     return JSON.parse(bytes.toString('utf8'));
   };
@@ -147,15 +147,13 @@ async function publish(files, notes, io) {
   if (files.size !== Object.keys(F.assets).length) fail('Unexpected package file count.');
   for (const [name, bytes] of files) assertBytes(name, bytes);
   if (sha256(Buffer.from(notes)) !== F.notesSha256) fail('Unexpected release notes.');
-  assertAbsent(await listAll(io.api, '/releases'), await io.api('GET', '/git/matching-refs/tags/' + F.tag));
-  const tag = await io.api('POST', '/git/refs', {ref: 'refs/tags/' + F.tag, sha: F.source}); assertTag(tag);
-  const release = await io.api('POST', '/releases', {tag_name: F.tag, target_commitish: F.source, name: F.title,
-    body: notes, draft: true, prerelease: true, make_latest: 'false', generate_release_notes: false});
-  assertRelease(release, notes, true);
-  if (!Array.isArray(release.assets) || release.assets.length) fail('New draft has unexpected assets.');
-  for (const [name, bytes] of files) await io.upload(release.id, name, bytes);
-  let actual = await io.api('GET', '/releases/' + release.id); assertRelease(actual, notes, true);
-  actual.assets = await listAll(io.api, '/releases/' + release.id + '/assets'); assertAssets(actual.assets);
+  // Reconciled failure: the tag and five uploaded assets already exist. Never
+  // recreate, retag, upload, replace or delete them. Only this exact draft may proceed.
+  const matching = (await listAll(io.api, '/releases')).filter(release => release.tag_name === F.tag);
+  if (matching.length !== 1 || matching[0].id !== F.draft || matching[0].draft !== true) fail('Prepared draft is not uniquely pending; stop without mutation.');
+  assertTag(await io.api('GET', '/git/ref/tags/' + F.tag));
+  let actual = await io.api('GET', '/releases/' + F.draft); assertRelease(actual, notes, true);
+  actual.assets = await listAll(io.api, '/releases/' + F.draft + '/assets'); assertAssets(actual.assets, true);
   const downloaded = new Map();
   for (const asset of actual.assets) {
     const bytes = await io.download(asset); assertBytes(asset.name, bytes);
@@ -163,10 +161,13 @@ async function publish(files, notes, io) {
     downloaded.set(asset.name, bytes);
   }
   await io.verify(downloaded, 'draft');
+  // Re-read identity and every paginated asset after downloads, before mutation.
+  actual = await io.api('GET', '/releases/' + F.draft); assertRelease(actual, notes, true);
+  assertAssets(await listAll(io.api, '/releases/' + F.draft + '/assets'), true);
   assertTag(await io.api('GET', '/git/ref/tags/' + F.tag));
   await io.checkDefault();
   // This is the only public-publication call, reached after complete draft verification.
-  actual = await io.api('PATCH', '/releases/' + release.id, {draft: false, prerelease: true, make_latest: 'false'});
+  actual = await io.api('PATCH', '/releases/' + F.draft, {draft: false, prerelease: true, make_latest: 'false'});
   assertRelease(actual, notes, false); assertAssets(actual.assets);
   return actual;
 }
@@ -209,18 +210,13 @@ async function main() {
     if (main.object?.sha !== process.env.GITHUB_SHA) fail('Default branch changed; stop for review.');
   };
   await checkDefault();
-  console.log('Exact five assets, license, notes and reproducibility verified. Creating only the fixed tag/draft.');
+  console.log('Exact five local assets verified. Resuming only reconciled draft418228303; no create/upload/retag.');
   const verify = async (downloaded, stage) => {
     const directory = path.join(temporary, stage); fs.mkdirSync(directory);
     for (const [name, bytes] of downloaded) fs.writeFileSync(path.join(directory, name), bytes, {flag: 'wx', mode: 0o600});
     exec(process.execPath, [path.join(source, 'scripts/verify-release.cjs'), directory]);
   };
   const release = await publish(files, notes, {api, checkDefault, verify,
-    upload: async (id, name, bytes) => {
-      positiveId(id); assertBytes(name, bytes);
-      await request('https://uploads.github.com/repos/' + F.repo + '/releases/' + id + '/assets?name=' + encodeURIComponent(name), {
-        token, method: 'POST', body: bytes, contentType: 'application/octet-stream'});
-    },
     download: asset => request(base + '/releases/assets/' + positiveId(asset.id), {token, accept: 'application/octet-stream', limit: F.assets[asset.name][0]})
   });
   console.log('Prerelease published after draft byte verification. Checking unauthenticated public downloads.');
@@ -239,4 +235,4 @@ async function main() {
 }
 if (require.main === module) main().catch(error => { console.error('STOP: ' + error.message); console.error('Do not rerun blindly, replace assets, widen permissions or change the tested source. Reconcile tag/draft/public state first.'); process.exitCode = 1; });
 module.exports = Object.freeze({F, sha256, assertJob, childEnv, assertWorkflowDiff, assertRun, assertBytes, readFiles,
-  assertAbsent, assertTag, assertRelease, assertAssets, permittedRequest, makeApi, listAll, publish});
+  assertTag, assertRelease, assertAssets, permittedRequest, makeApi, listAll, publish});
