@@ -134,6 +134,11 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 #scene-canvas.dragging{cursor:grabbing}
 .nudge-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--control-gap);margin-block:var(--control-gap)}
 .nudge-actions button{min-width:0;padding:8px;font-size:.74rem}
+
+/* Preserve readable action labels instead of squeezing every action into one row.
+   A shared minimum basis wraps added layer controls at narrow inspector widths. */
+.small-actions{gap:var(--control-gap)}
+.small-actions button{flex:1 1 7rem;min-width:min(100%,7rem);max-width:100%;white-space:normal;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -1371,20 +1376,21 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     try{if(typeof canvas.setPointerCapture==='function')canvas.setPointerCapture(event.pointerId);}catch(e){hide('Move canceled because pointer capture is unavailable. Use position controls.');return;}
     event.preventDefault();canvas.focus();
   });
-  function updateDirectGesture(event){
+  function updateDirectGesture(event,cancelDefault=true){
     const active=gesture;if(!active||active.selectionOnly||event.pointerId!==active.pointerId||!isLive())return;
     if(selectedId!==active.id){hide('Move canceled because the selected item changed.');return;}
     if(!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return;
     const current=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>current[key]!==active.rect[key])){hide('Move canceled because the preview layout changed.');return;}
     const dx=event.clientX-active.startX,dy=event.clientY-active.startY;
     if(!active.moved&&Math.hypot(dx,dy)<E.DRAG_THRESHOLD)return;
-    active.moved=true;event.preventDefault();
+    active.moved=true;if(cancelDefault)event.preventDefault();
     try{if(!stageMove(E.translate(active.before,active.id,dx,dy,active.rect.width,active.rect.height)))hide('Move canceled because the position is invalid.');}catch(e){hide('Move canceled. '+e.message);}
   }
   canvas.addEventListener('pointermove',updateDirectGesture);
   canvas.addEventListener('pointerup',event=>{
     const active=gesture;if(!active||event.pointerId!==active.pointerId)return;
-    updateDirectGesture(event);if(gesture!==active)return;
+    // Sample final coordinates without canceling the completed release event.
+    updateDirectGesture(event,false);if(gesture!==active)return;
     gesture=null;releaseCapture(active);
     if(active.moved)recordMove(active.before,working,active.id);
     selectAtEnd();

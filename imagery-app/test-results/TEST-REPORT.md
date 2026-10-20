@@ -10,6 +10,12 @@ The geometry and journal model files are pure future-phase foundations, not inte
 
 [Run 39407369118](https://github.com/woodkill00/aphantasia_build/actions/runs/39407369118) passed 105/106 native groups. Fullscreen isolation and desktop drag passed, but the mobile Undo tap after drag/scroll was not delivered. The next candidate waits two native animation frames after the explicit test scroll before its single trusted tap and records event/rectangle diagnostics if it fails. This tests a compositor-timing hypothesis; it is not yet proof of the cause or acceptance. Item selection also now scrolls the selected-object controls into view after the gesture ends.
 
+## Diagnostic findings and current experiment
+
+[Run 39409049301](https://github.com/woodkill00/aphantasia_build/actions/runs/39409049301) again passed 105/106 native groups. Correct trusted pointerdown/up reached Undo, but no click followed. [Run 39410912804](https://github.com/woodkill00/aphantasia_build/actions/runs/39410912804) passed 107/110: original, no-screenshot and 80 ms tap-dwell mobile variants all failed, so neither screenshot removal nor tap dwell was sufficient. Trusted touchstart/end were also uncanceled. All six direct-editor captures from the earlier run were inspected; separate full-label review found narrow overlap controls could clip.
+
+The current candidate keeps final release coordinates but does not cancel pointerup defaults, adds a separately labeled 600 ms post-drag-gap diagnostic, and wraps action labels at a readable minimum width. All original assertions remain. These are reviewed engineering changes, not an established root cause or native acceptance. The combined candidate requires fresh native execution and visual inspection; physical touch devices remain untested.
+
 ## Historical verification below
 
 # Public repository onboarding, MIT licensing and release preparation

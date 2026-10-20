@@ -126,3 +126,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 #scene-canvas.dragging{cursor:grabbing}
 .nudge-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--control-gap);margin-block:var(--control-gap)}
 .nudge-actions button{min-width:0;padding:8px;font-size:.74rem}
+
+/* Preserve readable action labels instead of squeezing every action into one row.
+   A shared minimum basis wraps added layer controls at narrow inspector widths. */
+.small-actions{gap:var(--control-gap)}
+.small-actions button{flex:1 1 7rem;min-width:min(100%,7rem);max-width:100%;white-space:normal;overflow-wrap:anywhere}

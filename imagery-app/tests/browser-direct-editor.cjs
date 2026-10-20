@@ -47,18 +47,19 @@ async function runDirectEditorScenarios({page,runCase}){
   }catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>window.__directTapTrace)));}
  }
  const near=(a,b)=>a.forEach((value,i)=>assert.ok(Math.abs(value-b[i])<=3,`actual pixel ${a} expected ${b}`));
- async function dragUndoScenario({captureName,dwellMs=0}){
+ async function dragUndoScenario({captureName,dwellMs=0,postDragGapMs=0}){
   const value=fixture();await start(value);const acceptedUndoBefore=await page.property('#undo','disabled');await beginDirectTrace();const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
   await page.evaluate(()=>{window.__directTrust=[];for(const type of ['pointerdown','pointermove','pointerup'])document.getElementById('scene-canvas').addEventListener(type,e=>window.__directTrust.push({type,trusted:e.isTrusted}));});
   await input('down',p.x,p.y);await input('move',q.x,q.y);await sleep(40);
   assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);assert.ok(Math.abs(Number(await page.property('#position-y','value'))-45)<.1);await page.visible();near(await sample(47,45),rgb(value.scene.objects[0].color));near(await sample(35,50),rgb(value.scene.background));
   await input('up',q.x,q.y);await sleep(40);assert.ok((await page.evaluate(()=>window.__directTrust)).every(e=>e.trusted));assert.equal(await page.property('#undo-move','disabled'),false);assert.equal(await page.property('#undo','disabled'),acceptedUndoBefore,'draft move must not change accepted history');
-  if(captureName)await page.visualCapture(captureName);await settledDirectClick('#undo-move',dwellMs);await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
+  if(captureName)await page.visualCapture(captureName);if(postDragGapMs)await sleep(postDragGapMs);await settledDirectClick('#undo-move',dwellMs);await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
   await page.click('#discard');const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);
  }
  await runCase('v8 trusted drag updates actual pixels before release and one move undo preserves applied scene',()=>dragUndoScenario({captureName:'v8-dragged-live-item'}));
  await runCase('v8 diagnostic fresh drag Undo without intervening screenshot',()=>dragUndoScenario({captureName:null}));
  await runCase('v8 diagnostic fresh drag Undo with single 80ms touch dwell',()=>dragUndoScenario({captureName:'v8-diagnostic-dwell-before-undo',dwellMs:80}));
+ await runCase('v8 diagnostic fresh drag Undo with single tap after 600ms gap',()=>dragUndoScenario({captureName:'v8-diagnostic-gap-before-undo',postDragGapMs:600}));
  await runCase('v8 native click selects topmost item and explicit overlap cycling selects underlying item',async()=>{
   const value=fixture();value.scene.objects.push(styledObject({id:'object-2',shape:'circle',x:35,y:50,size:12}));await start(value);const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5};await input('down',p.x,p.y);await input('up',p.x,p.y);await sleep(40);
   assert.equal(await page.property('#object-select','value'),'object-2');assert.equal(await page.property('#editor-panel','hidden'),false);assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#cycle-overlap');assert.equal(await page.property('#object-select','value'),'object-1');await page.visible();await page.visualCapture('v8-overlap-selection-controls');
@@ -69,6 +70,14 @@ async function runDirectEditorScenarios({page,runCase}){
  await runCase('v8 non-drag controls and focused keyboard movement stay reachable at narrow width',async()=>{
   await page.viewport(320,568);await start(fixture());await page.click('#nudge-right');assert.equal(await page.property('#position-x','value'),'36');await page.focus('#scene-canvas');await page.key('ArrowLeft');assert.equal(await page.property('#position-x','value'),'35');await page.visible();await page.noOverflow(320);
   for(const id of ['nudge-left','nudge-up','nudge-down','nudge-right','undo-move','redo-move']){await page.evaluate(id=>document.getElementById(id).scrollIntoView({block:'center'}),id);if(!await page.property('#'+id,'disabled'))await page.focus('#'+id);const result=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {width:r.width,height:r.height,top:r.top,bottom:r.bottom,hit:hit===e,viewport:innerHeight};},id);assert.ok(result.width>=44&&result.height>=44&&result.hit&&result.top>=0&&result.bottom<=result.viewport,`${id} unreachable: ${JSON.stringify(result)}`);}
+  for(const id of ['cycle-overlap','undo-move','redo-move']){
+   // Disabled history/overlap actions still need readable labels; do not claim
+   // they can receive focus while disabled.
+   if(!await page.property('#'+id,'disabled'))await page.focus('#'+id);
+   const result=await page.evaluate(id=>{const e=document.getElementById(id);e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect(),scroll=document.getElementById('editor-scroll'),s=scroll.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);return {id,box:{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height},text:Array.from(range.getClientRects(),t=>({left:t.left,right:t.right,top:t.top,bottom:t.bottom})),visible:{left:Math.max(0,s.left+scroll.clientLeft),right:Math.min(innerWidth,s.left+scroll.clientLeft+scroll.clientWidth),top:Math.max(0,s.top+scroll.clientTop),bottom:Math.min(innerHeight,s.top+scroll.clientTop+scroll.clientHeight)},hit:[[r.left+4,r.top+4],[r.right-4,r.top+4],[r.left+4,r.bottom-4],[r.right-4,r.bottom-4]].every(([x,y])=>document.elementFromPoint(x,y)===e)};},id);
+   assert.ok(result.hit&&result.box.width>=44&&result.box.height>=44&&result.box.left>=result.visible.left&&result.box.right<=result.visible.right&&result.box.top>=result.visible.top&&result.box.bottom<=result.visible.bottom,'Action clips behind inspector chrome: '+JSON.stringify(result));
+   for(const text of result.text)assert.ok(text.left>=result.box.left&&text.right<=result.box.right&&text.top>=result.box.top&&text.bottom<=result.box.bottom,'Action label clips: '+JSON.stringify(result));
+  }
   await page.visualCapture('v8-narrow-move-controls');await page.click('#hide-scene');await page.hidden();
  });
 }
