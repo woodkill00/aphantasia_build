@@ -114,7 +114,9 @@
       </div>
       <div id="editor-actions" class="editor-actions">
         <div id="scene-apply-actions" class="apply-row"><button id="apply-changes" class="primary" type="submit" form="scene-form">Apply changes</button><button id="discard" type="button">Discard</button></div>
-        <div class="capture-actions"><button id="capture-add" type="button">Add scene as step</button><button id="capture-replace" type="button" disabled>Replace selected step</button></div>
+        <div class="capture-caption"><span id="capture-source">From scene: A small constellation</span><span id="capture-source-state">Applied</span></div>
+        <span id="capture-replace-context" class="sr-only">Add a scene before replacing a step.</span>
+        <div class="capture-actions"><button id="capture-add" type="button" aria-describedby="capture-source capture-source-state">Add scene as step</button><button id="capture-replace" type="button" aria-describedby="capture-replace-context" disabled>Replace selected step</button></div>
       </div>
     </aside>
   </main>

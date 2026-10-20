@@ -53,6 +53,14 @@ function assertFullscreenSnapshot(snapshot, expectedElement) {
   assert.equal(snapshot.coloredPixels,0,'fullscreenchange handler must synchronously clear every canvas pixel to black');
   assert.equal(snapshot.focus,expectedElement?'exit-fullscreen':'fullscreen','fullscreenchange must focus the visible mode control');
 }
+function assertMotionSnapshot(snapshot, expectedMatches) {
+  assert.ok(snapshot,'A native MediaQueryList change event must be observed after changing preference');
+  assert.equal(snapshot.trusted,true,'motion preference change must be a native browser event');
+  assert.equal(snapshot.matches,expectedMatches,'motion event reported the wrong preference');
+  assert.equal(snapshot.visibility,'Hidden','motion change handler must synchronously conceal');
+  assert.match(snapshot.canvasLabel,/hidden/i,'motion change handler must update the hidden description');
+  assert.equal(snapshot.coloredPixels,0,'motion change handler must synchronously clear every canvas pixel to black');
+}
 // Independent CSS HSL oracle; never calls the production model color formatter.
 function hslRgb({h,s,l}) {
   const light=l/100, amplitude=(s/100)*Math.min(light,1-light);
@@ -214,6 +222,14 @@ class Page {
     // the desired Hidden result, then assert concealment without retrying it.
     await this.evaluate(() => {
       window.__testFullscreenTransitions=[];window.__testKeys=[];
+      window.__testMotionTransitions=[];
+      window.__testMotionQuery=matchMedia('(prefers-reduced-motion: reduce)');
+      window.__testMotionQuery.addEventListener('change',event=>{
+        const canvas=document.getElementById('scene-canvas'),bytes=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+        let coloredPixels=0;for(let i=0;i<bytes.length;i+=4)if(bytes[i]||bytes[i+1]||bytes[i+2])coloredPixels++;
+        window.__testMotionTransitions.push(Object.freeze({time:performance.now(),trusted:event.isTrusted,matches:event.matches,visibility:document.getElementById('visibility-label').textContent,coloredPixels,canvasLabel:canvas.getAttribute('aria-label'),focus:document.activeElement?.id||null}));
+      });
+
       document.addEventListener('fullscreenchange',event=>{
         const canvas=document.querySelector('#scene-canvas'),bytes=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
         let coloredPixels=0;for(let i=0;i<bytes.length;i+=4)if(bytes[i]||bytes[i+1]||bytes[i+2])coloredPixels++;
@@ -240,6 +256,22 @@ class Page {
     assertFullscreenSnapshot(observed,expectedElement);
     assert.equal(await this.evaluate(()=>document.fullscreenElement?.id||null),expectedElement);
     await this.hidden();
+  }
+  async motionPreference(value) {
+    assert.ok(value==='reduce'||value==='no-preference');
+    const expected=value==='reduce',state=()=>this.evaluate(()=>({matches:window.__testMotionQuery.matches,events:window.__testMotionTransitions.length}));
+    const beforeAction=await state();
+    await this.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value}]});
+    const afterAction=await state();
+    if(beforeAction.matches!==expected){
+      // CDP acknowledgement and matchMedia.matches may precede native change
+      // delivery. Wait for the event, never for a desired application state.
+      await until(()=>this.evaluate(index=>window.__testMotionTransitions.length>index,beforeAction.events),'native motion preference change delivery');
+      const observed=await this.evaluate(index=>window.__testMotionTransitions[index],beforeAction.events);
+      console.log(`Motion event evidence (${this.device.name}): ${JSON.stringify({beforeAction,afterAction,observed})}`);
+      assertMotionSnapshot(observed,expected);
+    }
+    assert.equal((await state()).matches,expected);
   }
   async settleInitialGuard() {
     // Emulation/navigation can deliver a real resize after load. Respect the same
@@ -741,4 +773,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,hslRgb};
+module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb};

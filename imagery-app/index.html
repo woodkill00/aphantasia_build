@@ -55,15 +55,20 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 .editor-scroll{overflow:auto;overscroll-behavior:contain;min-height:0;padding:18px 20px;scroll-padding-block:16px;scrollbar-color:#6b7d6a #18211b;scrollbar-gutter:stable}
 .editor-actions{padding:8px 12px;border-top:1px solid var(--line);background:var(--panel);z-index:2}
 .editor-actions .apply-row{margin:0;padding:0;border:0}.editor-actions .apply-row:not([hidden]){margin-bottom:6px}
+/* This caption occupies its own row; the name truncates, never the state. */
+.capture-caption{display:flex;gap:8px;align-items:center;min-width:0;height:16px;margin-bottom:4px;font-size:.63rem;line-height:16px;color:var(--muted)}
+#capture-source{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#capture-source-state{flex:none;white-space:nowrap;color:var(--accent)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .capture-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}.capture-actions button{font-size:.7rem;padding:8px}
 #controls h1,#sequence-title{font-size:1.65rem;margin:6px 0 12px}.section-heading{align-items:center}
 .inline-error{font-size:.76rem;line-height:1.5;padding:10px;border-left:3px solid #e4b497;color:#f2c6aa;background:#2c231f}
 #sequence-load{margin-top:12px;width:100%;font-size:.75rem}#sequence-example{width:100%;font-size:.78rem}
-.sequence-view-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1}.manual-actions,.playback-actions{display:flex;gap:6px}.sequence-view-actions button{font-size:.77rem;min-width:70px}.sequence-view-actions .hint{margin:0;font-size:.69rem}#sequence-progress{font-variant-numeric:tabular-nums;min-width:70px}#reduced-motion-note{width:100%}
+.sequence-view-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1}.manual-actions,.playback-actions{display:flex;gap:6px}.sequence-view-actions button{font-size:.77rem;min-width:70px}.sequence-view-actions .hint{margin:0;font-size:.69rem}#sequence-stop{min-width:44px;min-height:44px}#sequence-progress{font-variant-numeric:tabular-nums;min-width:70px}#reduced-motion-note{width:100%}
 .viewing-bar:has(#sequence-view-actions:not([hidden])){flex-wrap:wrap;gap:8px}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{flex-basis:100%;font-size:.7rem;max-height:3em}
 @media(max-width:650px){.editor-scroll{padding:14px 16px}.editor-actions{padding:7px 10px}.section-selector{padding:7px 10px}.sequence-view-actions{gap:6px;display:grid;grid-template-columns:minmax(0,1fr) auto}.manual-actions{grid-column:1/-1}.manual-actions button{flex:1}.playback-actions{min-width:0}.playback-actions button{min-width:0}.sequence-view-actions button{min-height:44px;padding:8px;font-size:.72rem}#sequence-progress{text-align:right;font-size:.65rem}#reduced-motion-note{grid-column:1/-1}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{flex-basis:auto;min-height:1.5em}}
 @media(max-height:500px){.editor-actions{padding:4px 7px}.capture-actions button,.editor-actions .apply-row button{padding:5px;font-size:.66rem}.section-selector{padding:4px 7px}.editor-scroll{padding:10px}.sequence-view-actions{gap:5px}.viewing-bar:has(#sequence-view-actions:not([hidden])){padding:5px;gap:4px}}
-@media(max-width:500px) and (max-height:300px){.editor-panel{grid-template-rows:auto minmax(56px,1fr) auto;overflow:auto}.section-selector{padding:2px}.editor-scroll{padding:6px}.editor-actions{padding:2px}.capture-actions button,.editor-actions .apply-row button{font-size:.6rem}.manual-actions button,.playback-actions button{font-size:.64rem}.sequence-view-actions{grid-template-columns:1fr auto;gap:2px}.sequence-view-actions .manual-actions{grid-column:auto}.sequence-view-actions #sequence-progress{display:none}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{max-height:1.5em}}
+@media(max-width:500px) and (max-height:300px){.editor-panel{grid-template-rows:auto minmax(56px,1fr) auto;overflow:auto}.section-selector{padding:2px}.editor-scroll{padding:6px}.editor-actions{padding:2px}.capture-actions button,.editor-actions .apply-row button{font-size:.6rem}.manual-actions button,.playback-actions button{font-size:.64rem}.sequence-view-actions{grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:2px}.sequence-view-actions .manual-actions{grid-column:auto}.sequence-view-actions .manual-actions,.sequence-view-actions .playback-actions{min-width:0;gap:2px}.sequence-view-actions button{flex:1;min-width:44px;min-height:44px;padding:4px}.sequence-view-actions #sequence-progress{display:none}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{max-height:1.5em}}
 </style>
 </head>
 <body>
@@ -172,7 +177,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       </div>
       <div id="editor-actions" class="editor-actions">
         <div id="scene-apply-actions" class="apply-row"><button id="apply-changes" class="primary" type="submit" form="scene-form">Apply changes</button><button id="discard" type="button">Discard</button></div>
-        <div class="capture-actions"><button id="capture-add" type="button">Add scene as step</button><button id="capture-replace" type="button" disabled>Replace selected step</button></div>
+        <div class="capture-caption"><span id="capture-source">From scene: A small constellation</span><span id="capture-source-state">Applied</span></div>
+        <span id="capture-replace-context" class="sr-only">Add a scene before replacing a step.</span>
+        <div class="capture-actions"><button id="capture-add" type="button" aria-describedby="capture-source capture-source-state">Add scene as step</button><button id="capture-replace" type="button" aria-describedby="capture-replace-context" disabled>Replace selected step</button></div>
       </div>
     </aside>
   </main>
@@ -1093,6 +1100,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('sequence-transition').value=String(step?step.transitionMs/1000:0);
   }
   function renderSequence(){
+    // Native browsers blur a focused control as soon as it becomes hidden or
+    // disabled. Preserve the reference before any visibility mutations.
+    const previouslyFocused=document.activeElement;
     const count=sequence?sequence.sequence.steps.length:0,invalid=!!sequenceError,full=document.fullscreenElement===root;
     const playback=timeline.getState(),running=playback.status==='running',paused=playback.status==='paused';
     $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Compose, apply, then show when you choose.';
@@ -1100,6 +1110,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('workspace-sequence').setAttribute('aria-pressed',String(section==='sequence'));
     $('scene-panel').hidden=section!=='scene';$('sequence-panel').hidden=section!=='sequence';
     $('scene-apply-actions').hidden=section!=='scene';$('sequence-count').textContent=String(count);
+    const readableName=value=>String(value).slice(0,64).replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g,'�').trim()||'Unnamed draft';
+    const sourceName=readableName($('scene-name').value),sourceState=formDirty?'Staged edits':'Applied';
+    $('capture-source').textContent='From scene: '+sourceName;$('capture-source').title='From scene: '+sourceName;
+    $('capture-source-state').textContent=sourceState;
+    const replaceContext=count?'Replace selected step '+(stepIndex+1)+' “'+sequence.sequence.steps[stepIndex].name+'” with scene “'+sourceName+'” ('+sourceState.toLowerCase()+').':'Add a scene before replacing a step.';
+    $('capture-replace-context').textContent=replaceContext;$('capture-replace').title=replaceContext;
+    $('capture-replace').setAttribute('aria-label',(formDirty?'Apply scene and replace step. ':'')+replaceContext);
     $('capture-add').textContent=formDirty?'Apply scene and add step':'Add scene as step';
     $('capture-replace').textContent=formDirty?'Apply scene and replace step':'Replace selected step';
     $('capture-add').disabled=invalid||count>=S.MAX_STEPS;$('capture-replace').disabled=invalid||!count;
@@ -1127,8 +1144,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     // Completion/cancellation must not strand keyboard focus on a removed
     // Pause/Resume control. Never move focus away from an editing field.
     if(section==='sequence'&&!full){
-      const active=document.activeElement;
-      if(['sequence-play','sequence-pause','sequence-resume','sequence-show'].some(id=>active===$(id)&&($(id).hidden||$(id).disabled)))$('sequence-stop').focus();
+      if(['sequence-play','sequence-pause','sequence-resume','sequence-show'].some(id=>previouslyFocused===$(id)&&($(id).hidden||$(id).disabled)))$('sequence-stop').focus();
     }
   }
   function setAcceptedSequence(value,compiled){

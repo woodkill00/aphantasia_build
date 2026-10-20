@@ -7,7 +7,7 @@ const {sequence,shortSequence,clone}=require('./sequence-fixtures.cjs');
 function rgb({h,s,l}){const a=s/100*Math.min(l/100,1-l/100);return [0,8,4].map(n=>{const k=(n+h/30)%12;return Math.round(255*(l/100-a*Math.max(-1,Math.min(k-3,9-k,1))))});}
 const mix=(a,b,t)=>a.map((v,i)=>Math.round(v*(1-t)+b[i]*t));
 async function runSequenceScenarios({page,runCase}){
- const media=value=>page.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value}]});
+ const media=value=>page.motionPreference(value);
  const open=value=>page.file('synthetic-timeline.json',value,true,'#sequence-import');
  async function ready(value=sequence()){await media('no-preference');await open(value);await sleep(3100);await page.hidden();}
  async function controlled(){await page.evaluate(()=>{

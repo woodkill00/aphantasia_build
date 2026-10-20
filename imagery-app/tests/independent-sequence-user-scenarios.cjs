@@ -35,6 +35,11 @@ async function runIndependentSequenceScenarios({page,runCase,out,captureLog=fals
   }
   async function targetMetrics(ids){return page.evaluate(ids=>ids.map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{id,width:r.width,height:r.height,left:r.left,top:r.top,right:r.right,bottom:r.bottom,visible:r.width>0&&r.height>0&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,hit:hit===e||e.contains(hit)};}),ids);}
   async function reachable(ids){const metrics=await targetMetrics(ids);for(const m of metrics)assert.ok(m.visible&&m.hit&&m.width>=44&&m.height>=44,`Control not reachable: ${JSON.stringify(m)}`);return metrics;}
+  async function captureContext(source,staged,target){
+    const value=await page.evaluate(()=>{const e=document.getElementById('capture-source'),r=e.getBoundingClientRect(),a=document.getElementById('editor-actions').getBoundingClientRect();return{text:e.textContent,state:document.getElementById('capture-source-state').textContent,title:e.title,context:document.getElementById('capture-replace-context').textContent,label:document.getElementById('capture-replace').getAttribute('aria-label'),buttonText:document.getElementById('capture-replace').textContent,visible:r.width>0&&r.height>0&&r.top>=a.top&&r.bottom<=a.bottom&&r.left>=0&&r.right<=innerWidth}});
+    assert.ok(value.text.includes(source),`Wrong capture source: ${JSON.stringify(value)}`);assert.match(value.state,staged?/staged/i:/applied/i);assert.ok(value.title.includes(source));assert.ok(value.visible,'Capture-source caption must remain in the fixed action strip');
+    if(target){assert.ok(value.label.includes(value.buttonText),'Accessible Replace name must include its full visible label');for(const field of ['context','label']){assert.ok(value[field].includes(source),`Missing source in ${field}`);assert.ok(value[field].includes(target),`Missing selected target in ${field}`);}}
+  }
   async function pixels(){return page.evaluate(()=>{
     const c=document.getElementById('scene-canvas'),ctx=c.getContext('2d'),r=c.getBoundingClientRect(),u=Math.min(r.width,r.height)/100;
     const at=(x,y)=>Array.from(ctx.getImageData(Math.floor(x*c.width/r.width),Math.floor(y*c.height/r.height),1,1).data).slice(0,3);
@@ -48,7 +53,7 @@ async function runIndependentSequenceScenarios({page,runCase,out,captureLog=fals
     if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,page.device.name+'-'+id+'.jpg'),bytes);}if(captureLog)console.log('IMAGERY_VISUAL_CAPTURE '+JSON.stringify({...metadata,base64:data}));
   }
   async function waitRevealGuard(){await sleep(3100);await page.hidden();}
-  async function motion(value){await page.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value}]});await until(()=>page.evaluate(v=>matchMedia('(prefers-reduced-motion: reduce)').matches===(v==='reduce'),value),'motion preference');}
+  async function motion(value){await page.motionPreference(value);}
   async function installPlayObserver(){await page.evaluate(()=>{window.__independentPlayStarts=[];document.getElementById('sequence-play').addEventListener('click',e=>window.__independentPlayStarts.push({time:performance.now(),trusted:e.isTrusted}),{capture:true});});}
   async function play(){await page.click('#sequence-play');await page.visible();const event=await page.evaluate(()=>window.__independentPlayStarts.at(-1));assert.equal(event.trusted,true);return event.time;}
   async function elapsedAt(start,target){await until(()=>page.evaluate((s,t)=>performance.now()-s>=t,start,target),'real elapsed '+target,target+3000);await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>resolve())));return page.evaluate(s=>performance.now()-s,start);}
@@ -62,7 +67,7 @@ async function runIndependentSequenceScenarios({page,runCase,out,captureLog=fals
       await page.fill('#scene-name',referenceSequence.sequence.steps[i].name);
       assert.match(await page.property('#capture-add','textContent'),/Apply scene and add step/i);
       if(i===0){
-        await nativeHue(211);await nativeHue(210);await observe('Hue focused with pinned actions');
+        await nativeHue(211);await nativeHue(210);await captureContext('Circle',true);await observe('Hue focused with pinned actions');
         const metrics=await reachable(['apply-changes','discard','capture-add']);
         console.log('INDEPENDENT_SEQUENCE_PINNED '+JSON.stringify({device:page.device.name,metrics,observation:observations.at(-1)}));
         await capture('scene-hue-and-pinned-actions');
@@ -71,8 +76,8 @@ async function runIndependentSequenceScenarios({page,runCase,out,captureLog=fals
       if(i===0)await page.fill('#sequence-name',referenceSequence.sequence.name);
     }
     assert.deepEqual((await download()).json,referenceSequence,'Native capture sequence must exactly match independent canonical reference');
-    await page.nativeSelect('#sequence-step-select','1');await page.click('#sequence-load');await page.hidden();assert.equal(await page.property('#scene-panel','hidden'),false);
-    await nativeHue(260);await page.click('#workspace-sequence');
+    await page.nativeSelect('#sequence-step-select','1');await captureContext('Triangle',false,'Square');await page.click('#sequence-load');await page.hidden();assert.equal(await page.property('#scene-panel','hidden'),false);
+    await nativeHue(260);await page.click('#workspace-sequence');await captureContext('Square',true,'Square');
     assert.deepEqual((await download()).json,referenceSequence,'Static draft must not change captured snapshot');
     assert.match(await page.property('#capture-replace','textContent'),/Apply scene and replace step/i);
     await act('Combined Apply scene and Replace square',()=>page.click('#capture-replace'));

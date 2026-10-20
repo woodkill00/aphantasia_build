@@ -381,6 +381,9 @@
     $('sequence-transition').value=String(step?step.transitionMs/1000:0);
   }
   function renderSequence(){
+    // Native browsers blur a focused control as soon as it becomes hidden or
+    // disabled. Preserve the reference before any visibility mutations.
+    const previouslyFocused=document.activeElement;
     const count=sequence?sequence.sequence.steps.length:0,invalid=!!sequenceError,full=document.fullscreenElement===root;
     const playback=timeline.getState(),running=playback.status==='running',paused=playback.status==='paused';
     $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Compose, apply, then show when you choose.';
@@ -388,6 +391,13 @@
     $('workspace-sequence').setAttribute('aria-pressed',String(section==='sequence'));
     $('scene-panel').hidden=section!=='scene';$('sequence-panel').hidden=section!=='sequence';
     $('scene-apply-actions').hidden=section!=='scene';$('sequence-count').textContent=String(count);
+    const readableName=value=>String(value).slice(0,64).replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g,'�').trim()||'Unnamed draft';
+    const sourceName=readableName($('scene-name').value),sourceState=formDirty?'Staged edits':'Applied';
+    $('capture-source').textContent='From scene: '+sourceName;$('capture-source').title='From scene: '+sourceName;
+    $('capture-source-state').textContent=sourceState;
+    const replaceContext=count?'Replace selected step '+(stepIndex+1)+' “'+sequence.sequence.steps[stepIndex].name+'” with scene “'+sourceName+'” ('+sourceState.toLowerCase()+').':'Add a scene before replacing a step.';
+    $('capture-replace-context').textContent=replaceContext;$('capture-replace').title=replaceContext;
+    $('capture-replace').setAttribute('aria-label',(formDirty?'Apply scene and replace step. ':'')+replaceContext);
     $('capture-add').textContent=formDirty?'Apply scene and add step':'Add scene as step';
     $('capture-replace').textContent=formDirty?'Apply scene and replace step':'Replace selected step';
     $('capture-add').disabled=invalid||count>=S.MAX_STEPS;$('capture-replace').disabled=invalid||!count;
@@ -415,8 +425,7 @@
     // Completion/cancellation must not strand keyboard focus on a removed
     // Pause/Resume control. Never move focus away from an editing field.
     if(section==='sequence'&&!full){
-      const active=document.activeElement;
-      if(['sequence-play','sequence-pause','sequence-resume','sequence-show'].some(id=>active===$(id)&&($(id).hidden||$(id).disabled)))$('sequence-stop').focus();
+      if(['sequence-play','sequence-pause','sequence-resume','sequence-show'].some(id=>previouslyFocused===$(id)&&($(id).hidden||$(id).disabled)))$('sequence-stop').focus();
     }
   }
   function setAcceptedSequence(value,compiled){

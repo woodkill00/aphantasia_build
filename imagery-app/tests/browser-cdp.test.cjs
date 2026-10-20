@@ -2,7 +2,7 @@
 // Transport/fixture checks only. These never launch Chrome or establish browser compatibility.
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,hslRgb} = require('./browser-cdp.cjs');
+const {CDP,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb} = require('./browser-cdp.cjs');
 class FakeSocket extends EventTarget {
   sent=[];
   send(value) { this.sent.push(JSON.parse(value)); }
@@ -109,4 +109,11 @@ test('independent sequence user fixture and temporal/color oracle are valid with
 });
 test('native sequence pixel blend oracle uses independent RGB arithmetic',()=>{
  const {rgb,mix}=require('./browser-sequence.cjs');assert.deepEqual(rgb({h:210,s:30,l:50}),[89,128,166]);assert.deepEqual(mix([0,10,200],[200,110,0],.5),[100,60,100]);assert.deepEqual(mix([0,10,200],[200,110,0],0),[0,10,200]);assert.deepEqual(mix([0,10,200],[200,110,0],1),[200,110,0]);
+});
+
+test('Native motion event snapshot accepts both preference directions only when synchronously concealed',()=>{
+ for(const matches of [false,true])assert.doesNotThrow(()=>assertMotionSnapshot(Object.freeze({trusted:true,matches,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0}),matches));
+});
+test('Native motion event snapshot rejects missing, untrusted, wrong-preference, visible or colored snapshots',()=>{
+ const valid={trusted:true,matches:true,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0};for(const snapshot of [undefined,{...valid,trusted:false},{...valid,matches:false},{...valid,visibility:'Visible'},{...valid,canvasLabel:'Scene shown.'},{...valid,coloredPixels:1}])assert.throws(()=>assertMotionSnapshot(snapshot,true));
 });
