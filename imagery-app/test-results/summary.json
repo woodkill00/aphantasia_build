@@ -4,14 +4,16 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 178256,
-    "sha256": "5e65f8e83e9d9469d6a37c8f59fb5baef47e066ab087fb341399b375b4d136a0"
+    "bytes": 178349,
+    "sha256": "a7a7d6ac091e1e8454efacecba781c25516bc3ccb1f5fbc78ad0e44bc0d9925c"
   },
   "browser": {
-    "status": "CI_FIXES_APPLIED_RERUN_PENDING",
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39405701039",
-    "previousHead": "40e3b5975268a3f0b64a8b4b76d372052795f701",
-    "findings": "Fullscreen canvas tabindex and an invalid empty accepted-history assumption in native setup. Both corrected and independently re-reviewed; exact-head rerun pending."
+    "status": "NATIVE_TOUCH_SYNCHRONIZATION_RERUN_PENDING",
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39407369118",
+    "previousHead": "953cb6eb9fbaa656d28f7dbd327800c0b694c113",
+    "passed": 105,
+    "failed": 1,
+    "findings": "Fullscreen and desktop drag passed. Mobile trusted Undo tap was not delivered after scrolling. A narrow native-frame synchronization and event trace experiment preserves one trusted dispatch; exact-head rerun pending."
   },
   "historicalV07": {
     "date": "2026-10-20",

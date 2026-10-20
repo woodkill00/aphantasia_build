@@ -13,6 +13,10 @@ async function runDirectEditorScenarios({page,runCase}){
   else{const names={down:'mousePressed',move:'mouseMoved',up:'mouseReleased'};await page.send('Input.dispatchMouseEvent',{type:names[type],x,y,button:'left',buttons:type==='up'?0:1,clickCount:1});}
  }
  async function sample(x,y){return page.evaluate(([x,y])=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(Math.floor(c.width*x/100),Math.floor(c.height*y/100),1,1).data).slice(0,3)},[x,y]);}
+ async function settledDirectClick(selector){
+  await page.evaluate(async selector=>{const e=document.querySelector(selector);e.scrollIntoView({block:'center',inline:'center',behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));window.__directTapTrace=[];for(const type of ['pointerdown','pointerup','pointercancel','click'])for(const capture of [true,false])document.addEventListener(type,event=>{if(window.__directTapTrace.length>=32)return;const r=e.getBoundingClientRect(),c=document.getElementById('scene-canvas').getBoundingClientRect();window.__directTapTrace.push({type,capture,target:event.target.id,trusted:event.isTrusted,x:event.clientX,y:event.clientY,button:{x:r.x,y:r.y,w:r.width,h:r.height},canvas:{x:c.x,y:c.y,w:c.width,h:c.height},scroll:document.getElementById('editor-scroll').scrollTop});},{capture});},selector);
+  try{await page.click(selector);}catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>window.__directTapTrace)));}
+ }
  const near=(a,b)=>a.forEach((value,i)=>assert.ok(Math.abs(value-b[i])<=3,`actual pixel ${a} expected ${b}`));
  await runCase('v8 trusted drag updates actual pixels before release and one move undo preserves applied scene',async()=>{
   const value=fixture();await start(value);const acceptedUndoBefore=await page.property('#undo','disabled');const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
@@ -20,7 +24,7 @@ async function runDirectEditorScenarios({page,runCase}){
   await input('down',p.x,p.y);await input('move',q.x,q.y);await sleep(40);
   assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);assert.ok(Math.abs(Number(await page.property('#position-y','value'))-45)<.1);await page.visible();near(await sample(47,45),rgb(value.scene.objects[0].color));near(await sample(35,50),rgb(value.scene.background));
   await input('up',q.x,q.y);await sleep(40);assert.ok((await page.evaluate(()=>window.__directTrust)).every(e=>e.trusted));assert.equal(await page.property('#undo-move','disabled'),false);assert.equal(await page.property('#undo','disabled'),acceptedUndoBefore,'draft move must not change accepted history');
-  await page.visualCapture('v8-dragged-live-item');await page.click('#undo-move');await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
+  await page.visualCapture('v8-dragged-live-item');await settledDirectClick('#undo-move');await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
   await page.click('#discard');const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);
  });
  await runCase('v8 native click selects topmost item and explicit overlap cycling selects underlying item',async()=>{

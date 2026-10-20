@@ -8,6 +8,8 @@ The geometry and journal model files are pure future-phase foundations, not inte
 
 [Run 39405701039](https://github.com/woodkill00/aphantasia_build/actions/runs/39405701039) ran the native suite and found two issues on both emulated devices: the focusable editor canvas remained in fullscreen tab order, and a new test incorrectly assumed that importing a fixture left accepted history empty. The canvas now leaves the tab order outside editing/explicit placement; the native test compares accepted history before and after a draft move and still verifies exact discard/export state. Independent focused re-review and 26 direct-editor tests pass. A new exact-head native/visual run is required; the failed run is not acceptance.
 
+[Run 39407369118](https://github.com/woodkill00/aphantasia_build/actions/runs/39407369118) passed 105/106 native groups. Fullscreen isolation and desktop drag passed, but the mobile Undo tap after drag/scroll was not delivered. The next candidate waits two native animation frames after the explicit test scroll before its single trusted tap and records event/rectangle diagnostics if it fails. This tests a compositor-timing hypothesis; it is not yet proof of the cause or acceptance. Item selection also now scrolls the selected-object controls into view after the gesture ends.
+
 ## Historical verification below
 
 # Public repository onboarding, MIT licensing and release preparation

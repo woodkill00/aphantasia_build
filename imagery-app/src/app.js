@@ -343,6 +343,7 @@
   }
   function selectAtEnd(){
     editorOpen=true;section='scene';fillSelected();render();
+    $('object-select').scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
     say('Selected '+selectedId+'. Drag or use the position controls to move it.');
   }
   canvas.addEventListener('pointerdown',event=>{
