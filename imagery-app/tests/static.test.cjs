@@ -65,3 +65,13 @@ test('FULLWINDOW: fullscreen stage owns Show, Hide, End and Exit controls',()=>{
  const stage=shell.slice(start,stop);for(const id of ['scene-canvas','show-scene','hide-scene','end-viewing','fullscreen','exit-fullscreen'])assert.ok(stage.includes(`id="${id}"`),`${id} must be within fullscreen stage`);
  assert.match(code,/fullscreenchange/);assert.match(code,/fullscreenerror/);
 });
+
+
+test('V3 STATIC: color previews have text equivalents and both fullscreen controls belong to the stage',()=>{
+ const shell=fs.readFileSync(path.join(ROOT,'src','shell.html'),'utf8');
+ for(const prefix of ['object','background']){assert.match(shell,new RegExp('id="'+prefix+'-color-swatch"[^>]*role="img"[^>]*aria-label='));assert.ok(shell.includes('id="'+prefix+'-color-text"'));}
+ for(const id of ['fullscreen-start','fullscreen-show','fullscreen-status','exit-fullscreen'])assert.ok(shell.includes('id="'+id+'"'));
+ assert.equal((code.match(/\bsetTimeout\s*\(/g)||[]).length,1,'only the pre-existing one-shot download cleanup timer is allowed; fullscreen needs no timers');
+ assert.match(css,/\.fullscreen-exit[^}]*min-width:44px[^}]*min-height:44px/);
+ assert.match(css,/\.fullscreen-exit:(?:focus-visible|focus)/);
+});

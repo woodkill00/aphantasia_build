@@ -21,6 +21,32 @@
   .view-actions{gap:2px}.view-actions button{min-height:44px;padding:3px;font-size:.65rem;border-radius:4px}
   .viewing-bar p{min-height:1.5em;max-height:1.5em;font-size:.63rem;line-height:1.5}
 }
+
+/* Small editor-only samples; slider gradients follow the actual draft HSL.
+   The canvas remains the accepted, explicitly revealed scene. */
+.color-preview{display:flex;align-items:center;gap:10px;margin:20px 0 8px;min-width:0}
+.color-swatch{width:38px;height:30px;flex:none;display:block;border:1px solid #91a090;border-radius:6px;background:#000}
+.color-preview-label,.color-preview-value{display:block;font-size:.72rem;line-height:1.5}
+.color-preview-label{color:#d9e2d5;font-weight:600}.color-preview-value{color:var(--muted);font-variant-numeric:tabular-nums}
+input.color-slider{appearance:none;-webkit-appearance:none;min-height:44px;height:44px;border-radius:0;background-size:100% 8px;background-position:center;background-repeat:no-repeat}
+input.color-slider::-webkit-slider-runnable-track{height:8px;border:1px solid #849282;border-radius:5px;background:transparent}
+input.color-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid #f1f4e9;border-radius:50%;background:#26322b;margin-top:-7px}
+input.color-slider::-moz-range-track{height:6px;border:1px solid #849282;border-radius:5px;background:transparent}
+input.color-slider::-moz-range-thumb{width:16px;height:16px;border:2px solid #f1f4e9;border-radius:50%;background:#26322b}
+input.color-slider:disabled{opacity:.45;cursor:default}
+/* Native fullscreen removes workspace chrome entirely. Exit stays discoverable,
+   keyboard focus stays visible, and touch never needs a hover-reveal gesture. */
+.stage-root.fullscreen-mode{display:block;padding:0;overflow:hidden}
+.fullscreen-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:72px 24px;color:#b2bcb2;background:#000}
+.fullscreen-start h2{font:400 1rem/1.5 ui-sans-serif,system-ui,sans-serif;margin:0}
+.fullscreen-start p{font-size:.75rem;max-width:34em;margin:0;color:#aab9ad}
+.fullscreen-start p.error{color:#f2c6aa}
+.fullscreen-exit{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));min-width:44px;min-height:44px;padding:10px 12px;z-index:10;font-size:.75rem;font-weight:500;line-height:1.25;border:1px solid #66716b;border-radius:7px;background:#141a17;color:#edf1ea;opacity:.75}
+.fullscreen-exit:hover,.fullscreen-exit:focus-visible,.fullscreen-exit:active{opacity:1;background:#253029}
+.fullscreen-exit:focus-visible{box-shadow:0 0 0 7px #000}
+@media(hover:none),(pointer:coarse){.fullscreen-exit{opacity:1}}
+@media(max-height:300px){.fullscreen-start{padding:50px 16px 12px;gap:8px;overflow:auto;justify-content:flex-start}.fullscreen-start p{font-size:.68rem}.fullscreen-exit{top:4px;right:4px}}
+@media(forced-colors:active){.color-swatch{forced-color-adjust:none}.fullscreen-exit{opacity:1;background:ButtonFace;color:ButtonText;border-color:ButtonText}.fullscreen-exit:focus-visible{box-shadow:none;outline-color:Highlight}input.color-slider{appearance:auto;-webkit-appearance:auto;background-image:none!important}}
 </style>
 </head>
 <body>
@@ -28,11 +54,11 @@
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
   <div id="hidden-label" class="hidden-label" aria-hidden="true"><span class="quiet-mark">○</span><span>The field is hidden</span><small>Compose, apply, then show when you choose.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
-  <header class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">STATIC STUDIO / 0.2</span></div><span id="visibility-label" class="pill">Hidden</span></div>
-    <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button><button id="exit-fullscreen" type="button" hidden>Exit fullscreen</button></nav>
+  <header id="masthead" class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">STATIC STUDIO / 0.3</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
-  <main class="stage-body">
+  <main id="stage-body" class="stage-body">
     <aside id="editor-panel" class="editor-panel" aria-label="Scene editor">
       <section id="controls" tabindex="-1" aria-labelledby="controls-title">
         <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Make room<br>for your own design.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
@@ -55,21 +81,25 @@
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Place on field lets you click or tap a new position while hidden. Position inputs work with a keyboard.</p>
-            <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" type="range" min="0" max="359" step="1" value="208">
-            <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" type="range" min="0" max="70" step="1" value="11">
-            <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" type="range" min="10" max="70" step="1" value="48">
+            <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
+            <p id="object-color-hint" class="hint">This small sample updates as you edit. The full field stays hidden until you Apply changes, then Show scene.</p>
+            <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="359" step="1" value="208">
+            <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="70" step="1" value="11">
+            <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="10" max="70" step="1" value="48">
           </fieldset>
           <fieldset class="group"><legend>Background field</legend>
             <p class="hint">Choose a color to represent your subjective visual field. It is your description, not a measurement of internal vision.</p>
-            <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" type="range" min="0" max="359" step="1" value="0">
-            <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" type="range" min="0" max="60" step="1" value="0">
-            <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" type="range" min="0" max="40" step="1" value="0">
+            <div class="color-preview"><span id="background-color-swatch" class="color-swatch" role="img" aria-label="Background color sample"></span><div><span class="color-preview-label">Background color sample</span><span id="background-color-text" class="color-preview-value"></span></div></div>
+            <p id="background-color-hint" class="hint">Only this small sample updates immediately. Apply changes, then Show scene to display the full field.</p>
+            <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="359" step="1" value="0">
+            <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="60" step="1" value="0">
+            <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="40" step="1" value="0">
             <p class="hint">At 0% lightness, the background is black. At 0% saturation, hue has no visible effect. Color lightness does not set your screen’s brightness.</p>
           </fieldset>
           <div class="apply-row"><button id="apply-changes" class="primary" type="submit">Apply changes</button><button id="discard" type="button">Discard</button></div>
         </form>
         <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step session history</span></div>
-        <p class="hint">Edits hide the field immediately. Apply them, then choose Show. Nothing moves or advances automatically.</p>
+        <p class="hint">Edits hide the full field immediately; only the small color samples update live. Apply changes, then choose Show. Nothing moves or advances automatically.</p>
         <details class="description"><summary>Applied scene description</summary><p id="scene-description"></p></details>
       </section>
       <section class="portable-card" aria-labelledby="portable-title">
@@ -97,10 +127,16 @@
       <p class="footnote">Object, geometry, color and resource bounds keep this prototype reviewable. They are engineering choices, not medically established safety thresholds. Static displays can still cause symptoms.</p>
     </aside>
   </main>
-  <section class="viewing-bar" aria-label="Viewing controls">
+  <section id="viewing-bar" class="viewing-bar" aria-label="Viewing controls">
     <div class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
     <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
   </section>
+  <section id="fullscreen-start" class="fullscreen-start" aria-labelledby="fullscreen-title" hidden>
+    <h2 id="fullscreen-title">The field is hidden</h2>
+    <button id="fullscreen-show" class="primary" type="button" aria-describedby="fullscreen-status">Show scene</button>
+    <p id="fullscreen-status" role="status" aria-live="polite" aria-atomic="true">Choose Show scene when you want to display it.</p>
+  </section>
+  <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>
 </div>
 <noscript><div class="noscript">JavaScript is required for this local editor. The scene is hidden.</div></noscript>
 <script>/* Imagery Field 0.2.0. Static scene model and interaction controller.
@@ -309,7 +345,10 @@
   const categories=Object.freeze(['unsure','none','external-perception','residual-aftereffect','voluntary-imagery','conceptual-knowledge','mixed']);
   const copy=value=>JSON.parse(JSON.stringify(value));
   const number=id=>$(id).value.trim()===''?NaN:Number($(id).value);
-  function say(message,error){$('status').textContent=String(message).slice(0,300);$('status').className=error?'error':'';}
+  function say(message,error){
+    const text=String(message).slice(0,300);
+    ['status','fullscreen-status'].forEach(id=>{$(id).textContent=text;$(id).className=error?'error':'';});
+  }
   function dimensions(){
     const rect=canvas.getBoundingClientRect();
     const width=Number.isFinite(rect.width)&&rect.width>0?rect.width:1;
@@ -336,10 +375,38 @@
       else{context.lineWidth=item.lineWidth;item.points.forEach((p,i)=>i?context.lineTo(p[0],p[1]):context.moveTo(p[0],p[1]));context.closePath();if(item.filled)context.fill();else context.stroke();}
     });
   }
-  function updateOutputs(){sliderIDs.forEach(id=>{$(id+'-value').textContent=$(id).value+(id.endsWith('hue')?'°':'%');});}
+  // These bounded editor samples represent only the current form colors. They
+  // never change the accepted scene, call Show, or paint a scene preview.
+  function updateColorSample(prefix){
+    const swatch=$(prefix+'-color-swatch'),description=$(prefix+'-color-text');
+    const present=prefix==='background'||!!selected();
+    const color={h:number(prefix+'-hue'),s:number(prefix+'-saturation'),l:number(prefix+'-lightness')};
+    const background=prefix==='background';
+    const valid=Number.isInteger(color.h)&&color.h>=0&&color.h<=359&&Number.isInteger(color.s)&&color.s>=0&&color.s<=(background?60:70)&&Number.isInteger(color.l)&&color.l>=(background?0:10)&&color.l<=(background?40:70);
+    swatch.hidden=!present;
+    if(!present||!valid){
+      swatch.style.backgroundColor='transparent';
+      swatch.setAttribute('aria-label',present?'Color sample unavailable: check the color values.':'No object selected.');
+      description.textContent=present?'Check the color values.':'No object selected.';
+      ['hue','saturation','lightness'].forEach(channel=>{$(prefix+'-'+channel).style.backgroundImage='none';});
+      return;
+    }
+    const css=M.colorCSS(color),text='HSL '+color.h+'° / '+color.s+'% / '+color.l+'%';
+    swatch.style.backgroundColor=css;
+    swatch.setAttribute('aria-label',(background?'Background':'Object')+' color sample: '+text+'.');
+    description.textContent=text;
+    const gradient=colors=>'linear-gradient(to right, '+colors.join(', ')+')';
+    $(prefix+'-hue').style.backgroundImage=gradient([0,60,120,180,240,300,359].map(h=>M.colorCSS({...color,h})+' '+(h/359*100)+'%'));
+    $(prefix+'-saturation').style.backgroundImage=gradient([0,background?60:70].map(s=>M.colorCSS({...color,s})));
+    const min=background?0:10,max=background?40:70;
+    $(prefix+'-lightness').style.backgroundImage=gradient((background?[min,max]:[min,50,max]).map(l=>M.colorCSS({...color,l})+' '+((l-min)/(max-min)*100)+'%'));
+  }
+  function updateOutputs(){
+    sliderIDs.forEach(id=>{$(id+'-value').textContent=$(id).value+(id.endsWith('hue')?'°':'%');});
+    updateColorSample('object');updateColorSample('background');
+  }
   function render(){
     const state=controller.getState();draw(state);
-    $('hidden-label').hidden=state.visible;
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
     $('show-scene').setAttribute('aria-pressed',String(state.visible));
     canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object. The scene is hidden. Escape cancels.':state.visible?M.describe(state.current):'Scene hidden. No design is displayed.');
@@ -355,6 +422,12 @@
     $('editor-toggle').setAttribute('aria-expanded',String(editorOpen));
     $('editor-toggle').textContent=editorOpen?'Close editor':'Open editor';
     const full=document.fullscreenElement===root;
+    root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'');
+    // Native fullscreen is a viewing surface. Hide whole editor/navigation
+    // subtrees so their controls leave both the layout and keyboard tab order.
+    ['masthead','stage-body','viewing-bar','skip-controls'].forEach(id=>{$(id).hidden=full;});
+    $('hidden-label').hidden=state.visible||full;
+    $('fullscreen-start').hidden=!full||state.visible;
     $('fullscreen').hidden=full;$('exit-fullscreen').hidden=!full;
     updateOutputs();
   }
@@ -464,12 +537,15 @@
   $('discard').addEventListener('click',()=>{
     cancelPlacement();controller.hide();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
   });
-  $('show-scene').addEventListener('click',()=>{
+  function showScene(){
     cancelPlacement();controller.invalidateImport();
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
-    if(formDirty){render();say('Apply or discard staged changes before showing the scene.',true);return;}
+    if(formDirty){render();say((document.fullscreenElement===root?'Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.':'Apply or discard staged changes before showing the scene.'),true);return;}
     const result=controller.show();render();say(result.ok?'Scene visible. Hide or press Escape at any time.':result.error,!result.ok);
-  });
+    if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
+  }
+  $('show-scene').addEventListener('click',showScene);
+  $('fullscreen-show').addEventListener('click',showScene);
   $('hide-scene').addEventListener('click',()=>hide());
   $('end-viewing').addEventListener('click',()=>{
     cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
@@ -481,14 +557,17 @@
     render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Show scene when you choose.':result.error,!result.ok);
   }));
   // Fullscreen is optional. Entry/exit/failure never reveal; the common ancestor
-  // includes every hiding control. Do not await or schedule a later Show.
+  // includes the always-reachable Exit control. Do not schedule a later Show.
   let fullscreenOperation=0;
+  function fullscreenFailure(message){
+    hide(message+(document.fullscreenElement===root?' The field is hidden. Try Exit again or leave fullscreen with your browser (usually Escape).':' The field is hidden. The full-window editor and controls are available.'));
+  }
   async function changeFullscreen(enter){
     hide(enter?'Entering fullscreen with the field hidden.':'Leaving fullscreen with the field hidden.');
     const operation=++fullscreenOperation,owner=enter?root:document,method=enter?'requestFullscreen':'exitFullscreen';
-    if(typeof owner[method]!=='function'){say('Browser fullscreen is unavailable. The full-window field and all controls still work.',true);return;}
+    if(typeof owner[method]!=='function'){fullscreenFailure('Browser fullscreen could not be changed.');return;}
     try{await owner[method]();if(operation===fullscreenOperation){controller.hide();cancelPlacement();render();say('Display mode changed. The field is hidden; choose Show when you choose.');}}
-    catch(e){if(operation===fullscreenOperation){controller.hide();cancelPlacement();render();say('Fullscreen could not be changed. The full-window field and all controls still work.',true);}}
+    catch(e){if(operation===fullscreenOperation)fullscreenFailure('Fullscreen could not be changed.');}
   }
   $('fullscreen').addEventListener('click',()=>changeFullscreen(true));
   $('exit-fullscreen').addEventListener('click',()=>changeFullscreen(false));
@@ -496,7 +575,7 @@
     hide('Fullscreen changed. The field is hidden and will not resume automatically.');
     $(document.fullscreenElement===root?'exit-fullscreen':'fullscreen').focus();
   });
-  document.addEventListener('fullscreenerror',()=>hide('Fullscreen was unavailable or rejected. The full-window field remains usable.'));
+  document.addEventListener('fullscreenerror',()=>fullscreenFailure('Fullscreen was unavailable or rejected.'));
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'){hide('Scene hidden with Escape. Placement and pending file reads were canceled.');}
     if(event.repeat&&(event.key==='Enter'||event.key===' ')&&event.target&&event.target.closest&&event.target.closest('button'))event.preventDefault();

@@ -1,3 +1,37 @@
+# Version 0.3 candidate verification
+
+Date: 2026-10-20. Current status: **240 non-browser checks PASS; real-browser and visual review NOT RUN for this candidate.**
+
+Candidate HTML: 65,152 bytes; SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Repository baseline: `f614c2733ac6c8df838e9dd3d7ffdf6dd746745a`. The commit carrying this candidate will be recorded when available. The baseline rerun passed 216/216 on Node v24.19.0 before test changes.
+
+## Executed non-browser checks
+
+On Linux with Node v24.19.0, the frozen candidate passed 240/240: 113 model, 100 DOM/Canvas-double, 11 static, and 16 CDP harness/fixture/oracle checks. Browser suite syntax and separate fixtures passed (3 valid accepted; 14 invalid rejected). Commands:
+
+```sh
+node --test imagery-app/tests/model.test.cjs imagery-app/tests/ui.test.cjs imagery-app/tests/static.test.cjs imagery-app/tests/browser-cdp.test.cjs
+node --check imagery-app/tests/browser-cdp.cjs
+node imagery-app/tests/browser-cdp.cjs --check-fixtures
+```
+
+The first expanded development run passed 235/236. Its sole failure was a capitalization assumption in the test: the actual fullscreen error said “Exit fullscreen to apply or discard…” while the assertion expected capitalized “Apply.” A case-insensitive assertion now retains the required actionable error. No runtime behavior assertion was removed. The exact developing artifact hash was not captured for that first attempt; it is not used as acceptance evidence.
+
+New tests cover per-input object/background HSL samples without Apply or full-field painting, gray/black semantics, selection/history/import synchronization, missing-object samples, hidden fullscreen controls, draft/repeat guards, focus recovery, rejected Exit, lifecycle concealment and stale callbacks. The implementation adds no fullscreen timer. The existing download cleanup timer cannot draw, reveal, or restore fullscreen UI.
+
+## Real-browser and visual gates
+
+The expanded suite prepares 54 real-Chrome groups (27 per desktop and phone-sized viewport/touch-emulation configuration). It adds an independent HSL-to-RGB oracle; native range input observations before change; actual computed swatches; hidden studio/tab-order checks; keyboard Show/Exit; pointer-idle and first-touch Exit; short fullscreen controls; injected Exit denial; and native fullscreen entry/Exit/Escape. The prior trusted fullscreenchange assertions are unchanged: the app must synchronously leave Hidden state, all-black canvas pixels, and correct mode-control focus at the observed native event. Polling only waits for event delivery, never for expected concealment.
+
+Fourteen compact JPEG frames of the same synthetic reference scene are prepared for review through the existing CI job log. This is not yet visual evidence: no current-version frames have been captured or inspected. Native browser CI is pending. No new local browser launch was attempted because the previous sandbox-enabled launch blocker remains; no package, workflow, or browser-security workaround was used.
+
+Computed swatch checks establish CSS color and sample dimensions. They do not by themselves establish that a sample remains within the editor scrollport during every mobile slider gesture. The slider gradients are additional immediate feedback. Real pixels and user-perspective interaction review remain necessary.
+
+Physical devices, ordinary OS dialogs, Safari, full screen-reader/zoom/manual accessibility, calibrated color, qualified sensory review and efficacy remain unverified. Historical v0.2/v0.1 results below belong to their recorded artifacts only.
+
+The separate independently authored browser-user module adds two groups per configuration: construction of the exact shared three-outline scene through trusted native controls, and draft/discard/apply/view flows with its own painted-pixel RGB oracle. Its synthetic fixture and three RGB expectations pass without launching a browser. These scripted interactions are not a human usability study.
+
+---
+
 # Software verification report
 
 ## Current v0.2 result: scoped Chrome CI PASS

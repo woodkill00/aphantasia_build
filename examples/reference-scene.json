@@ -1,0 +1,14 @@
+{
+  "format": "imagery-static-scene",
+  "version": 2,
+  "sampler": "static-objects-2",
+  "scene": {
+    "name": "Reference: circle square triangle",
+    "background": {"h": 210, "s": 10, "l": 8},
+    "objects": [
+      {"id": "object-1", "shape": "circle", "x": 30, "y": 50, "size": 10, "color": {"h": 210, "s": 30, "l": 50}},
+      {"id": "object-2", "shape": "square", "x": 50, "y": 50, "size": 10, "color": {"h": 130, "s": 30, "l": 50}},
+      {"id": "object-3", "shape": "triangle", "x": 70, "y": 50, "size": 10, "color": {"h": 40, "s": 35, "l": 50}}
+    ]
+  }
+}

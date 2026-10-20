@@ -49,8 +49,15 @@ function assertFullscreenSnapshot(snapshot, expectedElement) {
   assert.equal(snapshot.coloredPixels,0,'fullscreenchange handler must synchronously clear every canvas pixel to black');
   assert.equal(snapshot.focus,expectedElement?'exit-fullscreen':'fullscreen','fullscreenchange must focus the visible mode control');
 }
+// Independent CSS HSL oracle; never calls the production model color formatter.
+function hslRgb({h,s,l}) {
+  const light=l/100, amplitude=(s/100)*Math.min(light,1-light);
+  const channel=offset=>{const k=(offset+h/30)%12;return Math.round(255*(light-amplitude*Math.max(-1,Math.min(k-3,9-k,1))));};
+  return [channel(0),channel(8),channel(4)];
+}
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const {scene: fixtureScene, legacy} = require('./fixtures.cjs');
+const {runIndependentScenarios}=require('./independent-user-scenarios.cjs');
 const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
   const valid = scene({name:'Synthetic imported scene', shape:'square'});
@@ -335,13 +342,30 @@ class Page {
     assert.ok(index>=0,`Missing native select option ${value}`);await this.focus(selector);await this.key('Home');for(let i=0;i<index;i++)await this.key('ArrowDown');
     assert.equal(await this.property(selector,'value'),String(value));
   }
+  async swatch(prefix) {
+    return this.evaluate(p=>{
+      const e=document.getElementById(p+'-color-swatch'),r=e.getBoundingClientRect(),style=getComputedStyle(e);
+      return {rgb:style.backgroundColor,hidden:e.hidden,width:r.width,height:r.height,display:style.display,
+        label:e.getAttribute('aria-label'),text:document.getElementById(p+'-color-text').textContent,
+        values:{h:Number(document.getElementById(p+'-hue').value),s:Number(document.getElementById(p+'-saturation').value),l:Number(document.getElementById(p+'-lightness').value)}};
+    },prefix);
+  }
+  async assertSwatch(prefix, expected) {
+    const sample=await this.swatch(prefix),rgb=(sample.rgb.match(/[\d.]+/g)||[]).slice(0,3).map(Number),want=hslRgb(expected||sample.values);
+    assert.equal(sample.hidden,false,`${prefix} color sample hidden`);assert.notEqual(sample.display,'none');
+    assert.ok(sample.width>=16&&sample.height>=16&&sample.width<=120&&sample.height<=120,`${prefix} preview should be a small visible color patch: ${JSON.stringify(sample)}`);
+    assert.equal(rgb.length,3,`No actual CSS RGB sample: ${sample.rgb}`);rgb.forEach((channel,index)=>assert.ok(Math.abs(channel-want[index])<=1,`${prefix} actual swatch ${sample.rgb} differs from HSL ${JSON.stringify(expected||sample.values)}`));
+    assert.ok(sample.label&&sample.text,`${prefix} swatch needs text equivalent`);return sample;
+  }
   async rangeInput(selector) {
+    const prefix=selector.startsWith('#object-')?'object':'background',other=prefix==='object'?'background':'object';
+    const prior=await this.swatch(prefix),unchanged=await this.swatch(other);
     const point=await this.evaluate(s=>{const e=document.querySelector(s);e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect();window.__rangeEvents=[];for(const name of ['input','change'])e.addEventListener(name,event=>window.__rangeEvents.push({type:name,trusted:event.isTrusted}),{once:true});return {x:r.left+r.width*0.7,y:r.top+r.height/2}},selector);
     await this.send('Input.dispatchMouseEvent',{type:'mousePressed',...point,button:'left',clickCount:1});
     await until(()=>this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='input')),'native range input before pointer release');
     assert.equal(await this.evaluate(()=>window.__rangeEvents.find(e=>e.type==='input').trusted),true);
     assert.equal(await this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='change')),false,'range should conceal during input, before commit');
-    await this.hidden();await this.send('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});
+    await this.hidden();const changed=await this.assertSwatch(prefix);assert.notDeepEqual(changed.values,prior.values,'native range input must change its draft value');assert.equal((await this.swatch(other)).rgb,unchanged.rgb,'the other swatch must remain unchanged');assert.equal(await this.property('#draft-label','textContent'),'Changes staged');await this.send('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});
   }
   async file(filename, value, waitForRead = true) {
     const filePath = path.join(this.downloads, filename);
@@ -375,6 +399,17 @@ class Page {
   async viewport(width, height = this.device.height) {
     await this.send('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:this.device.scale,mobile:this.device.touch,screenWidth:width,screenHeight:height});
     await sleep(50);
+  }
+  async visualCapture(name) {
+    // Synthetic, explicitly requested review frames only. This is separate from
+    // optional raw failure screenshots, which never enter public CI output.
+    const metrics=await this.evaluate(()=>({width:innerWidth,height:innerHeight,dpr:devicePixelRatio}));
+    const maxWidth=this.device.touch?390:800,maxHeight=this.device.touch?844:550;
+    const scale=Math.min(1,maxWidth/(metrics.width*metrics.dpr),maxHeight/(metrics.height*metrics.dpr));
+    const {data}=await this.send('Page.captureScreenshot',{format:'jpeg',quality:42,fromSurface:true,captureBeyondViewport:false,clip:{x:0,y:0,width:metrics.width,height:metrics.height,scale}});
+    const bytes=Buffer.from(data,'base64');
+    const result={device:this.device.name,name,mime:'image/jpeg',sha256:digest(bytes),bytes:bytes.length,viewport:{width:metrics.width,height:metrics.height,dpr:metrics.dpr},captureScale:scale,base64:data};
+    console.log('IMAGERY_VISUAL_CAPTURE '+JSON.stringify(result));return {...result,base64:undefined};
   }
   async screenshot(name, out) {
     if (process.env.BROWSER_SCREENSHOTS !== '1') return;
@@ -582,17 +617,74 @@ async function run() {
           const pt=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();const points=[[0.65,0.65],[0.8,0.6],[0.6,0.8],[0.5,0.75]];for(const [x,y]of points){const px=r.left+r.width*x,py=r.top+r.height*y;if(document.elementFromPoint(px,py)?.id==='scene-canvas')return {x:px,y:py,px:x*100,py:y*100}}throw Error('No reachable canvas placement point')});
           await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.hidden();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
         });
-        await runCase(page,'v2 native fullscreen contains reachable Hide End Exit and stays hidden',async()=>{
+        await runCase(page,'v3 native fullscreen explicit Show, Exit and Escape retain synchronous concealment',async()=>{
           await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
           await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','entry');
-          assert.equal(await page.evaluate(()=>['show-scene','hide-scene','end-viewing','exit-fullscreen'].every(id=>document.fullscreenElement.contains(document.getElementById(id)))),true);
-          await sleep(M.REVEAL_GAP_MS+100);await page.hidden();await page.click('#show-scene');await page.visible();await page.click('#hide-scene');await page.hidden();
+          assert.equal(await page.evaluate(()=>['fullscreen-show','exit-fullscreen'].every(id=>document.fullscreenElement.contains(document.getElementById(id)))),true);
+          assert.equal(await page.property('#fullscreen-start','hidden'),false);await sleep(M.REVEAL_GAP_MS+100);await page.hidden();await page.click('#fullscreen-show');await page.visible();
+          assert.equal(await page.property('#fullscreen-start','hidden'),true);assert.equal(await page.evaluate(()=>document.activeElement.id),'exit-fullscreen');
           await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'explicit Exit');
           await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','second entry');
-          await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();
+          await sleep(M.REVEAL_GAP_MS+100);await page.click('#fullscreen-show');await page.visible();
           await page.fullscreenAfter(()=>page.key('Escape'),null,'browser-native Escape');
-          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','third entry');await page.click('#end-viewing');await page.hidden();
-          if(await page.evaluate(()=>!!document.fullscreenElement))await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'final Exit');
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','third entry');await page.hidden();
+          await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'hidden-state Exit');
+        });
+        await runCase(page,'v3 swatches track draft selection, discard, history, presets and imports',async()=>{
+          const sample=scene({background:{h:210,s:40,l:25},objects:[{id:'object-1',shape:'circle',x:35,y:50,size:20,color:{h:30,s:50,l:45}},{id:'object-2',shape:'pixel',x:65,y:50,size:4,color:{h:280,s:60,l:55}}]});
+          await page.file('color-state.json',sample);await page.assertSwatch('object',sample.scene.objects[0].color);await page.assertSwatch('background',sample.scene.background);
+          await page.focus('#object-hue');await page.key('ArrowUp');await page.assertSwatch('object',{h:31,s:50,l:45});await page.hidden();
+          await page.focus('#background-lightness');await page.key('ArrowUp');await page.assertSwatch('background',{h:210,s:40,l:26});
+          await page.nativeSelect('#object-select','object-2');await page.assertSwatch('object',sample.scene.objects[1].color);await page.assertSwatch('background',{h:210,s:40,l:26});
+          await page.nativeSelect('#object-select','object-1');await page.assertSwatch('object',{h:31,s:50,l:45});await page.click('#discard');await page.assertSwatch('object',sample.scene.objects[0].color);await page.assertSwatch('background',sample.scene.background);
+          await page.focus('#object-hue');await page.key('ArrowUp');await page.click('#apply-changes');await page.click('#undo');await page.assertSwatch('object',sample.scene.objects[0].color);await page.click('#redo');await page.assertSwatch('object',{h:31,s:50,l:45});
+          await page.nativeSelect('#preset','4');await page.assertSwatch('object',M.presets()[4].scene.objects[0].color);await page.assertSwatch('background',M.presets()[4].scene.background);await page.hidden();
+          await page.file('color-state-again.json',sample);await page.assertSwatch('object',sample.scene.objects[0].color);await page.assertSwatch('background',sample.scene.background);
+          await page.file('background-only.json',scene({objects:[],background:{h:240,s:50,l:20}}));await page.assertSwatch('background',{h:240,s:50,l:20});assert.equal(await page.property('#object-color-swatch','hidden'),true);assert.match(await page.property('#object-color-text','textContent'),/no object|none|select|background.only/i);await page.hidden();
+        });
+        await runCase(page,'v3 real CSS swatches preserve zero-saturation and black-lightness semantics',async()=>{
+          await page.file('color-semantics.json',scene({background:{h:210,s:40,l:25}}));
+          await page.focus('#object-saturation');await page.key('Home');const gray=await page.assertSwatch('object');assert.equal(gray.values.s,0);await page.focus('#object-hue');await page.key('End');assert.equal((await page.assertSwatch('object')).rgb,gray.rgb,'hue must not change gray at zero saturation');
+          await page.focus('#background-lightness');await page.key('Home');const black=await page.assertSwatch('background');assert.equal(black.values.l,0);assert.equal(black.rgb,'rgb(0, 0, 0)');await page.focus('#background-hue');await page.key('End');assert.equal((await page.assertSwatch('background')).rgb,black.rgb);await page.hidden();
+          assert.equal(await page.property('#draft-label','textContent'),'Changes staged');await page.click('#show-scene');await page.hidden();assert.match(await page.property('#status','textContent'),/apply or discard/i);
+        });
+        await runCase(page,'v3 clean fullscreen removes chrome and exposes keyboard Show and focused Exit',async()=>{
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','keyboard clean entry');
+          const chrome=await page.evaluate(()=>['masthead','stage-body','viewing-bar','skip-controls'].map(id=>{const e=document.getElementById(id);return {id,hidden:e.hidden,display:getComputedStyle(e).display,rects:e.getClientRects().length}}));
+          for(const item of chrome){assert.equal(item.hidden,true,item.id);assert.equal(item.display,'none',item.id);assert.equal(item.rects,0,item.id);}
+          const tabbables=()=>page.evaluate(()=>[...document.querySelectorAll('button,input,select,textarea,a[href],[tabindex]')].filter(e=>!e.disabled&&e.tabIndex>=0&&e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').map(e=>e.id));
+          assert.deepEqual((await tabbables()).sort(),['exit-fullscreen','fullscreen-show']);
+          let reached=false;for(let i=0;i<4;i++){await page.key('Tab');const id=await page.evaluate(()=>document.activeElement.id);assert.ok(['','exit-fullscreen','fullscreen-show'].includes(id),`hidden studio entered keyboard sequence: ${id}`);if(id==='fullscreen-show'){reached=true;break;}}assert.equal(reached,true,'Tab must reach explicit Show from Exit');
+          await sleep(M.REVEAL_GAP_MS+100);await page.key('Enter');await page.visible();assert.equal(await page.evaluate(()=>document.activeElement.id),'exit-fullscreen');assert.deepEqual(await tabbables(),['exit-fullscreen']);
+          const focus=await page.evaluate(()=>{const e=document.getElementById('exit-fullscreen'),s=getComputedStyle(e);return {visible:e.matches(':focus-visible'),outline:s.outlineStyle,width:parseFloat(s.outlineWidth),opacity:Number(s.opacity)}});assert.equal(focus.visible,true);assert.notEqual(focus.outline,'none');assert.ok(focus.width>=2);assert.equal(focus.opacity,1);
+          await page.fullscreenAfter(()=>page.key('Enter'),null,'keyboard Exit');
+        });
+        await runCase(page,'v3 fullscreen pointer and first-touch Exit stay discoverable without UI timers',async()=>{
+          await page.evaluate(()=>{window.__testUiTimers=[];const original=window.setTimeout;window.setTimeout=function(fn,delay,...args){window.__testUiTimers.push(delay);return original.call(this,fn,delay,...args)}});
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','idle entry');await sleep(M.REVEAL_GAP_MS+100);await page.click('#fullscreen-show');await page.visible();
+          await page.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:20,y:100});await sleep(350);
+          const control=await page.evaluate(()=>{const e=document.getElementById('exit-fullscreen'),r=e.getBoundingClientRect(),s=getComputedStyle(e),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {width:r.width,height:r.height,left:r.left,top:r.top,right:r.right,bottom:r.bottom,opacity:Number(s.opacity),hit:hit===e||e.contains(hit),text:e.textContent,label:e.getAttribute('aria-label'),coarse:matchMedia('(hover:none),(pointer:coarse)').matches,innerWidth,innerHeight}});
+          assert.ok(control.width>=44&&control.height>=44&&control.width<=180&&control.height<=64,'Exit must remain a small accessible target');assert.ok(control.left>control.innerWidth/2&&control.top>=0&&control.top<=16&&control.right<=control.innerWidth&&control.bottom<=control.innerHeight&&control.hit,'Exit must be reachable in the upper-right corner');assert.match(control.label,/hide.*exit/i);assert.ok(control.opacity>0,'idle exit cannot disappear');if(control.coarse)assert.equal(control.opacity,1);else assert.ok(control.opacity<1,'pointer-idle Exit should be visually subdued');
+          assert.deepEqual(await page.evaluate(()=>window.__testUiTimers),[],'fullscreen must schedule no UI or scene timer');await page.visible();
+          await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,device.touch?'first touch exits and hides':'first pointer click exits and hides');await sleep(350);await page.hidden();assert.equal(await page.property('#fullscreen-start','hidden'),true);assert.equal(await page.property('#exit-fullscreen','hidden'),true);assert.deepEqual(await page.evaluate(()=>window.__testUiTimers),[]);
+        });
+        await runCase(page,'v3 short fullscreen keeps guarded Show, errors and rejected Exit reachable',async()=>{
+          await page.fill('#scene-name','Synthetic staged draft');await page.viewport(320,180);await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','short hidden entry');
+          for(const id of ['fullscreen-show','exit-fullscreen']){const r=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height,hit:hit===e||e.contains(hit),innerWidth,innerHeight}},id);assert.ok(r.left>=0&&r.top>=0&&r.right<=r.innerWidth&&r.bottom<=r.innerHeight&&r.width>=44&&r.height>=44&&r.hit,`short fullscreen control unreachable: ${id} ${JSON.stringify(r)}`);}
+          await page.click('#fullscreen-show');await page.hidden();assert.match(await page.property('#fullscreen-status','textContent'),/exit fullscreen.*apply or discard/i);assert.equal(await page.property('#fullscreen-start','hidden'),false);
+          await page.evaluate(()=>{window.__testExitFullscreen=document.exitFullscreen;document.exitFullscreen=()=>Promise.reject(Error('Synthetic exit denial'))});await page.click('#exit-fullscreen');await page.hidden();assert.equal(await page.evaluate(()=>document.fullscreenElement?.id),'stage-root');assert.equal(await page.property('#exit-fullscreen','hidden'),false);assert.equal(await page.property('#fullscreen-start','hidden'),false);assert.match(await page.property('#fullscreen-status','textContent'),/fullscreen|exit|escape/i);assert.equal(await page.property('#scene-name','value'),'Synthetic staged draft');
+          await page.evaluate(()=>{document.exitFullscreen=window.__testExitFullscreen});await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'recovered native Exit');await page.hidden();
+        });
+        await runCase(page,'v3 shared synthetic reference visual checkpoints',async()=>{
+          report.visualCaptures=report.visualCaptures||[];
+          report.visualCaptures.push(await page.visualCapture('A-fresh-hidden'));
+          const reference={format:'imagery-static-scene',version:2,sampler:'static-objects-2',scene:{name:'Reference: circle square triangle',background:{h:210,s:10,l:8},objects:[{id:'object-1',shape:'circle',x:30,y:50,size:10,color:{h:210,s:30,l:50}},{id:'object-2',shape:'square',x:50,y:50,size:10,color:{h:130,s:30,l:50}},{id:'object-3',shape:'triangle',x:70,y:50,size:10,color:{h:40,s:35,l:50}}]}};
+          await page.file('shared-visual-reference.json',reference);await page.hidden();await page.click('#editor-toggle');await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();
+          report.visualCaptures.push(await page.visualCapture('C-reference-shown-editor-closed'));
+          await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','visual reference entry');report.visualCaptures.push(await page.visualCapture('D-fullscreen-hidden'));
+          await sleep(M.REVEAL_GAP_MS+100);await page.click('#fullscreen-show');await page.visible();await page.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:20,y:100});
+          report.visualCaptures.push(await page.visualCapture('E-fullscreen-reference-shown'));
+          await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'visual reference Exit');report.visualCaptures.push(await page.visualCapture('F-after-Exit-hidden'));await page.hidden();
         });
         await runCase(page,'v2 rejected fullscreen promise keeps fullwindow fallback usable',async()=>{
           await page.evaluate(()=>{document.querySelector('#stage-root').requestFullscreen=()=>Promise.reject(new Error('Synthetic fullscreen denial'))});
@@ -616,6 +708,7 @@ async function run() {
         await runCase(page,'v1 native file input migrates to strict v2 scene export',async()=>{
           const old=legacy({shape:'dots',dotCount:5,size:20});await page.file('legacy-v1.json',old);await page.hidden();const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(got.json,M.canonicalScene(old));assert.equal(got.json.scene.objects.length,5);
         });
+        await runIndependentScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});
         console.log(`${report.results.at(-1).status} ${device.name}: page runtime, dialog, and remote-request log`);
       } finally { await page.close(); }
@@ -640,4 +733,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot};
+module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,hslRgb};

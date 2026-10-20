@@ -17,7 +17,10 @@
   const categories=Object.freeze(['unsure','none','external-perception','residual-aftereffect','voluntary-imagery','conceptual-knowledge','mixed']);
   const copy=value=>JSON.parse(JSON.stringify(value));
   const number=id=>$(id).value.trim()===''?NaN:Number($(id).value);
-  function say(message,error){$('status').textContent=String(message).slice(0,300);$('status').className=error?'error':'';}
+  function say(message,error){
+    const text=String(message).slice(0,300);
+    ['status','fullscreen-status'].forEach(id=>{$(id).textContent=text;$(id).className=error?'error':'';});
+  }
   function dimensions(){
     const rect=canvas.getBoundingClientRect();
     const width=Number.isFinite(rect.width)&&rect.width>0?rect.width:1;
@@ -44,10 +47,38 @@
       else{context.lineWidth=item.lineWidth;item.points.forEach((p,i)=>i?context.lineTo(p[0],p[1]):context.moveTo(p[0],p[1]));context.closePath();if(item.filled)context.fill();else context.stroke();}
     });
   }
-  function updateOutputs(){sliderIDs.forEach(id=>{$(id+'-value').textContent=$(id).value+(id.endsWith('hue')?'°':'%');});}
+  // These bounded editor samples represent only the current form colors. They
+  // never change the accepted scene, call Show, or paint a scene preview.
+  function updateColorSample(prefix){
+    const swatch=$(prefix+'-color-swatch'),description=$(prefix+'-color-text');
+    const present=prefix==='background'||!!selected();
+    const color={h:number(prefix+'-hue'),s:number(prefix+'-saturation'),l:number(prefix+'-lightness')};
+    const background=prefix==='background';
+    const valid=Number.isInteger(color.h)&&color.h>=0&&color.h<=359&&Number.isInteger(color.s)&&color.s>=0&&color.s<=(background?60:70)&&Number.isInteger(color.l)&&color.l>=(background?0:10)&&color.l<=(background?40:70);
+    swatch.hidden=!present;
+    if(!present||!valid){
+      swatch.style.backgroundColor='transparent';
+      swatch.setAttribute('aria-label',present?'Color sample unavailable: check the color values.':'No object selected.');
+      description.textContent=present?'Check the color values.':'No object selected.';
+      ['hue','saturation','lightness'].forEach(channel=>{$(prefix+'-'+channel).style.backgroundImage='none';});
+      return;
+    }
+    const css=M.colorCSS(color),text='HSL '+color.h+'° / '+color.s+'% / '+color.l+'%';
+    swatch.style.backgroundColor=css;
+    swatch.setAttribute('aria-label',(background?'Background':'Object')+' color sample: '+text+'.');
+    description.textContent=text;
+    const gradient=colors=>'linear-gradient(to right, '+colors.join(', ')+')';
+    $(prefix+'-hue').style.backgroundImage=gradient([0,60,120,180,240,300,359].map(h=>M.colorCSS({...color,h})+' '+(h/359*100)+'%'));
+    $(prefix+'-saturation').style.backgroundImage=gradient([0,background?60:70].map(s=>M.colorCSS({...color,s})));
+    const min=background?0:10,max=background?40:70;
+    $(prefix+'-lightness').style.backgroundImage=gradient((background?[min,max]:[min,50,max]).map(l=>M.colorCSS({...color,l})+' '+((l-min)/(max-min)*100)+'%'));
+  }
+  function updateOutputs(){
+    sliderIDs.forEach(id=>{$(id+'-value').textContent=$(id).value+(id.endsWith('hue')?'°':'%');});
+    updateColorSample('object');updateColorSample('background');
+  }
   function render(){
     const state=controller.getState();draw(state);
-    $('hidden-label').hidden=state.visible;
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
     $('show-scene').setAttribute('aria-pressed',String(state.visible));
     canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object. The scene is hidden. Escape cancels.':state.visible?M.describe(state.current):'Scene hidden. No design is displayed.');
@@ -63,6 +94,12 @@
     $('editor-toggle').setAttribute('aria-expanded',String(editorOpen));
     $('editor-toggle').textContent=editorOpen?'Close editor':'Open editor';
     const full=document.fullscreenElement===root;
+    root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'');
+    // Native fullscreen is a viewing surface. Hide whole editor/navigation
+    // subtrees so their controls leave both the layout and keyboard tab order.
+    ['masthead','stage-body','viewing-bar','skip-controls'].forEach(id=>{$(id).hidden=full;});
+    $('hidden-label').hidden=state.visible||full;
+    $('fullscreen-start').hidden=!full||state.visible;
     $('fullscreen').hidden=full;$('exit-fullscreen').hidden=!full;
     updateOutputs();
   }
@@ -172,12 +209,15 @@
   $('discard').addEventListener('click',()=>{
     cancelPlacement();controller.hide();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
   });
-  $('show-scene').addEventListener('click',()=>{
+  function showScene(){
     cancelPlacement();controller.invalidateImport();
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
-    if(formDirty){render();say('Apply or discard staged changes before showing the scene.',true);return;}
+    if(formDirty){render();say((document.fullscreenElement===root?'Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.':'Apply or discard staged changes before showing the scene.'),true);return;}
     const result=controller.show();render();say(result.ok?'Scene visible. Hide or press Escape at any time.':result.error,!result.ok);
-  });
+    if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
+  }
+  $('show-scene').addEventListener('click',showScene);
+  $('fullscreen-show').addEventListener('click',showScene);
   $('hide-scene').addEventListener('click',()=>hide());
   $('end-viewing').addEventListener('click',()=>{
     cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
@@ -189,14 +229,17 @@
     render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Show scene when you choose.':result.error,!result.ok);
   }));
   // Fullscreen is optional. Entry/exit/failure never reveal; the common ancestor
-  // includes every hiding control. Do not await or schedule a later Show.
+  // includes the always-reachable Exit control. Do not schedule a later Show.
   let fullscreenOperation=0;
+  function fullscreenFailure(message){
+    hide(message+(document.fullscreenElement===root?' The field is hidden. Try Exit again or leave fullscreen with your browser (usually Escape).':' The field is hidden. The full-window editor and controls are available.'));
+  }
   async function changeFullscreen(enter){
     hide(enter?'Entering fullscreen with the field hidden.':'Leaving fullscreen with the field hidden.');
     const operation=++fullscreenOperation,owner=enter?root:document,method=enter?'requestFullscreen':'exitFullscreen';
-    if(typeof owner[method]!=='function'){say('Browser fullscreen is unavailable. The full-window field and all controls still work.',true);return;}
+    if(typeof owner[method]!=='function'){fullscreenFailure('Browser fullscreen could not be changed.');return;}
     try{await owner[method]();if(operation===fullscreenOperation){controller.hide();cancelPlacement();render();say('Display mode changed. The field is hidden; choose Show when you choose.');}}
-    catch(e){if(operation===fullscreenOperation){controller.hide();cancelPlacement();render();say('Fullscreen could not be changed. The full-window field and all controls still work.',true);}}
+    catch(e){if(operation===fullscreenOperation)fullscreenFailure('Fullscreen could not be changed.');}
   }
   $('fullscreen').addEventListener('click',()=>changeFullscreen(true));
   $('exit-fullscreen').addEventListener('click',()=>changeFullscreen(false));
@@ -204,7 +247,7 @@
     hide('Fullscreen changed. The field is hidden and will not resume automatically.');
     $(document.fullscreenElement===root?'exit-fullscreen':'fullscreen').focus();
   });
-  document.addEventListener('fullscreenerror',()=>hide('Fullscreen was unavailable or rejected. The full-window field remains usable.'));
+  document.addEventListener('fullscreenerror',()=>fullscreenFailure('Fullscreen was unavailable or rejected.'));
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'){hide('Scene hidden with Escape. Placement and pending file reads were canceled.');}
     if(event.repeat&&(event.key==='Enter'||event.key===' ')&&event.target&&event.target.closest&&event.target.closest('button'))event.preventDefault();

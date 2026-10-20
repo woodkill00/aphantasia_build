@@ -1,3 +1,11 @@
+## Version 0.3 controls
+
+Object and background color samples update immediately as sliders move. Their text labels show HSL values; slider tracks show the available color range. At zero saturation hue does not change the sample; zero lightness is black. These are draft samples, not the applied full-field scene.
+
+Fullscreen hides the editor and navigation. When the field is hidden, choose Show scene. While showing, a small upper-right Exit button is the only app control. It stays available for touch and keyboard, becomes clearer on hover/keyboard focus, and hides the field before exiting. Escape also leaves browser fullscreen. Fullscreen failure keeps the field hidden with recovery instructions.
+
+Current candidate testing is in progress; historical results below are scoped to their identified version.
+
 # Imagery Field 0.2
 
 A local engineering preview for manually controlled static scenes. It is not a treatment, diagnostic test, or validated way to develop mental imagery. A lingering afterimage or a reconstruction is not evidence that voluntary imagery improved. Static presentation and the app's restrictions do not guarantee safety.

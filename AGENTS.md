@@ -6,7 +6,9 @@ Maintain a static, manually controlled engineering prototype. Read `README.md`, 
 
 ## Required boundaries
 
-- Keep the app hidden at startup and after accepted scene changes. Showing a scene always requires a fresh explicit action.
+- Keep the full-field scene hidden at startup and after accepted scene changes. Showing the full-field scene always requires a fresh explicit action.
+- Small, clearly labeled editor-only color swatches may update immediately from manual slider input, as requested for color selection. They must not trigger full-field display or reveal a scene. Swatches are color previews, not measurements of internal imagery.
+- Fullscreen viewing may suppress normal interface chrome, but must retain an accessible exit control and an explicit Show route while hidden. Native Escape and lifecycle concealment remain required.
 - Preserve immediate Hide/End/Escape behavior, import invalidation, and lifecycle concealment. No delayed result may restore a hidden scene.
 - Do not add flicker, animation, periodic brightness changes, timed fixation, automatic progression, stronger-afterimage exercises, or exposure prescriptions.
 - Do not add diagnostic scores, improvement badges, treatment claims, or conclusions that task performance proves felt imagery.

@@ -1,6 +1,6 @@
 # Imagery Field
 
-A local-first, manually controlled static scene editor. Version 0.2 adds a full-window field, optional browser fullscreen, individual dots/pixels/outlines, and object/background color controls. The repository contains the self-contained app, editable sources, synthetic tests, and a focused technical/research plan.
+A local-first, manually controlled static scene editor. Version 0.3 adds immediate editor color samples and a clean fullscreen viewing mode, extending version 0.2 with a full-window field, optional browser fullscreen, individual dots/pixels/outlines, and object/background color controls. The repository contains the self-contained app, editable sources, synthetic tests, and a focused technical/research plan.
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation and software bounds do not guarantee sensory safety.
 
@@ -14,6 +14,12 @@ Download and extract the repository, then open `imagery-app/index.html` in a bro
 4. **Hide**, **End viewing**, and **Esc** conceal both the objects and chosen background. **Enter fullscreen** is optional; the full-window layout remains usable if the browser rejects or lacks fullscreen.
 
 See [app instructions](imagery-app/README.md) for ranges, saving/loading, optional notes, and viewing cautions. Physical mobile devices and ordinary OS file-opening/chooser workflows remain unverified; a downloaded file preview may not execute JavaScript.
+
+## Current iteration
+
+Version 0.3 is in independent verification. Color samples and slider gradients update immediately from draft values; Apply/Show is still required for the full-field scene. While fullscreen is showing, only a small Exit control remains. The Exit target is usable by touch and keyboard and is subdued when not hovered or keyboard-focused. Hidden fullscreen offers a separate Show control. No idle timer or scene animation was added.
+
+Timed scenes and transitions are a separately reviewed next increment; repeated flash/pulse modes are not part of this candidate.
 
 ## Verification: separate artifacts
 

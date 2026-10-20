@@ -44,3 +44,9 @@ Browser fullscreen, zoom/reflow, physical devices, assistive technology and qual
 The first v0.2 run passed 36/38 browser groups, with fullscreen Escape assertions failing before the harness observed native event delivery. The independently reviewed harness correction observes the event and asserts its immutable synchronous snapshot; it does not poll for eventual Hidden success. The first run used Chrome 155.0.8059.84, while the passing run used Chrome 155.0.8059.39, so the historical failure's exact cause is not conclusively isolated. Both results are retained in the test report.
 
 This supports a scoped engineering preview. Physical devices, other browser engines, OS dialogs, comprehensive accessibility, calibrated display/sensory review and clinical efficacy remain unestablished. Nothing has been merged or deployed.
+
+## Version 0.3 source candidate — 2026-10-20
+
+Independent source review accepted HTML `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a` (65,152 bytes) for native browser testing. The source and generated HTML match. Bounded live color swatches and range gradients do not reveal the full-field scene; fullscreen suppresses normal chrome and retains an accessible Exit plus explicit Show while hidden. No idle timer or scene animation was introduced.
+
+Review repairs clarified rejected-exit recovery while fullscreen remains active and added a dark-backed focus indicator against variable scene colors. Actual browser and screenshot acceptance remains pending for this candidate; earlier v0.2 results do not transfer automatically.

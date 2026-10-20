@@ -13,3 +13,29 @@
   .view-actions{gap:2px}.view-actions button{min-height:44px;padding:3px;font-size:.65rem;border-radius:4px}
   .viewing-bar p{min-height:1.5em;max-height:1.5em;font-size:.63rem;line-height:1.5}
 }
+
+/* Small editor-only samples; slider gradients follow the actual draft HSL.
+   The canvas remains the accepted, explicitly revealed scene. */
+.color-preview{display:flex;align-items:center;gap:10px;margin:20px 0 8px;min-width:0}
+.color-swatch{width:38px;height:30px;flex:none;display:block;border:1px solid #91a090;border-radius:6px;background:#000}
+.color-preview-label,.color-preview-value{display:block;font-size:.72rem;line-height:1.5}
+.color-preview-label{color:#d9e2d5;font-weight:600}.color-preview-value{color:var(--muted);font-variant-numeric:tabular-nums}
+input.color-slider{appearance:none;-webkit-appearance:none;min-height:44px;height:44px;border-radius:0;background-size:100% 8px;background-position:center;background-repeat:no-repeat}
+input.color-slider::-webkit-slider-runnable-track{height:8px;border:1px solid #849282;border-radius:5px;background:transparent}
+input.color-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid #f1f4e9;border-radius:50%;background:#26322b;margin-top:-7px}
+input.color-slider::-moz-range-track{height:6px;border:1px solid #849282;border-radius:5px;background:transparent}
+input.color-slider::-moz-range-thumb{width:16px;height:16px;border:2px solid #f1f4e9;border-radius:50%;background:#26322b}
+input.color-slider:disabled{opacity:.45;cursor:default}
+/* Native fullscreen removes workspace chrome entirely. Exit stays discoverable,
+   keyboard focus stays visible, and touch never needs a hover-reveal gesture. */
+.stage-root.fullscreen-mode{display:block;padding:0;overflow:hidden}
+.fullscreen-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:72px 24px;color:#b2bcb2;background:#000}
+.fullscreen-start h2{font:400 1rem/1.5 ui-sans-serif,system-ui,sans-serif;margin:0}
+.fullscreen-start p{font-size:.75rem;max-width:34em;margin:0;color:#aab9ad}
+.fullscreen-start p.error{color:#f2c6aa}
+.fullscreen-exit{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));min-width:44px;min-height:44px;padding:10px 12px;z-index:10;font-size:.75rem;font-weight:500;line-height:1.25;border:1px solid #66716b;border-radius:7px;background:#141a17;color:#edf1ea;opacity:.75}
+.fullscreen-exit:hover,.fullscreen-exit:focus-visible,.fullscreen-exit:active{opacity:1;background:#253029}
+.fullscreen-exit:focus-visible{box-shadow:0 0 0 7px #000}
+@media(hover:none),(pointer:coarse){.fullscreen-exit{opacity:1}}
+@media(max-height:300px){.fullscreen-start{padding:50px 16px 12px;gap:8px;overflow:auto;justify-content:flex-start}.fullscreen-start p{font-size:.68rem}.fullscreen-exit{top:4px;right:4px}}
+@media(forced-colors:active){.color-swatch{forced-color-adjust:none}.fullscreen-exit{opacity:1;background:ButtonFace;color:ButtonText;border-color:ButtonText}.fullscreen-exit:focus-visible{box-shadow:none;outline-color:Highlight}input.color-slider{appearance:auto;-webkit-appearance:auto;background-image:none!important}}

@@ -1,3 +1,13 @@
+# Version 0.3 pending native-browser verification
+
+The current candidate adds immediate local HSL samples/slider gradients and clean native fullscreen. The 65,152-byte HTML has SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Its 240 non-browser checks, browser syntax and 3-valid/14-invalid fixture check pass on Node v24.19.0. The 54 prepared real-browser groups and requested synthetic visual captures have **NOT RUN** for this artifact yet. Older passes below are historical.
+
+Use the existing sandbox-enabled CI and the same commands documented below; install nothing and do not change browser security. The existing native fullscreenchange observer and immutable trusted-event Hidden/black/focus assertions are retained. Added checks cover actual draft swatch RGB before native range change, black/gray semantics, selection/import/history color state, hidden fullscreen chrome/tab stops, keyboard Show/Exit, subdued pointer-idle Exit, first-action touch Exit, short fullscreen layout and injected Exit rejection.
+
+The requested shared-reference JPEG captures are emitted as `IMAGERY_VISUAL_CAPTURE` JSON lines in the existing job log. They contain only the synthetic three-outline fixture. Decode and inspect them before claiming visual review or redistributing frames; raw failure screenshots and process output stay private. Phone-sized touch emulation does not establish physical mobile support. No temporal sequence, animation, fade, loop or automatic reveal is included in this candidate.
+
+---
+
 # Browser and device verification
 
 ## v0.2: scoped Chrome browser suite passed
