@@ -4,7 +4,7 @@ A local-first scene and sequence editor. Version 0.7 starts the static live prev
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
 
-**Version 0.7 verification is pending for the changed artifact. Historical software verification:** version 0.6 passed **424 code checks and 96/96 native Chrome groups** in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), with all 52 actual rendered captures verified and independently inspected. The [test report](imagery-app/test-results/TEST-REPORT.md) records the exact source/runtime, earlier fixture failure, full retry and remaining limits. Those results do not verify version 0.7; its exact-source CI and fresh rendered-frame review are separate gates.
+**Scoped version 0.7 software verification:** **457 code checks and 98/98 native Chrome groups** passed in [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664). All **78 fresh rendered captures** were byte/hash verified and independently inspected, including complete focused precision rows, steady/pulse/mixed timing, startup and the repaired compact phone-sized header. The [test report](imagery-app/test-results/TEST-REPORT.md) preserves the first failed precision-test attempt, subsequent test/layout repairs and remaining limits. A documentation-only final-head CI gate remains separate; no merge or deployment is claimed here.
 
 ## Open and use the app
 
@@ -29,6 +29,8 @@ New starter scenes use HSL **4°, 60%, 4%**. Background saturation can be set an
 Choose **Steady · no pulse** to hold an item at constant opacity between its fades, or **Pulse** for smooth opacity variation. Items can mix both modes, overlap, or follow one another. Per-item Start, Fade in, Hold and Fade out determine visibility; zero fades give a steady on/off hold. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and verification contract.
 
 ## Verification: separate artifacts
+
+**Version 0.7:** source `33bca8b59e52596f0784529b9162ea5240d1a7fb`, 167,297-byte HTML, SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`. [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664) passed 457 non-browser checks and 98 native groups using Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.84 on Linux, with cleanup confirmed. All 78 actual frames were independently reviewed. The 640×450 case is effective viewport reflow, not actual OS/browser zoom. Physical devices, actual OS zoom and full accessibility remain unverified. The final documentation-head CI is an additional integration gate.
 
 **Historical version 0.6:** 424 code checks, 96 native groups and 52 independently inspected frames on the exact 162947-byte HTML with SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`. See the linked current test report for full environment, failed-attempt and integration details.
 

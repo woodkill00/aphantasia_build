@@ -1,6 +1,6 @@
 {
   "date": "2026-10-20",
-  "status": "V07_REVISED_CANDIDATE_NATIVE_CI_PENDING",
+  "status": "V07_SCOPED_CHROME_CI_PASS",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.7.0",
@@ -14,10 +14,10 @@
     "total": 457,
     "passed": 457,
     "failed": 0,
-    "node": "24.19.0"
+    "node": "22.23.3"
   },
   "browser": {
-    "status": "RETRY_PENDING",
+    "status": "PASS",
     "preparedGroups": 98,
     "expectedCaptures": 78,
     "timeoutBudget": {
@@ -41,14 +41,37 @@
           "profileRemoved": true
         },
         "cause": "Both new precision-layout groups mistakenly classified a text LABEL as a 44px numeric/range/button target. Later full-field and timing/layout assertions and 20 planned captures did not execute.",
-        "repair": "Explicit INPUT/BUTTON/SELECT classification plus a Node regression, retaining complete-label bounds/hit checks and44px actual-control assertions. Independent inspection of56 available frames also identified a wasted mobile header row; a narrow three-column action grid repairs it. Runtime changed, so complete native CI and fresh visual evidence are required.",
+        "repair": "Explicit INPUT/BUTTON/SELECT classification plus a Node regression, retaining complete-label bounds/hit checks and 44px actual-control assertions. Independent inspection of 56 available frames also identified a wasted mobile header row; a narrow three-column action grid repairs it. Runtime changed, so complete native CI and fresh visual evidence are required.",
         "visualCaptures": 56,
-        "visualReview": "All56 available actual captures independently inspected. Missing responsive tail remains unverified; prior frames do not certify revised runtime."
+        "visualReview": "All 56 available actual captures independently inspected. Missing responsive tail remains unverified; prior frames do not certify revised runtime."
       }
-    ]
+    ],
+    "total": 98,
+    "desktopGroups": 49,
+    "mobileViewportTouchEmulationGroups": 49,
+    "passed": 98,
+    "failed": 0,
+    "runId": 39377219664,
+    "jobId": 118477960095,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664",
+    "sourceCommit": "33bca8b59e52596f0784529b9162ea5240d1a7fb",
+    "testMergeCheckout": "b9087838b1f58fd3a12f3c51bc0d078c82029b88",
+    "node": "22.23.3",
+    "chrome": "155.0.8059.84",
+    "workflow": "SUCCESS",
+    "durationSeconds": 463.189,
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "runtimeErrors": 0,
+    "unexpectedDialogs": 0,
+    "remoteAppRequests": 0,
+    "visualCaptures": 78,
+    "note": "Complete repaired run exercised both formerly unexecuted responsive tails, retaining full-label visibility and 44px actual-control assertions. Chrome patch differs from the first attempt; the harness classification defect is independently reproduced by the targeted regression."
   },
   "visualReview": {
-    "status": "PENDING_REVISED_ARTIFACT_CAPTURES",
+    "status": "ALL_CAPTURES_VERIFIED_AND_INDEPENDENTLY_INSPECTED",
     "expected": 78,
     "priorAttempt": {
       "runId": 39375994747,
@@ -56,7 +79,13 @@
       "captured": 56,
       "inspected": 56,
       "totalJpegBytes": 999716
-    }
+    },
+    "captured": 78,
+    "totalJpegBytes": 1396233,
+    "reviewedRunId": 39377219664,
+    "artifactSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
+    "inspected": 78,
+    "scope": "Independent inspection of all 78 actual synthetic native frames, including startup, saturation 100, explicit modes and mixed tracks, full focused precision/timing controls, compact header and responsive layouts. Not physical-device testing or a human usability study."
   },
   "limits": [
     "Physical devices, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy are not established.",
@@ -868,5 +897,6 @@
     },
     "integrationGate": "Later documentation-only commits retain this exact runtime. Their full CI must also pass before merge; consult the current pull-request checks rather than treating this source run as an exact-head result."
   },
-  "integrationGate": "Require source review, complete native CI, independent actual-frame review and full exact-final-head CI before merge."
+  "integrationGate": "Later documentation-only integration retains this exact runtime and tests. Its full exact-head CI must pass before maintainer merge; consult PR5 checks, not only the earlier source run.",
+  "candidateCommit": "33bca8b59e52596f0784529b9162ea5240d1a7fb"
 }

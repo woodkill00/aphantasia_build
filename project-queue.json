@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T05:27:23Z",
+  "updated": "2026-10-20T06:05:33Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1369,15 +1369,16 @@
     {
       "id": "IF-043",
       "title": "Improve live startup and responsive item timing",
-      "status": "revised_candidate_native_ci_pending",
+      "status": "verified_for_scoped_software_release",
       "scope": "Start one static live preview; background saturation 0\u2013100 with default 60 and original legacy bounds; explicit Steady/Pulse and mixed finite timelines; calculated responsive spacing and complete precision-control visibility.",
       "evidence": [
-        "457/457 local Node checks pass after explicit element-role regression.",
-        "First native run39375994747 passed96/98; two harness label classifications failed and the responsive tail was not reached.",
-        "All56 available first-run frames inspected; approved compact header spacing repair implemented.",
-        "Revised HTML SHA256 c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857; full98-group native CI and78 fresh frames pending."
+        "457/457 Node checks and 98/98 native Chrome groups pass in https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664.",
+        "Source head 33bca8b59e52596f0784529b9162ea5240d1a7fb; exact 167297-byte HTML SHA-256 c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857.",
+        "All 78 actual synthetic captures byte/hash verified and independently inspected; no remaining scoped visual blocker.",
+        "First native failure, strict harness-role repair and frame-driven mobile header improvement are retained in the test report.",
+        "imagery-app/test-results/TEST-REPORT.md"
       ],
-      "nextAction": "Freeze reviewed source/tests, run complete native CI, inspect actual frames, reconcile documentation and require exact-final-head green CI before maintainer merge."
+      "nextAction": "Require full exact-head green CI for documentation-only integration before maintainer merge. No additional feature repair is indicated; physical-device, full accessibility and qualified sensory/clinical gates remain separate."
     }
   ],
   "sourceBase": {
