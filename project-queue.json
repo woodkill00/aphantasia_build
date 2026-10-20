@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T10:33:00Z",
+  "updated": "2026-10-20T12:32:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1757,11 +1757,11 @@
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "7f78b77b63b25cdc479df06520b314ff7a1b8aa0",
+    "repositoryBaseCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3",
     "targetBranch": "feature/009-authored-geometry",
     "appPath": "imagery-app/index.html",
-    "appSha256": "eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa",
-    "appBytes": 276388,
+    "appSha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23",
+    "appBytes": 277594,
     "note": "Expanded unreleased roadmap candidate; no temporary release publisher, deployment or collection service."
   },
   "authority": {
@@ -1849,11 +1849,14 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Expanded bounded roadmap implementation integrated with independent scoped code reviews. Exact-head native/visual gate remains pending. Richer families/catalog, natural-image usefulness, devices/AT and research governance remain explicitly incomplete.",
+  "currentStatus": "Bounded implementation and scoped source reviews complete; reviewed P1 touchstart repair ported. Current exact-head native, visual and package gates remain pending. Published v0.7 is unchanged; this is unreleased. Physical devices, full AT, natural-photo usefulness and research governance remain incomplete.",
   "currentIteration": {
     "base": "7f78b77b63b25cdc479df06520b314ff7a1b8aa0",
     "remoteBranch": "feature/009-authored-geometry",
-    "htmlSha256": "eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa",
-    "status": "independent_code_reviews_local_regression_pass_native_pending"
+    "htmlSha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23",
+    "status": "reviewed_touchstart_port_local_node_pass_native_visual_package_pending",
+    "htmlBytes": 277594,
+    "nodePassed": 764,
+    "nativePreparedGroups": 128
   }
 }

@@ -1,23 +1,30 @@
 {
   "date": "2026-10-20",
-  "status": "V08_EXPANDED_ROADMAP_NATIVE_VISUAL_PENDING",
+  "status": "SCOPED_TOUCHSTART_PORT_NODE_PASS_NATIVE_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 276906,
-    "sha256": "4bce4179933cdb1281e60f56c3b2fba180ca840247f3907fe487bf6183982ace"
+    "bytes": 277594,
+    "sha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23"
   },
   "browser": {
-    "status": "TOUCH_DEFAULT_EXPERIMENT_NATIVE_PENDING",
-    "preparedGroups": 124,
-    "expectedCaptures": 104,
+    "status": "NOT_RUN_CURRENT_HEAD",
+    "preparedGroups": 128,
+    "expectedCaptures": 108,
     "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39412858934",
     "previousHead": "08d4bf9d453604116b2b9e1a33bdd94dac7993b8",
     "previousPassed": 120,
     "previousFailed": 4,
     "previousCapturesInspected": 98,
     "findings": "All new aperture/text assertions passed; four mobile drag-to-Undo variants failed. Touch-default experiment and focused Undo capture correction require fresh exact-head native and visual evidence.",
-    "previousCapturesVerified": 104
+    "previousCapturesVerified": 104,
+    "note": "Scoped guarded canvas touchstart repair from independently accepted P1 is ported. Current larger runtime requires its own exact-head native, visual and packaging gates. Prior failures remain historical.",
+    "p1Reference": {
+      "head": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824",
+      "nativePassed": 116,
+      "status": "PASS_SEPARATE_SMALLER_RUNTIME"
+    }
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1022,9 +1029,10 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 739,
-    "passed": 739,
-    "failed": 0
+    "total": 764,
+    "passed": 764,
+    "failed": 0,
+    "skipped": 0
   },
   "documentation": {
     "status": "PASS",
