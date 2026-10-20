@@ -1418,7 +1418,8 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Constitution and seven spec/plan/analysis/checklist documents;64 proposal codes mapped to 17 queue items. Offline docs: 33 files / 188 links."
+        "Constitution and seven spec/plan/analysis/checklist documents;64 proposal codes mapped to 17 queue items. Offline docs: 33 files / 188 links.",
+        "specs/008-interactive-scene-roadmap/acceptance.md: bounded inventory, historical incomplete PR 12 evidence and separate current acceptance gates."
       ],
       "nextAction": "Independent specification consistency review; integration owner must reconcile historical screenshot binding after actual current-artifact visual verification."
     },
@@ -1480,7 +1481,7 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Explicit scene-v4 / sequence-v3 authored-canvas contract proposed, preserve legacy semantics; not integrated."
+        "Scene-v4 / sequence-v3 authored-canvas contracts are integrated; strict legacy validation, shared canvas matching and atomic capture rejection have model/DOM regression coverage. Current exact-head native acceptance remains pending."
       ],
       "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
     },
@@ -1500,7 +1501,7 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "10 bounded shape kernels; 14 pure tests pass; newformat,UI and renderer integration not complete."
+        "Ten bounded numeric shape families are integrated with shared geometry, validator, renderer, hit testing, description and round-trip fixtures. Arbitrary SVG/paths and every mathematical shape are not implemented; current native/visual acceptance remains pending."
       ],
       "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
     },
@@ -1508,7 +1509,7 @@
       "id": "IF-050",
       "title": "Add layer tools and original versioned presets",
       "priority": "P2",
-      "status": "four_presets_layers_implemented_richer_gallery_deferred",
+      "status": "twelve_preset_gallery_implemented_native_visual_pending",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1521,8 +1522,12 @@
       ],
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
-      "evidence": [],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "evidence": [
+        "imagery-app/src/preset-model.js and gallery-ui.js: twelve original revisioned MIT examples, validator-derived counts and descriptive filters; text-only default and explicit static thumbnail opt-in.",
+        "Focused preset/gallery model and DOM suite: 46/46 passed on Node 24.19.0 before final integration; original four scene payload hashes unchanged. This is not native or visual acceptance.",
+        "At most twelve 64\u00d748 canvases without DPR multiplication: 36,864 pixels, separate from main/offscreen buffers; invalidation hides and resets each backing store to 1\u00d71."
+      ],
+      "nextAction": "Verify the exact integrated gallery in native browser and inspected desktop/narrow/short captures. Locks, snap, guides, align/distribute and groups remain deferred."
     },
     {
       "id": "IF-051",
@@ -1584,7 +1589,7 @@
       "id": "IF-054",
       "title": "Define neutral private experience records",
       "priority": "P4",
-      "status": "private_journal_model_reviewed",
+      "status": "journal_v2_optional_provenance_implemented_native_pending",
       "scope": "Separate closed experience schema, missingness, scene/version association and minimal exposure accounting; no diagnostic scoring.",
       "dependencies": [
         "IF-045",
@@ -1598,15 +1603,17 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Private journal strict model: 26 synthetic tests pass; no user data, UI not integrated."
+        "imagery-app/src/journal-model.js and provenance-model.js: journal-v2 supports static-scene and whole-sequence references; explicit legacy v1 closed record validator retained.",
+        "Separate unchecked opt-in records only subsequent successful main-field displays. Latest ended interval with ready digest only; active/pending/failure stays unavailable without older fallback. Paused visible frames count; no epoch/device identifier or scene content is exported.",
+        "Bounded one active/latest-completed metadata record, one in-flight digest and one replaceable latest canonical queue, each input at most 1 MiB. Opt-out/Clear revoke stale results. Renderer label 0.8.0-dev.provenance1 is a version identifier, not a binary hash."
       ],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "nextAction": "Complete exact-head real-browser digest/display-interval and interrupted/unavailable-state verification. Do not interpret software-visible duration as gaze, calibrated light dose, safety or efficacy."
     },
     {
       "id": "IF-055",
       "title": "Implement optional session-memory journal",
       "priority": "P4",
-      "status": "private_journal_ui_reviewed_native_pending",
+      "status": "journal_v2_ui_integrated_native_visual_pending",
       "scope": "Optional neutral reflection and exact separate preview/export/clear; no autosave, storage or transmission.",
       "dependencies": [
         "IF-054"
@@ -1617,8 +1624,11 @@
       ],
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
-      "evidence": [],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "evidence": [
+        "Optional session-only reflections remain initially off, with separate initially unchecked provenance, exact selected preview and single-use export approval. Journal-v2 remains separate from scene/sequence/note files.",
+        "Integrated Node/DOM tests exercise actual Node SHA-256, default no-hash behavior, opt-out cancellation, lifecycle end reasons, whole-sequence reference, paused-visible duration and live-edit supersession. These are not native timing or visual evidence."
+      ],
+      "nextAction": "Verify final journal-v2 browser download, optional provenance status and keyboard/narrow/short layouts with synthetic records; refresh exact integrated test counts."
     },
     {
       "id": "IF-056",
@@ -1663,7 +1673,7 @@
       "id": "IF-058",
       "title": "Verify cross-feature regression and privacy invariants",
       "priority": "P1",
-      "status": "local_regression_verification_in_progress",
+      "status": "gallery_provenance_regression_integration_in_progress",
       "scope": "Aggregate exact-source checks; each implemented stage still requires its own earlier tests; preserve failures.",
       "dependencies": [
         "IF-046",
@@ -1685,15 +1695,16 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Regression suite,privacy and legacy gates continuing; no native acceptance yet."
+        "Historical PR 12 recorded 737 passing Node checks; those totals do not accept the changed gallery/provenance runtime.",
+        "New focused model/DOM and real-Node-SHA integration checks pass. Final aggregate suite, source/artifact hashes and report totals must be refreshed after integration; intermediate failures remain recorded."
       ],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "nextAction": "Freeze final source, reassemble, refresh manifest/report and run the full dependency-free regression suite. Do not copy earlier totals or hashes as current acceptance."
     },
     {
       "id": "IF-059",
       "title": "Inspect native behavior and rendered layouts",
       "priority": "P1",
-      "status": "exact_head_native_visual_pending",
+      "status": "prior_native_incomplete_current_repairs_gallery_provenance_unverified",
       "scope": "Actual browser/visual review; physical-device, OS, assistive-technology and qualified content evidence separately reported.",
       "dependencies": [
         "IF-058"
@@ -1706,15 +1717,16 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Sandboxed Chromium startup timeout before navigation; cleanup passed; no screenshots or native scenarios executed locally."
+        "Historical PR 12 native attempt passed 117 of 118 groups; the mobile Undo failure prevented a clean pass. Visual button-layout findings also required repair.",
+        "Candidate repairs and the new gallery/provenance integration require exact-head native execution and actual rendered-capture inspection. Historical counts and prepared tests do not establish the current result."
       ],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "nextAction": "Run and inspect exact-head native scenarios and captures, including repaired Undo/buttons and new gallery/provenance. Keep physical-device, OS, full accessibility and qualified content gates separate."
     },
     {
       "id": "IF-060",
       "title": "Reconcile user guides and exact-source evidence",
       "priority": "P1",
-      "status": "documentation_updated_current_evidence_pending",
+      "status": "gallery_provenance_guides_updated_final_evidence_pending",
       "scope": "Document only observed implemented behavior; update hashes, commands, versions, limitations and synthetic outgoing artifacts.",
       "dependencies": [
         "IF-059"
@@ -1731,15 +1743,17 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Guides describe direct editing; old v0.7 screenshots explicitly historical. Exact current CI and visual review pending."
+        "README.md, imagery-app/README.md, docs/roadmap-features.md, docs/architecture.md and specs/008-interactive-scene-roadmap/acceptance.md describe twelve examples, explicit thumbnail resources and separately opt-in journal-v2 provenance.",
+        "Published v0.7 download guidance remains unchanged; version 0.8 remains unreleased. Final exact-head regression/native/visual evidence and offline documentation counts require integration refresh.",
+        "Documentation draft check PASS: node scripts/check-docs.cjs, 35 Markdown files and 228 local links/fragments. git diff --check passed; rerun after final integration."
       ],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "nextAction": "Run local documentation links/fragments check, reconcile final evidence and inspect the exact outgoing tree without claiming all 64 proposals, all shapes or external acceptance complete."
     },
     {
       "id": "IF-061",
       "title": "Review and integrate tested increments",
       "priority": "P1",
-      "status": "independent_scoped_reviews_pass_native_visual_pending",
+      "status": "expanded_integration_review_native_visual_pending",
       "scope": "Independent exact-tree review and required CI; no implied publication, hosting or participant collection.",
       "dependencies": [
         "IF-060"
@@ -1751,17 +1765,18 @@
       "authority": "Maintainer approved staged Spec-Kit implementation and automated/visual testing on 20 October 2026; no silent persistence, hosting, real research collection or clinical claims.",
       "acceptanceReference": "specs/008-interactive-scene-roadmap/tasks.md",
       "evidence": [
-        "Independent reviewer found mutable drag target and stale overlap cache; fixed with regressions, re-review pending; main frozen for release."
+        "Scoped model/DOM reviews and targeted regression repairs are recorded. Earlier native/visual defects have candidate repairs, not current exact-head acceptance.",
+        "Final integrated review, required green CI and inspected current captures remain pending. No release publication, hosting or participant collection is implied."
       ],
-      "nextAction": "Execute the documented dependency and acceptance gates; do not infer completion from this entry."
+      "nextAction": "Review the final tested tree, resolve current blockers and preserve the protected integration boundary. Publication and governed collection remain separate decisions."
     }
   ],
   "sourceBase": {
     "repositoryBaseCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3",
-    "targetBranch": "feature/009-authored-geometry",
+    "targetBranch": "feature/010-gallery-provenance",
     "appPath": "imagery-app/index.html",
-    "appSha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23",
-    "appBytes": 277594,
+    "appSha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b",
+    "appBytes": 313647,
     "note": "Expanded unreleased roadmap candidate; no temporary release publisher, deployment or collection service."
   },
   "authority": {
@@ -1852,11 +1867,11 @@
   "currentStatus": "Bounded implementation and scoped source reviews complete; reviewed P1 touchstart repair ported. Current exact-head native, visual and package gates remain pending. Published v0.7 is unchanged; this is unreleased. Physical devices, full AT, natural-photo usefulness and research governance remain incomplete.",
   "currentIteration": {
     "base": "7f78b77b63b25cdc479df06520b314ff7a1b8aa0",
-    "remoteBranch": "feature/009-authored-geometry",
-    "htmlSha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23",
+    "remoteBranch": "feature/010-gallery-provenance",
+    "htmlSha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b",
     "status": "reviewed_touchstart_port_local_node_pass_native_visual_package_pending",
-    "htmlBytes": 277594,
-    "nodePassed": 764,
-    "nativePreparedGroups": 128
+    "htmlBytes": 313647,
+    "nodePassed": 855,
+    "nativePreparedGroups": 140
   }
 }

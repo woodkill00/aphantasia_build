@@ -4,21 +4,23 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 277594,
-    "sha256": "d8d527f120757ae8959a915e4e0a93bb878189bb2c7194a4bd96d62fc2381f23"
+    "bytes": 313647,
+    "sha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b"
   },
   "browser": {
     "status": "NOT_RUN_CURRENT_HEAD",
-    "preparedGroups": 128,
-    "expectedCaptures": 108,
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39412858934",
-    "previousHead": "08d4bf9d453604116b2b9e1a33bdd94dac7993b8",
-    "previousPassed": 120,
-    "previousFailed": 4,
-    "previousCapturesInspected": 98,
-    "findings": "All new aperture/text assertions passed; four mobile drag-to-Undo variants failed. Touch-default experiment and focused Undo capture correction require fresh exact-head native and visual evidence.",
-    "previousCapturesVerified": 104,
+    "preparedGroups": 140,
+    "expectedCaptures": 120,
     "note": "Scoped guarded canvas touchstart repair from independently accepted P1 is ported. Current larger runtime requires its own exact-head native, visual and packaging gates. Prior failures remain historical.",
+    "historicalExpandedRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
+    "historicalPassed": 117,
+    "historicalFailed": 1,
+    "historicalCapturesInspected": 98,
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39413117772",
+    "previousHead": "88325147bfaab515abf42be2ee435ebe99781263",
+    "previousPassed": 135,
+    "previousFailed": 1,
+    "previousCapturesVerified": 116,
     "p1Reference": {
       "head": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
       "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824",
@@ -1029,8 +1031,8 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 764,
-    "passed": 764,
+    "total": 855,
+    "passed": 855,
     "failed": 0,
     "skipped": 0
   },

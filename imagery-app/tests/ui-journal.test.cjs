@@ -77,7 +77,8 @@ function harness(options = {}) {
   vm.runInContext(fs.readFileSync(path.resolve(__dirname, '../src/journal-model.js'), 'utf8'), sandbox);
   vm.runInContext(fs.readFileSync(SOURCE, 'utf8'), sandbox);
   let api;
-  api = sandbox.ImageryJournalUI.mount(container, {onEdit() {
+  const provenanceOptions={...options.provenance}; if(provenanceOptions.getProvenance){const get=provenanceOptions.getProvenance;provenanceOptions.getProvenance=()=>vm.runInContext('('+JSON.stringify(get())+')',sandbox);}
+  api = sandbox.ImageryJournalUI.mount(container, {...provenanceOptions, onEdit() {
     editCount++; if (options.invalidateOnEdit && api) api.invalidateExport();
   }});
   function walk(element = container) { return [element, ...element.children.flatMap(child => walk(child))]; }
@@ -216,7 +217,7 @@ test('JOURNAL UI double: local download requires separate current approval and e
   const text = h.preview(); h.fire('download','click'); assert.equal(h.downloads.length,0);
   h.preview(); h.check('approve'); h.fire('download','click');
   assert.equal(h.downloads.length,1);
-  assert.equal(h.downloads[0].filename,'imagery-field-journal-v1.json');
+  assert.equal(h.downloads[0].filename,'imagery-field-journal-v2.json');
   assert.equal(h.downloads[0].blob.type,'application/json');
   assert.equal(await h.downloads[0].blob.text(),text);
   assert.match(h.downloads[0].href,/^blob:/);
@@ -390,4 +391,21 @@ test('JOURNAL UI source: no persistence, network, markup execution, hidden scene
   ]) assert.doesNotMatch(source,forbidden);
   assert.match(source,/\.textContent =/); assert.match(source,/createElement\(/);
   assert.match(source,/revokeObjectURL/); assert.match(source,/application\/json/);
+});
+
+
+test('JOURNAL UI double: display provenance is a separate unchecked opt-in and opt-out clears unfinished tracking', () => {
+  const changes=[];let cleared=0;
+  const summary={scene:{status:'available',format:'imagery-static-scene',version:4,sha256:'a'.repeat(64),rendererVersion:'0.8.0-dev.provenance1'},exposure:{status:'available',mode:'static',plannedMs:null,visibleMs:1234,interrupted:true,endedReason:'user-stop'}};
+  const h=harness({provenance:{onTrackingChange:value=>changes.push(value),clearTracking:()=>cleared++,getProvenance:()=>summary,getTrackingState:()=>({status:'ready'})}});
+  assert.equal(h.get('track-display').checked,false);h.check('enable');h.add();
+  assert.equal(h.api.getState().entries[0].reflection.scene.status,'unavailable');
+  h.check('track-display');h.add();assert.deepEqual(copy(h.api.getState().entries[1].reflection.scene),summary.scene);
+  h.check('enable',false);assert.equal(h.get('track-display').checked,false);assert.deepEqual(changes,[true,false]);
+  h.fire('clear','click');assert.equal(cleared,1);
+});
+test('JOURNAL UI double: pending provenance never substitutes a previous scene and warns before adding', () => {
+  const h=harness({provenance:{getTrackingState:()=>({status:'pending-digest'}),getProvenance:()=>({scene:{status:'unavailable'},exposure:{status:'unavailable'}})}});
+  h.check('enable');h.check('track-display');assert.match(h.get('tracking-status').textContent,/pending-digest/);h.add();
+  assert.equal(h.api.getState().entries[0].reflection.scene.status,'unavailable');assert.equal(h.api.getState().entries[0].reflection.exposure.status,'unavailable');
 });

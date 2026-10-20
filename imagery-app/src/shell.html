@@ -111,6 +111,7 @@
         <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate sequence files: legacy v2 or authored-canvas v3 (opens v1–v3), up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
   <section class="notes-card local-tools" aria-labelledby="image-tools-title"><h2 id="image-tools-title">Sketch a local picture</h2><p class="hint">Optional experimental approximation with editable shapes. No image is uploaded. Open these tools only when you want to choose a local image.</p><button id="open-image-tools" type="button" aria-expanded="false">Open local image tools</button><button id="undo-image-replacement" type="button" disabled>Undo image draft replacement</button><div id="image-tools-container" hidden></div></section>
+  <section id="gallery-container" aria-label="Original scene gallery"></section>
   <section id="journal-container" aria-label="Optional private reflections"></section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
@@ -159,6 +160,8 @@
 <script>/*__ITEMS__*/</script>
 <script>/*__EDITOR__*/</script>
 <script>/*__PRESETS__*/</script>
+<script>/*__GALLERY_UI__*/</script>
+<script>/*__PROVENANCE__*/</script>
 <script>/*__IMAGE_FILE__*/</script>
 <script>/*__IMAGE_MODEL__*/</script>
 <script>/*__IMAGE_UI__*/</script>
