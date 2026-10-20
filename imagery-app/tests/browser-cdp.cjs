@@ -8,9 +8,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const {spawn} = require('node:child_process');
+const {spawn, execFileSync} = require('node:child_process');
 const {pathToFileURL} = require('node:url');
 const {setTimeout: sleep} = require('node:timers/promises');
+const {createConsoleTransport} = require('./browser-evidence-transport.cjs');
 
 function settlesWithin(promise, milliseconds) {
   return new Promise((resolve, reject) => {
@@ -80,6 +81,7 @@ const {runPrivateToolScenarios}=require('./browser-private-tools.cjs');
 const {runGalleryProvenanceScenarios}=require('./browser-gallery-provenance.cjs');
 const {runArrangementScenarios}=require('./browser-arrangement.cjs');
 const {runEditorAidsScenarios}=require('./browser-editor-aids.cjs');
+const {runMultiSelectionScenarios}=require('./browser-multi-selection.cjs');
 const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
 const scene = changes => { const {shape,x,y,size,...rest}=changes||{}; const value = fixtureScene(rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
@@ -218,10 +220,15 @@ class Page {
   async property(selector, key) {
     return this.evaluate((s, k) => { const e = document.querySelector(s); if (!e) throw new Error(`Missing ${s}`); return e[k]; }, selector, key);
   }
-  async fresh() {
+  async fresh(localArtifact = artifact, expectedSha256 = null) {
+    assert.ok(typeof localArtifact === 'string' && path.isAbsolute(localArtifact) && path.extname(localArtifact) === '.html', 'Only an absolute local HTML artifact path is supported');
+    if(localArtifact !== artifact){
+      assert.match(expectedSha256 || '', /^[a-f0-9]{64}$/, 'An alternate local artifact requires its exact expected SHA-256');
+      assert.equal(digest(fs.readFileSync(localArtifact)), expectedSha256, 'Alternate local artifact hash mismatch');
+    }
     await this.send('Page.bringToFront');
     const previousLoads = this.loadCount;
-    const result = await this.send('Page.navigate', {url:pathToFileURL(artifact).href});
+    const result = await this.send('Page.navigate', {url:pathToFileURL(localArtifact).href});
     assert.ok(!result.errorText, result.errorText);
     await until(() => this.loadCount > previousLoads, 'page load event for local artifact');
     await until(() => this.evaluate(() => document.readyState === 'complete' && !!window.ImageryModel && !!document.querySelector('#scene-canvas')), 'loaded local artifact');
@@ -483,7 +490,7 @@ async function run() {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(),'imagery-chrome-profile-'));
   const report = {
     started:new Date().toISOString(), status:'RUNNING', artifactSha256:digest(fs.readFileSync(artifact)),
-    platform:process.platform,node:process.version,results:[],
+    platform:process.platform,node:process.version,results:[],suiteCompleted:false,
     scope:'Real headless Google Chrome; local file URL; desktop and phone-sized viewport/touch emulation; synthetic data only.',
     limitations:['Viewport/touch emulation does not establish physical-phone or Safari support.',
       'No screen-reader audit, actual OS file-picker interaction, display calibration, medical/sensory clearance, or universal-browser compatibility is established.',
@@ -491,8 +498,10 @@ async function run() {
       'File selection uses native CDP DOM.setFileInputFiles; the operating-system chooser itself is not exercised.'],
   };
   const write = () => fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2)+'\n');
-  let browser, profileCleanupSafe=true;
+  const originalConsole = console;
+  let browser, evidence, profileCleanupSafe=true;
   async function runCase(page, name, fn, {startupLive=false}={}) {
+    evidence?.beginCase(page.device.name,name);
     const start = Date.now();
     try {
       await page.viewport(page.device.width); await page.fresh();
@@ -511,6 +520,26 @@ async function run() {
     write();
   }
   try {
+    const repository = path.resolve(__dirname,'../..');
+    const git = args => execFileSync('git',['-C',repository,...args],{encoding:'utf8'}).trim();
+    evidence = createConsoleTransport({
+      outputDir:out,
+      // Explicit empirical output budget, not a claimed GitHub/connector limit.
+      // It includes envelope/status/terminal bytes; unrelated CI steps remain
+      // outside this native-only accounting. Overflow fails evidence acceptance.
+      maxTransportBytes:7350000,
+      identity:{
+        commit:git(['rev-parse','HEAD']),tree:git(['rev-parse','HEAD^{tree}']),
+        workingTreeClean:git(['status','--porcelain=v1','--untracked-files=all'])==='',
+        runtimeSha256:report.artifactSha256,runtimeBytes:fs.statSync(artifact).size,
+        runnerSha256:digest(fs.readFileSync(__filename)),
+        transportSha256:digest(fs.readFileSync(require.resolve('./browser-evidence-transport.cjs'))),
+        runId:process.env.GITHUB_RUN_ID||null,attempt:process.env.GITHUB_RUN_ATTEMPT||null,
+        job:process.env.GITHUB_JOB||null,node:process.version,platform:process.platform,
+        scope:report.scope,
+      },
+    });
+    global.console = evidence.console;
     try { browser = await startChrome(profile); }
     catch (error) { report.status='BLOCKED'; report.launchError=error.stack; profileCleanupSafe=!error.chromeStillRunning; process.exitCode=2; return; }
     const {cdp} = browser;
@@ -783,12 +812,15 @@ async function run() {
         await runGalleryProvenanceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runArrangementScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runEditorAidsScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
+        await runMultiSelectionScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runIndependentSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
+        evidence.beginCase(device.name,'page runtime, dialog, and remote-request log');
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});
         console.log(`${report.results.at(-1).status} ${device.name}: page runtime, dialog, and remote-request log`);
       } finally { await page.close(); }
     }
+    report.suiteCompleted = true;
     report.status = report.results.some(result => result.status === 'FAIL') ? 'FAIL' : 'PASS';
     if (report.status !== 'PASS') process.exitCode=1;
   } catch (error) { report.status='ERROR'; report.error=error.stack; process.exitCode=1; }
@@ -802,7 +834,14 @@ async function run() {
       report.cleanup={browserClosed:true,profileRemoved:true};
     } catch (error) { report.cleanup={error:error.message}; if (report.status==='PASS' || report.status==='RUNNING') report.status='ERROR'; process.exitCode=1; }
     report.finished=new Date().toISOString(); write(); console.log(JSON.stringify(report,null,2));
+    evidence?.markFinalReport();
     console.log(`Browser report: ${path.join(out,'results.json')}`);
+    try {
+      if (evidence && !(await evidence.finalize(report)).complete) process.exitCode=1;
+    } catch (error) {
+      process.exitCode=1;
+      originalConsole.error('Evidence transport finalization failed:',error.message);
+    } finally { global.console = originalConsole; }
   }
 }
 if (require.main === module) {

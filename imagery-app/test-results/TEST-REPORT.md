@@ -1,3 +1,76 @@
+# Feature 013 evidence-transport repair preparation
+
+20 October 2026, 17:01 UTC. This is an evidence-harness-only preparation record, not native acceptance or integration. Runtime remains **382339 bytes**, SHA-256 `df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4`. All 200 existing native groups, their assertions/order, 78 assigned Feature013 captures, screenshot settings, baseline fixture/paired timing criteria, sandbox/cleanup, single read-only job and 23-minute native / 26-minute job budgets remain unchanged. No group model, scenario import or runner call is added.
+
+## Green workflow with unavailable detailed evidence, retained
+
+[Run 39453086729](https://github.com/woodkill00/aphantasia_build/actions/runs/39453086729) reports workflow success on published head `ac0bb7db`. Its source tree `20c9f2659f6211db0e346b82b180be5e29523912` exactly matches clean local preparation commit `a399532556cb10e1de34c1cd0bb86d8fcb9f1b8a`. The completed-log connector response closes before its detailed evidence can be retrieved. Actual captures, paired timing, final native report and package details remain **unreviewed**. Green workflow metadata is not acceptance of those gates. The new transport cannot reconstruct or retroactively accept that old unavailable log; prior failures below remain failures.
+
+## Narrow repair and remaining gates
+
+The independently reviewed [lossless transport](../tests/BROWSER-EVIDENCE-TRANSPORT.md) retains every original formatted output record and JPEG byte/hash in bounded local spooling and independently compressed, ordered log blocks. It adds only generic runner reporting and source/runtime identity. No new action, dependency, upload, permission, setting or destination is introduced. The exact helper and tests match the accepted shared freeze; local targeted transport/CDP checks passed **46/46**. Complete local `node --test imagery-app/tests/*.test.cjs`: **1215/1215 PASS**, zero failures, Node v24.19.0, 22091.237608 ms. Offline documentation checks passed 51 Markdown files / 339 links; synthetic fixtures passed 3 valid / 14 rejected without a browser. All 84 manifest entries verify; assembly reproduces identical runtime bytes and 82 other tracked source/test/workflow/script files remain byte-identical. These are local checks, not native execution or a clean-checkout CI package pass.
+
+The native output cap is **7,350,000 bytes**, an empirical reviewed budget, not a known connector limit or delivery guarantee. The shared 350-capture projections are approximately 6,564,851 bytes from the current group corpus and 7,666,076 bytes from the older PR16 mix; the unfavorable estimate exceeds the cap and is not hidden. Neither is a bound or a measured size for Feature013's complete 200-group corpus. Non-native output and Actions timestamps add overhead. A cap or delivery failure remains nonacceptance, never permission to drop frames or silently increase the cap.
+
+The repair has **not run native CI**. A decoded complete transcript is not acceptance: independently verify terminal job success, expected source/tree/runtime and clean checkout, all **200** ordered original case results, final suite/cleanup and every capture hash; inspect assigned actual images and paired measurements; review the clean-checkout package output. No commit, publication, merge, release, hosting or collection is claimed by this preparation.
+
+---
+
+# Feature 013 repaired-candidate preparation record
+
+20 October 2026, 15:53 UTC. This is a dated source-preparation snapshot, not a claim of later native acceptance or integration. The independently reviewed repaired runtime is **382339 bytes**, SHA-256 `df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4`. Complete local `node --test imagery-app/tests/*.test.cjs`: **1192/1192 PASS**, zero failures, Node v24.19.0, 17203.442198 ms. Independent targeted UI checks passed 233 tests; atomic UI passed 62. Repaired native/visual/package checks had not run at this snapshot. Every exact head must pass all gates before protected merge; see [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) for the subsequent exact-head outcome.
+
+## Failed first native attempt, retained
+
+[Run 39447144887](https://github.com/woodkill00/aphantasia_build/actions/runs/39447144887), source `12c2b3563a8018750d09ad16b8d1a2f3008c98ae`, passed 1177 Node and **194/200 native groups**, with six failures in 1032.432 seconds. Chrome 155.0.8059.39, Node 22.23.3, default sandbox and browser/profile cleanup were retained; packaging was skipped. Discard selection, same-name explicit draft intent, and hidden short-window row clipping each failed on both devices. These remain failures, not a timeout or retroactive pass.
+
+All 214 emitted captures were byte/hash verified; 42 new v12 images were inspected, while 36 planned short-layout images were unreached. Review additionally found stale native anchor-option paint and provenance captures taken after export cleared the preview. The other 172 emitted frames are not claimed manually inspected. Paired shared-route timing completed within the predeclared bounds, but the maximum-item candidate-only tail was unreached; this does not accept the repaired runtime.
+
+Repairs preserve the selected singleton on Discard when valid, retain explicit ordinary-input dirty intent including a drag returning exactly to its origin, apply short-window full-inspector scrolling while hidden, and avoid rebuilding unchanged anchor options. Native tests now intersect actual clipping ancestors without relaxing full-label, 44-pixel, focus, corner/center-hit or Hide checks; journal captures occur before Apply/export clears their content. All original assertions and 200 native groups remain. The new failure regressions and original failures are retained. No runtime or test repair is counted as an executed browser pass.
+
+Guides [exact-main run 39444608463](https://github.com/woodkill00/aphantasia_build/actions/runs/39444608463) independently passed 1080 Node/178 native groups, scoped 36-frame visual review, bounded paired timing, package and cleanup on main `d95fbdc004324d1a9e062c085952e4df0bfa4626`. That result does not accept Feature 013. Physical devices, other engines, assistive technology, calibrated display latency and human-usefulness evidence remain unverified. No release, hosting, telemetry or research collection was added.
+
+---
+
+## Historical first-candidate preparation record
+
+The following records preserve the earlier snapshot and its then-pending outcomes; they are not current acceptance claims.
+
+# Version 0.8 atomic multi-selection candidate
+
+20 October 2026. Feature 013 has independent source review and a complete local Node pass. **Native, visual, same-runner timing and clean-checkout CI package acceptance: NOT RUN for this changed runtime.** Prepared coverage is 200 native groups (178 preserved plus 22 additive) and 78 additional actual captures. This report does not claim integration, a release, deployment, physical-device testing or efficacy.
+
+## Exact source and local evidence
+
+- HTML: 381567 bytes; SHA-256 `b3361a68f8ba585fcd3300b435a0ca7a38d3634446763a8983c194645b203bf8`.
+- Complete local command `node --test imagery-app/tests/*.test.cjs`: **1177/1177 PASS**, zero failures, Node v24.19.0, 16997.864914 ms. This includes model, DOM-double, documentation and package-unit checks, not native browser execution.
+- Pure selection model: 50 new tests; combined unchanged editor/arrangement plus new model suite **79/79 PASS**, independently repeated. Atomic UI: **47/47 PASS**; independent targeted UI review passed 218 checks before the final informational timing-sentence correction, then independently checked that narrow correction and timeline regression.
+- Exact assembler and release-kit source marker lists agree; the portable runtime remains self-contained. Runtime source review is accepted, not native acceptance.
+
+## Failures and corrections retained
+
+The first full aggregate passed **1147/1156**, with nine failures: eight stale runtime-hash documentation/integrity/package failures before final metadata refresh and one real same-preset export-dirty compatibility failure. The behavior failure has a focused regression. All nine remain recorded failures, not a pass.
+
+Independent review also exposed exact singleton helper compatibility mistakes (orthogonal-axis rounding, multiplication/division order and half-hundredth placement), provisional/cancellation refresh failure losing raw input or leaving stale visible raster, misleading cancellation text after a complete gesture commit followed by a scroll failure, and stale invalid markers after a successful full-field restore. These were repaired with direct regressions. A full **1177/1177** pass on preceding runtime `fce4844df0a639eba3096516de0e05e8e38e3b9a4e195a1e9cb9b27c240f2ce4` took 17590.644446 ms, but did not accept the later informational timing-sentence correction. The exact final-runtime aggregate above was rerun after that correction and source review.
+
+## Prepared native, visual and timing gates
+
+The additive native suite covers trusted semantic selection/primary controls, rapid multi-drag and first Undo, atomic locks/history/structural commands, invalid raw-input preservation, all authored aspect ratios plus legacy wide/tall batch geometry, idempotent alignment/equal gaps, and 12-row focus/aperture/corner-hit checks at wide, narrow and short layouts. Actual images, not geometry assertions alone, must be inspected. Existing 178 groups and their assertions remain intact.
+
+A test-only, MIT-preserved Feature 012 artifact is pinned to SHA-256 `bfb0470286be0cda2233cfa0ece7c4248f3b224bdf2851821223a7317fdf2735`, from [reviewed PR 15 source](https://github.com/woodkill00/aphantasia_build/commit/e819df22d6a6e01414e58468a55ae7da628d47b1). It is loaded locally on the same Chrome target/device, alternating baseline/candidate order across six pairs of identical synthetic maximum-effect scenes. Compare only preserved singleton nudge, drag and first Hide; new batch and gap operations have no baseline equivalent and remain candidate-only measurements. All trusted raw samples and partial failure evidence are retained.
+
+Before execution, the investigation gates are candidate-minus-baseline p95 ≤10 ms for comparable routes and each candidate event/Hide <50 ms. This measures synchronous handler-plus-forced-layout work, not calibrated screen latency, physical-device performance or human usefulness. There are 32 required reveal guards per device, totaling 198.4 seconds of prescribed test waits; total added work is estimated at 260–320 seconds, not measured. Independently reviewed coverage limits are 23 minutes native and 26 minutes for the same single job, with default sandbox, read-only permissions and cleanup unchanged. The earlier 198-group/18–21-minute estimate is preserved as superseded in [research](../../specs/013-atomic-selection/research.md).
+
+## Prerequisite and remaining scope
+
+Guides PR 15 merged as main `d95fbdc004324d1a9e062c085952e4df0bfa4626`, tree `0f19c407632ea36765898f2a314b2e3624ce2412`, after [exact-head run 39441769939](https://github.com/woodkill00/aphantasia_build/actions/runs/39441769939) passed 1080 Node and 178 native groups in 798.552 seconds, package/cleanup and assigned 36-frame guide visual review. Its [exact-main run](https://github.com/woodkill00/aphantasia_build/actions/runs/39444608463) is still a separate pending gate at this snapshot. Neither result accepts changed Feature 013 source.
+
+Session groups are the next separate engineering increment. Physical devices, other engines, OS file workflows, assistive technology, actual zoom, calibrated display timing, natural-image usefulness and governed participant research remain unverified. No release, hosting, durable storage, telemetry or collection was added.
+
+---
+
+## Historical Feature 012 evidence, superseded current-candidate status
+
 # Version 0.8 editor aids candidate
 
 2026-10-20. Feature 012 is a separate editor-only grid/center-guide increment. **Recorded corrected runtime: scoped source, native, visual, bounded paired timing and package acceptance PASS.** Final evidence/test-assertion head requires its own full CI before protected integration; this report does not claim a merge. The recorded run executed all 178 native groups: 160 preserved groups plus 18 additive aid checks. No new release or deployment has occurred.

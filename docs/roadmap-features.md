@@ -28,7 +28,7 @@ Hollow interiors count as targets; shadows and letterbox bars do not. Small hit 
 
 Authored scene-v4 adds ellipse, rectangle, rounded rectangle, polygon and star alongside dot, pixel, circle, square and triangle: ten finite families, not every mathematical shape. Dimensions, rotation, body fill/outline, polygon/star parameters and original effects/timing pass the shared closed validator. Width/height are bounded by family; unsupported fields, arbitrary paths, markup and nonfinite values are rejected. The [architecture](architecture.md#authored-scene-v4-and-sequence-v3-contract) records exact ranges.
 
-Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Session locks, snap and centering are the implemented fourth increment, with scoped native/visual acceptance described below. Visible guides, distribution and grouping remain deferred.
+Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Session locks, snap and centering are the implemented fourth increment, with scoped native/visual acceptance described below. Editor-only guides have passed scoped exact-main checks; multi-selection/distribution and flat session groups are separately gated increments.
 
 The **Original preset gallery** begins as a text-only list of twelve original MIT examples. Filter by item count, item color count, vertical symmetry, geometric overlap and authored timing. Color count excludes the shared background and disabled effects; symmetry includes colors; overlap includes containment as well as crossing shapes. These are descriptive filters, not clinical outcomes or a recommended order.
 
@@ -109,3 +109,7 @@ Still separate or deferred:
 - Qualified sensory/content review, clinical efficacy, diagnostic validity and participant research.
 
 No read-only repository permission, normal browser sandbox or CI protection is relaxed by this documentation. No hosting, deployment, release publication or participant collection is authorized merely by implementing the roadmap.
+
+## Atomic multi-selection acceptance gate
+
+Feature 013 adds semantic multi-selection and atomic arrangement commands. The first native run failed 6 of 200 groups; the repaired run 39453086729 is green in workflow metadata but its complete detailed log is unavailable, so native evidence, actual captures, paired timing and package details remain unreviewed. A separately reviewed lossless evidence-transport repair preserves the runtime and all 200 native groups; fresh exact-head native, actual capture, bounded timing and package review is required before protected integration; see [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) and the [test record](../imagery-app/test-results/TEST-REPORT.md). The published v0.7.0 download is unchanged.

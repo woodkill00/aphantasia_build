@@ -91,14 +91,14 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   .live-editor .view-actions button{min-height:44px;padding:5px;font-size:.7rem}
   .live-editor .capture-actions button,.live-editor .editor-actions .apply-row button{min-height:44px;padding:4px;font-size:.66rem}
 }
-/* In short windows the entire inspector scrolls. Pinned action rows would
-   otherwise leave too little height to show a complete precision control. Hide
-   remains in the separate, always-reachable viewing bar. */
+/* In short windows the entire inspector scrolls, visible or concealed. Pinned
+   action rows would otherwise leave too little height for a complete control
+   after resize hides the preview. Hide remains in the separate viewing bar. */
 @media(max-height:500px){
   .live-editor{grid-template-columns:minmax(80px,1fr) minmax(0,var(--inspector-width))}
-  .live-editor .editor-panel{display:block;overflow:auto;overscroll-behavior:contain;scroll-padding-block:var(--editor-pad)}
-  .live-editor .editor-scroll{overflow:visible;min-height:0;scrollbar-gutter:auto}
-  .live-editor .editor-actions{position:relative}
+  .editor-panel{display:block;overflow:auto;overscroll-behavior:contain;scroll-padding-block:var(--editor-pad)}
+  .editor-scroll{overflow:visible;min-height:0;scrollbar-gutter:auto}
+  .editor-actions{position:relative}
 }
 @media(max-width:650px) and (max-height:500px){
   .live-editor{--inspector-width:clamp(208px,calc(60vw - var(--workspace-gap)),360px)}
@@ -151,3 +151,6 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 /* Canvas pixels retain authored colors in forced-colors mode. Preserve only
    neutral guide marks; form controls continue using the user's system palette. */
 @media(forced-colors:active){.editor-aid-line{forced-color-adjust:none}}
+
+/* Selection remains semantic inspector content, never a canvas overlay or nested scroller. */
+.selection-controls{margin:16px 0;padding:0;border:0;min-width:0}.selection-controls legend{font-size:.8rem}.selection-list{display:grid;gap:var(--control-gap);margin-block:var(--control-gap);min-width:0}.selection-row{display:flex;align-items:center;gap:8px;min-height:44px;margin:0;padding:6px 4px;border:1px solid var(--line);border-radius:6px;overflow-wrap:anywhere}.selection-row input{flex:none;width:20px;height:20px;accent-color:var(--accent)}.selection-row span{min-width:0;line-height:1.45}.selection-row:focus-within{outline:2px solid var(--accent);outline-offset:1px}.selection-alignment{margin-top:var(--control-gap)}#selection-summary{min-height:3.1em;overflow-wrap:anywhere}.selection-deltas label{min-height:2.9em}.selection-deltas{margin-bottom:var(--control-gap)}
