@@ -16,6 +16,8 @@ The geometry and journal model files are pure future-phase foundations, not inte
 
 The current candidate keeps final release coordinates but does not cancel pointerup defaults, adds a separately labeled 600 ms post-drag-gap diagnostic, and wraps action labels at a readable minimum width. All original assertions remain. These are reviewed engineering changes, not an established root cause or native acceptance. The combined candidate requires fresh native execution and visual inspection; physical touch devices remain untested.
 
+[Run 39412581986](https://github.com/woodkill00/aphantasia_build/actions/runs/39412581986) passed 108/112 native groups. All four mobile Undo variants still failed, including a measured 703 ms post-drag gap. Uncanceling pointerup and waiting longer were not sufficient. The next experiment leaves touch pointerdown/move defaults uncanceled while retaining CSS touch-action:none, captured transactional geometry, mouse/pen behavior and every original native assertion. Failure diagnostics include actual draft/history state, not an alternate pass condition. Narrow capture setup now restores the focused Undo control after checking disabled Redo. Fresh native and visual evidence remains required; this is not a proven root cause.
+
 ## Historical verification below
 
 # Public repository onboarding, MIT licensing and release preparation

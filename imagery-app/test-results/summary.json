@@ -4,16 +4,16 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 178796,
-    "sha256": "0f6460f74349b142c4fa0130926dfdd4f66e11e39c96110c61f988563b9264c2"
+    "bytes": 178947,
+    "sha256": "9e701c43c95ad418f98fac90e9168f9175970aadf2fe7a25978c57b04b28416e"
   },
   "browser": {
-    "status": "POINTER_RELEASE_AND_LABEL_REPAIR_NATIVE_PENDING",
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39410912804",
-    "previousHead": "de9fb565b335a44874521ab06f63cfc711e929cd",
-    "passed": 107,
-    "failed": 3,
-    "findings": "Original, no-screenshot and80ms tap-dwell mobile Undo variants failed despite uncanceled correct-target trusted touch events. Pointerup default-cancellation experiment,600ms gap diagnostic and readable label wrapping require new exact-head native evidence."
+    "status": "TOUCH_DEFAULT_EXPERIMENT_NATIVE_PENDING",
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39412581986",
+    "previousHead": "cfcb265fdaccfcf25dac75942221d6b27093a88e",
+    "passed": 108,
+    "failed": 4,
+    "findings": "All four mobile drag-to-Undo variants failed, including a measured703ms post-drag gap. Current experiment removes redundant touch pointerdown/move default cancellation while preserving touch-action:none and mouse/pen behavior. Exact-head native evidence remains required."
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1017,9 +1017,9 @@
   },
   "nonBrowser": {
     "status": "PASS",
-    "total": 565,
-    "passed": 565,
-    "failed": 0,
-    "skipped": 0
+    "command": "node --test imagery-app/tests/*.test.cjs",
+    "total": 566,
+    "passed": 566,
+    "failed": 0
   }
 }
