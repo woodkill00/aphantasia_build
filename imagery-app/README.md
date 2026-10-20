@@ -1,6 +1,6 @@
 # Imagery Field 0.6 candidate
 
-A local engineering preview for static live editing, finite per-item animation and separate snapshot sequences. Version 0.6 adds precise numeric controls, independent outlines/shadows and item timing; exact-artifact implementation and browser verification remain pending. Historical version 0.5 passed 349 code checks and 82 Chrome groups in its final clean-exit CI. Those results do not verify this increment. This is not a treatment, diagnostic test or validated way to develop mental imagery. Static displays, fades and engineering limits do not guarantee safety.
+A local engineering preview for static live editing, finite per-item animation and separate snapshot sequences. Version 0.6 adds precise numeric controls, independent outlines/shadows and item timing; the exact runtime passed 424 code checks, 96 native Chrome groups and independent review of 52 actual frames. The [test report](test-results/TEST-REPORT.md) records source/run identifiers, the failed fixture attempt and full retry, and the exact-head integration gate. This is not a treatment, diagnostic test or validated way to develop mental imagery. Static displays, fades and engineering limits do not guarantee safety.
 
 ## Before viewing
 
@@ -109,7 +109,7 @@ Avoid unnecessary identifying/medical details. The note export contains its form
 
 ## Testing and limits
 
-New version 0.5 behavior requires fresh tests. The historical version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups in [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) on source `13cfac66e80b55d401b454dc99c8e6c690f09962` and HTML SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Controls, timing, native pixels, atomic transactions, file separation, concealment and selected layout/focus flows were exercised on desktop and phone-sized touch emulation. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
+Current version 0.6 outcomes are recorded separately in the [test report](test-results/TEST-REPORT.md); earlier results do not verify this increment. The historical version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups in [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) on source `13cfac66e80b55d401b454dc99c8e6c690f09962` and HTML SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Controls, timing, native pixels, atomic transactions, file separation, concealment and selected layout/focus flows were exercised on desktop and phone-sized touch emulation. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
 
 The separate v0.3 baseline passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), using sandbox-enabled headless Chrome 155.0.8059.39 on Linux. Two independent scripted journeys and 14 inspected actual frames informed the redesign; they were not a human usability study. The [root README](../README.md) identifies the exact v0.3 artifact and older baseline results.
 

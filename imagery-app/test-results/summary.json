@@ -1,13 +1,13 @@
 {
   "date": "2026-10-20",
-  "status": "V06_NONBROWSER_PASS_NATIVE_RETRY_PENDING",
+  "status": "V06_SCOPED_CHROME_CI_PASS",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.6.0",
     "bytes": 162947,
     "sha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97"
   },
-  "candidateCommit": "45882413759a10b5950dd1031d6d009cd585303d",
+  "candidateCommit": "3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79",
   "nonBrowser": {
     "status": "PASS",
     "total": 424,
@@ -16,9 +16,31 @@
     "command": "node --test imagery-app/tests/*.test.cjs"
   },
   "browser": {
-    "status": "RETRY_PENDING",
+    "status": "PASS",
     "preparedGroups": 96,
+    "total": 96,
+    "desktopGroups": 48,
+    "mobileViewportTouchEmulationGroups": 48,
+    "passed": 96,
+    "failed": 0,
     "expectedCaptures": 52,
+    "runId": 39366282160,
+    "jobId": 118443770240,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160",
+    "sourceCommit": "3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79",
+    "testMergeCheckout": "df3e57d63f1cba3d1749e8228f2ef6acb1d046ca",
+    "node": "22.23.3",
+    "chrome": "155.0.8059.39",
+    "workflow": "SUCCESS",
+    "durationSeconds": 433.973,
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    },
+    "runtimeErrors": 0,
+    "unexpectedDialogs": 0,
+    "remoteAppRequests": 0,
+    "visualCaptures": 52,
     "failedAttempts": [
       {
         "runId": 39365150191,
@@ -39,7 +61,8 @@
         "visualCaptures": 52,
         "visualReview": "All 52 actual frames hash/byte verified and independently inspected; no visual blocker. All 14 new v0.6 groups passed. This does not convert the aggregate failed run into a pass."
       }
-    ]
+    ],
+    "note": "Complete full retry passed all groups, including the previously unexecuted swatch/history tails. Runtime and strict assertions unchanged; only the malformed test-fixture adapter was repaired."
   },
   "limits": [
     "Physical devices, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy are not established.",
@@ -769,5 +792,15 @@
       "mergeCommit": "95e0483905b8aa5845127a3f9ac637720e8ad380",
       "note": "The clean-exit run superseded the earlier deadline failure; failure history is retained."
     }
-  }
+  },
+  "visualReview": {
+    "status": "FINAL_RUN_CAPTURES_VERIFIED_AND_INSPECTED",
+    "captured": 52,
+    "inspected": 52,
+    "reviewedRunId": 39366282160,
+    "artifactSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
+    "totalJpegBytes": 846246,
+    "scope": "Independent inspection of actual synthetic native frames, including body/outline/shadow atlas, grouped opacity, overlapping fades, compact precision controls and final hidden output. Not physical-device testing or a human usability study."
+  },
+  "integrationGate": "Later documentation-only commits retain this exact runtime. Their full CI must also pass before merge; consult the current pull-request checks rather than treating this source run as an exact-head result."
 }

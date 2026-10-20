@@ -1,6 +1,6 @@
-# Version 0.6 candidate verification procedure
+# Version 0.6 verification procedure
 
-Use the complete dependency-free suite against the exact assembled artifact: `node --test imagery-app/tests/*.test.cjs`, syntax/fixture checks, then `node imagery-app/tests/browser-cdp.cjs` with an already installed permitted Chrome. The current plan is 96 native groups and 52 synthetic rendered captures; execution and visual acceptance are pending. Consult the current TEST-REPORT and summary for exact counts, hashes and outcomes rather than historical sections below.
+Use the complete dependency-free suite against the exact assembled artifact: `node --test imagery-app/tests/*.test.cjs`, syntax/fixture checks, then `node imagery-app/tests/browser-cdp.cjs` with an already installed permitted Chrome. The full suite contains 96 native groups and 52 synthetic rendered captures. All passed and the captures were independently inspected for source `3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79` in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160). Later changes require fresh exact-artifact verification. Consult the current TEST-REPORT and summary for exact counts, hashes and outcomes rather than historical sections below.
 
 Keep sandboxing, offline direct-file checks, genuine event observations, strict raster/validation assertions and process cleanup. CI currently allows eight minutes for the native step within a ten-minute job. Do not silently omit tests or weaken assertions to meet that budget; report actual runtime and any deadline failure separately. Decode bounded synthetic capture records, verify bytes/hashes, and inspect actual pixels. Raw logs and captures stay outside the public source tree.
 

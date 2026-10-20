@@ -1,10 +1,10 @@
 # Imagery Field
 
-A local-first scene and sequence editor. The version 0.6 candidate adds precise numeric/step controls, independently colored item outlines and shadows, and a finite per-item timeline with overlapping fades. Live actual-scene editing remains separate from timed playback. See the [item editor and timeline contract](docs/item-timeline.md).
+A local-first scene and sequence editor. Version 0.6 adds precise numeric/step controls, independently colored item outlines and shadows, and a finite per-item timeline with overlapping fades. Live actual-scene editing remains separate from timed playback. See the [item editor and timeline contract](docs/item-timeline.md).
 
 **Engineering preview only.** This is not a treatment, diagnostic test, or validated way to develop voluntary mental imagery. A lingering afterimage or an external reconstruction does not establish an imagery gain. Static presentation, smooth transitions, and software bounds do not guarantee sensory safety.
 
-**Candidate status:** version 0.6 is in implementation and independent verification. Its new controls, appearance effects, migrations and item playback require exact-artifact results before release. The historical version 0.5 runtime passed 349 non-browser checks and 82 Chrome groups in [final clean-exit CI](https://github.com/woodkill00/aphantasia_build/actions/runs/39358880818), with 36 captured frames reviewed. Those results do not verify version 0.6.
+**Scoped software verification:** version 0.6 passed **424 code checks and 96/96 native Chrome groups** in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), with all 52 actual rendered captures verified and independently inspected. The [test report](imagery-app/test-results/TEST-REPORT.md) records the exact source/runtime, earlier fixture failure, full retry and remaining limits. Documentation-only integration still requires green exact-head CI before merge.
 
 ## Open and use the app
 
@@ -24,13 +24,15 @@ Timed playback is windowed-only so Pause and Stop remain reachable. Static scene
 
 ## Item editor increment
 
-New starter scenes use HSL **4°, 60%, 4%**. Imported scenes retain their saved background. Slider values become directly editable numeric controls with fine-step minus/plus actions. Optional outline and shadow effects have independent colors and geometry. Their disabled defaults preserve old imported appearance.
+New starter scenes use HSL **4°, 60%, 4%**. Imported scenes retain their saved background. Slider values are directly editable numeric controls with fine-step minus/plus actions. Optional outline and shadow effects have independent colors and geometry. Their disabled defaults preserve old imported appearance.
 
-Per-item Start, Fade in, Hold and Fade out determine visibility; items can overlap or follow one another. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These candidate behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and remaining test gates.
+Per-item Start, Fade in, Hold and Fade out determine visibility; items can overlap or follow one another. **Play items once** derives its automatic end from the latest item end, while **Live preview** stays a static appearance-editing mode. Duplicate item and Start after previous item reduce repeated entry, and selectable timeline tracks make overlap visible. These behaviors are specified in the [new contract](docs/item-timeline.md), including the optional shared-clock opacity pulse, migration and verification contract.
 
 ## Verification: separate artifacts
 
-**Version 0.5 live editing:** see the current test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and distinct workflow-timeout outcome. Earlier results below apply only to their historical artifacts.
+**Version 0.6:** 424 code checks, 96 native groups and 52 independently inspected frames on the exact 162947-byte HTML with SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`. See the linked current test report for full environment, failed-attempt and integration details.
+
+**Historical version 0.5 live editing:** see the test report for its exact artifact, 349/82 results, compact-layout repair, 36-frame review and final clean-exit CI. The earlier workflow-timeout failure is retained separately. Earlier results below apply only to their historical artifacts.
 
 **Version 0.4 baseline:** [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) passed **324 non-browser checks and 74/74 native Chrome scenario groups**, 37 each for desktop and phone-sized touch emulation. Source head: `13cfac66e80b55d401b454dc99c8e6c690f09962`. The 114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux were used; browser/profile cleanup passed. This covers sequence pixels/timing, atomic edits, reduced-motion events, file flows and revised layout, not untested devices or clinical efficacy. The two earlier failing runs and their repairs remain in the test report.
 

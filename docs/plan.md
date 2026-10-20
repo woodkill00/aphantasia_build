@@ -4,11 +4,11 @@ Updated 2026-10-20. The single public work register is [`project-queue.json`](..
 
 ## Current increment: version 0.6 precise styles and item timing
 
-Implement the [item-timeline contract](item-timeline.md): new starter background H4/S60/L4, editable numbers and fine-step controls, independently colored outline/shadow, duplicate/start-after helpers, selectable timeline tracks, overlapping item fades and finite shared-clock opacity pulse. Preserve old files through strict versioned migrations and keep item playback separate from snapshot sequences. Exact source/model/native-pixel/interaction/visual acceptance is pending for this increment. Earlier passes are not inherited.
+Implemented the [item-timeline contract](item-timeline.md): new starter background H4/S60/L4, editable numbers and fine-step controls, independently colored outline/shadow, duplicate/start-after helpers, selectable timeline tracks, overlapping item fades and finite shared-clock opacity pulse. Preserve old files through strict versioned migrations and keep item playback separate from snapshot sequences. The exact artifact passed 424 non-browser checks and 96 native groups in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160); all 52 actual rendered captures were verified and independently inspected. The first fixture failure and full repair retry remain recorded. Final documentation-only integration requires its own clean CI gate. Earlier-version passes were not inherited.
 
 ## Historical version 0.5 live editing
 
-Implement immediate actual-draft preview after one explicit start, valid manual edits without repeated Apply/Show, visible canvas alongside inspector, unchanged accepted history/snapshot semantics, invalid-input concealment, and no restart after Hide or lifecycle interruption. Independent model/UI/browser/visual checks passed for the exact recorded artifact. The native workflow timeout is a separate failed outcome; a budget-only repair and clean-exit CI gate precede merge. The recorded v0.4 results below remain historical.
+Implemented immediate actual-draft preview after one explicit start, valid manual edits without repeated Apply/Show, visible canvas alongside inspector, unchanged accepted history/snapshot semantics, invalid-input concealment, and no restart after Hide or lifecycle interruption. Independent model/UI/browser/visual checks passed for the exact recorded artifact. The earlier native workflow timeout remains a separate failed outcome; the budget-only repair was followed by [clean-exit CI run 39358880818](https://github.com/woodkill00/aphantasia_build/actions/runs/39358880818) and merge as `95e0483905b8aa5845127a3f9ac637720e8ad380`. The recorded v0.4 results below remain historical.
 
 ## Verified version 0.4 baseline
 
@@ -25,7 +25,7 @@ The supported hold/transition/count/total capacities are engineering limits, not
 - **v0.2:** [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), 216 non-browser checks and 38 browser groups. The initial run passed 36/38; a harness-only fullscreen-event observation repair preceded the complete rerun with unchanged app source. Chrome patch versions differed, so the first failure's cause remains unproven. Preserve the failure and local launch blocker.
 - **v0.1:** [CI run 39333956608](https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608), 156 non-browser checks and 22 browser groups after the recorded layout/harness repairs.
 
-The [root README](../README.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) distinguish artifact hashes, environments, attempts, and limits. The separate version 0.4 run supplies current sequence evidence; older runs remain historical.
+The [root README](../README.md) and [test report](../imagery-app/test-results/TEST-REPORT.md) distinguish artifact hashes, environments, attempts, and limits. The separate version 0.4 run supplies historical baseline sequence evidence; it does not verify later item-style or migration changes.
 
 ## Sequence acceptance checks completed in the recorded software scope
 
