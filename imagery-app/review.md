@@ -1,3 +1,13 @@
+# Feature 014 test-observer preparation, 20 October 2026
+
+17:41:40 UTC. The second [PR 17 native run](https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041) decoded completely: **213/224 PASS, eleven FAIL**, 341 captures, 1154.245 seconds. Desktop was 107/112 and mobile emulation 106/112. The whole run remains failed; its passing cases are not combined with another failed run. Ten failures occur at stale/undefined test observation after empty-group optimization. The separate mobile rapid case passed the first trusted Undo but later placement unexpectedly emptied the document; its cause remains unresolved.
+
+A passive empty-current-input history observer and ten new regressions are independently accepted, with 44/44 targeted helper tests PASS. Final bounded passive placement diagnostics are also source-accepted, with 47/47 targeted tests including 13 new observer/diagnostic regressions. Complete local aggregate is 1366/1366 PASS (19659.416407 ms, Node v24.19.0); docs 58/401 and all 89 manifest entries verify. Current repaired-head native/visual/performance/CI package gates remain NOT RUN. Geometry reads can perturb timing; a diagnostic pass alone would not resolve the original deletion. Runtime, runner, transport, thresholds, assertions, scenario count, 30/33-minute budgets and security are unchanged. All 341 payloads verify and all 85 emitted group frames were inspected without an additional blocker; nine planned frames are absent. Both inherited paired timing comparisons pass, but group-cost gates were interrupted. Terminal job/native FAIL and package SKIPPED are independently verified. Scope remains explicit in the [dated report](test-results/TEST-REPORT.md), not inferred from decoded bytes. PR 16's separate evidence-only rerun reports 200/200, 256 captures and package success, and the integration owner confirms scoped review and protected merge at 291ea178 with the accepted tree. Exact-main verification is active at this snapshot.
+
+---
+
+## Historical 17:02 runtime/transport preparation
+
 # Feature 014 repaired preparation, 20 October 2026
 
 The first [PR 17 native attempt](https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362) is terminal FAIL with package SKIPPED. Only partial native evidence is retained: 146 observed passes, three desktop failures, 198 byte/hash-verified captures and 45 actually inspected desktop group images. Final full/mobile counts and duration are unknown after log transport failed. No full-run visual acceptance is inferred.

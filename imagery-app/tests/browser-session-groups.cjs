@@ -75,7 +75,20 @@ function installObservation() {
       window.__groupStageCalls.push(name);return real[name](...values);
     }]))});
   }}));
-  intercept('ImageryGroups',model=>Object.freeze({...model,selectionUnits(...args){
+  intercept('ImageryGroups',model=>Object.freeze({...model,plan(...args){
+    const trace=window.__groupPlacementDiagnostic;
+    if(trace){if(trace.commands.length<16)trace.commands.push({time:performance.now(),command:JSON.parse(JSON.stringify(args[2])),beforeIds:args[0].scene.objects.map(o=>o.id)});else trace.droppedCommands++;}
+    return model.plan(...args);
+  },planHistory(...args){
+    try{return model.planHistory(...args);}
+    finally{
+      // Both public UI call sites pass the current session, never a planned
+      // endpoint. Valid renders check history even when its stacks are empty.
+      // Empty-group presentation skips selectionUnits; observe that gap only.
+      // A blocked history result still leaves these input groups authoritative.
+      if(args[1]?.groups?.length===0)window.__groupSession=JSON.parse(JSON.stringify({document:args[0],selection:args[1].selection,groups:args[1].groups}));
+    }
+  },selectionUnits(...args){
     const result=model.selectionUnits(...args);
     // UI calls this public pure API with its committed session state. Internal
     // planner calls are lexical, not intercepted. Keep actual groups separate
@@ -88,6 +101,47 @@ function installObservation() {
       window.__groupProvenanceCalls.push({name,canonical:name==='start'?values[0].canonical:null});return real[name](...values);
     }]))});
   }}));
+}
+
+// One bounded, passive placement diagnostic. It starts after the rapid first
+// Undo checks, introduces no wait/retry, and never changes native input routing.
+// Geometry reads can perturb timing: this is causal evidence, not a runtime fix.
+function installPlacementObservation() {
+  const trace={events:[],snapshots:[],commands:[],droppedEvents:0,droppedCommands:0},listeners=[];
+  window.__groupPlacementDiagnostic=trace;
+  const snapshot=(phase,event=null,point=null)=>{
+    const touch=event?.changedTouches?.[0]||event?.touches?.[0],p=point||touch||(Number.isFinite(event?.clientX)?event:null);
+    const at=p?{x:p.x??p.clientX,y:p.y??p.clientY}:null;
+    const box=id=>{const r=document.getElementById(id).getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height};};
+    return {phase,type:event?.type||null,time:event?.timeStamp??performance.now(),trusted:event?.isTrusted??null,
+      target:event?.target?.id||null,defaultPrevented:event?.defaultPrevented??null,pointerId:event?.pointerId??null,point:at,
+      hit:at?document.elementFromPoint(at.x,at.y)?.id||null:null,
+      editorHidden:document.getElementById('editor-panel').hidden,placing:document.getElementById('place-object').getAttribute('aria-pressed'),
+      rootClass:document.getElementById('stage-root').className,canvas:box('scene-canvas'),place:box('place-object'),remove:box('delete-object'),
+      objectIds:window.__groupController.getState().draft.scene.objects.map(o=>o.id)};
+  };
+  for(const type of ['pointerdown','pointerup','pointercancel','touchstart','touchend','touchcancel','click'])for(const capture of [true,false]){
+    const listener=event=>{if(trace.events.length<64)trace.events.push(snapshot(capture?'capture':'bubble',event));else trace.droppedEvents++;};
+    document.addEventListener(type,listener,{capture,passive:true});listeners.push({type,listener,capture});
+  }
+  trace.snapshots.push(snapshot('before-activation'));
+  window.__groupPlacementPoint=point=>{trace.tapPoint={x:point.x,y:point.y};trace.snapshots.push(snapshot('before-tap',null,trace.tapPoint));};
+  window.__groupPlacementStop=()=>{
+    try{
+      for(const {type,listener,capture}of listeners)document.removeEventListener(type,listener,capture);
+      trace.snapshots.push(snapshot('after-attempt',null,trace.tapPoint));trace.retainedPointerEvents=(window.__groupPointer||[]).slice(0,80);return trace;
+    }finally{window.__groupPlacementDiagnostic=null;delete window.__groupPlacementPoint;delete window.__groupPlacementStop;}
+  };
+}
+
+async function reportPlacementObservation(page,placementFailure,log=console.log,reportFailure=console.error) {
+  try{
+    const diagnostic=await page.evaluate(()=>window.__groupPlacementStop());
+    log('IMAGERY_SESSION_GROUP_PLACEMENT '+JSON.stringify({device:page.device.name,status:placementFailure?'FAIL':'OBSERVED',scope:'Bounded passive event/geometry and genuine planner-input diagnostic; no wait, retry or runtime fix',diagnostic}));
+  }catch(error){
+    try{reportFailure('IMAGERY_SESSION_GROUP_PLACEMENT_DIAGNOSTIC_FAILURE '+JSON.stringify({device:page.device.name,error:String(error?.message||error).slice(0,500),preservedPlacementFailure:!!placementFailure}));}catch(ignored){/* Reporting cannot replace the genuine interaction failure. */}
+    throw placementFailure||error;
+  }
 }
 
 async function runSessionGroupScenarios({page,runCase}) {
@@ -351,7 +405,12 @@ async function runSessionGroupScenarios({page,runCase}) {
         const timing=stats(dom.moves.map(e=>e.ms));console.log('IMAGERY_SESSION_GROUP_DRAG_COST '+JSON.stringify({device:page.device.name,scope:'Candidate-only grouped pointer handler plus forced layout; not physical latency or a baseline comparison',timing}));assert.ok(timing.max<HANDLER_MAX_MS);
       }
       await page.click('#redo-move');const moved=copy(value);moved.scene.objects.forEach(o=>{o.x+=15;o.y+=5;});assert.deepEqual(await draft(),moved);rigidOffsets(value,moved,saved);
-      await page.nativeSelect('#move-anchor','object-2');await page.click('#place-object');const placement=await content();await tap(point(placement,70,60));await page.hidden();const placed=copy(moved);placed.scene.objects.forEach(o=>{o.x-=10;o.y+=10;});assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),saved);
+      await page.nativeSelect('#move-anchor','object-2');await page.evaluate(installPlacementObservation);let placementFailure;
+      try{
+        await page.click('#place-object');const placement=await content(),tapPoint=point(placement,70,60);await page.evaluate(p=>window.__groupPlacementPoint(p),tapPoint);
+        await tap(tapPoint);await page.hidden();const placed=copy(moved);placed.scene.objects.forEach(o=>{o.x-=10;o.y+=10;});assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),saved);
+      }catch(error){placementFailure=error;throw error;}
+      finally{await reportPlacementObservation(page,placementFailure);}
       await page.click('#undo-move');assert.deepEqual(await draft(),moved);await live();await capture('selection-summary','v13-rapid-group-drag-rigid-result');assert.deepEqual(await applyRead(),moved);
     });
 
@@ -481,4 +540,4 @@ async function runSessionGroupScenarios({page,runCase}) {
     await page.send('Page.removeScriptToEvaluateOnNewDocument',{identifier});
   }
 }
-module.exports={runSessionGroupScenarios,groupFixture,rigidFixture,gapFixture,unionBounds,rigidOffsets};
+module.exports={runSessionGroupScenarios,groupFixture,rigidFixture,gapFixture,unionBounds,rigidOffsets,installObservation,installPlacementObservation,reportPlacementObservation};
