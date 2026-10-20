@@ -125,3 +125,35 @@ test('PROPERTY: seeded 10000 combined commands preserve validation/history/expli
 for(const action of ['invalid-apply','discard','empty-undo','empty-redo'])test(`STATE V2: ${action} conceals and invalidates pending work even without accepted data change`,()=>{
  const {c}=controller();const before=stateScene(c);assert.equal(c.show().ok,true);if(action==='invalid-apply')assert.equal(c.apply(object({x:-1})).ok,false);else c[action.replace('empty-','')]();assert.equal(c.getState().visible,false);assert.deepEqual(stateScene(c),before);assert.equal(c.show().ok,false);
 });
+
+// v0.5 explicit live draft preview remains distinct from accepted data/history.
+test('LIVE STATE: stageLive validates and updates draft but never reveals a hidden gate',()=>{
+ const {c}=controller(),before=c.getState(),draft=scene({name:'Live draft',background:{h:120,s:25,l:15}});
+ assert.equal(c.stageLive(draft).ok,true);const after=c.getState();assert.equal(after.visible,false);assert.deepEqual(after.current,before.current);assert.deepEqual(after.draft,draft);assert.equal(after.undoCount,0);assert.equal(after.revision,0);assert.ok(after.epoch>before.epoch);
+ draft.scene.name='mutated caller';assert.equal(c.getState().draft.scene.name,'Live draft');
+});
+test('LIVE STATE: explicit preview paints draft authority without committing or adding history',()=>{
+ const {c}=controller(),before=c.getState(),draft=scene({name:'Explicit preview'});
+ assert.equal(c.previewDraft(draft).ok,true);assert.equal(c.getState().visible,true);assert.deepEqual(c.getState().current,before.current);assert.deepEqual(c.getState().draft,draft);assert.equal(c.getState().dirty,true);assert.equal(c.getState().undoCount,0);assert.equal(c.getState().revision,0);
+ const later=scene({name:'Input edit',background:{h:80,s:30,l:20}});assert.equal(c.stageLive(later).ok,true);assert.equal(c.getState().visible,true);assert.deepEqual(c.getState().draft,later);assert.deepEqual(c.getState().current,before.current);
+});
+test('LIVE STATE: invalid live edit conceals, retains prior valid data, and cannot resume implicitly',()=>{
+ const {c,advance}=controller(),draft=scene({name:'Valid draft'});c.previewDraft(draft);
+ assert.equal(c.stageLive(object({x:-1})).ok,false);assert.equal(c.getState().visible,false);assert.deepEqual(c.getState().draft,draft);assert.equal(c.stageLive(scene({name:'Corrected'})).ok,true);assert.equal(c.getState().visible,false);assert.equal(c.previewDraft(scene({name:'Corrected'})).ok,false);advance();assert.equal(c.getState().visible,false);assert.equal(c.previewDraft(scene({name:'Corrected'})).ok,true);
+});
+for(const method of ['hide','end'])test(`LIVE STATE: ${method} plus edits obeys explicit repeat guard with no reveal queue`,()=>{
+ const {c,advance}=controller();c.previewDraft(scene({name:'A'}));c[method]();for(let i=0;i<20;i++){c.stageLive(scene({name:'B'+i}));assert.equal(c.getState().visible,false);assert.equal(c.previewDraft(scene({name:'B'+i})).ok,false);}advance();assert.equal(c.getState().visible,false);assert.equal(c.previewDraft(scene({name:'B'})).ok,true);
+});
+for(const method of ['stageLive','previewDraft'])test(`LIVE RACE: ${method} invalidates an earlier pending import`,()=>{
+ const {c}=controller(),original=c.getState().current,token=c.beginImport();c[method](scene({name:'Fresh draft'}));assert.equal(c.finishImport(token,JSON.stringify(scene({name:'Stale imported'}))).ok,false);assert.deepEqual(c.getState().current,original);assert.equal(c.getState().draft.scene.name,'Fresh draft');
+});
+test('LIVE STATE: preview does not bypass validation or turn an invalid request into visible state',()=>{
+ const {c}=controller(),before=c.getState();for(const value of [null,object({x:-1}),{...scene(),animation:true}]){assert.equal(c.previewDraft(value).ok,false);assert.equal(c.getState().visible,false);assert.deepEqual(c.getState().current,before.current);assert.deepEqual(c.getState().draft,before.draft);}
+});
+test('LIVE STATE: many input samples make only one applied history step',()=>{
+ const {c}=controller(),original=c.getState().current;c.previewDraft(original);for(let i=0;i<100;i++)c.stageLive(scene({name:'Draft '+i}));assert.equal(c.getState().undoCount,0);assert.equal(c.getState().revision,0);c.apply();assert.equal(c.getState().undoCount,1);assert.equal(c.getState().current.scene.name,'Draft 99');c.undo();assert.deepEqual(c.getState().current,original);c.redo();assert.equal(c.getState().current.scene.name,'Draft 99');
+});
+test('LIVE PROPERTY: 2000 deterministic mixed live operations preserve validation and explicit-reveal authority',()=>{
+ const {c,advance}=controller();let seed=0x51a5;const next=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed};
+ for(let i=0;i<2000;i++){const op=next()%9,before=c.getState(),value=scene({name:'Synthetic '+i,background:{h:next()%360,s:next()%101,l:next()%31}});let r;if(op===0)r=c.previewDraft(value);else if(op===1)r=c.stageLive(value);else if(op===2)r=c.hide();else if(op===3)r=c.end();else if(op===4)r=c.stageLive(object({x:-1}));else if(op===5)r=c.apply();else if(op===6)r=c.discard();else if(op===7)r=c.undo();else advance(next()%4000);const after=c.getState();assert.equal(m.validateScene(after.current).ok,true);assert.equal(m.validateScene(after.draft).ok,true);if(!before.visible&&after.visible){assert.equal(op,0);assert.equal(r.ok,true);}if(op===1){assert.deepEqual(after.current,before.current);assert.equal(after.undoCount,before.undoCount);assert.equal(after.revision,before.revision);}assert.ok(after.undoCount<=m.HISTORY_LIMIT);}
+});

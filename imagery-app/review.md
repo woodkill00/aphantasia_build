@@ -1,3 +1,13 @@
+# Version 0.5 live-draft review
+
+The 118362-byte runtime `8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326` passed 349 non-browser checks and all 82 native Chrome groups. Independent source review and 36-frame inspection accepted the scoped live-draft and compact-layout changes. The actual field repaints synchronously from validated manual inputs; hidden output cannot be revived by an edit. Drafts remain separate from accepted history, exports and sequence snapshots. Native full-field visibility checks replace the insufficient center-only slider test.
+
+The browser report and cleanup passed in run 39358013657, but its GitHub step timed out. This is not a green workflow claim. The native-step budget-only change requires a complete clean-exit rerun; see the [test report](test-results/TEST-REPORT.md) and current PR checks. Physical-device, full accessibility and sensory/clinical gates remain separate.
+
+Historical reviews follow.
+
+---
+
 # Current source and native-browser acceptance: version 0.4
 
 The exact 114,116-byte artifact `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda` passed 324 non-browser checks and all 74 native Chrome groups in [run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), source `13cfac66e80b55d401b454dc99c8e6c690f09962`. Production fixes and the final harness-only observation repair were independently reviewed. The native run confirms repaired focus recovery, 44-pixel short-layout controls, capture-source context, sequence boundaries/composition, genuine real-time playback and cancellation, separate downloads, static color feedback and clean fullscreen. Independent inspection of 28 actual frames from the preceding run accepted this same unchanged runtime; final-run capture evidence is reconciled in the [test report](test-results/TEST-REPORT.md) and summary.

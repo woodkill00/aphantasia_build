@@ -1,6 +1,6 @@
-# Imagery Field 0.4 candidate
+# Imagery Field 0.5
 
-A local engineering preview for static scene editing and finite, explicitly started sequence presentation. The sequence controls are implemented in the candidate source and independent verification is in progress; historical v0.3 passes do not cover it. It is not a treatment, diagnostic test, or validated way to develop mental imagery. A lingering afterimage or a reconstruction is not evidence that voluntary imagery improved. Static displays, smooth fades, and the app's restrictions do not guarantee safety.
+A local engineering preview for static scene editing and finite, explicitly started sequence presentation. Live actual-scene editing and responsive preview layout have scoped source, 349-check, 82-group native and 36-frame evidence. The recorded native run hit a workflow deadline after reporting success; see the current test report and PR checks for the separate clean-exit CI gate. It is not a treatment, diagnostic test, or validated way to develop mental imagery. A lingering afterimage or a reconstruction is not evidence that voluntary imagery improved. Static displays, smooth fades, and the app's restrictions do not guarantee safety.
 
 ## Before viewing
 
@@ -20,19 +20,19 @@ The layout adapts to narrow windows, but physical-device compatibility is unveri
 
 ## Build a static scene
 
-Use **Scene** to open the scene controls.
+Use **Scene** to open the scene controls. Choose **Live preview** once to start seeing your current valid draft. There is no Apply requirement for viewing it. The same scene canvas is arranged beside the desktop inspector or above the portrait inspector, so edits remain visible while you use controls.
 
 1. Choose a preset, or select **New object** and **Add object**. You can keep up to 12 dots, pixels, or circle/square/triangle outlines. New objects start at the center.
 2. Choose **Selected object**, then change its shape, size, position, or hue/saturation/color-lightness sliders. **Remove object** deletes it from the draft; removing all objects leaves a valid background-only static scene.
-3. Type **Horizontal position** and **Vertical position**, or choose **Place on field**. Placement closes the editor; click/tap the hidden field once to stage a position and reopen the editor. **Esc**, **Hide**, or **End viewing** cancels placement. Numeric inputs are the keyboard alternative; there is no dragging or visible full-field draft preview.
-4. Adjust the **Background field** sliders. Object/background color samples and slider tracks update immediately from draft values. They do not reveal the scene or measure internal vision. **Color lightness does not change screen brightness.** At 0% lightness the background is black; at 0% saturation hue has no visible effect.
-5. Choose **Apply changes** to accept the scene or **Discard** to abandon its draft, then **Show scene** separately. **Undo**/**Redo** restores applied scenes within the 40-step session history. Scene history does not undo sequence edits.
+3. Type **Horizontal position** and **Vertical position**, or choose **Place on field**. Placement closes the editor; click/tap the field once to stage a position and reopen the editor. An active live preview remains visible. **Esc**, **Hide**, or **End viewing** cancels placement. Numeric inputs are the keyboard alternative; there is no dragging.
+4. Adjust the **Background field** sliders. Object/background color samples and slider tracks update immediately from draft values. During Live preview, the actual scene also updates immediately on each valid input, before releasing a slider. While hidden, only the samples update. These are external color previews, not measurements of internal vision. **Color lightness does not change screen brightness.** At 0% lightness the background is black; at 0% saturation hue has no visible effect.
+5. Choose **Apply changes** to accept the scene for history/download, or **Discard** to abandon its draft. Neither is needed while previewing. These actions hide the field; choose **Live preview** again when wanted. Invalid input stops and hides preview; correcting it does not restart it. **Undo**/**Redo** restores applied scenes within the 40-step session history. Scene history does not undo sequence edits.
 
 Positions range from 0–100% with up to two decimal places, but the entire object must fit inside the validated edge inset. Size is a whole-number percentage of the field's shorter side: 1–8 for dots/pixels and 1–28 for outlines. Dots are filled circles; pixels are filled squares. Switching an outline to a dot/pixel caps its size at 8. Object hue is 0–359°, saturation 0–70%, and lightness 10–70%; background hue is 0–359°, saturation 0–60%, and lightness 0–40%. These are engineering restrictions, not medically safe settings.
 
 ## Capture and edit a sequence
 
-The candidate uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. These layout changes respond to the v0.3 screenshot review and remain subject to independent candidate checks.
+The editor uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. These layouts have scoped native focus/raster and actual-frame checks, including repaired short-portrait controls.
 
 - **Add scene as step** appends an independent copy of the scene. With a scene draft, its label becomes **Apply scene and add step**; it applies and captures a valid draft in one action, with no separate Apply click. The scene and proposed sequence are both checked before either is accepted. A rejected capture retains both accepted documents and scene history, and the field stays hidden.
 - The first captured step sets the shared background. Later captures must have the same background; a mismatch is rejected with an explanation. A background-only scene cannot become a step. Later scene edits never silently change snapshots.
@@ -66,9 +66,9 @@ Edits, imports, selection/mode changes, fullscreen changes, resize, loss of focu
 
 ## Show, hide, and fullscreen
 
-- **Close editor** gives more room to a static scene or manual preview. Opening/closing the editor conceals. **Hide**, **Stop / Hide**, **End viewing**, and **Esc**, when applicable, conceal both objects and the chosen background.
+- **Close editor** gives more room to a static scene or manual preview. Opening/closing the editor retains an active live draft and restores its unobscured/full-window layout; other modes conceal. **Hide**, **Stop / Hide**, **End viewing**, and **Esc**, when applicable, conceal both objects and the chosen background.
 - **Enter fullscreen** is optional for a static scene or manual step preview. Timed Play/Resume is windowed-only so Pause and Stop stay reachable. Entering or leaving fullscreen cancels playback and hides the field.
-- Fullscreen hides normal editor/navigation chrome. While hidden it offers **Show scene** or **Show selected step**, according to the selected section. While showing, a small upper-right **Exit** control remains available for touch and keyboard; it hides the field before exiting. Escape also leaves browser fullscreen. Failure keeps the field hidden with recovery instructions; the ordinary window remains usable.
+- Fullscreen hides normal editor/navigation chrome. While hidden it offers **Live preview** or **Show selected step**, according to the selected section. While showing, a small upper-right **Exit** control remains available for touch and keyboard; it hides the field before exiting. Escape also leaves browser fullscreen. Failure keeps the field hidden with recovery instructions; the ordinary window remains usable.
 - Explicit reveal uses the existing temporary anti-repeat guard. If blocked, the field stays hidden; choose Show or Play again later. No reveal is queued. The guard is an engineering restriction, not a medically safe interval or suggested schedule.
 
 No broader live flash/pulse controls are implemented. Future effect-curve authoring and offscreen output analysis are separate proposals; warnings do not establish sensory safety.
@@ -95,7 +95,7 @@ Avoid unnecessary identifying/medical details. The note export contains its form
 
 ## Testing and limits
 
-Version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups in [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) on source `13cfac66e80b55d401b454dc99c8e6c690f09962` and HTML SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Controls, timing, native pixels, atomic transactions, file separation, concealment and selected layout/focus flows were exercised on desktop and phone-sized touch emulation. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
+New version 0.5 behavior requires fresh tests. The historical version 0.4 passed 324 non-browser checks and all 74 scoped native Chrome groups in [CI run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875) on source `13cfac66e80b55d401b454dc99c8e6c690f09962` and HTML SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`. Controls, timing, native pixels, atomic transactions, file separation, concealment and selected layout/focus flows were exercised on desktop and phone-sized touch emulation. The [test report](test-results/TEST-REPORT.md) records current results, failures, and blockers.
 
 The separate v0.3 baseline passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), using sandbox-enabled headless Chrome 155.0.8059.39 on Linux. Two independent scripted journeys and 14 inspected actual frames informed the redesign; they were not a human usability study. The [root README](../README.md) identifies the exact v0.3 artifact and older baseline results.
 

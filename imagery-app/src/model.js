@@ -164,6 +164,21 @@
     return Object.freeze({
       getState,
       stage(value) { const checked=validateScene(value); conceal(false); if(!checked.ok)return result(false,checked.error);draft=checked.scene;return result(true); },
+      // Live staging can update an already visible draft, but never reveal one.
+      stageLive(value) {
+        const checked=validateScene(value);invalid();
+        if(!checked.ok){conceal(false);return result(false,checked.error);}
+        draft=checked.scene;return result(true);
+      },
+      // Only an explicit preview action may reveal a draft. Accepted data and
+      // history remain unchanged until Apply/capture.
+      previewDraft(value) {
+        const checked=validateScene(value);invalid();
+        if(!checked.ok){conceal(false);return result(false,checked.error);}
+        draft=checked.scene;
+        if(!visible&&now()<revealAt)return result(false,'Scene stays hidden during the temporary repeat-action lock. Start Live preview again later; nothing is queued.');
+        visible=true;return result(true);
+      },
       invalidateImport() {invalid();return result(true);},
       show() {
         invalid();

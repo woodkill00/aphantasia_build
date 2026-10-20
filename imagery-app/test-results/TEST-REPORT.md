@@ -1,3 +1,35 @@
+# Version 0.5 live-edit software evidence
+
+2026-10-20. The exact artifact below passed **349/349 non-browser checks and 82/82 native Chrome scenario groups**. Independent source review and inspection of **36 actual rendered captures** accepted the scoped live-edit behavior and responsive controls.
+
+**CI outcome is separate:** [run 39358013657](https://github.com/woodkill00/aphantasia_build/actions/runs/39358013657), job 118417249126, emitted a passing full browser report and successful browser/profile cleanup, but GitHub marked the native step **FAILED** at its six-minute deadline (approximately 6m03s). This run is not green CI. The native step budget is now eight minutes within the unchanged ten-minute job. The full suite must run to a clean workflow exit; consult the [current PR checks](https://github.com/woodkill00/aphantasia_build/pull/3/checks) for the exact commit's outcome before merging.
+
+## Exact artifact and environment
+
+- Source commit: `6bcbcc5461ba5b3464af63706495931ec67a24c2`.
+- HTML: 118362 bytes; SHA-256 `8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326`.
+- Node 22.23.3, Linux, sandbox-enabled Chrome 155.0.8059.39.
+- Synthetic fixtures only; offline local-file app checks; no package installation, security bypass or deployment.
+- Browser closure and temporary-profile deletion both passed.
+
+## What passed
+
+Live preview displays a valid draft without Apply. Native range input changes actual raster pixels before pointer release; six object/background HSL channels use independent expected RGB samples. Object shape/position/add/remove/preset changes redraw while accepted exports/history and sequence snapshots remain separate. Hide/Escape, invalid fields and lifecycle events stop preview; later valid edits never reactivate hidden output. Rejected draft export produces no download and leaves current draft pixels unchanged.
+
+Native responsive checks include desktop, phone-sized touch emulation, 320×568 portrait and 844×390 landscape. The canvas and inspector do not intersect; the complete focused slider must fit inside a scrollport at least 80 CSS pixels high. The remaining static/fullscreen, sequence timing/composition, pause/resume/stop, reduced-motion, validation, file round-trip and cancellation scenarios also passed. These are automated software checks, not a human usability study or physical-phone testing.
+
+## Failure and repair history
+
+1. [First v0.5 run 39356071107](https://github.com/woodkill00/aphantasia_build/actions/runs/39356071107), source `604eec3a4496830c46a07fde3b127d766a355bc0`, passed 349 non-browser checks and 78/82 browser groups. An old color test did not wait the reveal guard after editing; a new export test incorrectly expected concealment from a rejected unapplied export. The corrected tests retain the real guard wait and assert no download, guidance and unchanged draft pixels.
+2. Actual screenshots exposed a focused slider clipped at 320×568 despite center hit-testing. Compact live-view chrome/padding and a 25% preview / 75% inspector split at short portrait sizes repaired the scrollport. The test now checks the entire slider and minimum scrollport height.
+3. The complete retry passed all 82 groups, captured 36 frames and cleaned up, but exceeded the workflow step's six-minute deadline. The budget-only repair to eight minutes retains the full suite and unchanged security settings.
+
+## Limits
+
+Physical phones, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory assessment and clinical efficacy remain unverified. Software tests and static/gradual visuals do not establish sensory safety. The historical reports below apply only to their recorded artifacts.
+
+---
+
 # Version 0.4 verified software preview
 
 Date: 2026-10-20. **324/324 non-browser checks and 74/74 native Chrome groups PASS.** [Successful full run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), job 118401068686, tested source `13cfac66e80b55d401b454dc99c8e6c690f09962` through PR test-merge checkout `7dc3a5663548e1275d34f8f611807d44fdc9f19e`.

@@ -6,8 +6,8 @@ Maintain a manually controlled local visual editor. The authorized one-pass sequ
 
 ## Required boundaries
 
-- Keep the full-field scene hidden at startup and after accepted scene changes. Showing the full-field scene always requires a fresh explicit action.
-- Small, clearly labeled editor-only color swatches may update immediately from manual slider input, as requested for color selection. They must not trigger full-field display or reveal a scene. Swatches are color previews, not measurements of internal imagery.
+- Keep the field hidden at startup. The explicit Live preview action may reveal a valid scene draft without applying it. While that live session remains visible, validated manual object/background edits repaint immediately. Edits never start or resume a hidden preview.
+- Small labeled color swatches also update while hidden, but never reveal the field. An active live draft uses the same main canvas and remains visible alongside the controls. Invalid raw input, Hide/End/Escape, imports, sequence-mode changes, fullscreen and lifecycle interruption stop/conceal; correction alone never resumes. Apply/discard/history operations retain explicit concealment and accepted-scene semantics.
 - Fullscreen viewing may suppress normal interface chrome, but must retain an accessible exit control and an explicit Show route while hidden. Native Escape and lifecycle concealment remain required.
 - Preserve immediate Hide/End/Escape behavior, import invalidation, and lifecycle concealment. No delayed result may restore a hidden scene.
 - The only authorized timed display is the explicit single-pass presentation in `docs/sequence-spec.md`: fixed background, finite holds, adjacent crossfades/cuts, visible stop controls, cancellation and reduced-motion handling. Do not add strobe/pulse oscillators, loops, exposure escalation, timed fixation, stronger-afterimage exercises or exposure prescriptions.

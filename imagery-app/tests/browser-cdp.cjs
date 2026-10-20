@@ -41,7 +41,7 @@ function initialGuardRemaining(events, now) {
   return Math.max(0, Math.max(...guards.map(event=>event.time)) + M.REVEAL_GAP_MS + 100 - now);
 }
 function assertFullscreenDraftMessage(message) {
-  assert.match(message,/apply or discard/i,'fullscreen draft error must explain how to resolve staged edits');
+  assert.match(message,/fix|invalid|discard/i,'fullscreen invalid draft error must explain how to resolve invalid edits');
   assert.match(message,/exit fullscreen/i,'fullscreen draft error must explain how to reach the editor');
 }
 function assertFullscreenSnapshot(snapshot, expectedElement) {
@@ -71,6 +71,7 @@ const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const {scene: fixtureScene, legacy} = require('./fixtures.cjs');
 const {runIndependentScenarios}=require('./independent-user-scenarios.cjs');
 const {runSequenceScenarios}=require('./browser-sequence.cjs');
+const {runLiveScenarios}=require('./browser-live.cjs');
 const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
 const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
@@ -401,12 +402,13 @@ class Page {
   async rangeInput(selector) {
     const prefix=selector.startsWith('#object-')?'object':'background',other=prefix==='object'?'background':'object';
     const prior=await this.swatch(prefix),unchanged=await this.swatch(other);
+    const beforeRaster=await this.evaluate(()=>{const c=document.getElementById('scene-canvas'),a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let sum=0;for(let i=0;i<a.length;i++)sum=(sum+a[i]*(i%251+1))>>>0;return sum;});
     const point=await this.evaluate(s=>{const e=document.querySelector(s);e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect();window.__rangeEvents=[];for(const name of ['input','change'])e.addEventListener(name,event=>window.__rangeEvents.push({type:name,trusted:event.isTrusted}),{once:true});return {x:r.left+r.width*0.7,y:r.top+r.height/2}},selector);
     await this.send('Input.dispatchMouseEvent',{type:'mousePressed',...point,button:'left',clickCount:1});
     await until(()=>this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='input')),'native range input before pointer release');
     assert.equal(await this.evaluate(()=>window.__rangeEvents.find(e=>e.type==='input').trusted),true);
-    assert.equal(await this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='change')),false,'range should conceal during input, before commit');
-    await this.hidden();const changed=await this.assertSwatch(prefix);assert.notDeepEqual(changed.values,prior.values,'native range input must change its draft value');assert.equal((await this.swatch(other)).rgb,unchanged.rgb,'the other swatch must remain unchanged');assert.equal(await this.property('#draft-label','textContent'),'Changes staged');await this.send('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});
+    assert.equal(await this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='change')),false,'range must update before the change/commit event');
+    await this.visible();const afterRaster=await this.evaluate(()=>{const c=document.getElementById('scene-canvas'),a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let sum=0;for(let i=0;i<a.length;i++)sum=(sum+a[i]*(i%251+1))>>>0;return sum;});assert.notEqual(afterRaster,beforeRaster,'actual scene pixels must change during native input before release or Apply');const changed=await this.assertSwatch(prefix);assert.notDeepEqual(changed.values,prior.values,'native range input must change its draft value');assert.equal((await this.swatch(other)).rgb,unchanged.rgb,'the other swatch must remain unchanged');assert.equal(await this.property('#draft-label','textContent'),'Live draft');await this.send('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});
   }
   async file(filename, value, waitForRead = true, selector = '#scene-import') {
     const filePath = path.join(this.downloads, filename);
@@ -641,7 +643,7 @@ async function run() {
           const changed=await page.download('#export-scene','imagery-field-scene-v2.json');const pixel=changed.json.scene.objects.find(o=>o.id===firstId);assert.equal(pixel.x,35.25);assert.equal(pixel.y,65);assert.equal(pixel.size,6);assert.equal(changed.json.version,2);assert.equal(changed.json.sampler,'static-objects-2');assert.deepEqual(M.canonicalScene(changed.json),changed.json);
           await page.click('#delete-object');await page.hidden();await page.click('#apply-changes');const removed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(removed.json.scene.objects.map(o=>o.id),[secondId]);await page.click('#undo');const restored=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(restored.json,changed.json);
         });
-        await runCase(page,'v2 background input conceals and empty field Hide is black',async()=>{
+        await runCase(page,'v5 background input updates live and empty field Hide is black',async()=>{
           await page.file('colored-empty.json',scene({objects:[],background:{h:200,s:30,l:20}}));await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
           const raster=await page.canvas();assert.equal(raster.coloredPixels,raster.width*raster.height,'background must fill full canvas');
           for(const slider of ['#background-hue','#background-saturation','#background-lightness']){if(slider!=='#background-hue'){await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();}await page.rangeInput(slider);await page.click('#apply-changes');await page.hidden();}const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.notEqual(got.json.scene.background.l,20);assert.deepEqual(got.json.scene.objects,[]);
@@ -654,9 +656,9 @@ async function run() {
           await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
           const bounds=await page.evaluate(()=>{const c=document.querySelector('#scene-canvas'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let minX=c.width,maxX=-1,minY=c.height,maxY=-1;for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4;if(d[i]||d[i+1]||d[i+2]){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)}}return {width:maxX-minX+1,height:maxY-minY+1}});
           assert.ok(Math.abs(bounds.width-bounds.height)<=2,'square contour is stretched');
-          await page.click('#place-object');await page.hidden();
+          await page.click('#place-object');await page.visible();
           const pt=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();const points=[[0.65,0.65],[0.8,0.6],[0.6,0.8],[0.5,0.75]];for(const [x,y]of points){const px=r.left+r.width*x,py=r.top+r.height*y;if(document.elementFromPoint(px,py)?.id==='scene-canvas')return {x:px,y:py,px:x*100,py:y*100}}throw Error('No reachable canvas placement point')});
-          await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.hidden();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
+          await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.visible();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
         });
         await runCase(page,'v3 native fullscreen explicit Show, Exit and Escape retain synchronous concealment',async()=>{
           await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
@@ -687,7 +689,7 @@ async function run() {
           await page.file('color-semantics.json',scene({background:{h:210,s:40,l:25}}));
           await page.focus('#object-saturation');await page.key('Home');const gray=await page.assertSwatch('object');assert.equal(gray.values.s,0);await page.focus('#object-hue');await page.key('End');assert.equal((await page.assertSwatch('object')).rgb,gray.rgb,'hue must not change gray at zero saturation');
           await page.focus('#background-lightness');await page.key('Home');const black=await page.assertSwatch('background');assert.equal(black.values.l,0);assert.equal(black.rgb,'rgb(0, 0, 0)');await page.focus('#background-hue');await page.key('End');assert.equal((await page.assertSwatch('background')).rgb,black.rgb);await page.hidden();
-          assert.equal(await page.property('#draft-label','textContent'),'Changes staged');await page.click('#show-scene');await page.hidden();assert.match(await page.property('#status','textContent'),/apply or discard/i);
+          assert.equal(await page.property('#draft-label','textContent'),'Changes staged');await sleep(M.REVEAL_GAP_MS+100);await page.hidden();await page.click('#show-scene');await page.visible();
         });
         await runCase(page,'v3 clean fullscreen removes chrome and exposes keyboard Show and focused Exit',async()=>{
           await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','keyboard clean entry');
@@ -710,9 +712,9 @@ async function run() {
           await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,device.touch?'first touch exits and hides':'first pointer click exits and hides');await sleep(350);await page.hidden();assert.equal(await page.property('#fullscreen-start','hidden'),true);assert.equal(await page.property('#exit-fullscreen','hidden'),true);assert.deepEqual(await page.evaluate(()=>window.__testUiTimers),[]);
         });
         await runCase(page,'v3 short fullscreen keeps guarded Show, errors and rejected Exit reachable',async()=>{
-          await page.fill('#scene-name','Synthetic staged draft');await page.viewport(320,180);await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','short hidden entry');
+          await page.fill('#scene-name','Synthetic staged draft');await page.fill('#position-x','0');await page.viewport(320,180);await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','short hidden entry');
           for(const id of ['fullscreen-show','exit-fullscreen']){const r=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height,hit:hit===e||e.contains(hit),innerWidth,innerHeight}},id);assert.ok(r.left>=0&&r.top>=0&&r.right<=r.innerWidth&&r.bottom<=r.innerHeight&&r.width>=44&&r.height>=44&&r.hit,`short fullscreen control unreachable: ${id} ${JSON.stringify(r)}`);}
-          await page.click('#fullscreen-show');await page.hidden();assertFullscreenDraftMessage(await page.property('#fullscreen-status','textContent'));assert.equal(await page.property('#fullscreen-start','hidden'),false);
+          await sleep(M.REVEAL_GAP_MS+100);await page.click('#fullscreen-show');await page.hidden();assertFullscreenDraftMessage(await page.property('#fullscreen-status','textContent'));assert.equal(await page.property('#fullscreen-start','hidden'),false);
           await page.evaluate(()=>{window.__testExitFullscreen=document.exitFullscreen;document.exitFullscreen=()=>Promise.reject(Error('Synthetic exit denial'))});await page.click('#exit-fullscreen');await page.hidden();assert.equal(await page.evaluate(()=>document.fullscreenElement?.id),'stage-root');assert.equal(await page.property('#exit-fullscreen','hidden'),false);assert.equal(await page.property('#fullscreen-start','hidden'),false);assert.match(await page.property('#fullscreen-status','textContent'),/fullscreen|exit|escape/i);assert.equal(await page.property('#scene-name','value'),'Synthetic staged draft');
           await page.evaluate(()=>{document.exitFullscreen=window.__testExitFullscreen});await page.fullscreenAfter(()=>page.click('#exit-fullscreen'),null,'recovered native Exit');await page.hidden();
         });
@@ -750,6 +752,7 @@ async function run() {
           const old=legacy({shape:'dots',dotCount:5,size:20});await page.file('legacy-v1.json',old);await page.hidden();const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(got.json,M.canonicalScene(old));assert.equal(got.json.scene.objects.length,5);
         });
         await runIndependentScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
+        await runLiveScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runIndependentSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});

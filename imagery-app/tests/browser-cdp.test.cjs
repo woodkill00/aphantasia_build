@@ -100,7 +100,7 @@ test('Independent native-user fixture and separate RGB oracle remain determinist
 });
 
 test('Fullscreen draft message requires both editor directions without requiring sentence order',()=>{
- for(const text of ['Exit fullscreen to apply or discard staged changes before showing the scene.','Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.'])assert.doesNotThrow(()=>assertFullscreenDraftMessage(text));
+ for(const text of ['Exit fullscreen to fix or discard invalid changes before preview.','Invalid draft. Exit fullscreen to fix the fields.'])assert.doesNotThrow(()=>assertFullscreenDraftMessage(text));
  for(const text of ['Apply or discard staged changes.','Exit fullscreen.','Changes staged.'])assert.throws(()=>assertFullscreenDraftMessage(text));
 });
 
