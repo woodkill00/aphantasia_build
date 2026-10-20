@@ -1,3 +1,11 @@
+# Feature 014 touch-placement source repair, 20 October 2026
+
+18:19 UTC. Narrow source 987a2b20 / 421345 bytes and strengthened singleton/group native helper are independently accepted. 107 relevant placement/direct/observer and 50 browser-helper checks pass. Final complete local aggregate is 1423/1423 PASS (18600.893153 ms, Node v24.19.0), docs 58/402 and 90 manifest entries verify. Exact repaired native/visual/performance/CI package gates remain NOT RUN. Three earlier native runs remain failed; the latest 223/224 trace confirmed successful canvas placement followed by inspector reopen and same-touch compatibility-click Delete. All 349 payloads and 93 emitted group frames were reviewed, with one frame absent; scoped timing passes do not accept the failed run or new source. The [dated report](test-results/TEST-REPORT.md) retains exact evidence and limits.
+
+---
+
+## Historical observer/diagnostic preparation
+
 # Feature 014 test-observer preparation, 20 October 2026
 
 17:41:40 UTC. The second [PR 17 native run](https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041) decoded completely: **213/224 PASS, eleven FAIL**, 341 captures, 1154.245 seconds. Desktop was 107/112 and mobile emulation 106/112. The whole run remains failed; its passing cases are not combined with another failed run. Ten failures occur at stale/undefined test observation after empty-group optimization. The separate mobile rapid case passed the first trusted Undo but later placement unexpectedly emptied the document; its cause remains unresolved.

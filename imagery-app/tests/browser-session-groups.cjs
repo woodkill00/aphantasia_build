@@ -3,6 +3,7 @@
 // Synthetic fixtures only. Preparing these checks is not native acceptance.
 // No synthetic DOM activations, input retries, clock bypasses, production test
 // hooks, sandbox changes, new packages, or modifications to inherited cases.
+// Two devices: 24 additive scenarios and 96 planned visual captures.
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const {setTimeout:sleep} = require('node:timers/promises');
@@ -77,7 +78,7 @@ function installObservation() {
   }}));
   intercept('ImageryGroups',model=>Object.freeze({...model,plan(...args){
     const trace=window.__groupPlacementDiagnostic;
-    if(trace){if(trace.commands.length<16)trace.commands.push({time:performance.now(),command:JSON.parse(JSON.stringify(args[2])),beforeIds:args[0].scene.objects.map(o=>o.id)});else trace.droppedCommands++;}
+    if(trace){if(trace.commands.length<16)trace.commands.push({time:performance.now(),event:trace.activeEvent?{...trace.activeEvent}:null,command:JSON.parse(JSON.stringify(args[2])),beforeIds:args[0].scene.objects.map(o=>o.id)});else trace.droppedCommands++;}
     return model.plan(...args);
   },planHistory(...args){
     try{return model.planHistory(...args);}
@@ -121,11 +122,15 @@ function installPlacementObservation() {
       objectIds:window.__groupController.getState().draft.scene.objects.map(o=>o.id)};
   };
   for(const type of ['pointerdown','pointerup','pointercancel','touchstart','touchend','touchcancel','click'])for(const capture of [true,false]){
-    const listener=event=>{if(trace.events.length<64)trace.events.push(snapshot(capture?'capture':'bubble',event));else trace.droppedEvents++;};
+    const listener=event=>{
+      if(capture)trace.activeEvent={type:event.type,target:event.target?.id||null,trusted:event.isTrusted};
+      if(trace.events.length<64)trace.events.push(snapshot(capture?'capture':'bubble',event));else trace.droppedEvents++;
+      if(!capture)trace.activeEvent=null;
+    };
     document.addEventListener(type,listener,{capture,passive:true});listeners.push({type,listener,capture});
   }
   trace.snapshots.push(snapshot('before-activation'));
-  window.__groupPlacementPoint=point=>{trace.tapPoint={x:point.x,y:point.y};trace.snapshots.push(snapshot('before-tap',null,trace.tapPoint));};
+  window.__groupPlacementPoint=point=>{trace.tapPoint={x:point.x,y:point.y};const before=snapshot('before-tap',null,trace.tapPoint);trace.snapshots.push(before);return before;};
   window.__groupPlacementStop=()=>{
     try{
       for(const {type,listener,capture}of listeners)document.removeEventListener(type,listener,capture);
@@ -138,10 +143,38 @@ async function reportPlacementObservation(page,placementFailure,log=console.log,
   try{
     const diagnostic=await page.evaluate(()=>window.__groupPlacementStop());
     log('IMAGERY_SESSION_GROUP_PLACEMENT '+JSON.stringify({device:page.device.name,status:placementFailure?'FAIL':'OBSERVED',scope:'Bounded passive event/geometry and genuine planner-input diagnostic; no wait, retry or runtime fix',diagnostic}));
+    return diagnostic;
   }catch(error){
     try{reportFailure('IMAGERY_SESSION_GROUP_PLACEMENT_DIAGNOSTIC_FAILURE '+JSON.stringify({device:page.device.name,error:String(error?.message||error).slice(0,500),preservedPlacementFailure:!!placementFailure}));}catch(ignored){/* Reporting cannot replace the genuine interaction failure. */}
     throw placementFailure||error;
   }
+}
+
+function assertPlacementEvidence(trace,touch,{removeOverlap=false}={}) {
+  assert.equal(trace.droppedEvents,0);assert.equal(trace.droppedCommands,0);
+  const before=trace.snapshots.find(row=>row.phase==='before-tap');
+  assert.equal(before.hit,'scene-canvas');assert.equal(before.editorHidden,true);assert.equal(before.placing,'true');
+  const down=trace.events.filter(row=>row.phase==='capture'&&row.type==='pointerdown'&&row.target==='scene-canvas');
+  const up=trace.events.filter(row=>row.phase==='capture'&&row.type==='pointerup'&&row.target==='scene-canvas');
+  assert.equal(down.length,1);assert.equal(up.length,1);assert.ok(down[0].trusted&&up[0].trusted);assert.equal(up[0].pointerId,down[0].pointerId);
+  assert.ok(trace.commands.every(row=>row.command.type==='place'&&row.event?.target==='scene-canvas'&&row.event.trusted&&['touchstart','pointerup'].includes(row.event.type)));
+  assert.equal(trace.commands.filter(row=>row.event.type==='pointerup').length,1,'one placement completion, not a newly exposed control command');
+  assert.ok(trace.commands.filter(row=>row.event.type==='touchstart').length<=(touch?1:0),'at most one pure touchstart preflight');
+  const completionClicks=trace.events.filter(row=>row.phase==='capture'&&row.type==='click'&&row.time>=down[0].time);
+  assert.ok(completionClicks.every(row=>row.target==='scene-canvas'&&row.trusted),'placement cannot click any newly exposed control');
+  if(touch){
+    const starts=trace.events.filter(row=>row.phase==='bubble'&&row.type==='touchstart'&&row.target==='scene-canvas');
+    assert.equal(starts.length,1);assert.ok(starts[0].trusted&&starts[0].defaultPrevented,'only the owned placement touch suppresses its compatibility click');
+  }
+  if(removeOverlap){
+    const reopened=trace.events.find(row=>row.phase==='bubble'&&row.type==='pointerup'&&row.pointerId===down[0].pointerId),r=reopened.remove,p=reopened.point;
+    assert.equal(reopened.editorHidden,false);assert.equal(reopened.hit,'delete-object','the regression must exercise the reopened Remove control, not an empty spot');
+    assert.ok(r.width>=44&&r.height>=44&&p.x>=r.left&&p.x<=r.left+r.width&&p.y>=r.top&&p.y<=r.top+r.height);
+  }
+}
+function assertNextPlacementControl(events,touch) {
+  assert.equal(events.filter(row=>row.type==='click'&&row.target==='undo-move'&&row.trusted).length,1,'first and only next Undo must really arrive');
+  if(touch)assert.ok(events.some(row=>row.type==='touchstart'&&row.target==='undo-move'&&row.trusted&&!row.defaultPrevented),'placement cannot suppress the next control touch');
 }
 
 async function runSessionGroupScenarios({page,runCase}) {
@@ -151,6 +184,7 @@ async function runSessionGroupScenarios({page,runCase}) {
   async function live() {await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();}
   const draft=()=>page.evaluate(()=>window.__groupController.getState().draft);
   const controller=()=>page.evaluate(()=>{const s=window.__groupController.getState();return {current:s.current,draft:s.draft,dirty:s.dirty,undoCount:s.undoCount,redoCount:s.redoCount,revision:s.revision};});
+  const acceptedHistory=()=>page.evaluate(()=>{const s=window.__groupController.getState();return {current:s.current,undoCount:s.undoCount,redoCount:s.redoCount};});
   async function state() {
     return page.evaluate(()=>{const rows=Array.from(document.querySelectorAll('#selection-list input[type="checkbox"]'));
       const list=rows.map(e=>({id:e.id.slice('selection-'.length),checked:e.checked,indeterminate:e.indeterminate,label:document.querySelector('label[for="'+e.id+'"]').textContent}));
@@ -405,13 +439,37 @@ async function runSessionGroupScenarios({page,runCase}) {
         const timing=stats(dom.moves.map(e=>e.ms));console.log('IMAGERY_SESSION_GROUP_DRAG_COST '+JSON.stringify({device:page.device.name,scope:'Candidate-only grouped pointer handler plus forced layout; not physical latency or a baseline comparison',timing}));assert.ok(timing.max<HANDLER_MAX_MS);
       }
       await page.click('#redo-move');const moved=copy(value);moved.scene.objects.forEach(o=>{o.x+=15;o.y+=5;});assert.deepEqual(await draft(),moved);rigidOffsets(value,moved,saved);
-      await page.nativeSelect('#move-anchor','object-2');await page.evaluate(installPlacementObservation);let placementFailure;
+      const groupAccepted=await acceptedHistory();await page.nativeSelect('#move-anchor','object-2');await page.evaluate(installPlacementObservation);let placementFailure,placementEvidence;
       try{
-        await page.click('#place-object');const placement=await content(),tapPoint=point(placement,70,60);await page.evaluate(p=>window.__groupPlacementPoint(p),tapPoint);
-        await tap(tapPoint);await page.hidden();const placed=copy(moved);placed.scene.objects.forEach(o=>{o.x-=10;o.y+=10;});assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),saved);
+        await page.click('#place-object');const placement=await content(),tapPoint=point(placement,70,60),initialHit=await page.evaluate(p=>window.__groupPlacementPoint(p),tapPoint);assert.equal(initialHit.hit,'scene-canvas');
+        await tap(tapPoint);await page.hidden();const placed=copy(moved);placed.scene.objects.forEach(o=>{o.x-=10;o.y+=10;});assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),saved);assert.deepEqual(await acceptedHistory(),groupAccepted);
       }catch(error){placementFailure=error;throw error;}
-      finally{await reportPlacementObservation(page,placementFailure);}
-      await page.click('#undo-move');assert.deepEqual(await draft(),moved);await live();await capture('selection-summary','v13-rapid-group-drag-rigid-result');assert.deepEqual(await applyRead(),moved);
+      finally{placementEvidence=await reportPlacementObservation(page,placementFailure);}
+      assertPlacementEvidence(placementEvidence,page.device.touch);
+      await page.click('#undo-move');assertNextPlacementControl(await page.evaluate(n=>window.__groupPointer.slice(n),placementEvidence.retainedPointerEvents.length),page.device.touch);
+      assert.deepEqual(await draft(),moved);assert.deepEqual(await groups(),saved);assert.deepEqual(await acceptedHistory(),groupAccepted);await live();await capture('selection-summary','v13-rapid-group-drag-rigid-result');assert.deepEqual(await applyRead(),moved);
+
+      // Singleton placement deliberately lands above the real Remove button
+      // when the editor reopens. The first next control tap occurs before any
+      // screenshot or reveal wait, and must undo exactly one placement.
+      const singleton=groupFixture(2);singleton.scene.objects.splice(1);await load(singleton);await page.nativeSelect('#snap-step','10');const singletonAccepted=await acceptedHistory();
+      const overlap=await page.evaluate(()=>{
+        document.getElementById('place-object').scrollIntoView({block:'center',inline:'center',behavior:'instant'});
+        const e=document.getElementById('delete-object'),r=e.getBoundingClientRect(),point={x:r.left+r.width/2,y:r.top+r.height/2};
+        return {point,hit:document.elementFromPoint(point.x,point.y)?.id,disabled:e.disabled};
+      });
+      assert.equal(overlap.hit,'delete-object');assert.equal(overlap.disabled,false);
+      await page.evaluate(installPlacementObservation);let singletonFailure,singletonEvidence;
+      try{
+        await page.click('#place-object');const placement=await content(),initialHit=await page.evaluate(p=>window.__groupPlacementPoint(p),overlap.point);assert.equal(initialHit.hit,'scene-canvas');
+        const placed=copy(singleton);placed.scene.objects[0].x=Math.round((overlap.point.x-placement.left)*10/placement.width)*10;placed.scene.objects[0].y=Math.round((overlap.point.y-placement.top)*10/placement.height)*10;
+        await tap(overlap.point);await page.hidden();assert.deepEqual(await draft(),placed);assert.deepEqual(await groups(),[]);assert.deepEqual(await acceptedHistory(),singletonAccepted);await history(true,false);
+      }catch(error){singletonFailure=error;throw error;}
+      finally{singletonEvidence=await reportPlacementObservation(page,singletonFailure);}
+      assertPlacementEvidence(singletonEvidence,page.device.touch,{removeOverlap:true});
+      await page.click('#undo-move');assertNextPlacementControl(await page.evaluate(n=>window.__groupPointer.slice(n),singletonEvidence.retainedPointerEvents.length),page.device.touch);
+      await page.hidden();assert.deepEqual(await draft(),singleton);assert.deepEqual(await groups(),[]);assert.deepEqual(await acceptedHistory(),singletonAccepted);await history(false,true);
+      await capture('position-x','v13-singleton-placement-first-undo');
     });
 
     await runCase('v13 captured groups retain fresh invalid input and never override Hide, lifecycle or playback',async()=>{
@@ -540,4 +598,4 @@ async function runSessionGroupScenarios({page,runCase}) {
     await page.send('Page.removeScriptToEvaluateOnNewDocument',{identifier});
   }
 }
-module.exports={runSessionGroupScenarios,groupFixture,rigidFixture,gapFixture,unionBounds,rigidOffsets,installObservation,installPlacementObservation,reportPlacementObservation};
+module.exports={runSessionGroupScenarios,groupFixture,rigidFixture,gapFixture,unionBounds,rigidOffsets,installObservation,installPlacementObservation,reportPlacementObservation,assertPlacementEvidence,assertNextPlacementControl};

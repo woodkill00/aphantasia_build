@@ -1,7 +1,7 @@
 'use strict';
 // Observer/DOM doubles only. These tests do not establish native or visual acceptance.
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm');
-const {installObservation,installPlacementObservation,reportPlacementObservation,groupFixture}=require('./browser-session-groups.cjs');
+const {installObservation,installPlacementObservation,reportPlacementObservation,assertPlacementEvidence,assertNextPlacementControl,groupFixture}=require('./browser-session-groups.cjs');
 const {createHarness}=require('./dom-harness.cjs');
 const copy=value=>JSON.parse(JSON.stringify(value));
 function labels(h){
@@ -130,7 +130,7 @@ test('placement planner diagnostic is bounded, input-only and preserves one genu
   reject=true;assert.throws(()=>s.ImageryGroups.plan(...args),error=>error===failure);
   assert.equal(calls.length,19);for(const call of calls)args.forEach((value,index)=>assert.equal(call[index],value));
   const trace=copy(s.__groupPlacementDiagnostic);assert.equal(trace.commands.length,16);assert.equal(trace.droppedCommands,2);
-  assert.deepEqual(trace.commands[0],{time:12,command,beforeIds:['object-1','object-2']});
+  assert.deepEqual(trace.commands[0],{time:12,event:null,command,beforeIds:['object-1','object-2']});
   command.x=20;assert.equal(s.__groupPlacementDiagnostic.commands[0].command.x,70);
 });
 
@@ -146,8 +146,10 @@ test('placement event diagnostic retains capture/bubble causal state, caps outpu
   s.window=s;vm.createContext(s);vm.runInContext('('+installPlacementObservation.toString()+')();',s);assert.equal(listeners.length,14);
   const event={type:'pointerup',timeStamp:20,isTrusted:true,target:{id:'scene-canvas'},clientX:273,clientY:506.4,pointerId:3,defaultPrevented:false};
   listeners.find(row=>row.type==='pointerup'&&row.capture).listener(event);
+  assert.deepEqual(copy(s.__groupPlacementDiagnostic.activeEvent),{type:'pointerup',target:'scene-canvas',trusted:true});
   editorHidden=true;placing='true';hit='scene-canvas';objectIds=[];
   listeners.find(row=>row.type==='pointerup'&&!row.capture).listener(event);
+  assert.equal(s.__groupPlacementDiagnostic.activeEvent,null);
   s.__groupPlacementPoint({x:273,y:506.4});
   for(let i=0;i<70;i++)listeners.find(row=>row.type==='pointerup'&&row.capture).listener(event);
   const trace=copy(s.__groupPlacementStop());assert.equal(listeners.length,0);assert.equal(s.__groupPlacementDiagnostic,null);
@@ -172,4 +174,40 @@ test('diagnostic collection or emission failure cannot replace a genuine placeme
     assert.equal(reports.length,1);assert.match(reports[0],/DIAGNOSTIC_FAILURE/);assert.match(reports[0],/"preservedPlacementFailure":true/);
     await assert.rejects(()=>reportPlacementObservation(page,null,log,report),error=>error===diagnostic);
   }
+});
+
+function placementTrace(touch){
+  const command=type=>({command:{type:'place',x:70,y:60,snapStep:10},event:{type,target:'scene-canvas',trusted:true}});
+  return {droppedEvents:0,droppedCommands:0,snapshots:[{phase:'before-tap',hit:'scene-canvas',editorHidden:true,placing:'true'}],
+    commands:[...(touch?[command('touchstart')]:[]),command('pointerup')],
+    events:[
+      {phase:'capture',type:'pointerdown',target:'scene-canvas',time:1,pointerId:3,trusted:true},
+      ...(touch?[{phase:'bubble',type:'touchstart',target:'scene-canvas',time:1,trusted:true,defaultPrevented:true}]:[]),
+      {phase:'capture',type:'pointerup',target:'scene-canvas',time:2,pointerId:3,trusted:true},
+      {phase:'bubble',type:'pointerup',target:'scene-canvas',time:2,pointerId:3,trusted:true,editorHidden:false,hit:'delete-object',remove:{left:250,top:480,width:100,height:44},point:{x:273,y:506}},
+      ...(!touch?[{phase:'capture',type:'click',target:'scene-canvas',time:2,trusted:true}]:[])
+    ]};
+}
+test('placement gate distinguishes pure touchstart preflight from one completion and requires actual reopened-control overlap',()=>{
+  for(const touch of [false,true])assert.doesNotThrow(()=>assertPlacementEvidence(placementTrace(touch),touch,{removeOverlap:true}));
+  const trace=placementTrace(true);trace.commands.shift();assert.doesNotThrow(()=>assertPlacementEvidence(trace,true,{removeOverlap:true}));
+});
+test('placement gate rejects click-through, extra commands, missing ownership, untrusted input and dropped evidence',()=>{
+  const mutations=[
+    trace=>trace.commands.push({command:{type:'delete'},event:{type:'click',target:'delete-object',trusted:true}}),
+    trace=>trace.commands.push(copy(trace.commands.at(-1))),
+    trace=>trace.commands.push(copy(trace.commands[0])),
+    trace=>trace.events.push({phase:'capture',type:'click',target:'delete-object',time:2,trusted:true}),
+    trace=>{trace.events.find(row=>row.type==='touchstart').defaultPrevented=false;},
+    trace=>{trace.events.find(row=>row.type==='pointerup').trusted=false;},
+    trace=>{trace.snapshots[0].hit='delete-object';},
+    trace=>{trace.events.find(row=>row.type==='pointerup'&&row.phase==='bubble').hit='editor-scroll';},
+    trace=>{trace.droppedEvents=1;},trace=>{trace.droppedCommands=1;}
+  ];
+  for(const mutate of mutations){const trace=placementTrace(true);mutate(trace);assert.throws(()=>assertPlacementEvidence(trace,true,{removeOverlap:true}));}
+});
+test('next-placement-control gate requires exactly one trusted Undo and an unprevented first touch',()=>{
+  const click={type:'click',target:'undo-move',trusted:true},touch={type:'touchstart',target:'undo-move',trusted:true,defaultPrevented:false};
+  assert.doesNotThrow(()=>assertNextPlacementControl([click],false));assert.doesNotThrow(()=>assertNextPlacementControl([touch,click],true));
+  for(const events of [[],[touch,{...click,trusted:false}],[{...touch,defaultPrevented:true},click],[touch,click,click]])assert.throws(()=>assertNextPlacementControl(events,true));
 });

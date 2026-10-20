@@ -3441,7 +3441,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     syncEditorAids(state);
   }
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
-  let lockedTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null;
+  let lockedTouchIntent=null,placementTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null;
   let groups=[],selection={ids:[],primaryId:null},sceneGeneration=0,interactionRevision=0,lastRawTarget=null;
   const selectionRows=new Map();
   const locks=E.createLocks();let snapStep=0;
@@ -3695,7 +3695,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     syncArrangementControls();
     return painted&&state.visible;
   }
-  function cancelPlacement(){placing=false;}
+  function cancelPlacement(){placing=false;placementTouchIntent=null;}
   function selected(){return selection.ids.length===1?working.scene.objects.find(o=>o.id===selection.ids[0]):undefined;}
   function setSelection(value){selection=A.canonicalSelection(working,value,groups);selectedId=selection.primaryId;}
   function firstSelection(value){const id=value.scene.objects[0]?.id||null;return {ids:id?[id]:[],primaryId:id};}
@@ -3992,6 +3992,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(placing)canvas.focus();
   });
   canvas.addEventListener('pointerup',event=>{
+    placementTouchIntent=null;
     if(!placing||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const outer=canvas.getBoundingClientRect();
     if(!E.point(outer,event.clientX,event.clientY))return;
@@ -4028,7 +4029,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     return {changes,precision};
   }
   function cancelDirectGesture(){
-    lockedTouchIntent=null;
+    lockedTouchIntent=null;placementTouchIntent=null;
     const active=gesture;if(!active)return;const pending=freshRawChanges(active);gesture=null;releaseCapture(active);
     working=copy(active.before);groups=copy(active.groups);setSelection(active.selection);formDirty=active.wasDirty;controller.stage(working);interactionRevision++;
     // Only provisional values are rolled back. Fresh user-authored text survives
@@ -4049,9 +4050,15 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     say(message||'Selected '+selection.ids.length+' item'+(selection.ids.length===1?'':'s')+'. Drag or use the selection movement controls.');
   }
   canvas.addEventListener('pointerdown',event=>{
-    lockedTouchIntent=null;
+    lockedTouchIntent=null;placementTouchIntent=null;
     if(gesture){if(event.pointerId!==gesture.pointerId)hide('Move canceled because another pointer touched the field.');return;}
-    if(placing||!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
+    if(placing){
+      if(event.target===canvas&&event.pointerType==='touch'&&event.isPrimary===true&&(event.button===undefined||event.button===0)){
+        try{const rect=canvas.getBoundingClientRect();if(E.point(rect,event.clientX,event.clientY))placementTouchIntent={x:event.clientX,y:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},selection:copy(selection),revision:interactionRevision,generation:sceneGeneration};}catch(e){/* An unavailable placement cannot own a touch default. */}
+      }
+      return;
+    }
+    if(!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const rect=canvas.getBoundingClientRect(),p=E.point(rect,event.clientX,event.clientY);if(!p)return;
     const checked=readCanonicalFields();if(!checked)return;
     const ids=E.hits(checked,rect.width,rect.height,p.x,p.y,event.pointerType==='touch'?12:6);
@@ -4070,7 +4077,22 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const intent=lockedTouchIntent;lockedTouchIntent=null;
     if(intent&&event.target===canvas&&event.cancelable&&event.touches?.length===1&&isLive()&&!placing&&section==='scene'&&document.fullscreenElement!==root&&selectedId===intent.id&&interactionRevision===intent.revision&&selection.ids.some(id=>locks.has(id))&&M.validateScene(readFields()).ok)event.preventDefault();
   },{passive:false});
-  ['touchend','touchcancel'].forEach(type=>canvas.addEventListener(type,()=>{lockedTouchIntent=null;},{passive:true}));
+  canvas.addEventListener('touchstart',event=>{
+    // Placement reopens the inspector at pointerup. Consume only its owned
+    // touchstart so the browser cannot click a control newly exposed underneath.
+    // Hidden explicit placement is valid; this preflight has no reveal authority.
+    const intent=placementTouchIntent;placementTouchIntent=null;
+    if(!intent||event.target!==canvas||!event.cancelable||event.touches?.length!==1||!placing||document.hidden||section!=='scene'||document.fullscreenElement===root||interactionRevision!==intent.revision||sceneGeneration!==intent.generation||!sameScene(selection,intent.selection))return;
+    const touch=event.touches[0];if(touch.clientX!==intent.x||touch.clientY!==intent.y)return;
+    try{
+      const outer=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>outer[key]!==intent.rect[key]))return;
+      const candidate=M.canonicalScene(readFields()),content=M.contentRect(candidate,outer.width,outer.height),rect={left:outer.left+content.x,top:outer.top+content.y,width:content.width,height:content.height},p=E.point(rect,touch.clientX,touch.clientY);
+      if(!p||p.x<0||p.y<0||p.x>rect.width||p.y>rect.height)return;
+      A.plan(candidate,sessionState(),{type:'place',x:p.x*100/rect.width,y:p.y*100/rect.height,snapStep},{locks,history:historyState(),viewport:{width:outer.width,height:outer.height}});
+      event.preventDefault();
+    }catch(e){/* Rejected preflight leaves browser defaults and editor state intact. */}
+  },{passive:false});
+  ['touchend','touchcancel'].forEach(type=>canvas.addEventListener(type,()=>{lockedTouchIntent=null;placementTouchIntent=null;},{passive:true}));
   canvas.addEventListener('touchstart',event=>{
     const active=gesture;
     if(event.target!==canvas||!event.cancelable||!event.touches||event.touches.length!==1||!active||active.pointerType!=='touch'||!active.isPrimary||active.selectionOnly||placing||!isLive()||section!=='scene'||document.fullscreenElement===root||interactionRevision!==active.revision||sceneGeneration!==active.generation||!M.validateScene(readFields()).ok)return;
@@ -4119,7 +4141,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       $(selection.ids.length===1?'object-select':'selection-summary').scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
     }catch(e){if(published){conceal('technical-failure');try{render();}catch(ignored){removeUnavailablePreview();}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);}else hide('Move canceled. '+e.message);}
   });
-  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{lockedTouchIntent=null;if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
+  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{lockedTouchIntent=null;placementTouchIntent=null;if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
   $('cycle-overlap').addEventListener('click',()=>{
     lockedTouchIntent=null;
     if(gesture){hide('Move canceled. Select overlapping items after releasing the pointer.');return;}

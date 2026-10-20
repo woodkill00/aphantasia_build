@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T17:41:40Z",
+  "updated": "2026-10-20T18:19:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1520,7 +1520,7 @@
       "id": "IF-050",
       "title": "Add layer tools, original presets and session arrangement",
       "priority": "P2",
-      "status": "session_groups_observer_diagnostic_source_full_local_node_pass_native_not_run",
+      "status": "session_groups_touch_placement_source_native_review_full_local_pass_native_not_run",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1550,9 +1550,14 @@
         "20 October 2026, 17:02 UTC: exact accepted runtime e4551d30 and source-reviewed native premise repair 46ab0bf7 plus lossless transport pass complete local 1353/1353, zero failures, Node v24.19.0, 23926.495041 ms. Docs 58 files/400 links, all 88 manifest entries and three recursive fixtures verify. Transport targeted checks 46/46 pass, but 6,564,851/7,666,076-byte linear projections are not bounds; fixed 7,350,000-byte native cap fails closed. Fresh complete native/visual/performance/package evidence remains required. Original terminal failure and unknown full/mobile counts retained.",
         "20 October 2026, 17:33 UTC preparation: complete second PR 17 run 39463607041 decoded 213/224 PASS, 11 FAIL, 341 captures, 1154.245 seconds. Ten observer-path failures and a distinct unresolved mobile later-placement failure retained. Observer-only candidate and 10 new tests are under review; full local aggregate and exact-head native gates are pending, not inherited from prior passes. Final review verifies terminal FAIL/package SKIPPED, all341 payloads and all85 emitted group frames inspected (nine absent), both inherited paired comparisons pass; observer repair independently accepted44/44, separate mobile placement remains unresolved.",
         "20 October 2026, 17:40 UTC: final observer/passive diagnostic native helper 724ab412 and new testfile 901da452 independently accepted, 47 targeted tests PASS, 13 new tests (10 observer + 3 diagnostics). Runtime e455, runner 64eb and transport b453 unchanged. Full local aggregate pending. Unresolved mobile later-placement deletion remains a distinct failure; passive geometry reads can perturb timing. PR16 protected merge 291ea178 accepted tree 2e3c3abd, exact-main run 39467700368 active.",
-        "20 October 2026, 17:41:40 UTC final local preparation: complete node --test imagery-app/tests/*.test.cjs passes 1366/1366, zero failures/cancelled/skipped, Node v24.19.0, 19659.416407 ms, on accepted observer/diagnostic native helper 724ab412 and testfile 901da452. Docs 58 files/401 links, all 89 manifest entries/3 recursive fixtures and frozen runtime/runner/transport hashes verify; workflow unchanged. This is not a native pass or a fix for unresolved mobile later-placement deletion. Prior failures and exact previous JSON/report records remain intact."
+        "20 October 2026, 17:41:40 UTC final local preparation: complete node --test imagery-app/tests/*.test.cjs passes 1366/1366, zero failures/cancelled/skipped, Node v24.19.0, 19659.416407 ms, on accepted observer/diagnostic native helper 724ab412 and testfile 901da452. Docs 58 files/401 links, all 89 manifest entries/3 recursive fixtures and frozen runtime/runner/transport hashes verify; workflow unchanged. This is not a native pass or a fix for unresolved mobile later-placement deletion. Prior failures and exact previous JSON/report records remain intact.",
+        "20 October 2026, 18:10 UTC failure record: run39468802272 terminal223/224 FAIL/package SKIPPED in1268.757 seconds, complete1192records/349captures/93groupframes. All ten observer failures resolved. Real source defect independently confirmed: valid canvas place succeeds, inspector reopens, same trusted touch compatibility click targets Delete and removes two items. Source fix and singleton/group native strengthening pending independent review; prior1366 local pass does not accept changed runtime. Actual inspected visual count is recorded separately, not inferred from emitted frames.",
+        "20 October 2026,18:14:20 UTC completed third-run review: all349 original JPEG payloads length/hash/PIL verified, all93 emitted group frames actually inspected (47 desktop/46 mobile), one planned mobile rapid-result frame absent, no additional visual blocker. Paired nudge/drag/Hide p95 deltas desktop+1.5/+5.4/+3.0ms and mobile\u22121.5/+3.9/+3.5ms pass unchanged gates. Candidate-only group handlers all<50ms, metadata maximum14.6ms; one mutating center sample separately from five no-op samples. Overall223/224 FAIL and source repair gates remain pending.",
+        "20 October 2026 pre-refresh source-worker full aggregate:1415/1423 FAIL with8 integrity failures in17893.510604ms, one stale CI exact-runtime pin and seven package checks reporting Runtime manifest and tested HTML hash differ. No runtime behavior regression failure observed, but no complete-suite pass claimed. Provisional runtime987a2b20/421345bytes and singleton/group native strengthening await independent review; final manifest/aggregate held.",
+        "20 October2026,18:17 UTC: source987a2b20/421345bytes and final native helpercafa3213aab9ec51a2b4bdd568c0ac0acce02fab1ff98756509dadd913f81753 independently accepted;107 relevant DOM checks and50 helper checks PASS. Prepared same224 cases,96 new group/352 total captures, two added singleton-overlap frames, no extra reveal waits, estimated4\u20138seconds within unchanged30/33-minute budget. Pre-refresh1415/1423 failure retained; final aggregate and all repaired-source native gates pending. Feature013 exact-main291ea178 scoped acceptance is verified, not transferable to new group runtime.",
+        "20 October 2026, 18:19 UTC final local preparation: complete node --test imagery-app/tests/*.test.cjs passes1423/1423, zero failures/cancelled/skipped, Node v24.19.0,18600.893153ms on accepted runtime987a2b20/nativecafa3213. Offline docs58files/402links, all90manifest entries/3recursivefixtures and exact source/native/transport hashes verify. Workflow change only exact HTML pin. Current224native cases/96new group frames/352total captures NOT RUN; all three native failures and pre-refresh1415/1423 failure retained."
       ],
-      "nextAction": "Independently review the exact outgoing tree, then execute and inspect unchanged full native/visual/performance/clean-checkout package gates. Diagnose mobile later placement without treating timing-perturbed diagnostic success as a runtime repair; verify prerequisite exact main."
+      "nextAction": "Independently review exact outgoing tree, then execute all224 native cases and inspect352 planned captures with unchanged performance/package gates on987a repair. Keep all three native failures and the pre-refresh local failure separate; no native pass before complete repaired evidence."
     },
     {
       "id": "IF-051",
@@ -1819,13 +1824,13 @@
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "2744a400732610fc386c5ad19370faa221944758",
-    "repositoryBaseTree": "6c035a76fdd3dd481cf8a9bb759ef4d8a0a94dc4",
+    "repositoryBaseCommit": "c2064011439a9f8fae301d5ae34e8f3d47756e65",
+    "repositoryBaseTree": "f567fbf2fdbdbf8b4d1ad46efea600d926d3aa7e",
     "appPath": "imagery-app/index.html",
-    "appSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
-    "appBytes": 419083,
-    "artifactStatus": "UNCHANGED_E455_RUNTIME_PRIOR_NATIVE_FAIL_OBSERVER_DIAGNOSTIC_SOURCE_FULL_LOCAL_PASS",
-    "note": "Evidence-only observer and passive placement diagnostics independently accepted with complete local 1366/1366 PASS; runtime, runner, transport and workflow unchanged. Second native run remains failed, mobile later-placement cause unresolved. PR16 protected merged as 291ea178 with accepted tree 2e3c3abd; exact-main run 39467700368 is active at this snapshot. No group integration, release, hosting or collection claimed.",
+    "appSha256": "987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9",
+    "appBytes": 421345,
+    "artifactStatus": "TOUCH_PLACEMENT_SOURCE_NATIVE_REVIEW_FULL_LOCAL_PASS_NATIVE_NOT_RUN",
+    "note": "Narrow touch-placement runtime987a2b20 and strengthened native regressions independently accepted with complete local1423/1423 PASS. Current runtime remains untested native. Feature013 exact-main prerequisite accepted; no group native or integration acceptance inferred. Workflow change is the exact tested runtime hash only; budgets/security/permissions unchanged.",
     "targetBranch": "feature/014-session-groups"
   },
   "authority": {
@@ -1860,10 +1865,11 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Runtime/runner/transport/workflow unchanged; exact test observer and bounded passive placement diagnostics independently accepted. No runtime repair claimed for unresolved mobile deletion.",
+      "currentStatus": "Narrow one-shot owned-placement touchstart repair accepted; no preflight staging/history/reveal. Runtime987a2b20 and exact app-only generated substitution reviewed.",
       "historicalArrangementStatus": "Bounded session locks/Unlock all, drag/placement snap and centering implemented; exact-source native and scoped visual/package checks passed. Wider grouping/distribution/editor-only grids remain deferred.",
       "historicalFirstFeature014PreparationStatus": "Flat session-group source reviewed after safety repairs and exact upstream compatibility reconciliation. Runtime remains frozen; no broader group/persistence capability added.",
-      "historicalFeature014RuntimeRepairPreparationStatus": "Exact A+B defensive empty-group runtime and lossless test-evidence transport source are frozen and independently accepted; no runtime scope expansion."
+      "historicalFeature014RuntimeRepairPreparationStatus": "Exact A+B defensive empty-group runtime and lossless test-evidence transport source are frozen and independently accepted; no runtime scope expansion.",
+      "historicalFeature014ObserverDiagnosticPreparationStatus": "Runtime/runner/transport/workflow unchanged; exact test observer and bounded passive placement diagnostics independently accepted. No runtime repair claimed for unresolved mobile deletion."
     },
     {
       "role": "tester",
@@ -1879,10 +1885,11 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "47 targeted helper tests and complete local 1366/1366 PASS, with 13 new observer/diagnostic tests. Docs 58 files/401 links and integrity verify. Prior native remains 213/224 FAIL/package SKIPPED; current diagnostic native gates NOT RUN.",
+      "currentStatus": "Complete local1423/1423 PASS after accepted source/native integration and pin refresh; docs58/402 and90manifest entries verify. Prior1415/1423 integrity failure retained. Current224 native cases/352 planned captures NOT RUN.",
       "historicalArrangementStatus": "Recorded PR 14 source passed 935/935 CI Node and 160/160 native groups; 142 captures emitted. Independent review inspected 26 actual SHA-verified arrangement/direct-input frames. Final documentation-head full CI remains required.",
       "historicalFirstFeature014PreparationStatus": "Exact reconciled local aggregate 1318/1318 and focused 143/143 pass; native 224 groups and 94 new captures prepared, NOT RUN at this dated snapshot.",
-      "historicalFeature014RuntimeRepairPreparationStatus": "Complete local 1353/1353 PASS after accepted runtime/native-premise/transport integration; docs 58 files/400 links and integrity verify. Repaired native/visual/performance/clean-checkout CI package NOT RUN."
+      "historicalFeature014RuntimeRepairPreparationStatus": "Complete local 1353/1353 PASS after accepted runtime/native-premise/transport integration; docs 58 files/400 links and integrity verify. Repaired native/visual/performance/clean-checkout CI package NOT RUN.",
+      "historicalFeature014ObserverDiagnosticPreparationStatus": "47 targeted helper tests and complete local 1366/1366 PASS, with 13 new observer/diagnostic tests. Docs 58 files/401 links and integrity verify. Prior native remains 213/224 FAIL/package SKIPPED; current diagnostic native gates NOT RUN."
     },
     {
       "role": "reviewer",
@@ -1899,10 +1906,11 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Final observer/diagnostic source independently accepted. All341 prior payloads verified, all85 emitted group images inspected; nine absent. Both inherited paired routes pass, group-cost cases interrupted and mobile placement cause unresolved.",
+      "currentStatus": "Exact source and singleton/group native regression freeze accepted. Third-run93-frame and scoped paired/group performance reviews remain limited to prior failed e455 runtime. New native gates unverified.",
       "historicalArrangementStatus": "Assigned PR 14 source/native/input/scoped-visual/package review accepted. All 22 arrangement and four rapid/focused-Undo captures inspected, not all 142. Accepted PR 12/13 feature visual reviews remain separately scoped; external device/AT/content gates remain open.",
       "historicalFirstFeature014PreparationStatus": "Exact source/narrow upstream reconciliation reviewed with no remaining source blocker. Actual group native/visual/performance/package and final outgoing-tree/CI acceptance remain separate.",
-      "historicalFeature014RuntimeRepairPreparationStatus": "Exact combined source and transport accepted. First-run visual scope remains 45 inspected desktop group images only; missing/mobile and repaired native results are not accepted."
+      "historicalFeature014RuntimeRepairPreparationStatus": "Exact combined source and transport accepted. First-run visual scope remains 45 inspected desktop group images only; missing/mobile and repaired native results are not accepted.",
+      "historicalFeature014ObserverDiagnosticPreparationStatus": "Final observer/diagnostic source independently accepted. All341 prior payloads verified, all85 emitted group images inspected; nine absent. Both inherited paired routes pass, group-cost cases interrupted and mobile placement cause unresolved."
     },
     {
       "role": "integrator",
@@ -1918,10 +1926,11 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Final local aggregate and manifest reconciled; outgoing review and fresh exact-head native/visual/performance/package gates required. Preserve both failures and timing-perturbation caveat. PR16 protected merged; exact-main run active. No release/hosting/collection.",
+      "currentStatus": "Final local aggregate, pins, manifest and docs reconciled. Exact outgoing review and fresh native/visual/performance/package evidence required. Feature013 exact-main prerequisite accepted. All three native failures retained; no release/hosting/collection.",
       "historicalArrangementStatus": "PR 11/12/13 accepted and merged on their own scoped source/native/visual/package evidence. PR 14 scoped software evidence passed; final documentation-head CI/outgoing-tree review and protected integration pending. No new release or hosting.",
       "historicalFirstFeature014PreparationStatus": "Dated Feature 014 metadata reconciled, including exact inherited native-helper/spec repairs and reviewed 30/33-minute bounded allowance. Verified Feature 013 main and all group final exact-head gates required before integration; no release or hosting.",
-      "historicalFeature014RuntimeRepairPreparationStatus": "Dated repaired evidence and manifest reconciled. Review outgoing tree and execute fresh exact-head native/visual/performance/package CI; fixed transport cap remains risk-bearing, no release/hosting/collection claim."
+      "historicalFeature014RuntimeRepairPreparationStatus": "Dated repaired evidence and manifest reconciled. Review outgoing tree and execute fresh exact-head native/visual/performance/package CI; fixed transport cap remains risk-bearing, no release/hosting/collection claim.",
+      "historicalFeature014ObserverDiagnosticPreparationStatus": "Final local aggregate and manifest reconciled; outgoing review and fresh exact-head native/visual/performance/package gates required. Preserve both failures and timing-perturbation caveat. PR16 protected merged; exact-main run active. No release/hosting/collection."
     }
   ],
   "activeRepairs": {
@@ -1953,37 +1962,26 @@
       "nextAction": "Retain exact mark/control computed-color and actual screenshot checks in final-head CI."
     }
   },
-  "currentStatus": "Dated 20 October 2026, 17:41:40 UTC evidence-only preparation: exact observer/placement-diagnostic source accepted; 47 targeted and complete local 1366/1366 tests PASS. Docs 58 files/401 links and all 89 manifest entries verify. Prior native remains 213/224 FAIL, package SKIPPED, 341 payloads/85 group frames reviewed with nine absent. Separate mobile later-placement deletion remains unresolved. Runtime/runner/transport/workflow unchanged; PR16 protected merged, exact-main verification active. No release, hosting or collection.",
+  "currentStatus": "20 October 2026, 18:19 UTC: reviewed touch-placement runtime 987a2b20 (421345 bytes) and strengthened native helper cafa3213 pass complete local 1423/1423, zero failures, in 18600.893153 ms on Node v24.19.0. Docs 58 files/402 links, all 90 manifest entries/3 fixtures and accepted source hashes verify. Current native/visual/performance/CI package NOT RUN. All three native failures and pre-refresh1415/1423 failure retained; third run confirmed compatibility-click Delete. Feature013 exact-main prerequisite accepted. No release, hosting or collection.",
   "currentIteration": {
-    "name": "Feature 014: evidence-only observer and placement-diagnostic preparation",
+    "name": "Feature014: touch-placement compatibility-click source repair",
     "contract": "specs/014-session-groups/spec.md",
-    "snapshotAt": "2026-10-20T17:41:40Z",
-    "status": "dated_observer_diagnostic_source_and_full_local_node_pass_native_not_run",
-    "htmlSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
-    "htmlBytes": 419083,
-    "appSha256": "e1bb5f1c8706b9f2f692fc233aafe903a5a5e7e023626690815de1353fcb68ee",
+    "snapshotAt": "2026-10-20T18:19:00Z",
+    "status": "touch_placement_source_native_regression_review_and_full_local_node_pass_native_not_run",
+    "htmlSha256": "987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9",
+    "htmlBytes": 421345,
+    "appSha256": "d79d2838a4b44d8e6cd5cb5c98fce2ee708e3776cbd26356ac4ee684ef71dd72",
     "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/17/checks",
     "runtimeAggregate": {
-      "status": "PASS",
-      "passed": 1289,
-      "total": 1289,
-      "failed": 0,
-      "durationMs": 19363.321859,
-      "nodeVersion": "v24.19.0",
-      "excludedSuites": [
-        "docs.test.cjs",
-        "release-package.test.cjs"
-      ]
+      "status": "NOT_RUN_SEPARATELY_COVERED_BY_COMPLETE_1423_AGGREGATE",
+      "note": "No separate runtime-only aggregate/count is claimed for987a. Complete local1423/1423 includes runtime coverage. Previous1289 runtime-only aggregate belongs to e455 and is preserved in history."
     },
     "focused": {
       "status": "PASS",
-      "passed": 146,
-      "total": 146,
-      "groupTests": 84,
-      "inheritedMultiSelectionTests": 62,
-      "durationMs": 8183.622748,
-      "nodeVersion": "v24.19.0",
-      "scope": "Focused UI test doubles; not native."
+      "passed": 107,
+      "total": 107,
+      "independentlyRepeated": true,
+      "scope": "Placement/direct/observer checks, independently repeated:54 new placement DOM regressions plus53 other relevant checks. Not native execution."
     },
     "model": {
       "status": "PASS",
@@ -1995,20 +1993,24 @@
     "localNode": {
       "status": "PASS",
       "command": "node --test imagery-app/tests/*.test.cjs",
-      "passed": 1366,
-      "total": 1366,
+      "passed": 1423,
+      "total": 1423,
       "failed": 0,
       "cancelled": 0,
       "skipped": 0,
       "nodeVersion": "v24.19.0",
-      "durationMs": 19659.416407,
-      "scope": "Complete local aggregate on independently accepted observer/diagnostic test candidate, including 13 new tests and unchanged runtime/runner/transport. Not native execution, unresolved-placement repair or actual clean-checkout CI package acceptance."
+      "durationMs": 18600.893153,
+      "scope": "Complete local aggregate after accepted987a runtime/cafa native regression integration and exact metadata/runtime pin refresh; includes54 new placement DOM and3 new helper regressions. Not native execution or clean-checkout CI packaging."
     },
     "sourceReview": {
-      "status": "PASS_EXACT_OBSERVER_AND_PASSIVE_DIAGNOSTIC_SOURCE",
-      "runtimeAndTransport": "PREVIOUS_EXACT_FREEZES_ACCEPTED_UNCHANGED",
-      "nativeTestSha256": "724ab41276e547b6a10932b5b5664cd10e964717b73656059db5cfd7d26609fe",
-      "observerTestSha256": "901da4528d709dc9aa9895d2aecc1ae3a8c03cfffdfca3bef993a7aa3d7a2526"
+      "status": "PASS_EXACT_TOUCH_PLACEMENT_SOURCE_AND_NATIVE_REGRESSION_FREEZES",
+      "runtimeSha256": "987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9",
+      "appSha256": "d79d2838a4b44d8e6cd5cb5c98fce2ee708e3776cbd26356ac4ee684ef71dd72",
+      "nativeTestSha256": "cafa3213aab9ec51a2b4bdd568c0ac0acce02fab1ff98756509dadd913f81753",
+      "observerTestSha256": "ebb97ae466f2788f7b543814002dc9010f6729d1dfc859a3f96ea7a7a1ea3901",
+      "newPlacementUiTestSha256": "928d23f9200b3f2707b92a71bfbe4e21067708ce2b7f607a842af02fccc35c5c",
+      "inheritedDirectUiTestSha256": "906782eb6be9cb7be1359aa32cc4fc02301d20e8a0e03c4c716f37f1d3388032",
+      "generatedArtifactVerification": "Independent review verified exact app-only substitution in generated artifact; other source parts unchanged."
     },
     "firstNativeAttempt": {
       "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362",
@@ -2075,12 +2077,12 @@
       "failedPartialRunIsNotCompleteBaseline": true,
       "required": "Reconcile actual complete repaired Feature 013 and Feature 014 results/durations before acceptance."
     },
-    "nativeStatus": "PRECEDING_RUN_FAIL_CURRENT_TEST_REPAIR_NOT_RUN",
-    "visualStatus": "85_EMITTED_GROUP_FRAMES_INSPECTED_9_ABSENT_WHOLE_RUN_FAILED",
-    "performanceStatus": "BOTH_INHERITED_PAIRED_ROUTES_PASS_GROUP_COST_GATES_INTERRUPTED",
-    "cleanCheckoutPackageStatus": "CURRENT_TEST_REPAIR_NOT_RUN",
+    "nativeStatus": "NOT_RUN_FOR_987A_TOUCH_PLACEMENT_REPAIR",
+    "visualStatus": "NOT_RUN_FOR_987A_REPAIR_PRIOR93_FRAME_SCOPE_ONLY",
+    "performanceStatus": "NOT_RUN_FOR_987A_REPAIR_PRIOR_SCOPED_TIMING_NOT_TRANSFERRED",
+    "cleanCheckoutPackageStatus": "NOT_RUN_FOR_987A_REPAIR_CLEAN_CHECKOUT_CI_PACKAGE",
     "evidenceTransport": {
-      "status": "COMPLETE_SECOND_RUN_DECODE_NATIVE_SUITE_FAILED_NOT_ACCEPTANCE",
+      "status": "COMPLETE_THIRD_RUN_DECODE_NATIVE_SUITE_FAILED_NOT_ACCEPTANCE",
       "files": {
         "imagery-app/tests/browser-evidence-transport.cjs": "b453d6563215c6c438e31c316c2de6afc2b8047e855fbf09106d5909dff8e274",
         "imagery-app/tests/browser-evidence-transport.test.cjs": "b57b88318d2aa50ccbc603719df2e5e3699670150bcff94357cc495a9ed88356",
@@ -2114,37 +2116,37 @@
         "Temporary spool is not an upload or remotely retrievable artifact after runner disposal."
       ],
       "freshNativeDelivery": {
-        "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041",
+        "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39468802272",
         "complete": true,
-        "records": 1182,
-        "captures": 341,
+        "records": 1192,
+        "captures": 349,
         "nativeStatus": "FAIL",
-        "note": "One complete decode is not a future capacity guarantee; both earlier projections and fixed fail-closed cap remain unchanged.",
-        "nativeOwnOutputBytes": 6867657
+        "nativeOwnOutputBytes": 7114336,
+        "note": "7,114,336 native output bytes under unchanged7,350,000 cap, but complete delivery of failure is not acceptance or a future capacity guarantee."
       }
     },
-    "nextAction": "Independently review the exact outgoing tree, then execute and inspect unchanged full native/visual/performance/clean-checkout package gates. Diagnose mobile later placement without treating timing-perturbed diagnostic success as a runtime repair; verify prerequisite exact main.",
+    "nextAction": "Independently review exact outgoing tree, then execute all224 native cases and inspect352 planned captures with unchanged performance/package gates on987a repair. Keep all three native failures and the pre-refresh local failure separate; no native pass before complete repaired evidence.",
     "documentation": {
       "status": "PASS",
       "command": "node scripts/check-docs.cjs",
       "markdownFiles": 58,
-      "localLinks": 401
+      "localLinks": 402
     },
     "integrity": {
       "status": "PASS",
-      "manifestEntries": 89,
+      "manifestEntries": 90,
       "recursiveFixtureFiles": 3,
       "allRecursiveFixturesCovered": true,
+      "newPlacementUiTestsCovered": true,
       "allTransportSourceAndDocumentFilesCovered": true,
-      "newObserverDiagnosticTestCovered": true,
-      "runtimeFreezeHashesVerified": true,
+      "acceptedSourceNativeFreezeHashesVerified": true,
       "transportFreezeHashesVerified": true,
-      "workflowUnchanged": true,
+      "workflowChange": "Exact tested-runtime SHA only;30/33-minute budgets/actions/settings/permissions unchanged.",
       "priorSummaryIterationReportPreservedExactly": true,
       "whitespace": "PASS"
     },
     "prerequisiteCurrentPreparation": {
-      "status": "PR16_PROTECTED_MERGED_EXACT_MAIN_VERIFICATION_ACTIVE",
+      "status": "PR16_PROTECTED_MERGED_EXACT_MAIN_SCOPED_ACCEPTANCE_PASS",
       "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39463329129",
       "head": "4dc8f0d7b9a04b17685fda2c98b5f668ad816b01",
       "tree": "2e3c3abd78c60a9a42ef307c11fe0cb49888aa65",
@@ -2153,14 +2155,25 @@
       "nativeTotal": 200,
       "captures": 256,
       "package": "PASS_REPORTED_BY_INTEGRATION_OWNER",
-      "evidenceLimit": "Integration owner confirms accepted prerequisite tree protected-merged; exact-main run is active and separately monitored. No transfer of predecessor native/visual acceptance to group candidate or claim of completed main verification.",
+      "evidenceLimit": "Independent exact-main review accepts commit291ea178 and exact tree2e3c3abd within its native/timing/78-frame scope. This removes the Feature013 prerequisite blocker but does not transfer acceptance to the changed group runtime.",
       "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
       "protectedMergeCommit": "291ea178e03edadfea34352842cdc55a449695b9",
       "acceptedTree": "2e3c3abd78c60a9a42ef307c11fe0cb49888aa65",
       "assignedFramesInspected": 78,
       "scopedVisualReview": "PASS_REPORTED_BY_INTEGRATION_OWNER",
       "exactMainRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39467700368",
-      "exactMainStatus": "IN_PROGRESS_AT_SNAPSHOT"
+      "exactMainStatus": "PASS",
+      "exactMainNodePassed": 1215,
+      "exactMainNativePassed": 200,
+      "exactMainCaptures": 256,
+      "exactMainAssignedFrames": 78,
+      "exactMainVisualBasis": {
+        "byteIdenticalPreviouslyInspected": 75,
+        "changedOriginalsActuallyInspected": 3
+      },
+      "exactMainPackage": "PASS",
+      "exactMainTransport": "COMPLETE_ACCEPTED",
+      "exactMainTiming": "SCOPED_PASS"
     },
     "secondNativeAttempt": {
       "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041",
@@ -2508,24 +2521,548 @@
       }
     },
     "observerRepair": {
-      "status": "SOURCE_INDEPENDENTLY_ACCEPTED_NATIVE_NOT_RUN",
+      "status": "PRIOR_E455_OBSERVER_PATHS_PASS_ON_THIRD_FAILED_RUN_CURRENT_987A_NOT_RUN",
       "scope": "Passive test-only planHistory observation snapshots already-current empty group input, delegates exactly once, and retains genuine return/exception behavior. Nonempty observation remains on selectionUnits. No runtime validation is restored or bypassed.",
       "newTests": 10,
       "targetedTotal": 47,
-      "targetedStatus": "PASS_INDEPENDENTLY_REPEATED_WITH_FINAL_DIAGNOSTICS",
-      "nativeExecution": "NOT_RUN",
-      "remainingFailure": "Separate mobile later 70/60 placement empties objects; cause unresolved. Geometry reads may perturb timing, so even a future diagnostic pass cannot alone explain the original failure.",
-      "targetedScope": "47 combined CDP/trace/observer/diagnostic helper tests, including the ten new observer regressions; not 47 observer-only tests."
+      "targetedStatus": "PASS_PRIOR_724A_DIAGNOSTIC_PREPARATION_NOT_CURRENT_NATIVE_ACCEPTANCE",
+      "nativeExecution": "EXECUTED_ON_THIRD_FAILED_E455_RUN_CURRENT_987A_NOT_RUN",
+      "remainingFailure": "Third run confirms successful placement followed by same-touch compatibility-click Delete, not unresolved targeting. Narrow987a source repair is accepted but unverified native.",
+      "targetedScope": "47 combined CDP/trace/observer/diagnostic helper tests, including the ten new observer regressions; not 47 observer-only tests.",
+      "preparationSnapshotAt": "2026-10-20T17:41:40Z",
+      "diagnosticRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39468802272"
     },
     "placementDiagnostic": {
-      "status": "SOURCE_INDEPENDENTLY_ACCEPTED_NATIVE_NOT_RUN",
+      "status": "EXECUTED_ON_THIRD_FAILED_E455_RUN_CAUSE_CONFIRMED_CURRENT_987A_NOT_RUN",
       "newTests": 3,
       "combinedNewTests": 13,
       "targetedTotal": 47,
-      "targetedStatus": "PASS_INDEPENDENTLY_REPEATED",
+      "targetedStatus": "PASS_PRIOR_724A_PREPARATION_HELPER_TESTS",
       "scope": "Test-only passive capture/bubble input targets, elementFromPoint, geometry, visibility, object IDs and genuine planner inputs, after all original rapid first-Undo assertions. At most64 event records,16 planner inputs and80 retained prior pointer records; dropped counts explicit. No wait, retry, synthetic cancellation, input reroute, expected-state or assertion change.",
       "errorHandling": "Diagnostic teardown clears hooks even if final snapshot fails. Original placement assertion is preserved if collection/emission fails; a diagnostic-only failure fails closed.",
-      "limit": "Geometry reads may perturb timing; this is causal evidence gathering, not a runtime fix or a valid reason to declare an unresolved interaction fixed if the diagnostic run passes."
+      "limit": "Diagnostic geometry reads may perturb timing. Third run reproduced and identified successful place\u2192inspector reopen\u2192same-touch Delete; new987a source and strengthened native tests still require complete native execution.",
+      "preparationSnapshotAt": "2026-10-20T17:41:40Z",
+      "diagnosticRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39468802272"
+    },
+    "thirdNativeAttempt": {
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39468802272",
+      "sourceHead": "f3800c6d1ce03e1bcfc0f103167630e8d2f14b4f",
+      "head": "200a508a894d3c809aa5764256a7395e86f6875e",
+      "headRole": "Clean checkout identity; PR source head recorded separately.",
+      "tree": "f567fbf2fdbdbf8b4d1ad46efea600d926d3aa7e",
+      "workingTreeClean": true,
+      "runtimeSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
+      "runtimeBytes": 419083,
+      "jobId": 118787109422,
+      "status": "FAIL",
+      "nativeStep": "FAIL",
+      "package": "SKIPPED",
+      "passed": 223,
+      "failed": 1,
+      "total": 224,
+      "perDevice": {
+        "desktop": {
+          "passed": 112,
+          "failed": 0,
+          "total": 112
+        },
+        "mobileEmulation": {
+          "passed": 111,
+          "failed": 1,
+          "total": 112
+        }
+      },
+      "inheritedCases": {
+        "passed": 200,
+        "failed": 0,
+        "total": 200
+      },
+      "newGroupCases": {
+        "passed": 23,
+        "failed": 1,
+        "total": 24
+      },
+      "started": "2026-10-20T17:45:57.406Z",
+      "finished": "2026-10-20T18:07:06.163Z",
+      "durationSeconds": 1268.757,
+      "nodeVersion": "v22.23.3",
+      "browser": "Chrome/155.0.8059.39",
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      },
+      "transport": {
+        "kind": "end",
+        "complete": true,
+        "blocks": 32,
+        "records": 1192,
+        "rawBytes": 11628931,
+        "transcriptSha256": "95e4c7229b1fb073cbd55dc1472ebc8a4a8a4db6aa3f7c4a2b0b1c81112d1daa",
+        "captures": 349,
+        "captureManifestSha256": "0427086f6ec7ddbba2043489defc3619960032e59fbee0c7bc663c9c030ebdd7",
+        "reportRecord": 1190,
+        "reportSha256": "792f214a65bbaa559f04c2fd127e77faab05b73c18efdb401089d40df93c12fc",
+        "testStatus": "FAIL",
+        "cases": 224,
+        "suiteCompleted": true,
+        "cleanup": {
+          "browserClosed": true,
+          "profileRemoved": true
+        },
+        "failures": []
+      },
+      "nativeOwnOutputBytes": 7114336,
+      "emittedCaptures": 349,
+      "emittedGroupFrames": 93,
+      "missingPlannedGroupFrames": 1,
+      "observerFailureOutcome": "All ten previously stale/undefined observer cases now pass; this does not retroactively pass the second run.",
+      "remainingFailure": {
+        "case": "mobile-emulation: v13 rapid grouped drag keeps the first trusted Undo and preserves snap and grab offsets",
+        "classification": "Confirmed genuine touch placement compatibility-click fallthrough",
+        "causalSequence": [
+          "Trusted pointerdown and initial hit-test both target scene-canvas with placement active.",
+          "Genuine place command succeeds with both original object IDs retained.",
+          "Pointerup handler reopens the inspector; the unchanged screen point now hits delete-object.",
+          "The same touch produces a trusted compatibility click targeting delete-object.",
+          "Genuine delete command removes the two selected items."
+        ],
+        "notTheCause": [
+          "Not a stale initial canvas target.",
+          "Not the already-passed first rapid drag/Undo route."
+        ],
+        "sourceRepairStatus": "PENDING_INDEPENDENT_SOURCE_AND_NATIVE_TEST_FREEZE"
+      },
+      "visualReview": {
+        "runId": 39468802272,
+        "asOf": "2026-10-20T18:13:30Z",
+        "payloadsLengthHashPILVerified": 349,
+        "groupFramesActuallyInspected": 93,
+        "devices": {
+          "desktop": 47,
+          "mobile-emulation": 46
+        },
+        "additionalVisualBlockers": [],
+        "missingPlannedGroupFrames": [
+          {
+            "device": "mobile-emulation",
+            "name": "v13-rapid-group-drag-rigid-result",
+            "reason": "Genuine later touch-placement click-through failure stops this case before capture."
+          }
+        ],
+        "scope": "All 93 emitted group frames visually inspected through exact-payload contact sheets. Includes metadata, deletion, lifecycle/reset, seven geometry before/after pairs, both gap axes, provenance, complete focused labels and Group/Ungroup controls across four viewports and forced colors. No additional visual blocker observed. This is not acceptance of the distinct mobile placement failure; no absent frame substituted or inferred. Original payloads unchanged.",
+        "files": [
+          "captures/0122.jpg",
+          "captures/0123.jpg",
+          "captures/0124.jpg",
+          "captures/0125.jpg",
+          "captures/0126.jpg",
+          "captures/0127.jpg",
+          "captures/0128.jpg",
+          "captures/0129.jpg",
+          "captures/0130.jpg",
+          "captures/0131.jpg",
+          "captures/0132.jpg",
+          "captures/0133.jpg",
+          "captures/0134.jpg",
+          "captures/0135.jpg",
+          "captures/0136.jpg",
+          "captures/0137.jpg",
+          "captures/0138.jpg",
+          "captures/0139.jpg",
+          "captures/0140.jpg",
+          "captures/0141.jpg",
+          "captures/0142.jpg",
+          "captures/0143.jpg",
+          "captures/0144.jpg",
+          "captures/0145.jpg",
+          "captures/0146.jpg",
+          "captures/0147.jpg",
+          "captures/0148.jpg",
+          "captures/0149.jpg",
+          "captures/0150.jpg",
+          "captures/0151.jpg",
+          "captures/0152.jpg",
+          "captures/0153.jpg",
+          "captures/0154.jpg",
+          "captures/0155.jpg",
+          "captures/0156.jpg",
+          "captures/0157.jpg",
+          "captures/0158.jpg",
+          "captures/0159.jpg",
+          "captures/0160.jpg",
+          "captures/0161.jpg",
+          "captures/0162.jpg",
+          "captures/0163.jpg",
+          "captures/0164.jpg",
+          "captures/0165.jpg",
+          "captures/0166.jpg",
+          "captures/0167.jpg",
+          "captures/0168.jpg",
+          "captures/0297.jpg",
+          "captures/0298.jpg",
+          "captures/0299.jpg",
+          "captures/0300.jpg",
+          "captures/0301.jpg",
+          "captures/0302.jpg",
+          "captures/0303.jpg",
+          "captures/0304.jpg",
+          "captures/0305.jpg",
+          "captures/0306.jpg",
+          "captures/0307.jpg",
+          "captures/0308.jpg",
+          "captures/0309.jpg",
+          "captures/0310.jpg",
+          "captures/0311.jpg",
+          "captures/0312.jpg",
+          "captures/0313.jpg",
+          "captures/0314.jpg",
+          "captures/0315.jpg",
+          "captures/0316.jpg",
+          "captures/0317.jpg",
+          "captures/0318.jpg",
+          "captures/0319.jpg",
+          "captures/0320.jpg",
+          "captures/0321.jpg",
+          "captures/0322.jpg",
+          "captures/0323.jpg",
+          "captures/0324.jpg",
+          "captures/0325.jpg",
+          "captures/0326.jpg",
+          "captures/0327.jpg",
+          "captures/0328.jpg",
+          "captures/0329.jpg",
+          "captures/0330.jpg",
+          "captures/0331.jpg",
+          "captures/0332.jpg",
+          "captures/0333.jpg",
+          "captures/0334.jpg",
+          "captures/0335.jpg",
+          "captures/0336.jpg",
+          "captures/0337.jpg",
+          "captures/0338.jpg",
+          "captures/0339.jpg",
+          "captures/0340.jpg",
+          "captures/0341.jpg",
+          "captures/0342.jpg"
+        ]
+      },
+      "evidenceLimit": "Complete failed report remains FAIL. All349 original payloads verified and all93 emitted group frames actually inspected; one planned mobile rapid-result frame absent. Scoped paired/group cost passes do not accept the genuine placement deletion or pending source repair.",
+      "initialVisualPrefix": {
+        "runId": 39468802272,
+        "asOf": "2026-10-20T18:01:35Z",
+        "payloadsLengthHashPILVerified": 197,
+        "groupFramesActuallyInspected": 47,
+        "devices": {
+          "desktop": 47,
+          "mobile-emulation": 0
+        },
+        "additionalVisualBlockers": [],
+        "scope": "All47 emitted desktop group frames visually inspected, including the four previously missing metadata/delete/lifecycle/reset frames, every before/after ratio pair, both gap axes, rapid result, provenance, complete focused labels and Group/Ungroup controls across four viewports, forced colors. No inference about pending mobile or unresolved prior deletion. Original payloads retained unchanged.",
+        "files": [
+          "captures/0122.jpg",
+          "captures/0123.jpg",
+          "captures/0124.jpg",
+          "captures/0125.jpg",
+          "captures/0126.jpg",
+          "captures/0127.jpg",
+          "captures/0128.jpg",
+          "captures/0129.jpg",
+          "captures/0130.jpg",
+          "captures/0131.jpg",
+          "captures/0132.jpg",
+          "captures/0133.jpg",
+          "captures/0134.jpg",
+          "captures/0135.jpg",
+          "captures/0136.jpg",
+          "captures/0137.jpg",
+          "captures/0138.jpg",
+          "captures/0139.jpg",
+          "captures/0140.jpg",
+          "captures/0141.jpg",
+          "captures/0142.jpg",
+          "captures/0143.jpg",
+          "captures/0144.jpg",
+          "captures/0145.jpg",
+          "captures/0146.jpg",
+          "captures/0147.jpg",
+          "captures/0148.jpg",
+          "captures/0149.jpg",
+          "captures/0150.jpg",
+          "captures/0151.jpg",
+          "captures/0152.jpg",
+          "captures/0153.jpg",
+          "captures/0154.jpg",
+          "captures/0155.jpg",
+          "captures/0156.jpg",
+          "captures/0157.jpg",
+          "captures/0158.jpg",
+          "captures/0159.jpg",
+          "captures/0160.jpg",
+          "captures/0161.jpg",
+          "captures/0162.jpg",
+          "captures/0163.jpg",
+          "captures/0164.jpg",
+          "captures/0165.jpg",
+          "captures/0166.jpg",
+          "captures/0167.jpg",
+          "captures/0168.jpg"
+        ]
+      },
+      "pairedPerformance": {
+        "runId": 39468802272,
+        "status": "SCOPED PASS",
+        "devices": {
+          "desktop": {
+            "status": "PASS",
+            "recordsVerified": 12,
+            "alternatingPairs": 6,
+            "routes": {
+              "nudge": {
+                "baseline": {
+                  "count": 6,
+                  "median": 13.799999999988358,
+                  "p95": 14.799999999988358,
+                  "max": 14.799999999988358
+                },
+                "candidate": {
+                  "count": 6,
+                  "median": 15.700000000011642,
+                  "p95": 16.29999999998836,
+                  "max": 16.29999999998836
+                },
+                "p95DeltaMs": 1.5
+              },
+              "drag": {
+                "baseline": {
+                  "count": 6,
+                  "median": 8.5,
+                  "p95": 9.200000000011642,
+                  "max": 9.200000000011642
+                },
+                "candidate": {
+                  "count": 6,
+                  "median": 13.700000000011642,
+                  "p95": 14.599999999976717,
+                  "max": 14.599999999976717
+                },
+                "p95DeltaMs": 5.399999999965075
+              },
+              "hide": {
+                "baseline": {
+                  "count": 6,
+                  "median": 7.2999999999883585,
+                  "p95": 7.899999999965075,
+                  "max": 7.899999999965075
+                },
+                "candidate": {
+                  "count": 6,
+                  "median": 10.099999999976717,
+                  "p95": 10.899999999965075,
+                  "max": 10.899999999965075
+                },
+                "p95DeltaMs": 3.0
+              }
+            }
+          },
+          "mobile-emulation": {
+            "status": "PASS",
+            "recordsVerified": 12,
+            "alternatingPairs": 6,
+            "routes": {
+              "nudge": {
+                "baseline": {
+                  "count": 6,
+                  "median": 14.699999999953434,
+                  "p95": 16.699999999953434,
+                  "max": 16.699999999953434
+                },
+                "candidate": {
+                  "count": 6,
+                  "median": 14.5,
+                  "p95": 15.199999999953434,
+                  "max": 15.199999999953434
+                },
+                "p95DeltaMs": -1.5
+              },
+              "drag": {
+                "baseline": {
+                  "count": 6,
+                  "median": 8.899999999906868,
+                  "p95": 10.099999999860302,
+                  "max": 10.099999999860302
+                },
+                "candidate": {
+                  "count": 6,
+                  "median": 13.899999999906868,
+                  "p95": 14,
+                  "max": 14
+                },
+                "p95DeltaMs": 3.9000000001396984
+              },
+              "hide": {
+                "baseline": {
+                  "count": 6,
+                  "median": 7.100000000093132,
+                  "p95": 7.2000000001862645,
+                  "max": 7.2000000001862645
+                },
+                "candidate": {
+                  "count": 6,
+                  "median": 10,
+                  "p95": 10.700000000186265,
+                  "max": 10.700000000186265
+                },
+                "p95DeltaMs": 3.5
+              }
+            }
+          }
+        },
+        "overallNativeAccepted": false
+      },
+      "groupPerformance": {
+        "runId": 39468802272,
+        "devices": {
+          "desktop": {
+            "status": "SCOPED PASS",
+            "metadata": {
+              "count": 13,
+              "median": 9.899999999906868,
+              "p95": 14.20000000006985,
+              "max": 14.20000000006985
+            },
+            "rigidNudge": {
+              "count": 6,
+              "median": 10.100000000093132,
+              "p95": 10.800000000046566,
+              "max": 10.800000000046566
+            },
+            "rigidCenter": {
+              "mutating": {
+                "count": 1,
+                "median": 11.20000000006985,
+                "p95": 11.20000000006985,
+                "max": 11.20000000006985
+              },
+              "noOp": {
+                "count": 5,
+                "median": 6.699999999953434,
+                "p95": 7.5,
+                "max": 7.5
+              }
+            },
+            "firstHide": {
+              "id": "hide-scene",
+              "trusted": true,
+              "ms": 8.199999999953434,
+              "rows": 12,
+              "selected": 12,
+              "width": 343,
+              "visibility": "Hidden"
+            },
+            "drag": {
+              "count": 3,
+              "median": 4.899999999906868,
+              "p95": 5.200000000069849,
+              "max": 5.200000000069849
+            },
+            "rapidFirstUndo": {
+              "lastMoveToUpMs": 16.599999999976717,
+              "upToNextRealDownMs": 9.0,
+              "traceComplete": true
+            },
+            "limitations": "Trusted handler plus forced layout only, not physical-device/display/compositor latency. Center has one mutating sample and five exact no-op samples. Later mobile placement fails separately."
+          },
+          "mobile-emulation": {
+            "status": "SCOPED PASS",
+            "metadata": {
+              "count": 13,
+              "median": 9.599999999860302,
+              "p95": 14.599999999860302,
+              "max": 14.599999999860302
+            },
+            "rigidNudge": {
+              "count": 6,
+              "median": 10,
+              "p95": 10.100000000093132,
+              "max": 10.100000000093132
+            },
+            "rigidCenter": {
+              "mutating": {
+                "count": 1,
+                "median": 11.199999999953434,
+                "p95": 11.199999999953434,
+                "max": 11.199999999953434
+              },
+              "noOp": {
+                "count": 5,
+                "median": 6.7999999998137355,
+                "p95": 6.900000000139698,
+                "max": 6.900000000139698
+              }
+            },
+            "firstHide": {
+              "id": "hide-scene",
+              "trusted": true,
+              "ms": 8.699999999953434,
+              "rows": 12,
+              "selected": 12,
+              "width": 340,
+              "visibility": "Hidden"
+            },
+            "drag": {
+              "count": 3,
+              "median": 5.300000000046566,
+              "p95": 5.399999999906868,
+              "max": 5.399999999906868
+            },
+            "rapidFirstUndo": {
+              "lastMoveToUpMs": 33.5,
+              "upToNextRealDownMs": 18.300000000046566,
+              "traceComplete": true
+            },
+            "limitations": "Trusted handler plus forced layout only, not physical-device/display/compositor latency. Center has one mutating sample and five exact no-op samples. Later mobile placement fails separately."
+          }
+        },
+        "overallNativeAccepted": false
+      }
+    },
+    "placementRepair": {
+      "status": "SOURCE_AND_NATIVE_REGRESSION_REVIEW_ACCEPTED_NATIVE_NOT_RUN",
+      "scope": "Own only a primary touch pointerdown on active canvas placement; bind one-shot intent to coordinates, viewport rectangle, selection, scene generation and interaction revision. On matching cancelable single touchstart, defensively preflight canonical fields, content geometry, locks and the existing group placement planner; cancel only the owned browser default. No staging/history/reveal occurs in preflight. Existing pointerup performs the actual atomic placement. Rejected, stale, unrelated or canceled intents leave defaults available; lifecycle/cancellation/end paths clear intent.",
+      "required": "Final outgoing review plus complete fresh exact-head native/actual visual/performance/clean-checkout CI package evidence. Local1423 pass and pure preflight do not prove browser compatibility-click suppression.",
+      "restrictions": "No assertion threshold, workflow budget, security, transport, release, hosting or collection change.",
+      "nativeRegression": {
+        "status": "SOURCE_ACCEPTED_NOT_RUN",
+        "helperTestsPassed": 50,
+        "helperTestsTotal": 50,
+        "cases": 224,
+        "newGroupCaptures": 96,
+        "totalCaptures": 352,
+        "additionalCaptures": 2,
+        "estimatedAdditionalSeconds": [
+          4,
+          8
+        ],
+        "scope": "Original singleton and grouped overlap geometry, exact post-placement document/IDs/selection/groups, accepted scene/history invariance, one exact placement Undo with redo availability, no implicit control command, and first later intentional control activation; same224 cases, no extra reveal waits. The separate earlier drag transaction executes Redo; placement Redo itself is not exercised by the new native segment."
+      }
+    },
+    "preRefreshAggregateFailure": {
+      "status": "FAIL",
+      "scope": "Real source-worker full aggregate before metadata/runtime pin refresh; not final candidate acceptance.",
+      "command": "node --test imagery-app/tests/*.test.cjs",
+      "passed": 1415,
+      "total": 1423,
+      "failed": 8,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationMs": 17893.510604,
+      "failures": {
+        "staleCiExactRuntimePin": 1,
+        "staleManifestPackageChecks": 7,
+        "message": "Runtime manifest and tested HTML hash differ."
+      },
+      "runtimeBehaviorRegressionFailuresObserved": 0,
+      "note": "Integrity failures are preserved as failures. No complete-suite pass is claimed before final source/native review, hash refresh and fresh aggregate."
     }
   },
   "historicalArrangementPremergeIteration": {
@@ -3292,6 +3829,580 @@
       "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
       "evidenceLimit": "Integration owner reports the old ac0 head workflow green, but detailed evidence remains unreviewed because log transport was unavailable. Green status alone is not native/visual acceptance.",
       "nextPreparation": "A separate evidence-only Feature 013 update with the identical df7 runtime and exact accepted transport helper/test/document bytes is being prepared. No new published head or source identity is claimed here. The final group revision must reconcile that dependency without replacing this dated group metadata or losing group source."
+    }
+  },
+  "previousFeature014ObserverPreparationIteration": {
+    "name": "Feature 014: evidence-only observer and placement-diagnostic preparation",
+    "contract": "specs/014-session-groups/spec.md",
+    "snapshotAt": "2026-10-20T17:41:40Z",
+    "status": "dated_observer_diagnostic_source_and_full_local_node_pass_native_not_run",
+    "htmlSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
+    "htmlBytes": 419083,
+    "appSha256": "e1bb5f1c8706b9f2f692fc233aafe903a5a5e7e023626690815de1353fcb68ee",
+    "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/17/checks",
+    "runtimeAggregate": {
+      "status": "PASS",
+      "passed": 1289,
+      "total": 1289,
+      "failed": 0,
+      "durationMs": 19363.321859,
+      "nodeVersion": "v24.19.0",
+      "excludedSuites": [
+        "docs.test.cjs",
+        "release-package.test.cjs"
+      ]
+    },
+    "focused": {
+      "status": "PASS",
+      "passed": 146,
+      "total": 146,
+      "groupTests": 84,
+      "inheritedMultiSelectionTests": 62,
+      "durationMs": 8183.622748,
+      "nodeVersion": "v24.19.0",
+      "scope": "Focused UI test doubles; not native."
+    },
+    "model": {
+      "status": "PASS",
+      "passed": 104,
+      "total": 104,
+      "independentlyRepeated": true,
+      "scope": "Focused pure group plus inherited selection model tests, independently repeated"
+    },
+    "localNode": {
+      "status": "PASS",
+      "command": "node --test imagery-app/tests/*.test.cjs",
+      "passed": 1366,
+      "total": 1366,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "nodeVersion": "v24.19.0",
+      "durationMs": 19659.416407,
+      "scope": "Complete local aggregate on independently accepted observer/diagnostic test candidate, including 13 new tests and unchanged runtime/runner/transport. Not native execution, unresolved-placement repair or actual clean-checkout CI package acceptance."
+    },
+    "sourceReview": {
+      "status": "PASS_EXACT_OBSERVER_AND_PASSIVE_DIAGNOSTIC_SOURCE",
+      "runtimeAndTransport": "PREVIOUS_EXACT_FREEZES_ACCEPTED_UNCHANGED",
+      "nativeTestSha256": "724ab41276e547b6a10932b5b5664cd10e964717b73656059db5cfd7d26609fe",
+      "observerTestSha256": "901da4528d709dc9aa9895d2aecc1ae3a8c03cfffdfca3bef993a7aa3d7a2526"
+    },
+    "firstNativeAttempt": {
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362",
+      "head": "7bc6bbf1435275b9fe882a27f0b2564c98238176",
+      "tree": "8ea48e89e402c1e5ff6eb5e6bb27b4faf1f6deea",
+      "jobId": 118738197312,
+      "runtimeSha256": "7fac30dabe3e327d3060fc2a25b9975d625950c7d186580a3dd8ce3699b317d9",
+      "status": "FAIL",
+      "nativeStep": "FAIL",
+      "package": "SKIPPED",
+      "fullNativePassed": null,
+      "fullNativeFailed": null,
+      "fullNativeTotal": null,
+      "fullDurationSeconds": null,
+      "evidenceLimit": "Full log retrieval ended with Transport closed. Final full/mobile counts and duration are unknown; preserved partial snapshot is not the terminal full result.",
+      "partialSnapshot": {
+        "observedAtUtc": "2026-10-20T16:29:00Z",
+        "lastAvailableLogUtc": "2026-10-20T16:21:09Z",
+        "passesObserved": 146,
+        "failuresObserved": 3,
+        "desktopNewGroupPassed": 10,
+        "desktopNewGroupFailed": 2,
+        "desktopNewGroupExpected": 12,
+        "capturesByteHashVerified": 198,
+        "newDesktopGroupCapturesInspected": 45,
+        "expectedNewDesktopGroupCaptures": 47,
+        "newMobileGroupCapturesInspected": 0,
+        "visualOutcome": "No additional blocker in the 45 actually inspected desktop group images; missing rapid/provenance and all mobile group images not accepted."
+      },
+      "failures": [
+        {
+          "case": "Desktop paired singleton drag against frozen Feature 012 baseline",
+          "classification": "Genuine paired performance regression",
+          "deltaP95Ms": 12.4,
+          "unchangedMaximumDeltaMs": 10,
+          "nudgeDeltaP95Ms": 6.3,
+          "hideDeltaP95Ms": 3.2,
+          "absoluteHandlersBelowMs": 50
+        },
+        {
+          "case": "Desktop rapid grouped drag placement",
+          "classification": "Independently confirmed test premise: obsolete canvas rectangle reused after placement activated and editor closed",
+          "repair": "Read fresh content rectangle after placement activation, retaining expected coordinates and rapid/first Undo assertions."
+        },
+        {
+          "case": "Desktop clean metadata provenance",
+          "classification": "Independently confirmed test premise: baseline included five selection-induced draws/tracker calls",
+          "repair": "Finish selection before baseline; then click Group/Ungroup/Group directly, retaining zero-call/raster/dirty assertions."
+        }
+      ]
+    },
+    "executionBudget": {
+      "status": "INDEPENDENTLY_REVIEWED_PROJECTION_NOT_PERFORMANCE_ACCEPTANCE",
+      "nativeMinutes": 30,
+      "jobMinutes": 33,
+      "nonNativeAllowanceSeconds": 180,
+      "acceptedCompleteGuideBaselineSeconds": 795.126,
+      "feature013ConservativeProjectionSeconds": 320,
+      "feature014UpperProjectionSeconds": 360,
+      "projectedSeconds": 1475.126,
+      "headroomSeconds": 324.874,
+      "headroomPercent": 22.023,
+      "failedPartialFeature013Seconds": 1032.432,
+      "failedPartialRunIsNotCompleteBaseline": true,
+      "required": "Reconcile actual complete repaired Feature 013 and Feature 014 results/durations before acceptance."
+    },
+    "nativeStatus": "PRECEDING_RUN_FAIL_CURRENT_TEST_REPAIR_NOT_RUN",
+    "visualStatus": "85_EMITTED_GROUP_FRAMES_INSPECTED_9_ABSENT_WHOLE_RUN_FAILED",
+    "performanceStatus": "BOTH_INHERITED_PAIRED_ROUTES_PASS_GROUP_COST_GATES_INTERRUPTED",
+    "cleanCheckoutPackageStatus": "CURRENT_TEST_REPAIR_NOT_RUN",
+    "evidenceTransport": {
+      "status": "COMPLETE_SECOND_RUN_DECODE_NATIVE_SUITE_FAILED_NOT_ACCEPTANCE",
+      "files": {
+        "imagery-app/tests/browser-evidence-transport.cjs": "b453d6563215c6c438e31c316c2de6afc2b8047e855fbf09106d5909dff8e274",
+        "imagery-app/tests/browser-evidence-transport.test.cjs": "b57b88318d2aa50ccbc603719df2e5e3699670150bcff94357cc495a9ed88356",
+        "imagery-app/tests/browser-cdp.cjs": "64eb5129950c9bf2cebab647e5dffb4851ced214aa7a12e8041fbff1693c2b6d",
+        "imagery-app/tests/BROWSER-EVIDENCE-TRANSPORT.md": "de8c7f77d9cd9cb8cbb90ffcf9fc8c0e2a52ed3153040596b66604b127fb6d03"
+      },
+      "targetedChecks": {
+        "status": "PASS",
+        "newTransportTests": 23,
+        "existingCdpTests": 23,
+        "total": 46,
+        "durationMs": 342.890308
+      },
+      "nativeOutputCapBytes": 7350000,
+      "brotliQuality": 6,
+      "blockMaxRawBytes": 1048576,
+      "spoolMaxBytes": 67108864,
+      "projections": {
+        "basis": "Linear 350-capture projections from retained every-line transport replay; neither is a worst-case bound",
+        "pr17Bytes": 6564851,
+        "pr16Bytes": 7666076,
+        "secondProjectionExceedsCap": true
+      },
+      "scope": "Lossless original stdout/stderr records and unchanged capture bytes in ordered bounded Brotli envelopes; narrow runner reporting only. Runtime, scenario assertions/order, screenshot settings, timing criteria, budgets, workflow actions/settings/permissions, sandbox and cleanup unchanged.",
+      "limits": [
+        "Retained-log replay reconstructs exact bytes but is synthetic BLOCKED/nonaccepted evidence, not fresh native/visual/performance/package acceptance.",
+        "The native cap can be exceeded; cap/spool/output/decode failures are explicit nonacceptance and original native assertions/cleanup continue.",
+        "Setup/Node/transport-test/package output and Actions timestamp overhead lie outside the native cap.",
+        "Whole-job connector reads remain unbounded by this encoding; no guarantee of delivery through an undocumented service limit.",
+        "Acceptance requires complete decoded evidence plus independently verified terminal job success, clean expected source/runtime identity and expected case count; no partial output can pass.",
+        "Temporary spool is not an upload or remotely retrievable artifact after runner disposal."
+      ],
+      "freshNativeDelivery": {
+        "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041",
+        "complete": true,
+        "records": 1182,
+        "captures": 341,
+        "nativeStatus": "FAIL",
+        "note": "One complete decode is not a future capacity guarantee; both earlier projections and fixed fail-closed cap remain unchanged.",
+        "nativeOwnOutputBytes": 6867657
+      }
+    },
+    "nextAction": "Independently review the exact outgoing tree, then execute and inspect unchanged full native/visual/performance/clean-checkout package gates. Diagnose mobile later placement without treating timing-perturbed diagnostic success as a runtime repair; verify prerequisite exact main.",
+    "documentation": {
+      "status": "PASS",
+      "command": "node scripts/check-docs.cjs",
+      "markdownFiles": 58,
+      "localLinks": 401
+    },
+    "integrity": {
+      "status": "PASS",
+      "manifestEntries": 89,
+      "recursiveFixtureFiles": 3,
+      "allRecursiveFixturesCovered": true,
+      "allTransportSourceAndDocumentFilesCovered": true,
+      "newObserverDiagnosticTestCovered": true,
+      "runtimeFreezeHashesVerified": true,
+      "transportFreezeHashesVerified": true,
+      "workflowUnchanged": true,
+      "priorSummaryIterationReportPreservedExactly": true,
+      "whitespace": "PASS"
+    },
+    "prerequisiteCurrentPreparation": {
+      "status": "PR16_PROTECTED_MERGED_EXACT_MAIN_VERIFICATION_ACTIVE",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39463329129",
+      "head": "4dc8f0d7b9a04b17685fda2c98b5f668ad816b01",
+      "tree": "2e3c3abd78c60a9a42ef307c11fe0cb49888aa65",
+      "runtimeSha256": "df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4",
+      "nativePassed": 200,
+      "nativeTotal": 200,
+      "captures": 256,
+      "package": "PASS_REPORTED_BY_INTEGRATION_OWNER",
+      "evidenceLimit": "Integration owner confirms accepted prerequisite tree protected-merged; exact-main run is active and separately monitored. No transfer of predecessor native/visual acceptance to group candidate or claim of completed main verification.",
+      "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
+      "protectedMergeCommit": "291ea178e03edadfea34352842cdc55a449695b9",
+      "acceptedTree": "2e3c3abd78c60a9a42ef307c11fe0cb49888aa65",
+      "assignedFramesInspected": 78,
+      "scopedVisualReview": "PASS_REPORTED_BY_INTEGRATION_OWNER",
+      "exactMainRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39467700368",
+      "exactMainStatus": "IN_PROGRESS_AT_SNAPSHOT"
+    },
+    "secondNativeAttempt": {
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041",
+      "head": "79fb6a20a7d58fcd8037ba0ff38f9ab8a9eeb330",
+      "tree": "6c035a76fdd3dd481cf8a9bb759ef4d8a0a94dc4",
+      "runtimeSha256": "e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8",
+      "runtimeBytes": 419083,
+      "workingTreeClean": true,
+      "nodeVersion": "v22.23.3",
+      "browser": "Chrome/155.0.8059.84",
+      "status": "FAIL",
+      "passed": 213,
+      "failed": 11,
+      "total": 224,
+      "perDevice": {
+        "desktop": {
+          "passed": 107,
+          "failed": 5,
+          "total": 112
+        },
+        "mobileEmulation": {
+          "passed": 106,
+          "failed": 6,
+          "total": 112
+        }
+      },
+      "newGroupCases": {
+        "desktop": {
+          "passed": 7,
+          "failed": 5,
+          "total": 12
+        },
+        "mobileEmulation": {
+          "passed": 6,
+          "failed": 6,
+          "total": 12
+        }
+      },
+      "started": "2026-10-20T17:09:59.978Z",
+      "finished": "2026-10-20T17:29:14.223Z",
+      "durationSeconds": 1154.245,
+      "package": "SKIPPED",
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      },
+      "transport": {
+        "complete": true,
+        "accepted": false,
+        "reason": "Complete decoded evidence and independent terminal job verification both retain FAIL; delivery is not test acceptance.",
+        "blocks": 30,
+        "records": 1182,
+        "rawBytes": 11330461,
+        "transcriptSha256": "a38fd6458762df3e29f182fdf3f60671bf88a7a7d1c2e00631619f0361878dca",
+        "captures": 341,
+        "captureManifestSha256": "568df81365bc693fd91b15473392ef8af022d47fc5ae41c4e3457d8f3c382e1b",
+        "reportSha256": "af24f032f451348db950008ccd86e0f3b693ae57875dc865cbb676362a64e0d4",
+        "nativeOwnOutputBytes": 6867657,
+        "transportFailures": []
+      },
+      "failures": [
+        {
+          "device": "desktop",
+          "case": "v13 keyboard Group and Ungroup preserve exact scene, raster, dirty state and real controller staging",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "desktop",
+          "case": "v13 noncontiguous grouped layers and nearest-survivor deletion have exact reversible history",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "desktop",
+          "case": "v13 captured groups retain fresh invalid input and never override Hide, lifecycle or playback",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "desktop",
+          "case": "v13 Apply, capture and sequence import retain groups while identical replacement and accepted history reset them",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "desktop",
+          "case": "v13 metadata and rigid-unit handler costs remain bounded without claiming a nonexistent baseline",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "mobile-emulation",
+          "case": "v13 keyboard Group and Ungroup preserve exact scene, raster, dirty state and real controller staging",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "mobile-emulation",
+          "case": "v13 noncontiguous grouped layers and nearest-survivor deletion have exact reversible history",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "mobile-emulation",
+          "case": "v13 rapid grouped drag keeps the first trusted Undo and preserves snap and grab offsets",
+          "classification": "Unresolved mobile later placement empties objects; first rapid drag and trusted Undo passed"
+        },
+        {
+          "device": "mobile-emulation",
+          "case": "v13 captured groups retain fresh invalid input and never override Hide, lifecycle or playback",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "mobile-emulation",
+          "case": "v13 Apply, capture and sequence import retain groups while identical replacement and accepted history reset them",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        },
+        {
+          "device": "mobile-emulation",
+          "case": "v13 metadata and rigid-unit handler costs remain bounded without claiming a nonexistent baseline",
+          "classification": "Stale or undefined test observer after empty-group optimization; actual complete row labels disagree with stale observation"
+        }
+      ],
+      "partialVisualSnapshot": {
+        "runId": 39463607041,
+        "asOf": "2026-10-20T17:33:20Z",
+        "allCapturePayloadsVerified": 341,
+        "PILVerified": 341,
+        "groupFramesVisuallyInspected": 85,
+        "scope": "All 85 emitted group review frames were visually inspected, including all seven before/after geometry variants on both devices, unequal-gap axes, all 24 focused short rows, summaries, Group/Ungroup controls, forced colors, both provenance concealment frames and the desktop rapid result. No additional visual blocker observed in these frames. Nine planned group frames are absent because assertions stopped their cases; no visual inference for those missing frames. Original JPEGs retained byte-for-byte. Native acceptance is blocked by 11 failures, including the unresolved mobile placement deletion.",
+        "files": [
+          "captures/0122.jpg",
+          "captures/0123.jpg",
+          "captures/0124.jpg",
+          "captures/0125.jpg",
+          "captures/0126.jpg",
+          "captures/0127.jpg",
+          "captures/0128.jpg",
+          "captures/0129.jpg",
+          "captures/0130.jpg",
+          "captures/0131.jpg",
+          "captures/0132.jpg",
+          "captures/0133.jpg",
+          "captures/0134.jpg",
+          "captures/0135.jpg",
+          "captures/0136.jpg",
+          "captures/0137.jpg",
+          "captures/0138.jpg",
+          "captures/0139.jpg",
+          "captures/0140.jpg",
+          "captures/0141.jpg",
+          "captures/0142.jpg",
+          "captures/0143.jpg",
+          "captures/0144.jpg",
+          "captures/0145.jpg",
+          "captures/0146.jpg",
+          "captures/0147.jpg",
+          "captures/0148.jpg",
+          "captures/0149.jpg",
+          "captures/0150.jpg",
+          "captures/0151.jpg",
+          "captures/0152.jpg",
+          "captures/0153.jpg",
+          "captures/0154.jpg",
+          "captures/0155.jpg",
+          "captures/0156.jpg",
+          "captures/0157.jpg",
+          "captures/0158.jpg",
+          "captures/0159.jpg",
+          "captures/0160.jpg",
+          "captures/0161.jpg",
+          "captures/0162.jpg",
+          "captures/0163.jpg",
+          "captures/0164.jpg",
+          "captures/0293.jpg",
+          "captures/0294.jpg",
+          "captures/0295.jpg",
+          "captures/0296.jpg",
+          "captures/0297.jpg",
+          "captures/0298.jpg",
+          "captures/0299.jpg",
+          "captures/0300.jpg",
+          "captures/0301.jpg",
+          "captures/0302.jpg",
+          "captures/0303.jpg",
+          "captures/0304.jpg",
+          "captures/0305.jpg",
+          "captures/0306.jpg",
+          "captures/0307.jpg",
+          "captures/0308.jpg",
+          "captures/0309.jpg",
+          "captures/0310.jpg",
+          "captures/0311.jpg",
+          "captures/0312.jpg",
+          "captures/0313.jpg",
+          "captures/0314.jpg",
+          "captures/0315.jpg",
+          "captures/0316.jpg",
+          "captures/0317.jpg",
+          "captures/0318.jpg",
+          "captures/0319.jpg",
+          "captures/0320.jpg",
+          "captures/0321.jpg",
+          "captures/0322.jpg",
+          "captures/0323.jpg",
+          "captures/0324.jpg",
+          "captures/0325.jpg",
+          "captures/0326.jpg",
+          "captures/0327.jpg",
+          "captures/0328.jpg",
+          "captures/0329.jpg",
+          "captures/0330.jpg",
+          "captures/0331.jpg",
+          "captures/0332.jpg",
+          "captures/0333.jpg",
+          "captures/0334.jpg"
+        ],
+        "groupFrameCounts": {
+          "desktop": 43,
+          "mobile-emulation": 42
+        }
+      },
+      "pairedPerformance": [
+        {
+          "device": "desktop",
+          "all12AlternatingRecordsValidated": true,
+          "p95DeltasMs": {
+            "nudge": 1.9,
+            "drag": 2.5,
+            "hide": 1.5
+          }
+        },
+        {
+          "device": "mobile-emulation",
+          "all12AlternatingRecordsValidated": true,
+          "p95DeltasMs": {
+            "nudge": 1.2,
+            "drag": 1.7,
+            "hide": 1.3
+          }
+        }
+      ],
+      "evidenceLimit": "Whole run remains FAIL. All 341 payloads verified and all 85 emitted group frames inspected; nine planned frames absent. Scoped passing paired comparisons do not accept interrupted group-cost gates or erase mobile placement failure. No passes combined across failed runs.",
+      "nativeStep": "FAIL",
+      "jobId": 118769068905,
+      "sourceHead": "aa0630fc93795b8098ef58f78e1400dfa5c9f940",
+      "headRole": "Clean checkout commit from decoded run identity; sourceHead separately records the PR source commit.",
+      "inheritedCases": {
+        "passed": 200,
+        "failed": 0,
+        "total": 200
+      },
+      "visualReview": {
+        "runId": 39463607041,
+        "asOf": "2026-10-20T17:33:20Z",
+        "allCapturePayloadsVerified": 341,
+        "PILVerified": 341,
+        "groupFramesVisuallyInspected": 85,
+        "scope": "All 85 emitted group review frames were visually inspected, including all seven before/after geometry variants on both devices, unequal-gap axes, all 24 focused short rows, summaries, Group/Ungroup controls, forced colors, both provenance concealment frames and the desktop rapid result. No additional visual blocker observed in these frames. Nine planned group frames are absent because assertions stopped their cases; no visual inference for those missing frames. Original JPEGs retained byte-for-byte. Native acceptance is blocked by 11 failures, including the unresolved mobile placement deletion.",
+        "files": [
+          "captures/0122.jpg",
+          "captures/0123.jpg",
+          "captures/0124.jpg",
+          "captures/0125.jpg",
+          "captures/0126.jpg",
+          "captures/0127.jpg",
+          "captures/0128.jpg",
+          "captures/0129.jpg",
+          "captures/0130.jpg",
+          "captures/0131.jpg",
+          "captures/0132.jpg",
+          "captures/0133.jpg",
+          "captures/0134.jpg",
+          "captures/0135.jpg",
+          "captures/0136.jpg",
+          "captures/0137.jpg",
+          "captures/0138.jpg",
+          "captures/0139.jpg",
+          "captures/0140.jpg",
+          "captures/0141.jpg",
+          "captures/0142.jpg",
+          "captures/0143.jpg",
+          "captures/0144.jpg",
+          "captures/0145.jpg",
+          "captures/0146.jpg",
+          "captures/0147.jpg",
+          "captures/0148.jpg",
+          "captures/0149.jpg",
+          "captures/0150.jpg",
+          "captures/0151.jpg",
+          "captures/0152.jpg",
+          "captures/0153.jpg",
+          "captures/0154.jpg",
+          "captures/0155.jpg",
+          "captures/0156.jpg",
+          "captures/0157.jpg",
+          "captures/0158.jpg",
+          "captures/0159.jpg",
+          "captures/0160.jpg",
+          "captures/0161.jpg",
+          "captures/0162.jpg",
+          "captures/0163.jpg",
+          "captures/0164.jpg",
+          "captures/0293.jpg",
+          "captures/0294.jpg",
+          "captures/0295.jpg",
+          "captures/0296.jpg",
+          "captures/0297.jpg",
+          "captures/0298.jpg",
+          "captures/0299.jpg",
+          "captures/0300.jpg",
+          "captures/0301.jpg",
+          "captures/0302.jpg",
+          "captures/0303.jpg",
+          "captures/0304.jpg",
+          "captures/0305.jpg",
+          "captures/0306.jpg",
+          "captures/0307.jpg",
+          "captures/0308.jpg",
+          "captures/0309.jpg",
+          "captures/0310.jpg",
+          "captures/0311.jpg",
+          "captures/0312.jpg",
+          "captures/0313.jpg",
+          "captures/0314.jpg",
+          "captures/0315.jpg",
+          "captures/0316.jpg",
+          "captures/0317.jpg",
+          "captures/0318.jpg",
+          "captures/0319.jpg",
+          "captures/0320.jpg",
+          "captures/0321.jpg",
+          "captures/0322.jpg",
+          "captures/0323.jpg",
+          "captures/0324.jpg",
+          "captures/0325.jpg",
+          "captures/0326.jpg",
+          "captures/0327.jpg",
+          "captures/0328.jpg",
+          "captures/0329.jpg",
+          "captures/0330.jpg",
+          "captures/0331.jpg",
+          "captures/0332.jpg",
+          "captures/0333.jpg",
+          "captures/0334.jpg"
+        ],
+        "groupFrameCounts": {
+          "desktop": 43,
+          "mobile-emulation": 42
+        }
+      }
+    },
+    "observerRepair": {
+      "status": "SOURCE_INDEPENDENTLY_ACCEPTED_NATIVE_NOT_RUN",
+      "scope": "Passive test-only planHistory observation snapshots already-current empty group input, delegates exactly once, and retains genuine return/exception behavior. Nonempty observation remains on selectionUnits. No runtime validation is restored or bypassed.",
+      "newTests": 10,
+      "targetedTotal": 47,
+      "targetedStatus": "PASS_INDEPENDENTLY_REPEATED_WITH_FINAL_DIAGNOSTICS",
+      "nativeExecution": "NOT_RUN",
+      "remainingFailure": "Separate mobile later 70/60 placement empties objects; cause unresolved. Geometry reads may perturb timing, so even a future diagnostic pass cannot alone explain the original failure.",
+      "targetedScope": "47 combined CDP/trace/observer/diagnostic helper tests, including the ten new observer regressions; not 47 observer-only tests."
+    },
+    "placementDiagnostic": {
+      "status": "SOURCE_INDEPENDENTLY_ACCEPTED_NATIVE_NOT_RUN",
+      "newTests": 3,
+      "combinedNewTests": 13,
+      "targetedTotal": 47,
+      "targetedStatus": "PASS_INDEPENDENTLY_REPEATED",
+      "scope": "Test-only passive capture/bubble input targets, elementFromPoint, geometry, visibility, object IDs and genuine planner inputs, after all original rapid first-Undo assertions. At most64 event records,16 planner inputs and80 retained prior pointer records; dropped counts explicit. No wait, retry, synthetic cancellation, input reroute, expected-state or assertion change.",
+      "errorHandling": "Diagnostic teardown clears hooks even if final snapshot fails. Original placement assertion is preserved if collection/emission fails; a diagnostic-only failure fails closed.",
+      "limit": "Geometry reads may perturb timing; this is causal evidence gathering, not a runtime fix or a valid reason to declare an unresolved interaction fixed if the diagnostic run passes."
     }
   }
 }

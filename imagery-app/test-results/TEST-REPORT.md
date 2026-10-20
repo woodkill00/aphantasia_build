@@ -1,3 +1,61 @@
+# Feature 014 touch-placement source repair preparation
+
+20 October 2026, 18:19 UTC. The independently reviewed repaired runtime is **421345 bytes**, SHA-256 `987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9`; app `d79d2838a4b44d8e6cd5cb5c98fce2ee708e3776cbd26356ac4ee684ef71dd72`. The final strengthened native helper is `cafa3213aab9ec51a2b4bdd568c0ac0acce02fab1ff98756509dadd913f81753`, observer/regression test file `ebb97ae466f2788f7b543814002dc9010f6729d1dfc859a3f96ea7a7a1ea3901`. **107 relevant placement/direct/observer checks** (including 54 new placement DOM tests) and **50 browser-helper checks** pass. Complete local `node --test imagery-app/tests/*.test.cjs`: **1423/1423 PASS**, zero failures/cancelled/skipped, Node v24.19.0, **18600.893153 ms**, after exact metadata/runtime pin refresh. Offline docs **58 files / 402 links**, **90 manifest entries / three recursive fixtures**, accepted source/native and unchanged transport hashes, exact historical-record preservation and whitespace all verify. **Current repaired native, actual visual, paired/group performance and clean-checkout CI package gates are NOT RUN.** Earlier source/local passes do not accept this changed runtime.
+
+## Narrow accepted repair and required new evidence
+
+Explicit canvas placement records one-shot intent only for a primary touch, bound to exact coordinates, viewport rectangle, selection, scene generation and interaction revision. Matching cancelable single touchstart revalidates canonical raw fields, content geometry, locks and the existing placement planner before canceling only its owned browser default. Preflight cannot stage the scene, add history or reveal. The existing pointerup performs the real atomic placement. Stale, invalid, unrelated or canceled intent leaves defaults available; end/cancellation/lifecycle paths clear intent. This is not a global click blocker, artificial wait, retry or delayed inspector update.
+
+The final native strengthening retains **224 cases**, now with **96 new group frames / 352 total planned captures**, adding one singleton overlap frame per profile. It checks original singleton and grouped overlap geometry; exact document, IDs, selection and groups; accepted-scene/history invariance; one exact placement Undo with redo availability; no implicit control command; and the first later intentional control activation. The earlier drag transaction separately exercises Redo; the new placement segment does not execute placement Redo. There are no extra reveal waits or reduced assertions. The additional **four to eight seconds** is an estimate within the unchanged 30/33-minute allowance, not a measured latency or native pass. Fresh exact-head execution and actual-frame review remain required.
+
+The source-worker **1415/1423 FAIL** checkpoint, with one stale CI runtime pin and seven package manifest/hash checks in 17893.510604 ms, remains retained below. Final pins and manifest were refreshed only after exact source/native acceptance; the fresh 1423/1423 result supersedes, but does not erase, that failed checkpoint. No test was relaxed to obtain a pass.
+
+Feature 013 prerequisite exact main `291ea178e03edadfea34352842cdc55a449695b9`, accepted tree `2e3c3abd78c60a9a42ef307c11fe0cb49888aa65`, is independently accepted on [run 39467700368](https://github.com/woodkill00/aphantasia_build/actions/runs/39467700368): 1215 Node, 200 native, complete transport, scoped timing and package. Its 78 assigned frames comprise 75 byte-identical previously inspected frames plus three changed originals actually inspected. This removes the prerequisite blocker but transfers no acceptance to the new group runtime. See [PR 17 checks](https://github.com/woodkill00/aphantasia_build/pull/17/checks) for subsequent exact-head outcomes.
+
+No timing threshold, 30/33-minute budget, transport cap, browser sandbox, permission, release, hosting or collection change is part of this repair. Workflow edits are limited to the exact tested runtime hash. Physical devices, other engines, actual assistive technology, calibrated display latency, sensory safety and efficacy remain unverified.
+
+---
+
+## Dated third-run diagnosis and pre-freeze failure history
+
+The following 18:14 snapshot records what was known before the source/native freeze; its then-pending statements do not override the accepted source review above. Both older native failures and earlier records remain intact.
+
+# Feature 014 confirmed touch-placement defect: repair preparation
+
+20 October 2026, 18:14:20 UTC. This is a dated failure-history snapshot while the narrow source fix and strengthened singleton/group native regressions are being prepared. **No repaired runtime/source freeze, complete local aggregate, native/visual/performance or clean-checkout package acceptance is claimed.** The artifact below is the last tested failed runtime; the preceding 1366/1366 local pass belongs to the diagnostic candidate, not the pending source repair. Manifest/hash refresh is intentionally held until independent source/native acceptance.
+
+## Third native attempt: complete diagnostic failure and causal evidence
+
+[Run 39468802272](https://github.com/woodkill00/aphantasia_build/actions/runs/39468802272) is terminal **FAIL: 223/224**, with native **FAIL** and package **SKIPPED**, job 118787109422. PR source head `f3800c6d1ce03e1bcfc0f103167630e8d2f14b4f`, clean checkout `200a508a894d3c809aa5764256a7395e86f6875e`, tree `f567fbf2fdbdbf8b4d1ad46efea600d926d3aa7e`, tested runtime **419083 bytes**, SHA-256 `e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8`. Native execution ran **17:45:57.406–18:07:06.163 UTC, 1268.757 seconds**, on Node v22.23.3 / Chrome 155.0.8059.39, with default sandbox and browser/profile cleanup retained.
+
+Desktop passed **112/112**, mobile emulation **111/112**: all **200 inherited cases** and **23/24 group cases** passed. All ten previously stale/undefined observer cases now pass. The whole run remains failed; this does not retroactively pass either earlier run or combine their passing subsets into acceptance.
+
+The remaining failure is now a **confirmed real touch-placement compatibility-click defect**, not an unexplained initial hit-test or observer error. The native trace shows trusted pointerdown and initial hit-test targeting the canvas with placement active. The genuine `place` command succeeds and retains both IDs. During pointerup the inspector reopens, making the same screen point hit `delete-object`. The same touch then emits a trusted compatibility click targeting Delete, followed by the genuine `delete` command and an empty object list. The original rapid drag and first trusted Undo already passed; the failure occurs during later placement. Passive geometry reads can perturb timing, but this run reproduced and causally identified the failure rather than inferring a fix from an instrumented pass.
+
+Lossless transport delivered **32 blocks, 1192 records, 11628931 raw bytes and 349 capture payloads**, including **93 group frames: 47 desktop / 46 mobile**. One planned mobile rapid-result frame is absent. Transcript SHA-256 is `95e4c7229b1fb073cbd55dc1472ebc8a4a8a4db6aa3f7c4a2b0b1c81112d1daa`; capture manifest `0427086f6ec7ddbba2043489defc3619960032e59fbee0c7bc663c9c030ebdd7`; report `792f214a65bbaa559f04c2fd127e77faab05b73c18efdb401089d40df93c12fc`. Native envelope/status output **7114336 bytes** remains under the unchanged **7350000-byte** cap. Delivery of the failed report is not test acceptance or guaranteed future transport capacity.
+
+Final independent review byte/hash/PIL-verified **all 349 original payloads** and actually inspected **all 93 emitted group frames, 47 desktop / 46 mobile**, with no additional visual blocker. **One planned mobile rapid-result frame is absent** because the genuine placement failure stopped its case; that frame is not accepted or substituted. The earlier 197-payload/47-desktop prefix is retained separately in JSON history.
+
+Independently verified paired nudge/drag/Hide p95 deltas are **+1.5 / +5.4 / +3.0 ms desktop** and **−1.5 / +3.9 / +3.5 ms mobile emulation**, within the unchanged +10 ms and <50 ms gates. Candidate-only group metadata/nudge/center/Hide/drag handlers also meet <50 ms; maximum metadata interval is **14.6 ms**. Center includes **one mutating sample separately from five no-op samples**, not six equivalent mutations. These are scoped measurements within a failed run, not overall native acceptance or evidence for the pending changed source.
+
+## Pre-refresh local failure, not a waived gate
+
+The source author's complete `node --test imagery-app/tests/*.test.cjs` ran before metadata refresh and **failed: 1415/1423 PASS, eight FAIL**, zero cancelled/skipped, **17893.510604 ms**. One CI test still pinned the previous runtime; seven package tests reported “Runtime manifest and tested HTML hash differ.” No runtime behavior regression test failed in that run, but the integrity failures remain genuine failures and **no full-suite pass is claimed**. Final source/native review, exact pin/manifest refresh and a fresh complete aggregate are still required.
+
+The provisional source artifact is 421345 bytes / `987a2b20f595ef87167f22815792f7edf655c3c4869c305172c13cb6785932b9`, app `d79d2838a4b44d8e6cd5cb5c98fce2ee708e3776cbd26356ac4ee684ef71dd72`, with 54 new DOM regressions, awaiting independent source review. The proposed native strengthening retains 224 cases and prepares 96 new group frames, adding one singleton overlap capture per profile without extra reveal waits. Its estimated four to eight additional seconds fits within the unchanged 30/33-minute budget, but is not measured performance or executed coverage. These provisional identities are not a final freeze.
+
+## Repair and evidence still required
+
+Prepare and independently review the narrow source repair with DOM regressions plus strengthened singleton/group native coverage. Then freeze the exact source/native hashes, refresh manifest/docs, run the complete local aggregate and execute every exact-head native, actual visual, unchanged performance and clean-checkout package gate. No scenario threshold, 30/33-minute allowance, bounded transport, sandbox, permission, release, hosting or collection change is authorized by this record. See [PR17 checks](https://github.com/woodkill00/aphantasia_build/pull/17/checks) for subsequent exact-head outcomes.
+
+Both earlier failures, their different evidence limits, and the entire preceding source/local preparation are retained verbatim below and in the JSON history. The first run's final/mobile counts remain unknown; the second remains 213/224 FAIL. Newly confirmed causality is a later finding, not a rewrite of what was known then.
+
+---
+
+## Historical 17:41:40 observer/diagnostic preparation
+
+The following dated record is preserved verbatim. Its then-unresolved diagnosis and then-unrun native gates describe that earlier snapshot, not the current confirmed defect or pending source repair.
+
 # Feature 014 test-observer repair preparation record
 
 20 October 2026, 17:41:40 UTC. This is a dated preparation record, not native acceptance. The runtime remains **419083 bytes**, SHA-256 `e4551d303f8883bdcbfe105bde164132c7a5430ed9bf599b5809351f74f744c8`; app, models, runner and lossless transport are unchanged. The final passive observer and bounded placement-diagnostic source are independently accepted, with **47/47 targeted helper tests**, including **13 new regressions (ten observer, three diagnostic)**. Complete local `node --test imagery-app/tests/*.test.cjs` is **1366/1366 PASS**, zero failures/cancelled/skipped, Node v24.19.0, **19659.416407 ms**. Offline docs **58 files / 401 links**, **89 manifest entries / three recursive fixtures**, frozen runtime/runner/transport hashes, exact prior-record preservation and whitespace verify. **Current observer/diagnostic native/visual/group-performance/clean-checkout CI package gates are NOT RUN.** The previous 1353/1353 aggregate below belongs to the earlier test tree.
