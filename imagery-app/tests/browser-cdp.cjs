@@ -35,10 +35,11 @@ async function stopChrome(browser, waits) {
 const root = path.resolve(process.env.IMAGERY_APP_ROOT || path.join(__dirname, '..'));
 const M = require(path.join(root, 'src/model.js'));
 const artifact = path.join(root, 'index.html');
-function initialGuardRemaining(events, now) {
+function initialGuardRemaining(events, now, explicitHideAt = null) {
   const guards=events.filter(event => ['resize','blur','pagehide'].includes(event.type) || (event.type==='visibilitychange' && event.hidden));
-  if (!guards.length) return 0;
-  return Math.max(0, Math.max(...guards.map(event=>event.time)) + M.REVEAL_GAP_MS + 100 - now);
+  const boundaries=guards.map(event=>event.time);if(Number.isFinite(explicitHideAt))boundaries.push(explicitHideAt);
+  if (!boundaries.length) return 0;
+  return Math.max(0, Math.max(...boundaries) + M.REVEAL_GAP_MS + 100 - now);
 }
 function assertFullscreenDraftMessage(message) {
   assert.match(message,/fix|invalid|discard/i,'fullscreen invalid draft error must explain how to resolve invalid edits');
@@ -212,6 +213,7 @@ class Page {
     return this.evaluate((s, k) => { const e = document.querySelector(s); if (!e) throw new Error(`Missing ${s}`); return e[k]; }, selector, key);
   }
   async fresh() {
+    await this.send('Page.bringToFront');
     const previousLoads = this.loadCount;
     const result = await this.send('Page.navigate', {url:pathToFileURL(artifact).href});
     assert.ok(!result.errorText, result.errorText);
@@ -243,9 +245,8 @@ class Page {
       });
       document.addEventListener('keydown',event=>{window.__testKeys.push({key:event.key,time:performance.now(),trusted:event.isTrusted,defaultPrevented:event.defaultPrevented,element:document.fullscreenElement?.id||null,visibility:document.querySelector('#visibility-label').textContent});if(window.__testKeys.length>20)window.__testKeys.shift();});
     });
-    await this.send('Page.bringToFront');
-    await sleep(100);
-    await this.hidden();
+    await this.visible();
+    assert.equal(await this.evaluate(()=>window.__testRAFRequests||0),0,'startup must not schedule timed animation');
   }
   async fullscreenAfter(action,expectedElement,label) {
     const state=()=>this.evaluate(()=>({time:performance.now(),element:document.fullscreenElement?.id||null,visibility:document.querySelector('#visibility-label').textContent,events:window.__testFullscreenTransitions.length}));
@@ -281,14 +282,14 @@ class Page {
   async settleInitialGuard() {
     // Emulation/navigation can deliver a real resize after load. Respect the same
     // guard a person encounters; never retry Show, change the clock, or touch the controller.
-    const state=()=>this.evaluate(() => ({events:window.__testLifecycle||[],time:performance.now()}));
+    const state=()=>this.evaluate(() => ({events:window.__testLifecycle||[],time:performance.now(),hideAt:window.__testExplicitSetupHideAt??null}));
     const initial=await state();
-    if (initialGuardRemaining(initial.events,initial.time)>0) {
+    if (initialGuardRemaining(initial.events,initial.time,initial.hideAt)>0) {
       console.log(`Initial lifecycle guard observed (${this.device.name}): ${JSON.stringify(initial.events)}`);
       await until(async () => {
         await this.hidden();
         const current=await state();
-        return initialGuardRemaining(current.events,current.time)===0;
+        return initialGuardRemaining(current.events,current.time,current.hideAt)===0;
       },'observed initial lifecycle guard to expire without automatic reveal',M.REVEAL_GAP_MS+4000);
     }
     await this.hidden();
@@ -444,6 +445,12 @@ class Page {
     await this.send('Emulation.setDeviceMetricsOverride', {width,height,deviceScaleFactor:this.device.scale,mobile:this.device.touch,screenWidth:width,screenHeight:height});
     await sleep(50);
   }
+  async workspaceHeader() {
+    const metrics=await this.evaluate(()=>[...document.querySelectorAll('.workspace-actions button')].filter(e=>!e.hidden).map(e=>{const r=e.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);const t=range.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{id:e.id,left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,text:{left:t.left,right:t.right,top:t.top,bottom:t.bottom},hit:hit===e||e.contains(hit),viewport:{width:innerWidth,height:innerHeight}}}));
+    assert.equal(metrics.length,3,'all three workspace actions must remain present');
+    for(const m of metrics){assert.ok(m.width>=44&&m.height>=44&&m.hit&&m.left>=0&&m.right<=m.viewport.width+1&&m.top>=0&&m.bottom<=m.viewport.height+1,'whole44px workspace target: '+JSON.stringify(m));assert.ok(m.text.left>=m.left&&m.text.right<=m.right&&m.text.top>=m.top&&m.text.bottom<=m.bottom,'whole visible workspace button text: '+JSON.stringify(m));assert.ok(Math.abs(m.top-metrics[0].top)<=1,'workspace actions stay on one row: '+JSON.stringify(metrics));}
+    return metrics;
+  }
   async visualCapture(name) {
     // Synthetic, explicitly requested review frames only. This is separate from
     // optional raw failure screenshots, which never enter public CI output.
@@ -479,10 +486,14 @@ async function run() {
   };
   const write = () => fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2)+'\n');
   let browser, profileCleanupSafe=true;
-  async function runCase(page, name, fn) {
+  async function runCase(page, name, fn, {startupLive=false}={}) {
     const start = Date.now();
     try {
-      await page.viewport(page.device.width); await page.fresh(); await fn();
+      await page.viewport(page.device.width); await page.fresh();
+      // Legacy cases explicitly start after a real native Hide, not a hidden
+      // startup override. The v7 startup case observes untouched actual startup.
+      if(!startupLive){await page.click('#hide-scene');await page.evaluate(()=>{window.__testExplicitSetupHideAt=performance.now()});await page.hidden();}
+      await fn();
       const result = {device:page.device.name,name,status:'PASS',durationMs:Date.now()-start}; report.results.push(result);
       console.log(`PASS ${page.device.name}: ${name}`);
     } catch (error) {
@@ -509,6 +520,7 @@ async function run() {
         await page.send('Page.enable'); await page.send('Runtime.enable'); await page.send('Network.enable');
         await page.send('Page.addScriptToEvaluateOnNewDocument',{source:`
           window.__testLifecycle=[];
+          window.__testRAFRequests=0;const realRAF=window.requestAnimationFrame;window.requestAnimationFrame=function(fn){window.__testRAFRequests++;return realRAF.call(this,fn)};
           const record=event=>{window.__testLifecycle.push({type:event.type,time:performance.now(),width:innerWidth,height:innerHeight,hidden:document.hidden});if(window.__testLifecycle.length>20)window.__testLifecycle.shift();};
           for(const type of ['resize','blur','focus','pageshow','pagehide'])window.addEventListener(type,record);
           document.addEventListener('visibilitychange',record);
@@ -522,9 +534,13 @@ async function run() {
           assert.equal(await page.evaluate(() => navigator.onLine),false);
           assert.equal(await page.evaluate(() => location.protocol),'file:');
           const canvas = await page.canvas(); assert.ok(canvas.width>0 && canvas.width<=4096); assert.ok(canvas.height>0 && canvas.height<=4096); assert.ok(canvas.width*canvas.height<=8388608); const ratio=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();return {w:r.width,h:r.height}}); assert.ok(Math.abs(canvas.width/canvas.height-ratio.w/ratio.h)<0.01,'canvas backing and CSS aspect ratios differ');
-          await page.noOverflow(device.width);
-          await sleep(250); await page.hidden(); await page.screenshot('startup',out);
-        });
+          await page.noOverflow(device.width);await page.workspaceHeader();
+          await page.visible();assert.equal(await page.evaluate(()=>window.__testRAFRequests),0);await page.visualCapture('v7-startup-live-static');await page.screenshot('startup',out);
+          const rgb=await page.evaluate(()=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(0,0,1,1).data).slice(0,3)});hslRgb({h:4,s:60,l:4}).forEach((v,i)=>assert.ok(Math.abs(rgb[i]-v)<=1));
+          await page.fill('#background-saturation-value',100);await page.visible();assert.equal(await page.property('#background-saturation','value'),'100');const saturated=await page.evaluate(()=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(0,0,1,1).data).slice(0,3)});hslRgb({h:4,s:100,l:4}).forEach((v,i)=>assert.ok(Math.abs(saturated[i]-v)<=1));await page.visualCapture('v7-live-background-saturation-100');
+          await page.click('#capture-add');await page.hidden();const sequence=await page.download('#sequence-export','imagery-field-sequence-v2.json');assert.equal(sequence.json.sequence.background.s,100);await page.click('#sequence-load');const restored=await page.download('#export-scene','imagery-field-scene-v3.json');assert.equal(restored.json.scene.background.s,100);
+          await page.fresh();await page.visible();assert.equal(await page.property('#background-saturation-value','value'),'60');assert.equal(await page.evaluate(()=>window.__testRAFRequests),0);
+        },{startupLive:true});
         await runCase(page,'native Show, Escape, rapid lock, keyboard, and End',async () => {
           await page.settleInitialGuard(); await page.click('#show-scene'); await page.visible(); await page.key('Escape'); await page.hidden();
           // Keep the whole repeated burst within the 3-second lock instead of relying on runner speed.

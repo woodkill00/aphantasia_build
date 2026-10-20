@@ -8,6 +8,9 @@ const {legacySequence,sequence}=require('./sequence-fixtures.cjs');
 const {itemScene,pulseScene,styleScene,alphas}=require('./item-fixtures.cjs');
 const rgb=({h,s,l})=>{const a=s/100*Math.min(l/100,1-l/100);return[0,8,4].map(n=>{const k=(n+h/30)%12;return Math.round(255*(l/100-a*Math.max(-1,Math.min(k-3,9-k,1))))})};
 const mix=(background,foreground,alpha)=>background.map((v,i)=>Math.round(v+(foreground[i]-v)*alpha));
+// Labels must fit and remain hittable, but the44px input target contract applies
+// to actual interactive controls, never to a fallback diagnostic ID.
+const isPrecisionTarget=part=>['INPUT','BUTTON','SELECT'].includes(part.tag);
 async function runItemScenarios({page,runCase}){
  const media=value=>page.motionPreference(value);
  const open=value=>page.file('synthetic-item-scene.json',value);
@@ -62,9 +65,40 @@ async function runItemScenarios({page,runCase}){
    await advance(3100);await page.click('#item-play');await page.fill('#object-hue-value','');await page.hidden();await page.fill('#object-hue-value','120');await page.hidden();await advance(3100);await page.click('#item-play');await page.visible();await media('reduce');await page.hidden();assert.equal(await page.evaluate(()=>window.__itemFrames.size),0);await media('no-preference');await advance(3100);await page.click('#item-play');await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','item timeline fullscreen cancellation');assert.equal(await page.evaluate(()=>window.__itemFrames.size),0);await page.fullscreenAfter(()=>page.key('Escape'),null,'item timeline fullscreen return');await page.hidden();
   }finally{await media('reduce')}
  });
- await runCase('v6 compact precision, style and timing controls remain fully visible with live field',async()=>{
-  await open(styleScene());await expand('item-style-details');await expand('item-timing-details');for(const[width,height]of[[320,568],[844,390]]){await page.viewport(width,height);await staticStart();await page.noOverflow(width);for(const id of['object-hue-value','object-hue-increase','outline-hue-value','shadow-hue-value','item-start','item-hold','pulse-period']){await page.focus('#'+id);const bounds=await page.evaluate(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect(),scroll=document.getElementById('editor-scroll').getBoundingClientRect(),c=document.getElementById('scene-canvas').getBoundingClientRect(),panel=document.getElementById('editor-panel').getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{focus:document.activeElement===e,hit:hit===e||e.contains(hit),top:r.top,bottom:r.bottom,scrollTop:scroll.top,scrollBottom:scroll.bottom,width:r.width,height:r.height,overlap:Math.max(0,Math.min(c.right,panel.right)-Math.max(c.left,panel.left))*Math.max(0,Math.min(c.bottom,panel.bottom)-Math.max(c.top,panel.top))}},id);assert.ok(bounds.focus&&bounds.hit&&bounds.top>=bounds.scrollTop-1&&bounds.bottom<=bounds.scrollBottom+1&&bounds.overlap<=1,`compact control clipped ${id} at${width}x${height}: ${JSON.stringify(bounds)}`);if(id.endsWith('increase'))assert.ok(bounds.width>=44&&bounds.height>=44);}
-   await page.visualCapture('v6-compact-precision-'+width+'x'+height);await page.click('#hide-scene');await page.hidden();}
+ await runCase('v7 native Steady and Pulse choices mix without changing steady hold or finite end',async()=>{
+  try{await media('no-preference');await page.fresh();await page.visible();await page.click('#item-play');await page.visible();assert.match(await page.property('#item-progress','textContent'),/Playing/);assert.ok(await page.evaluate(()=>window.__testRAFRequests)>0);await page.click('#item-stop');await page.hidden();const value=itemScene();for(const o of value.scene.objects)o.timing={startMs:0,fadeInMs:0,holdMs:4000,fadeOutMs:0,pulse:{enabled:false,minOpacity:.5}};await open(value);const rafBefore=await page.evaluate(()=>window.__testRAFRequests);await expand('item-timing-details');
+   assert.equal(await page.property('#pulse-enabled','tagName'),'SELECT');assert.equal(await page.property('#pulse-enabled','value'),'steady');await page.nativeSelect('#object-select','object-2');await page.nativeSelect('#pulse-enabled','pulse');value.scene.objects[1].timing.pulse.enabled=true;await page.hidden();assert.equal(await page.evaluate(()=>window.__testRAFRequests),rafBefore);await page.visualCapture('v7-selected-pulse-mode');
+   await page.click('#apply-changes');const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);await page.nativeSelect('#object-select','object-1');assert.equal(await page.property('#pulse-enabled','value'),'steady');await page.focus('#pulse-enabled');await page.visualCapture('v7-selected-steady-no-pulse');
+   await page.evaluate(()=>document.getElementById('item-total').scrollIntoView({block:'start',behavior:'instant'}));assert.match(await page.property('#item-total','textContent'),/1 steady.*1 pulsing/i);assert.match(await page.property('#item-timeline','textContent'),/Steady/);assert.match(await page.property('#item-timeline','textContent'),/Pulse/);await page.visualCapture('v7-mixed-item-summary-and-tracks');
+   await controlled();await advance(3100);await page.click('#item-play');let elapsed=0;for(const time of[500,1000,2000,3000,3999]){await advance(time-elapsed);elapsed=time;const result=await framePixels(value,time);assert.equal(result.weights[0],1);assert.ok(result.weights[1]<1);assert.equal(await page.evaluate(()=>window.__itemFrames.size),1)}await advance(1);await page.hidden();assert.equal(await page.evaluate(()=>window.__itemFrames.size),0);await advance(60000);await page.hidden();
+  }finally{await media('reduce')}
+ });
+ await runCase('v7 full precision controls and labels fit responsive and effective-zoom reflow',async()=>{
+  await open(styleScene());await expand('item-style-details');await expand('item-timing-details');
+  // 640x450 is the effective CSS viewport of a 1280x900 window at 200% zoom.
+  // This verifies reflow, not browser chrome zoom, a physical screen or text zoom.
+  for(const[width,height]of[[320,568],[844,390],[640,450],[1024,768]]){
+   await page.viewport(width,height);await staticStart();await page.noOverflow(width);await page.workspaceHeader();
+   for(const id of ['object-hue','object-saturation','object-lightness','outline-width','outline-hue','shadow-offset-x','shadow-hue','background-saturation']){
+    await page.focus('#'+id+'-value');
+    const bounds=await page.evaluate(id=>{
+     const field=document.getElementById(id+'-value'),group=field.closest('.precision-control');group.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+     const scroll=document.getElementById(innerHeight<=500?'editor-panel':'editor-scroll').getBoundingClientRect(),canvas=document.getElementById('scene-canvas').getBoundingClientRect(),panel=document.getElementById('editor-panel').getBoundingClientRect();
+     const rect=e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{id:e.id||e.tagName,tag:e.tagName,left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,hit:hit===e||e.contains(hit)}};
+     return{focus:document.activeElement===field,group:rect(group),parts:[...group.querySelectorAll('label,input,button')].map(rect),scroll:{left:scroll.left,right:scroll.right,top:scroll.top,bottom:scroll.bottom},viewport:{width:innerWidth,height:innerHeight},canvas:{left:canvas.left,right:canvas.right,top:canvas.top,bottom:canvas.bottom,width:canvas.width,height:canvas.height},overlap:Math.max(0,Math.min(canvas.right,panel.right)-Math.max(canvas.left,panel.left))*Math.max(0,Math.min(canvas.bottom,panel.bottom)-Math.max(canvas.top,panel.top))};
+    },id);
+    assert.ok(bounds.focus&&bounds.overlap<=1,'focused field and separate live canvas: '+JSON.stringify(bounds));
+    assert.ok(bounds.canvas.width>=30&&bounds.canvas.height>=30&&bounds.canvas.left>=0&&bounds.canvas.top>=0&&bounds.canvas.right<=width+1&&bounds.canvas.bottom<=height+1,'canvas remains in viewport: '+JSON.stringify(bounds));
+    for(const part of bounds.parts){assert.ok(part.left>=Math.max(0,bounds.scroll.left)-1&&part.right<=Math.min(width,bounds.scroll.right)+1&&part.top>=Math.max(0,bounds.scroll.top)-1&&part.bottom<=Math.min(height,bounds.scroll.bottom)+1&&part.hit,`whole ${id} component is reachable at ${width}x${height}: ${JSON.stringify(bounds)}`);if(isPrecisionTarget(part))assert.ok(part.height>=44&&part.width>=44,'44px numeric/range/button target: '+JSON.stringify(part))}
+    if(id==='object-hue'||id==='background-saturation')await page.visualCapture('v7-whole-'+id+'-'+width+'x'+height);
+   }
+   for(const id of ['item-start','item-hold','pulse-period','pulse-enabled']){
+    await page.focus('#'+id);const bounds=await page.evaluate(id=>{const input=document.getElementById(id);input.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});const scroll=document.getElementById(innerHeight<=500?'editor-panel':'editor-scroll').getBoundingClientRect();return{focus:document.activeElement===input,scroll:{left:scroll.left,right:scroll.right,top:scroll.top,bottom:scroll.bottom},parts:[document.querySelector('label[for="'+id+'"]'),input].map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return{id:e.id,tag:e.tagName,left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height,hit:hit===e||e.contains(hit)}})}},id);
+    assert.ok(bounds.focus);for(const part of bounds.parts){assert.ok(part.left>=Math.max(0,bounds.scroll.left)-1&&part.right<=Math.min(width,bounds.scroll.right)+1&&part.top>=Math.max(0,bounds.scroll.top)-1&&part.bottom<=Math.min(height,bounds.scroll.bottom)+1&&part.hit,`timing label/input clipped ${id} at${width}x${height}: ${JSON.stringify(bounds)}`);if(isPrecisionTarget(part))assert.ok(part.width>=44&&part.height>=44)}
+   }
+   if(width===320||width===844)await page.visualCapture('v7-timing-mode-'+width+'x'+height);
+   await page.click('#hide-scene');await page.hidden();
+  }
  });
 }
-module.exports={runItemScenarios,rgb,mix};
+module.exports={runItemScenarios,rgb,mix,isPrecisionTarget};

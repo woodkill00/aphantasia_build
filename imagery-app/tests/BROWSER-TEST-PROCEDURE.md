@@ -85,7 +85,7 @@ node imagery-app/tests/browser.cjs
 
 Set `CHROMIUM_PATH` when the executable differs from the script's standard Linux location. The suite enables the Chromium sandbox and navigates the actual HTML through `file:`. No package installation is performed by the script. A missing dependency or failed launch is BLOCKED, not PASS. Generated outputs are local and git-ignored; inspect them for machine details before publishing.
 
-The suite covers laptop and phone-sized touch emulation, hidden startup, explicit display controls, editing, actual downloads, JSON round trips, rejected imports, stale import races, optional-note separation, selected focus/layout checks, and observed requests/errors. The script was syntax-checked but has not been behaviorally validated by a successful browser run. Fix test defects transparently if execution exposes them.
+The suite covers laptop and phone-sized touch emulation, one-time static live startup, explicit conceal/resume controls, editing, actual downloads, JSON round trips, rejected imports, stale import races, optional-note separation, selected focus/layout checks, and observed requests/errors. The alternate Playwright script has been adapted to the v0.7 startup contract and syntax-checked, but has not been behaviorally validated by a successful browser run. Its historical scenarios explicitly select Hide before testing stopped behavior. Fix test defects transparently if execution exposes them.
 
 ## Physical-device and manual checks
 
@@ -93,7 +93,7 @@ Use synthetic scenes and notes. Record device, OS, browser/version, artifact has
 
 1. Download and open the actual HTML through the ordinary OS-to-browser workflow. A file preview or HTTP server is not this acceptance case.
 2. Disconnect networking and reopen a fresh copy. Exercise all presets, edits, history, visibility controls, imports, and exports. Inspect app network requests where supported.
-3. Confirm hidden startup and concealment after backgrounding, app switching, lock/unlock, resize, page restoration, and sleep/wake. Hide must remain reachable while scrolling and while a file read is pending.
+3. Confirm one-time visible static startup with no timed autoplay. After Hide/Escape, backgrounding, app switching, lock/unlock, an actual viewport change, page restoration, or sleep/wake, confirm concealment persists until a fresh explicit Resume action. A same-size resize notification must not be confused with an actual viewport change. Hide must remain reachable while scrolling and while a file read is pending.
 4. Export an accepted scene, verify the real file exists, close/reopen a moved or renamed HTML copy, import the file, and compare canonical data. Exercise duplicate filenames, canceled downloads/choosers, blocked downloads, same-file reselect, and read errors.
 5. Reject empty, malformed, oversized, duplicate-key, unknown-version/field, nested, URL, markup, and animation fixtures without executing them or losing the last valid scene.
 6. Rapidly combine opposing edits, palette/preset changes, history, Hide/Show, and keyboard repeat. An old file read must not restore a hidden scene or overwrite newer accepted data.
@@ -103,3 +103,11 @@ Use synthetic scenes and notes. Record device, OS, browser/version, artifact has
 10. Verify that scene export excludes synthetic notes; note export requires reviewing and selecting current contents; edits/clearing invalidate prior preview approval; reload clears in-memory notes.
 
 Phone emulation is not a physical phone result. Browser tests cannot establish medical safety, efficacy, calibrated luminance/timing, or full accessibility conformance. Qualified review remains separate.
+
+## Version 0.7 startup and responsive acceptance
+
+The dependency-free CDP gate observes the real initial static preview before any Hide action. Legacy stopped-state cases explicitly click native Hide; they do not override runtime initialization. Startup pixels use an independent HSL oracle at default H4/S60/L4 and S100, then verify current scene/sequence capture and reload defaults. Instrumented native RAF requests must be zero before explicit timed playback. Default live preview must transition to finite items with one Play click.
+
+Steady and Pulse are native select choices for each item; a mixed raster fixture holds its steady item unchanged while a pulsing item varies and both stop at the latest end. Controlled-clock raster checks remain distinct from real scheduling tests.
+
+Full label, numeric output, slider and both fine buttons are checked for clipping, hit testing and 44-pixel input targets at 320×568, 844×390, 640×450 and 1024×768. The 640×450 case represents the effective CSS viewport of 1280×900 at 200% zoom; it is a reflow check, not browser-chrome zoom, physical-device or text-enlargement evidence. Actual captured frames still require independent inspection.

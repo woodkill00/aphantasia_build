@@ -1,3 +1,47 @@
+# Version 0.7 live startup and responsive timing verification
+
+2026-10-20. **457/457 non-browser checks and 98/98 native Chrome groups PASS** in [run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664), job 118477960095. Source head `33bca8b59e52596f0784529b9162ea5240d1a7fb` was tested through PR test-merge checkout `b9087838b1f58fd3a12f3c51bc0d078c82029b88`. All **78 actual synthetic rendered captures** were byte/hash verified (1396233 JPEG bytes); all 78 were independently inspected and accepted for the tested software scope.
+
+## Exact artifact and environment
+
+- HTML: 167297 bytes; SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`.
+- Node 22.23.3, Linux, sandbox-enabled Chrome 155.0.8059.84.
+- Native duration: 463.189 seconds (7m43.189s). Workflow exited successfully; browser closure and temporary-profile deletion passed.
+- Full commands: `node --test imagery-app/tests/*.test.cjs`; `node --check imagery-app/tests/browser-cdp.cjs`; `node imagery-app/tests/browser-cdp.cjs --check-fixtures`; `node imagery-app/tests/browser-cdp.cjs`. Fixture checks accepted 3 valid inputs and rejected 14 invalid inputs.
+- The preinstalled-tool CI retains read-only repository permission and the normal browser sandbox, with no package installation, permission expansion or deployment. Inspected pages reported zero runtime errors, unexpected dialogs or remote app requests.
+
+## Verified software scope
+
+The valid starter draft renders immediately as a static Live preview with the requested HSL 4/60/4 background; startup starts no timer or pulse. Background saturation is editable from 0–100, not capped at its 60 default. Current-format scene/sequence paths preserve 100, while original legacy bounds and item/effect bounds remain unchanged. Numeric entry, slider and fine-step buttons synchronize and actual live pixels change without Apply. Explicit Hide, invalid input and handled lifecycle cancellation remain concealed; valid edits never resurrect output.
+
+Per-item Steady and Pulse selection, mixed steady/pulsing composition, zero-fade hold, overlapping fades and finite automatic end were verified. One deliberate Play action transfers active static preview into finite item playback without bypassing a later Hide lock. Repeated Play, stale callbacks, Stop/Hide/Escape, reduced motion, mode changes and separate snapshot clocks retain their reviewed controls.
+
+Actual native layout checks cover 320×568 portrait, 844×390 short landscape, 640×450 effective viewport reflow and 1024×768, under both desktop and phone-sized touch profiles. Complete labels, focused numeric fields, ranges and fine-step buttons must fit their scrollport, actual controls retain 44px targets, and preview/editor rectangles do not overlap. Header button bounds, whole text, hit testing and compact one-row alignment are checked. Expanded style/timing rows and actual mixed-summary tracks are included. The 640×450 case models the CSS viewport of 1280×900 at 200% zoom; it is not native browser-chrome zoom or text-zoom testing. CSS calc/min/max/clamp and shared sizing tokens are design mechanisms, not proof of every possible layout.
+
+## Failure, review and complete retry
+
+The first attempt below passed 96/98 native groups but failed two new tests because a diagnostic LABEL identifier was mistaken for an input/button target. The explicit element-tag classification repair adds an independent regression and preserves full-label bounds/hit checks and actual-control 44px assertions. Neither previously unexecuted responsive tail was waived: both passed in this full rerun. Independent inspection of all 56 first-run frames also identified a wasted mobile header row; the narrow three-column action-grid repair changed the artifact, so fresh exact-runtime native and visual evidence was required. Actual mixed-summary/track captures were added rather than inferring them from selector screenshots.
+
+The first run used Chrome 155.0.8059.39 and this successful run used 155.0.8059.84; both exact environments are recorded. The harness classification is reproduced by its focused regression, not attributed to an unproven Chrome defect. The 10-minute native step and 12-minute job budgets were approved from measured prior duration plus counted additional guards/checks; no assertions, security flags or acceptance gates were weakened. Local sandbox-enabled Chromium launch was blocked before navigation, so it is recorded as an environment blocker, not native verification.
+
+## Integration and limits
+
+Later documentation-only integration must retain this exact runtime/tests and pass complete exact-head CI before merge; consult [PR 5 checks](https://github.com/woodkill00/aphantasia_build/pull/5/checks). This source-run report alone does not assert a merge or hosted deployment.
+
+Physical devices, other browser engines, ordinary OS dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy remain unestablished. Browser emulation is not a physical-device test, compressed screenshots supplement exact raster assertions, and agent review is not a human usability study. Opacity/timing limits are engineering restrictions, not medically safe thresholds or composite-output photosensitivity certification.
+
+<!-- V07-FIRST-FAILED-ATTEMPT -->
+# First version 0.7 native attempt (failed)
+
+2026-10-20. [First native run 39375994747](https://github.com/woodkill00/aphantasia_build/actions/runs/39375994747) passed all 456 Node checks and 96/98 native Chrome groups, but is a failed workflow. Both new precision-layout groups misclassified a text LABEL as a 44px numeric/range/button target. Later responsive/timing assertions and 20 planned captures did not execute. Repair requires explicit control-role classification while preserving complete-label bounds and actual-control 44px assertions, followed by a complete native rerun.
+
+Source head: `fdb4afff3c943af6118de37b82fb557cf2f25963`; PR test-merge checkout: `7188016cfe29d1f0bcb1dd6bf271b6641975dcdb`. Runtime: 167235 bytes, SHA-256 `842aba7113a8c8372f19e3d8cd7708484447431215ed2d288c12da84bed12b70`. Node 22.23.3 and sandbox-enabled Chrome 155.0.8059.39 on Linux. Native duration 447.411 seconds; browser closure and temporary-profile deletion passed. All 56 emitted synthetic JPEG captures were byte/hash verified (999716 bytes); missing captures and pending visual review prevent full layout acceptance.
+
+The candidate changes one static startup preview, background saturation through 100% with default 60%, explicit Steady/Pulse item modes and calculated responsive precision layout. The native step/job budget is 10/12 minutes based on measured prior runtime plus counted new guards/checks. No assertions or browser-security settings were weakened. Local sandbox-enabled Chromium launch was blocked before navigation; native CI is the actual browser evidence.
+
+Full exact-head CI, actual-frame acceptance and evidence reconciliation remain required before merge. Physical devices, other engines, ordinary OS dialogs, full accessibility, calibrated sensory safety and clinical efficacy are not established. Historical results below do not verify this changed runtime.
+
+<!-- HISTORICAL-V06-EVIDENCE -->
 # Version 0.6 verified item styles and finite timelines
 
 2026-10-20. **424/424 non-browser checks and 96/96 native Chrome scenario groups PASS.** [Full successful run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160), job 118443770240, tested source `3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79` through PR test-merge checkout `df3e57d63f1cba3d1749e8228f2ef6acb1d046ca`. All **52 actual synthetic rendered captures** were byte/hash verified and independently inspected; no visual blocker remained.

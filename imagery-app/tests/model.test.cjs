@@ -54,7 +54,7 @@ test('VALIDATE V3: shape size ranges and inset enforced including contour stroke
  }
  for(const shape of ['','dots','stripes','animated',null,0,{},[]])rejects(object({shape}));
 });
-for(const [location,field,min,max]of [['background','h',0,359],['background','s',0,60],['background','l',0,40],['color','h',0,359],['color','s',0,70],['color','l',10,70]])test(`VALIDATE V3: ${location}.${field} boundaries and types`,()=>{
+for(const [location,field,min,max]of [['background','h',0,359],['background','s',0,100],['background','l',0,40],['color','h',0,359],['color','s',0,70],['color','l',10,70]])test(`VALIDATE V3: ${location}.${field} boundaries and types`,()=>{
  for(const v of [min,max,min-1,max+1,NaN,Infinity,-Infinity,1.5,String(min),null,false,{},[]]){const s=base();(location==='background'?s.scene.background:s.scene.objects[0].color)[field]=v;if(v===min||v===max)accepts(s);else rejects(s)}
 });
 test('VALIDATE V3: name boundaries, controls, markup remains inert text',()=>{

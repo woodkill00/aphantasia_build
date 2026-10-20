@@ -11,6 +11,66 @@ test('MODEL V3: new presets use requested H4 S60 L4 without changing imported ba
  assert.deepEqual(M.DEFAULT_BACKGROUND,{h:4,s:60,l:4});assert.ok(Object.isFrozen(M.DEFAULT_BACKGROUND));
  for(const background of [{h:0,s:0,l:0},{h:222,s:43,l:19}])assert.deepEqual(checked(legacyObjects({background})).scene.background,background);
 });
+test('MODEL V3: background saturation supports every integer0–100 and roundtrips without changing defaults',()=>{
+ for(let saturation=0;saturation<=100;saturation++){
+  const value=scene({background:{h:4,s:saturation,l:4}}),before=copy(value),canonical=checked(value);
+  assert.deepEqual(canonical.scene.background,{h:4,s:saturation,l:4});
+  assert.deepEqual(M.parseScene(JSON.stringify(canonical)),canonical);
+  assert.equal(M.colorCSS(canonical.scene.background),`hsl(4 ${saturation}% 4%)`);
+  assert.deepEqual(value,before);
+ }
+ assert.deepEqual(M.DEFAULT_BACKGROUND,{h:4,s:60,l:4});
+ for(const preset of M.presets())assert.deepEqual(preset.scene.background,{h:4,s:60,l:4});
+});
+test('MODEL V3: saturation extension does not widen item, outline, shadow or other background channels',()=>{
+ for(const path of ['color','outline.color','shadow.color']){
+  const at=s=>path.split('.').reduce((o,key)=>o[key],s.scene.objects[0]);
+  const valid=scene({background:{h:359,s:100,l:40}});at(valid).s=70;checked(valid);
+  for(const saturation of [71,100]){const invalid=copy(valid);at(invalid).s=saturation;reject(invalid);}
+ }
+ for(const[key,value]of [['h',360],['l',41],['s',101],['s',-1],['s',60.5],['s','100'],['s',NaN],['s',Infinity]]){
+  const invalid=scene({background:{h:4,s:100,l:4}});invalid.scene.background[key]=value;reject(invalid);
+ }
+});
+test('MODEL V3: legacy scene backgrounds retain original closed60 cap then migrate without clamping',()=>{
+ for(const saturation of [0,60]){
+  const old=legacyObjects({background:{h:4,s:saturation,l:4}}),migrated=M.parseScene(JSON.stringify(old));
+  assert.equal(migrated.version,3);assert.equal(migrated.scene.background.s,saturation);
+  migrated.scene.background.s=100;assert.equal(checked(migrated).scene.background.s,100);
+ }
+ for(const saturation of [61,100,101]){
+  const invalid=legacyObjects({background:{h:4,s:saturation,l:4}});reject(invalid);assert.throws(()=>M.parseScene(JSON.stringify(invalid)));
+ }
+});
+test('MODEL V3:100 saturation survives live draft, apply, history and import without hidden revival',()=>{
+ let now=0;const c=M.createController(()=>now,scene({background:{h:4,s:60,l:4}}));
+ const full=scene({background:{h:4,s:100,l:4}});
+ assert.equal(c.previewDraft(full).ok,true);assert.equal(c.getState().draft.scene.background.s,100);
+ assert.equal(c.getState().current.scene.background.s,60);
+ c.hide();assert.equal(c.stageLive(full).ok,true);assert.equal(c.getState().visible,false);
+ assert.equal(c.apply().ok,true);assert.equal(c.getState().current.scene.background.s,100);assert.equal(c.getState().visible,false);
+ assert.equal(c.undo().ok,true);assert.equal(c.getState().current.scene.background.s,60);
+ assert.equal(c.redo().ok,true);assert.equal(c.getState().current.scene.background.s,100);
+ const exported=JSON.stringify(c.getState().current),token=c.beginImport();
+ assert.equal(c.finishImport(token,exported).ok,true);assert.deepEqual(c.getState().current,full);assert.equal(c.getState().visible,false);
+ const bad=copy(full);bad.scene.background.s=101;assert.equal(c.stageLive(bad).ok,false);assert.deepEqual(c.getState().current,full);
+ now=3000;assert.equal(c.previewDraft(c.getState().draft).ok,true);
+});
+test('MODEL V3: fully saturated background stays fixed through finite mixed item timing',()=>{
+ const I=require('../src/item-model.js'),steady=styledObject({id:'object-1'}),pulsing=styledObject({id:'object-2'});
+ steady.timing={startMs:0,fadeInMs:0,holdMs:4000,fadeOutMs:0,pulse:{enabled:false,minOpacity:.8}};
+ pulsing.timing={startMs:1000,fadeInMs:1000,holdMs:4000,fadeOutMs:1000,pulse:{enabled:true,minOpacity:.5}};
+ const value=scene({background:{h:4,s:100,l:4},objects:[steady,pulsing]}),before=copy(value),compiled=I.compileTimeline(value);
+ assert.equal(compiled.durationMs,7000);assert.ok(Object.isFrozen(compiled.document.scene.background));
+ for(const time of [0,999,1000,1500,2000,3999,4000,6000,6999,7000]){
+  const frame=I.frameAt(compiled,time);
+  assert.deepEqual(compiled.document.scene.background,{h:4,s:100,l:4});
+  if(time<4000)assert.equal(frame.items[0].alpha,1);
+  if(time===2000)assert.equal(frame.items[1].alpha,.5);
+  if(time===7000)assert.equal(frame.done,true);
+ }
+ assert.deepEqual(value,before);
+});
 test('MODEL V3: strict v2 migration adds defaults and preserves base geometry and colors',()=>{
  const old=legacyObjects(),before=copy(old),now=checked(old);assert.deepEqual(old,before);assert.equal(now.version,3);assert.equal(now.sampler,'styled-objects-3');assert.equal(now.scene.pulsePeriodMs,4000);const o=now.scene.objects[0];for(const[k,v]of Object.entries(old.scene.objects[0]))assert.deepEqual(o[k],v);for(const[k,v]of Object.entries(effects()))assert.deepEqual(o[k],v);
  const extra=legacyObjects();extra.scene.objects[0].outline=effects().outline;reject(extra);const noVersion=scene();noVersion.version=2;noVersion.sampler='static-objects-2';reject(noVersion);

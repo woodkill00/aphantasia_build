@@ -2,9 +2,15 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: version 0.6 precise styles and item timing
+## Current increment: version 0.7 live startup and responsive timing controls
 
-Implemented the [item-timeline contract](item-timeline.md): new starter background H4/S60/L4, editable numbers and fine-step controls, independently colored outline/shadow, duplicate/start-after helpers, selectable timeline tracks, overlapping item fades and finite shared-clock opacity pulse. Preserve old files through strict versioned migrations and keep item playback separate from snapshot sequences. The exact artifact passed 424 non-browser checks and 96 native groups in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160); all 52 actual rendered captures were verified and independently inspected. The first fixture failure and full repair retry remain recorded. Final documentation-only integration requires its own clean CI gate. Earlier-version passes were not inherited.
+The requested increment starts the valid static draft preview once, keeps Hide persistent, extends current background saturation to 100% while retaining the 60% default and strict legacy bounds, and exposes explicit Steady/Pulse modes with mixed-item summaries. Consolidate responsive sizing around shared tokens and calc/min/max/clamp, preserving an unobscured preview and fully visible precision rows. See the [design](editor-redesign.md) and [item contract](item-timeline.md).
+
+The exact source `33bca8b59e52596f0784529b9162ea5240d1a7fb` and 167,297-byte HTML (SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`) passed 457 non-browser checks and 98 native Chrome groups in [CI run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664). All 78 fresh rendered frames were verified and independently inspected, covering startup, background-100, steady/pulse/mixed timing, narrow/short controls and effective 640×450 reflow. The first run failed a label/control classification assertion before its new responsive tail; the full retry followed the assertion repair and a visually motivated compact-header improvement. Failed outcomes remain recorded. Actual OS/browser zoom, physical devices, full accessibility and qualified sensory acceptance remain separate gates. Final documentation-head CI is still required before integration; no earlier artifact pass was inherited.
+
+## Historical version 0.6 precise styles and item timing
+
+Implemented the [item-timeline contract](item-timeline.md): new starter background H4/S60/L4, editable numbers and fine-step controls, independently colored outline/shadow, duplicate/start-after helpers, selectable timeline tracks, overlapping item fades and finite shared-clock opacity pulse. Preserve old files through strict versioned migrations and keep item playback separate from snapshot sequences. The exact artifact passed 424 non-browser checks and 96 native groups in [run 39366282160](https://github.com/woodkill00/aphantasia_build/actions/runs/39366282160); all 52 actual rendered captures were verified and independently inspected. The first fixture failure and full repair retry remain recorded. Its final integration evidence is recorded in the test report. Earlier-version passes were not inherited.
 
 ## Historical version 0.5 live editing
 

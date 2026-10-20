@@ -44,6 +44,8 @@ test('CDP malformed message rejects in-flight commands', async () => {
 
 test('Initial-viewport settling responds only to observed hide lifecycle events', () => {
   assert.equal(initialGuardRemaining([],0),0);
+  assert.equal(initialGuardRemaining([],100,50),3050);
+  assert.equal(initialGuardRemaining([],4000,50),0);
   assert.equal(initialGuardRemaining([{type:'pageshow',time:50}],100),0);
   assert.equal(initialGuardRemaining([{type:'visibilitychange',time:50,hidden:false}],100),0);
   assert.equal(initialGuardRemaining([{type:'resize',time:50}],100),3050);

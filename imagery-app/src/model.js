@@ -1,4 +1,4 @@
-/* Imagery Field 0.6.0. Styled scene model and interaction controller.
+/* Imagery Field 0.7.0. Styled scene model and interaction controller.
    Counts, geometry, colors and buffer limits are engineering choices only.
    They are not calibrated luminance, sensory safety or exposure thresholds. */
 (function (root, factory) {
@@ -45,9 +45,9 @@
     if (typeof value!=='string'||value.length<1||value.length>64||!value.trim()||/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(value)) throw new Error('Name must be 1–64 characters without control characters.');
     return value;
   }
-  function color(value,background,effect) {
+  function color(value,background,effect,backgroundSaturationMax=100) {
     object(value,['h','s','l'],background?'Background':'Object color');
-    integer(value.h,0,359,'Hue');integer(value.s,0,background?60:70,'Saturation');integer(value.l,background||effect?0:10,background?40:70,'Lightness');
+    integer(value.h,0,359,'Hue');integer(value.s,0,background?backgroundSaturationMax:70,'Saturation');integer(value.l,background||effect?0:10,background?40:70,'Lightness');
     return {h:value.h,s:value.s,l:value.l};
   }
   function decimal(value,min,max,scale,label) {
@@ -101,7 +101,9 @@
     const s=value.scene;
     object(s,old?['name','background','objects']:['name','background','pulsePeriodMs','objects'],'Scene');name(s.name);
     const pulsePeriodMs=old?DEFAULT_PULSE_PERIOD_MS:pulsePeriod(s.pulsePeriodMs);
-    const background=color(s.background,true),list=s.objects;
+    // Current backgrounds use the full saturation range; historical inputs
+    // retain their original closed bounds before migration. Never clamp imports.
+    const background=color(s.background,true,false,old?60:100),list=s.objects;
     if(!Array.isArray(list)||Object.getPrototypeOf(list)!==Array.prototype||list.length>MAX_OBJECTS)throw new Error('Scene objects must be an array with 0–12 objects.');
     const keys=Reflect.ownKeys(list);
     if(keys.length!==list.length+1||keys.some(k=>k!=='length'&&(typeof k!=='string'||!/^\d+$/.test(k)||Number(k)>=list.length)))throw new Error('Object array has missing or unsupported fields.');
@@ -207,8 +209,9 @@
         if(!checked.ok){conceal(false);return result(false,checked.error);}
         draft=checked.scene;return result(true);
       },
-      // Only an explicit preview action may reveal a draft. Accepted data and
-      // history remain unchanged until Apply/capture.
+      // The UI may call this once for requested startup static preview, then
+      // only for an explicit preview action. It never schedules playback.
+      // Accepted data and history remain unchanged until Apply/capture.
       previewDraft(value) {
         const checked=validateScene(value);invalid();
         if(!checked.ok){conceal(false);return result(false,checked.error);}

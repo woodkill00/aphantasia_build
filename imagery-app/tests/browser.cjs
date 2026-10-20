@@ -19,8 +19,8 @@ const payload=(name,value)=>({name,mimeType:'application/json',buffer:Buffer.fro
 async function hidden(page){assert.equal((await page.locator('#visibility-label').textContent()).trim(),'Hidden');}
 async function visible(page){assert.equal((await page.locator('#visibility-label').textContent()).trim(),'Visible');}
 async function download(page,id,name){const next=page.waitForEvent('download');await page.locator(id).click();const d=await next;assert.equal(await d.failure(),null);const target=path.join(out,name);await d.saveAs(target);return JSON.parse(fs.readFileSync(target,'utf8'));}
-async function fresh(page){await page.goto(pathToFileURL(path.join(root,'index.html')).href);await hidden(page);}
-async function runCase(page,device,name,fn){const started=Date.now();try{await fresh(page);await fn();report.results.push({device,name,status:'PASS',durationMs:Date.now()-started})}catch(e){report.results.push({device,name,status:'FAIL',error:e.stack,durationMs:Date.now()-started});try{await page.screenshot({path:path.join(out,`${device}-${name.replace(/[^a-z0-9]+/gi,'-')}-failure.png`),fullPage:true})}catch{}}write();}
+async function fresh(page){await page.goto(pathToFileURL(path.join(root,'index.html')).href);await visible(page);}
+async function runCase(page,device,name,fn,{startupLive=false}={}){const started=Date.now();try{await fresh(page);if(!startupLive){await page.locator('#hide-scene').click();await hidden(page);await page.waitForTimeout(m.REVEAL_GAP_MS+100)}await fn();report.results.push({device,name,status:'PASS',durationMs:Date.now()-started})}catch(e){report.results.push({device,name,status:'FAIL',error:e.stack,durationMs:Date.now()-started});try{await page.screenshot({path:path.join(out,`${device}-${name.replace(/[^a-z0-9]+/gi,'-')}-failure.png`),fullPage:true})}catch{}}write();}
 (async()=>{
  let browser;
  try {browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,chromiumSandbox:true});report.browser=await browser.version();}
@@ -29,11 +29,11 @@ async function runCase(page,device,name,fn){const started=Date.now();try{await f
  for(const cfg of [{name:'laptop',viewport:{width:1366,height:900},deviceScaleFactor:1,isMobile:false,hasTouch:false},{name:'phone-emulation',viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true}]){
   const {name,...settings}=cfg;const context=await browser.newContext({...settings,offline:true,acceptDownloads:true,reducedMotion:'reduce'});const page=await context.newPage();page.setDefaultTimeout(7000);const errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:|^wss?:/.test(r.url()))external.push(r.url())});
-  await runCase(page,name,'startup-static-hidden-and-no-overflow',async()=>{
-   await hidden(page);assert.match(await page.title(),/Imagery Field/);const canvas=await page.locator('#scene-canvas').evaluate(e=>({w:e.width,h:e.height,label:e.getAttribute('aria-label')}));assert.match(canvas.label,/hidden/i);assert.ok(canvas.w<=4096&&canvas.h<=4096&&canvas.w*canvas.h<=8388608);
-   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal page overflow');await page.waitForTimeout(300);await hidden(page);
+  await runCase(page,name,'startup-live-static-and-no-overflow',async()=>{
+   await visible(page);assert.match(await page.title(),/Imagery Field/);const canvas=await page.locator('#scene-canvas').evaluate(e=>({w:e.width,h:e.height,label:e.getAttribute('aria-label')}));assert.doesNotMatch(canvas.label,/scene hidden/i);assert.ok(canvas.w<=4096&&canvas.h<=4096&&canvas.w*canvas.h<=8388608);
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal page overflow');await page.waitForTimeout(300);await visible(page);
    await page.screenshot({path:path.join(out,`${name}-startup.png`),fullPage:true});
-  });
+  },{startupLive:true});
   await runCase(page,name,'show-hide-repeated-input-and-keyboard',async()=>{
    await page.locator('#show-scene').click();await visible(page);await page.keyboard.press('Escape');await hidden(page);for(let i=0;i<8;i++){await page.locator('#show-scene').click();await hidden(page);}
    await page.waitForTimeout(m.REVEAL_GAP_MS+100);await hidden(page);await page.locator('#show-scene').focus();await page.keyboard.press('Enter');await visible(page);await page.locator('#end-viewing').click();await hidden(page);
@@ -47,7 +47,7 @@ async function runCase(page,device,name,fn){const started=Date.now();try{await f
   });
   await runCase(page,name,'actual-file-export-reload-import-roundtrip',async()=>{
    await page.locator('#scene-name').fill('Portable roundtrip');await page.locator('#apply-changes').click();const got=await download(page,'#export-scene',`${name}-roundtrip.json`);
-   await page.reload();await hidden(page);await page.locator('#scene-import').setInputFiles(path.join(out,`${name}-roundtrip.json`));await hidden(page);assert.equal(await page.locator('#scene-name').inputValue(),'Portable roundtrip');const again=await download(page,'#export-scene',`${name}-roundtrip-reexport.json`);assert.deepEqual(again,got);
+   await page.reload();await visible(page);await page.locator('#scene-import').setInputFiles(path.join(out,`${name}-roundtrip.json`));await hidden(page);assert.equal(await page.locator('#scene-name').inputValue(),'Portable roundtrip');const again=await download(page,'#export-scene',`${name}-roundtrip-reexport.json`);assert.deepEqual(again,got);
   });
   await runCase(page,name,'invalid-and-malicious-imports-preserve-current',async()=>{
    const original=await page.locator('#scene-name').inputValue();const bad=['','{','null',JSON.stringify({...fixture({}),version:999}),JSON.stringify({...fixture({}),animation:true}),JSON.stringify(fixture({})).replace('"version":3','"version":99,"version":3'),' '.repeat(m.MAX_IMPORT_BYTES+1)];

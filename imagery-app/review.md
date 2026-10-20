@@ -1,3 +1,18 @@
+# Version 0.7 source and native-browser review
+
+The exact 167297-byte runtime `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857` passed 457 non-browser checks and all 98 native Chrome groups in [run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664), source `33bca8b59e52596f0784529b9162ea5240d1a7fb`. All 78 emitted synthetic frames were independently hash/byte verified; all 78 were independently visually inspected with no remaining scoped blocker.
+
+Independent source review accepted one static startup render without timed autoplay; immediate validated draft editing; explicit live-to-finite-item authority transfer; continued cancellation and hidden-state lock; current background saturation 0–100 with default 60 and unchanged legacy bounds; and explicit Steady/Pulse modes with mixed finite timing. No hidden edit, stale callback or page restoration gains reveal authority. Current saved files preserve saturation 100 through scene and sequence paths.
+
+The first native run failed two precision-layout groups because its diagnostic LABEL identifier was mistaken for an interactive target. The independently reviewed repair classifies INPUT/BUTTON/SELECT by actual tag and adds a role regression. Complete-label bounds/hit checks and actual-control 44px minima remain; both previously unexecuted responsive tails passed in the full rerun. Inspection of 56 first-run frames exposed a wasted mobile header row, repaired by the narrow three-column workspace-action grid. The changed artifact received fresh native evidence, including whole header text and reachability.
+
+Fresh evidence includes startup/default and 100% saturation, steady/pulse/mixed summary and tracks, whole focused numeric/slider/button rows, independent style controls, four responsive viewport shapes, finite playback and cancellation, and prior scene/sequence/file/fullscreen flows. The 640×450 effective viewport models CSS reflow, not native browser zoom. Source calculations alone are not layout acceptance.
+
+This is scoped engineering acceptance. Physical devices, other engines, ordinary OS workflows, complete accessibility, qualified sensory assessment and clinical efficacy remain unestablished. The first failure and environment differences are preserved in the [test report](test-results/TEST-REPORT.md). Documentation integration must retain this runtime/tests and pass full exact-head CI before maintainer merge; nothing here claims hosted deployment.
+
+<!-- HISTORICAL-SOURCE-REVIEWS -->
+
+
 # Version 0.5 live-draft review
 
 The 118362-byte runtime `8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326` passed 349 non-browser checks and all 82 native Chrome groups. Independent source review and 36-frame inspection accepted the scoped live-draft and compact-layout changes. The actual field repaints synchronously from validated manual inputs; hidden output cannot be revived by an edit. Drafts remain separate from accepted history, exports and sequence snapshots. Native full-field visibility checks replace the insufficient center-only slider test.
