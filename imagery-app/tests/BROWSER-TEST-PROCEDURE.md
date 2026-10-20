@@ -1,10 +1,10 @@
-# Version 0.4 native verification prepared, not run
+# Version0.4 repair awaits native rerun
 
-The frozen 111,934-byte HTML has SHA-256 `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e`. Its 319 non-browser checks pass. The prepared existing-CDP suite has 74 groups and 28 compact synthetic JPEG checkpoints across desktop and phone-sized touch emulation. Native v0.4 execution and visual inspection are NOT RUN; the v0.3 pass below is historical.
+The repaired114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`;323 non-browser checks pass. [First native v0.4 run39350355646](https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646) failed8 of74 groups on the previous be1be8a2 artifact. All28 captured synthetic frames were hash verified and inspected. Current repaired native execution is NOT RUN. The complete failure history and unexecuted tails are in the report.
 
-Run `node --test imagery-app/tests/*.test.cjs`, the syntax/fixture checks in the current report, and `node imagery-app/tests/browser-cdp.cjs` through the existing sandbox-enabled CI only. No installs or security changes. Added helpers are `sequence-fixtures.cjs`, `browser-sequence.cjs` and `independent-sequence-user-scenarios.cjs`; the latter uses genuine clocks and RAF, while separately labeled controlled-clock groups test exact real Canvas boundaries. Every case reloads its document. Retain the trusted fullscreenchange Hidden/black/focus snapshot assertions unchanged.
+Rerun the existing74-group suite,37 per profile, through unchanged sandbox-enabled CI. Keep native completion/Escape focus and44px target assertions. Media preference changes now wait only for a native MediaQueryList event and validate its immutable same-event Hidden/black snapshot; both directions and cleanup use this barrier. Existing fullscreen snapshots are unchanged. Every case reloads the document; controlled clocks cannot leak into genuine real-time journeys. Inspect28 new JPEG checkpoints before repaired-source visual acceptance.
 
-Inspect actual case failures before repair. Decode `IMAGERY_VISUAL_CAPTURE` lines, verify hashes and inspect all frames before a visual claim. Keep raw logs and failure images private; publish only reviewed summaries. Emulation is not a physical device or human usability study. A single authorized finite sequence does not authorize loops or other stimulation features.
+Run `node --test imagery-app/tests/*.test.cjs`, helper syntax/fixture checks, then `node imagery-app/tests/browser-cdp.cjs`. Install nothing; do not change browser security, timeout, workflow actions or artifacts. First native runtime was4m51s, within the existing6-minute step. Decode `IMAGERY_VISUAL_CAPTURE` lines and verify hashes; raw logs/failure images remain private. Emulation does not establish physical-device, accessibility or efficacy acceptance.
 
 ---
 

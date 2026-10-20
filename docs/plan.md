@@ -2,7 +2,11 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: verified version 0.4 software preview
+## Current increment: version 0.5 live-editing candidate
+
+Implement immediate actual-draft preview after one explicit start, valid manual edits without repeated Apply/Show, visible canvas alongside inspector, unchanged accepted history/snapshot semantics, invalid-input concealment, and no restart after Hide or lifecycle interruption. Independent model/UI/browser/visual checks are pending for this new artifact. The recorded v0.4 results below remain historical.
+
+## Verified version 0.4 baseline
 
 Implemented the [final one-pass sequence contract](sequence-spec.md): independent scene snapshots, atomic apply/capture, immediate valid sequence edits, 1–32 steps, finite holds, adjacent crossfades/direct cuts against one shared background, manual step preview, windowed one-pass playback, exact painted-frame Pause/Resume, immediate cancellation/concealment, reduced-motion handling, and separate sequence JSON.
 

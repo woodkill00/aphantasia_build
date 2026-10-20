@@ -148,7 +148,7 @@ async function runIndependentScenarios({page,runCase,out,captureLog=false}) {
     const exported=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(exported.json,after,'Only the square hue may change');
     await act('Close editor',()=>page.click('#editor-toggle'));await sleep(3100);await page.hidden();
     await act('Explicitly show edited reference',()=>page.click('#show-scene'));await page.visible();await scenePixels(after);
-    await page.click('#editor-toggle');await page.hidden();await rangeTo('#background-hue',30);await swatch('background',{h:30,s:10,l:8});
+    await page.click('#editor-toggle');await page.visible();await page.click('#hide-scene');await page.hidden();await rangeTo('#background-hue',30);await swatch('background',{h:30,s:10,l:8});
     await page.click('#discard');await swatch('background',referenceScene.scene.background);await page.hidden();
     await page.fullscreenAfter(()=>page.click('#fullscreen'),'stage-root','independent entry');
     const hiddenControls=await page.evaluate(()=>({

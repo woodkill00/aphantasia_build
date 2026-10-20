@@ -23,7 +23,7 @@
 }
 
 /* Small editor-only samples; slider gradients follow the actual draft HSL.
-   The canvas remains the accepted, explicitly revealed scene. */
+   The canvas shows the explicitly started live draft or a sequence frame. */
 .color-preview{display:flex;align-items:center;gap:10px;margin:20px 0 8px;min-width:0}
 .color-swatch{width:38px;height:30px;flex:none;display:block;border:1px solid #91a090;border-radius:6px;background:#000}
 .color-preview-label,.color-preview-value{display:block;font-size:.72rem;line-height:1.5}
@@ -69,15 +69,36 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 @media(max-width:650px){.editor-scroll{padding:14px 16px}.editor-actions{padding:7px 10px}.section-selector{padding:7px 10px}.sequence-view-actions{gap:6px;display:grid;grid-template-columns:minmax(0,1fr) auto}.manual-actions{grid-column:1/-1}.manual-actions button{flex:1}.playback-actions{min-width:0}.playback-actions button{min-width:0}.sequence-view-actions button{min-height:44px;padding:8px;font-size:.72rem}#sequence-progress{text-align:right;font-size:.65rem}#reduced-motion-note{grid-column:1/-1}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{flex-basis:auto;min-height:1.5em}}
 @media(max-height:500px){.editor-actions{padding:4px 7px}.capture-actions button,.editor-actions .apply-row button{padding:5px;font-size:.66rem}.section-selector{padding:4px 7px}.editor-scroll{padding:10px}.sequence-view-actions{gap:5px}.viewing-bar:has(#sequence-view-actions:not([hidden])){padding:5px;gap:4px}}
 @media(max-width:500px) and (max-height:300px){.editor-panel{grid-template-rows:auto minmax(56px,1fr) auto;overflow:auto}.section-selector{padding:2px}.editor-scroll{padding:6px}.editor-actions{padding:2px}.capture-actions button,.editor-actions .apply-row button{font-size:.6rem}.manual-actions button,.playback-actions button{font-size:.64rem}.sequence-view-actions{grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:2px}.sequence-view-actions .manual-actions{grid-column:auto}.sequence-view-actions .manual-actions,.sequence-view-actions .playback-actions{min-width:0;gap:2px}.sequence-view-actions button{flex:1;min-width:44px;min-height:44px;padding:4px}.sequence-view-actions #sequence-progress{display:none}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{max-height:1.5em}}
+
+/* Keep the real canvas unobscured beside editing controls. This is the same
+   render surface, not a color swatch or second bitmap. No animation/reveal. */
+.live-editor .masthead{grid-area:1/1}
+.live-editor .stage-body{grid-area:2/1}
+.live-editor .viewing-bar{grid-area:3/1}
+.live-editor #scene-canvas{position:relative;inset:auto;grid-area:2/1;align-self:start;justify-self:start;width:calc(100% - 412px);height:100%;z-index:0;border:1px solid var(--line);border-radius:8px}
+@media(max-width:650px) and (min-height:501px){
+  .live-editor #scene-canvas{width:100%;height:32%}
+  .live-editor .stage-body{align-items:flex-end}
+  .live-editor .editor-panel{width:100%;height:calc(68% - 8px)}
+}
+@media(max-width:650px) and (max-height:500px){
+  .live-editor #scene-canvas{width:calc(40% - 6px);height:100%}
+  .live-editor .editor-panel{width:60%;height:100%}
+  .live-editor .editor-scroll{padding:8px}
+  .live-editor .editor-actions{padding:3px}
+}
+/* Status text must not resize the preview after it has been painted. */
+.live-editor #status{height:3em;min-height:3em;max-height:3em}
+@media(max-height:500px){.live-editor #status{height:1.5em;min-height:1.5em;max-height:1.5em}}
 </style>
 </head>
 <body>
 <div id="stage-root" class="stage-root">
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
-  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Compose, apply, then show when you choose.</small></div>
+  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Start Live preview, then edit to see changes immediately.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
   <header id="masthead" class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">SCENE + SEQUENCE / 0.4</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">LIVE EDITOR / 0.5</span></div><span id="visibility-label" class="pill">Hidden</span></div>
     <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
   <main id="stage-body" class="stage-body">
@@ -87,7 +108,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       <div id="scene-panel">
       <section id="controls" tabindex="-1" aria-labelledby="controls-title">
         <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Build a scene.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
-        <p class="lede">Place individual dots, pixels and outlines across the whole field. Adjust its background to describe what you want to represent.</p>
+        <p class="lede">Place individual dots, pixels and outlines across the whole field. Start Live preview once, then see object and background edits immediately. Apply commits the draft for history and download.</p>
         <p class="scope">Engineering preview. Not a treatment or diagnostic test; it does not establish imagery gains.</p>
         <label for="preset">Start with a preset</label>
         <select id="preset"><option value="">Choose a design…</option><option value="0">A small constellation</option><option value="1">A single point</option><option value="2">Circle contour</option><option value="3">Square contour</option><option value="4">Triangle contour</option></select>
@@ -105,9 +126,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
             </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="delete-object" type="button">Remove object</button></div>
-            <p id="placement-hint" class="hint">Place on field lets you click or tap a new position while hidden. Position inputs work with a keyboard.</p>
+            <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
-            <p id="object-color-hint" class="hint">This small sample updates as you edit. The full field stays hidden until you Apply changes, then Show scene.</p>
+            <p id="object-color-hint" class="hint">Start Live preview to see the actual objects update as you move these sliders. The small sample also works while hidden.</p>
             <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="359" step="1" value="208">
             <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="70" step="1" value="11">
             <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="10" max="70" step="1" value="48">
@@ -115,7 +136,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
           <fieldset class="group"><legend>Background field</legend>
             <p class="hint">Choose a color to represent your subjective visual field. It is your description, not a measurement of internal vision.</p>
             <div class="color-preview"><span id="background-color-swatch" class="color-swatch" role="img" aria-label="Background color sample"></span><div><span class="color-preview-label">Background color sample</span><span id="background-color-text" class="color-preview-value"></span></div></div>
-            <p id="background-color-hint" class="hint">Only this small sample updates immediately. Apply changes, then Show scene to display the full field.</p>
+            <p id="background-color-hint" class="hint">With Live preview on, the actual background updates immediately. The small sample also works while hidden.</p>
             <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="359" step="1" value="0">
             <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="60" step="1" value="0">
             <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="40" step="1" value="0">
@@ -124,7 +145,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   
         </form>
         <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step scene history</span></div>
-        <p class="hint">Edits hide the full field immediately; only the small color samples update live. Apply changes, then choose Show. Nothing is shown automatically.</p>
+        <p class="hint">Live preview shows valid draft edits immediately. Apply commits them for history and download; it is not needed for preview. Hide stops preview until you explicitly start it again.</p>
         <details class="description"><summary>Applied scene description</summary><p id="scene-description"></p></details>
       </section>
       <section class="portable-card" aria-labelledby="portable-title">
@@ -185,12 +206,12 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   </main>
   <section id="viewing-bar" class="viewing-bar" aria-label="Viewing controls">
     <div id="sequence-view-actions" class="sequence-view-actions" hidden><div class="manual-actions"><button id="sequence-previous" type="button" aria-label="Select previous step">Previous</button><button id="sequence-show" type="button" class="primary">Show step</button><button id="sequence-next" type="button" aria-label="Select next step">Next</button></div><div class="playback-actions"><button id="sequence-play" type="button">Play once</button><button id="sequence-pause" type="button" hidden>Pause</button><button id="sequence-resume" type="button" hidden>Resume</button><button id="sequence-stop" type="button" class="hide-button">Stop / Hide</button></div><span id="sequence-progress" class="hint">Stopped</span><p id="reduced-motion-note" class="hint" hidden>Reduced motion is on. Select Previous or Next, then Show step.</p></div>
-    <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
+    <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Live preview</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
     <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
   </section>
   <section id="fullscreen-start" class="fullscreen-start" aria-labelledby="fullscreen-title" hidden>
     <h2 id="fullscreen-title">The field is hidden</h2>
-    <button id="fullscreen-show" class="primary" type="button" aria-describedby="fullscreen-status">Show scene</button>
+    <button id="fullscreen-show" class="primary" type="button" aria-describedby="fullscreen-status">Live preview</button>
     <p id="fullscreen-status" role="status" aria-live="polite" aria-atomic="true">Choose Show scene when you want to display it.</p>
   </section>
   <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>
@@ -362,6 +383,21 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     return Object.freeze({
       getState,
       stage(value) { const checked=validateScene(value); conceal(false); if(!checked.ok)return result(false,checked.error);draft=checked.scene;return result(true); },
+      // Live staging can update an already visible draft, but never reveal one.
+      stageLive(value) {
+        const checked=validateScene(value);invalid();
+        if(!checked.ok){conceal(false);return result(false,checked.error);}
+        draft=checked.scene;return result(true);
+      },
+      // Only an explicit preview action may reveal a draft. Accepted data and
+      // history remain unchanged until Apply/capture.
+      previewDraft(value) {
+        const checked=validateScene(value);invalid();
+        if(!checked.ok){conceal(false);return result(false,checked.error);}
+        draft=checked.scene;
+        if(!visible&&now()<revealAt)return result(false,'Scene stays hidden during the temporary repeat-action lock. Start Live preview again later; nothing is queued.');
+        visible=true;return result(true);
+      },
       invalidateImport() {invalid();return result(true);},
       show() {
         invalid();
@@ -718,7 +754,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 }));
 </script>
 <script>/* Local scene editor and explicit finite, single-pass sequence presentation.
-   One visibility gate. Every edit/lifecycle interruption cancels before concealment. */
+   One visibility gate. Live manual draft edits preserve an explicitly visible field; interruptions conceal. */
 (function () {
   'use strict';
   const M=window.ImageryModel,S=window.ImagerySequence;
@@ -797,7 +833,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         paintScene(offscreenContext,offscreen,stepScene(frame.nextStepIndex),d);
         resetContext(context);context.globalAlpha=frame.alpha;context.drawImage(offscreen,0,0);resetContext(context);
       }
-    }else paintScene(context,canvas,displayKind==='step'?stepScene(stepIndex):state.current,d);
+    }else paintScene(context,canvas,displayKind==='step'?stepScene(stepIndex):displayKind==='live'?state.draft:state.current,d);
     return true;
   }
   // These bounded editor samples represent only the current form colors. They
@@ -833,6 +869,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function render(){
     let state=controller.getState();
     if(gateClockFault&&state.visible){cancelPlayback();controller.hide();state=controller.getState();}
+    const full=document.fullscreenElement===root;
+    root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&displayKind==='live'&&editorOpen&&!full?' live-editor':'');
+    $('editor-panel').hidden=!editorOpen;
     try{draw(state);}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
       cancelPlayback();controller.hide();canvas.hidden=true;context=null;state=controller.getState();
@@ -840,10 +879,11 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
     $('show-scene').setAttribute('aria-pressed',String(state.visible));
-    canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object. The scene is hidden. Escape cancels.':state.visible?(displayKind==='scene'?M.describe(state.current):sequenceDescription()):'Scene hidden. No design is displayed.');
+    canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object.'+(isLive()?' Live draft displayed.':' The scene is hidden.')+' Escape cancels.':state.visible?(displayKind==='live'?'Live draft. '+M.describe(state.draft):displayKind==='scene'?M.describe(state.current):sequenceDescription()):'Scene hidden. No design is displayed.');
     $('undo').disabled=state.undoCount===0;$('redo').disabled=state.redoCount===0;
-    $('draft-label').textContent=formDirty?'Changes staged':'Applied';
-    $('scene-description').textContent=M.describe(state.current);
+    $('draft-label').textContent=formDirty?(isLive()?'Live draft':'Changes staged'):'Applied';
+    $('show-scene').textContent=isLive()?'Live preview on':'Live preview';
+    $('scene-description').textContent=(isLive()?'Live draft: ':'Applied scene: ')+M.describe(isLive()?state.draft:state.current);
     $('object-count').textContent=working.scene.objects.length+' / '+M.MAX_OBJECTS;
     $('add-object').disabled=working.scene.objects.length>=M.MAX_OBJECTS;
     $('place-object').setAttribute('aria-pressed',String(placing));
@@ -852,8 +892,6 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('editor-panel').hidden=!editorOpen;
     $('editor-toggle').setAttribute('aria-expanded',String(editorOpen));
     $('editor-toggle').textContent=editorOpen?'Close editor':'Open editor';
-    const full=document.fullscreenElement===root;
-    root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'');
     // Native fullscreen is a viewing surface. Hide whole editor/navigation
     // subtrees so their controls leave both the layout and keyboard tab order.
     ['masthead','stage-body','viewing-bar','skip-controls'].forEach(id=>{$(id).hidden=full;});
@@ -895,25 +933,33 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     return next;
   }
   function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
+  function isLive(){return displayKind==='live'&&controller.getState().visible;}
+  function beginManualEdit(){
+    if(isLive())controller.invalidateImport();else conceal();
+    cancelPlacement();
+  }
   function stageWorking(message){
-    formDirty=true;const result=controller.stage(working);render();say(result.ok?message:result.error+' Your applied scene is unchanged.',!result.ok);return result.ok;
+    const live=isLive();formDirty=true;
+    const result=live?controller.stageLive(working):controller.stage(working);
+    if(!result.ok&&live)conceal();
+    render();say(result.ok?(live?'Live draft updated. Apply keeps it for history and download; Hide stops preview.':message):result.error+' Preview stopped. Your applied scene is unchanged.',!result.ok);return result.ok;
   }
   function edited(event){
-    conceal();cancelPlacement();
+    beginManualEdit();
     if(event.target.id==='shape'){
       const max=$('shape').value==='dot'||$('shape').value==='pixel'?8:28;$('size').max=String(max);if(number('size')>max)$('size').value=String(max);
     }
-    working=readFields();updateObjectList();stageWorking('Changes staged. Apply them before showing the scene.');
+    working=readFields();updateObjectList();stageWorking('Changes staged. Start Live preview to see this draft immediately.');
   }
   fieldIDs.forEach(id=>$(id).addEventListener('input',edited));
   $('object-select').addEventListener('change',()=>{
-    const nextId=$('object-select').value;conceal();cancelPlacement();working=readFields();
+    const nextId=$('object-select').value;beginManualEdit();working=readFields();
     if(working.scene.objects.some(o=>o.id===nextId))selectedId=nextId;
-    fillSelected();render();say('Selected '+(selectedId||'background only')+'. Existing staged changes are kept; the field is hidden.');
+    fillSelected();render();say('Selected '+(selectedId||'background only')+'. Existing staged changes are kept.'+(isLive()?' Live preview continues.':' The field is hidden.'));
   });
-  $('add-shape').addEventListener('change',()=>hide('New object type selected. The field is hidden.'));
+  $('add-shape').addEventListener('change',()=>{beginManualEdit();render();say('New object type selected.'+(isLive()?' Add it to update the live draft.':' The field is hidden.'));});
   $('add-object').addEventListener('click',()=>{
-    conceal();cancelPlacement();working=readFields();
+    beginManualEdit();working=readFields();
     const checked=M.validateScene(working);
     if(!checked.ok){render();say('Fix the staged fields before adding an object. '+checked.error,true);return;}
     if(working.scene.objects.length>=M.MAX_OBJECTS){render();say('This prototype supports up to 12 objects.',true);return;}
@@ -923,17 +969,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     working.scene.objects.push(o);selectedId=o.id;fillSelected();stageWorking('New '+shape+' staged at the center. Set its position or choose Place on field.');
   });
   $('delete-object').addEventListener('click',()=>{
-    conceal();cancelPlacement();working=readFields();
+    beginManualEdit();working=readFields();
     const index=working.scene.objects.findIndex(o=>o.id===selectedId);if(index<0){render();return;}
     working.scene.objects.splice(index,1);selectedId=working.scene.objects[Math.min(index,working.scene.objects.length-1)]?.id||null;
     fillSelected();stageWorking('Object removed from the draft. Apply changes to keep this composition.');
   });
   $('place-object').addEventListener('click',()=>{
-    const wasPlacing=placing;conceal();cancelPlacement();working=readFields();
+    const wasPlacing=placing;beginManualEdit();working=readFields();
     const checked=M.validateScene(working);if(!checked.ok){render();say('Fix the staged fields before placing an object. '+checked.error,true);return;}
     if(!selected()){render();return;}
     placing=!wasPlacing;if(placing)editorOpen=false;render();
-    say(placing?'Placement active for '+selectedId+'. Click or tap the field once. The draft stays hidden. Escape, Hide or End cancels.':'Placement canceled.');
+    say(placing?'Placement active for '+selectedId+'. Click or tap the field once.'+(isLive()?' Live preview continues.':' The draft stays hidden.')+' Escape, Hide or End cancels.':'Placement canceled.');
     if(placing)canvas.focus();
   });
   canvas.addEventListener('pointerup',event=>{
@@ -943,7 +989,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const extent=o.size/2+(o.shape==='dot'||o.shape==='pixel'?0:0.5),min=1+extent,max=99-extent;
     const clamp=v=>Math.round(Math.max(min,Math.min(max,v))*100)/100;
     o.x=clamp((event.clientX-(rect.left||0))*100/rect.width);o.y=clamp((event.clientY-(rect.top||0))*100/rect.height);
-    cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Apply changes, then Show when you choose.');$('position-x').focus();
+    cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Start Live preview when you choose.');$('position-x').focus();
   });
   $('skip-controls').addEventListener('click',event=>{
     event.preventDefault();conceal();cancelPlacement();editorOpen=true;section='scene';render();$('controls').focus();say('Scene controls focused. The field is hidden.');
@@ -952,30 +998,33 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     conceal();cancelPlacement();editorOpen=true;render();$('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();say('Viewing guidance focused. The field is hidden.');
   });
   $('editor-toggle').addEventListener('click',()=>{
-    conceal();cancelPlacement();editorOpen=!editorOpen;render();
-    say(editorOpen?'Editor open. The field is hidden.':'Editor closed. Choose Show to use the whole field.');
+    beginManualEdit();editorOpen=!editorOpen;render();
+    say((editorOpen?'Editor open.':'Editor closed.')+(isLive()?' Live preview continues.':' The field is hidden; start Live preview when you choose.'));
     if(editorOpen){const heading=$(section==='scene'?'controls':'sequence-title');heading.setAttribute('tabindex','-1');heading.focus();}else $('editor-toggle').focus();
   });
   $('preset').addEventListener('change',()=>{
     const index=Number($('preset').value);if($('preset').value===''||!Number.isInteger(index)||!M.presets()[index])return;
-    cancelPlacement();conceal();const next=M.presets()[index];controller.stage(next);fillFields(next);formDirty=true;render();say('Preset staged. Choose Apply changes, then Show scene when you choose.');
+    beginManualEdit();const next=M.presets()[index];fillFields(next);stageWorking('Preset staged. Start Live preview to see it without Apply.');
   });
   $('scene-form').addEventListener('submit',event=>{
     event.preventDefault();cancelPlacement();conceal();
     const result=controller.apply(readFields());
     if(!result.ok){render();say(result.error,true);return;}
-    formDirty=false;fillFields(result.state.current);render();say('Changes applied. The scene is hidden; choose Show scene to display it.');
+    formDirty=false;fillFields(result.state.current);render();say('Changes applied. The scene is hidden; choose Live preview to display it.');
   });
   $('discard').addEventListener('click',()=>{
     cancelPlacement();conceal();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
   });
   function showScene(){
-    if(controller.getState().visible&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Show scene again after the repeat-action lock.');return;}
+    if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; start Live preview again after the repeat-action lock.');return;}
     cancelPlayback();cancelPlacement();controller.invalidateImport();
     if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.');return;}
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
-    if(formDirty){render();say((document.fullscreenElement===root?'Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.':'Apply or discard staged changes before showing the scene.'),true);return;}
-    displayKind='scene';const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}render();say(result.ok?'Scene visible. Hide or press Escape at any time.':result.error,!result.ok);
+    working=readFields();
+    const result=controller.previewDraft(working);
+    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(result.ok)displayKind='live';
+    render();say(result.ok?'Live preview on. Object and background edits appear immediately. Apply keeps changes for history/download; Hide or Escape stops preview.':result.error+(document.fullscreenElement===root?' Exit fullscreen to fix the fields or discard the draft.':''),!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('show-scene').addEventListener('click',showScene);
@@ -988,7 +1037,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
     cancelPlacement();conceal();const result=controller[action]();
     if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
-    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Show scene when you choose.':result.error,!result.ok);
+    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Live preview when you choose.':result.error,!result.ok);
   }));
   // Fullscreen is optional. Entry/exit/failure never reveal; the common ancestor
   // includes the always-reachable Exit control. Do not schedule a later Show.
@@ -1017,9 +1066,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.');});
   window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.'));
   window.addEventListener('pagehide',()=>{cancelPlacement();conceal();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
-  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Show scene when you choose.'));
-  window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Show scene to resume.');});
-  window.addEventListener('resize',()=>hide('Scene hidden after the window size changed. Choose Show scene when you choose.'));
+  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Live preview when you choose.'));
+  window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Live preview to resume.');});
+  window.addEventListener('resize',()=>hide('Scene hidden after the window size changed. Choose Live preview when you choose.'));
   function download(value,filename) {
     const serialized=JSON.stringify(value,null,2)+'\n';
     let url;
@@ -1046,7 +1095,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       const text=await file.text(),state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;
       const result=controller.finishImport(token,text);
       if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
-      render();say(result.ok?'Scene opened and hidden. Choose Show scene when you choose.':result.error+' Your applied scene is unchanged.',!result.ok);
+      render();say(result.ok?'Scene opened and hidden. Choose Live preview when you choose.':result.error+' Your applied scene is unchanged.',!result.ok);
     }catch(e){const state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;controller.invalidateImport();render();say('The file could not be read. Your applied scene is unchanged.',true);}
   });
   function clearPreview() {notePreview=null;$('include-note').checked=false;$('export-notes').disabled=true;$('notes-export-area').hidden=true;$('notes-preview').textContent='';}
@@ -1105,7 +1154,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const previouslyFocused=document.activeElement;
     const count=sequence?sequence.sequence.steps.length:0,invalid=!!sequenceError,full=document.fullscreenElement===root;
     const playback=timeline.getState(),running=playback.status==='running',paused=playback.status==='paused';
-    $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Compose, apply, then show when you choose.';
+    $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Start Live preview, then edit to see changes immediately.';
     $('workspace-scene').setAttribute('aria-pressed',String(section==='scene'));
     $('workspace-sequence').setAttribute('aria-pressed',String(section==='sequence'));
     $('scene-panel').hidden=section!=='scene';$('sequence-panel').hidden=section!=='sequence';
@@ -1136,7 +1185,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('sequence-play').hidden=running||paused;$('sequence-pause').hidden=!running;$('sequence-resume').hidden=!paused;
     $('sequence-view-actions').hidden=section!=='sequence';$('scene-view-actions').hidden=section==='sequence';
     $('reduced-motion-note').hidden=!motionReduced;
-    $('fullscreen-show').textContent=section==='sequence'?'Show selected step':'Show scene';
+    $('fullscreen-show').textContent=section==='sequence'?'Show selected step':'Live preview';
     if(running||paused){
       const f=paintedFrame,elapsed=f?f.elapsedMs:0;
       $('sequence-progress').textContent=(paused?'Paused':'Playing')+' · '+(elapsed/1000).toFixed(1)+' / '+(compiledSequence.durationMs/1000)+' s';
@@ -1178,7 +1227,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   $('sequence-discard').addEventListener('click',()=>{conceal();sequenceError='';fillSequenceFields();render();say('Invalid sequence fields discarded. Accepted snapshots are unchanged.');});
   function chooseSection(next){
     conceal();cancelPlacement();section=next;render();$('editor-scroll').scrollTop=0;
-    say(next==='sequence'?'Sequence editor. Select a step, then Show step, or choose Play once.':'Scene editor. Changes remain hidden until Apply and Show.');
+    say(next==='sequence'?'Sequence editor. Select a step, then Show step, or choose Play once.':'Scene editor. Start Live preview to see draft changes immediately.');
   }
   $('workspace-scene').addEventListener('click',()=>chooseSection('scene'));
   $('workspace-sequence').addEventListener('click',()=>chooseSection('sequence'));

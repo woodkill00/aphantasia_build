@@ -1,3 +1,13 @@
+# Version 0.5 live-edit candidate
+
+2026-10-20. Actual-scene live draft editing and responsive split preview are implemented and independently source-reviewed. All **349 non-browser checks pass**; the full **82 native browser groups and 36 captures are prepared, not yet run**.
+
+Artifact: 117309 bytes; SHA-256 `0aa93926dfec1e1f4058759c9c21ec13dbea35eac9ddeb623e9d2f2379e28fdf`. No native or rendered acceptance is claimed for this candidate until its exact run is inspected. Physical-device, full accessibility and sensory/clinical gates remain separate.
+
+The historical results below belong to prior artifacts.
+
+---
+
 # Version 0.4 verified software preview
 
 Date: 2026-10-20. **324/324 non-browser checks and 74/74 native Chrome groups PASS.** [Successful full run 39352924875](https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875), job 118401068686, tested source `13cfac66e80b55d401b454dc99c8e6c690f09962` through PR test-merge checkout `7dc3a5663548e1275d34f8f611807d44fdc9f19e`.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T01:30:00Z",
+  "updated": "2026-10-20T01:53:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1337,6 +1337,17 @@
         "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
         "result": "Reviewed source/test deltas and explicit eight-file documentation allowlist. Synthetic data only; no raw logs, user notes, private paths or unsupported acceptance claims included."
       }
+    },
+    {
+      "id": "IF-041",
+      "title": "Show actual scene edits live",
+      "status": "native_verification_pending",
+      "scope": "Explicit live preview of valid manual object and background edits without repeated Apply/Show; visible responsive preview; cancellation and snapshot isolation retained.",
+      "evidence": [
+        "349 non-browser tests pass;82 browser groups and36 captures prepared.",
+        "imagery-app/test-results/TEST-REPORT.md"
+      ],
+      "nextAction": "Run exact-artifact Chrome checks, inspect screenshots, repair failures, and integrate verified evidence."
     }
   ],
   "sourceBase": {
@@ -1432,19 +1443,12 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version 0.4 passes 324 non-browser checks and 74 native Chrome groups on the exact recorded runtime. Final documentation/outgoing-tree integration and merge verification remain; physical-device, full accessibility and qualified sensory/clinical gates remain open.",
+  "currentStatus": "Version0.5 live-edit candidate passes349 non-browser checks;native82-group run and visual acceptance pending.",
   "currentIteration": {
-    "base": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
-    "concurrencySlots": 7,
-    "coordinatorCounts": true,
-    "requestedModel": "gpt-6-astra",
-    "requestedReasoning": "xhigh",
-    "remoteBranch": "feat/live-colors-clean-fullscreen",
-    "recovery": "All 324 non-browser and 74 native groups pass. Reviewed runtime and source context fixes accepted in scoped software verification. Final documentation/outgoing-tree review and merge remain distinct. No deployment or physical-device/clinical acceptance claimed.",
-    "sourceHead": "13cfac66e80b55d401b454dc99c8e6c690f09962",
-    "pullRequest": 2,
-    "candidateRun": 39352924875,
-    "htmlSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
-    "visualReview": "All 28 final-run JPEG byte counts/hashes verified; actual contact-sheet pixels and selected full-size frames inspected, consistent with earlier independent exact-runtime visual acceptance."
+    "base": "fee5b718abf6a31433be9f46900b7e342753fa17",
+    "remoteBranch": "feat/live-scene-preview",
+    "htmlSha256": "0aa93926dfec1e1f4058759c9c21ec13dbea35eac9ddeb623e9d2f2379e28fdf",
+    "sourceHead": null,
+    "nativeStatus": "NOT_RUN"
   }
 }

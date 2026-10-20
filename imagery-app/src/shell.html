@@ -11,10 +11,10 @@
 <body>
 <div id="stage-root" class="stage-root">
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
-  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Compose, apply, then show when you choose.</small></div>
+  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Start Live preview, then edit to see changes immediately.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
   <header id="masthead" class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">SCENE + SEQUENCE / 0.4</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">LIVE EDITOR / 0.5</span></div><span id="visibility-label" class="pill">Hidden</span></div>
     <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
   <main id="stage-body" class="stage-body">
@@ -24,7 +24,7 @@
       <div id="scene-panel">
       <section id="controls" tabindex="-1" aria-labelledby="controls-title">
         <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Build a scene.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
-        <p class="lede">Place individual dots, pixels and outlines across the whole field. Adjust its background to describe what you want to represent.</p>
+        <p class="lede">Place individual dots, pixels and outlines across the whole field. Start Live preview once, then see object and background edits immediately. Apply commits the draft for history and download.</p>
         <p class="scope">Engineering preview. Not a treatment or diagnostic test; it does not establish imagery gains.</p>
         <label for="preset">Start with a preset</label>
         <select id="preset"><option value="">Choose a design…</option><option value="0">A small constellation</option><option value="1">A single point</option><option value="2">Circle contour</option><option value="3">Square contour</option><option value="4">Triangle contour</option></select>
@@ -42,9 +42,9 @@
             </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="delete-object" type="button">Remove object</button></div>
-            <p id="placement-hint" class="hint">Place on field lets you click or tap a new position while hidden. Position inputs work with a keyboard.</p>
+            <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
-            <p id="object-color-hint" class="hint">This small sample updates as you edit. The full field stays hidden until you Apply changes, then Show scene.</p>
+            <p id="object-color-hint" class="hint">Start Live preview to see the actual objects update as you move these sliders. The small sample also works while hidden.</p>
             <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="359" step="1" value="208">
             <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="70" step="1" value="11">
             <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="10" max="70" step="1" value="48">
@@ -52,7 +52,7 @@
           <fieldset class="group"><legend>Background field</legend>
             <p class="hint">Choose a color to represent your subjective visual field. It is your description, not a measurement of internal vision.</p>
             <div class="color-preview"><span id="background-color-swatch" class="color-swatch" role="img" aria-label="Background color sample"></span><div><span class="color-preview-label">Background color sample</span><span id="background-color-text" class="color-preview-value"></span></div></div>
-            <p id="background-color-hint" class="hint">Only this small sample updates immediately. Apply changes, then Show scene to display the full field.</p>
+            <p id="background-color-hint" class="hint">With Live preview on, the actual background updates immediately. The small sample also works while hidden.</p>
             <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="359" step="1" value="0">
             <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="60" step="1" value="0">
             <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="40" step="1" value="0">
@@ -61,7 +61,7 @@
   
         </form>
         <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step scene history</span></div>
-        <p class="hint">Edits hide the full field immediately; only the small color samples update live. Apply changes, then choose Show. Nothing is shown automatically.</p>
+        <p class="hint">Live preview shows valid draft edits immediately. Apply commits them for history and download; it is not needed for preview. Hide stops preview until you explicitly start it again.</p>
         <details class="description"><summary>Applied scene description</summary><p id="scene-description"></p></details>
       </section>
       <section class="portable-card" aria-labelledby="portable-title">
@@ -122,12 +122,12 @@
   </main>
   <section id="viewing-bar" class="viewing-bar" aria-label="Viewing controls">
     <div id="sequence-view-actions" class="sequence-view-actions" hidden><div class="manual-actions"><button id="sequence-previous" type="button" aria-label="Select previous step">Previous</button><button id="sequence-show" type="button" class="primary">Show step</button><button id="sequence-next" type="button" aria-label="Select next step">Next</button></div><div class="playback-actions"><button id="sequence-play" type="button">Play once</button><button id="sequence-pause" type="button" hidden>Pause</button><button id="sequence-resume" type="button" hidden>Resume</button><button id="sequence-stop" type="button" class="hide-button">Stop / Hide</button></div><span id="sequence-progress" class="hint">Stopped</span><p id="reduced-motion-note" class="hint" hidden>Reduced motion is on. Select Previous or Next, then Show step.</p></div>
-    <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
+    <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Live preview</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
     <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
   </section>
   <section id="fullscreen-start" class="fullscreen-start" aria-labelledby="fullscreen-title" hidden>
     <h2 id="fullscreen-title">The field is hidden</h2>
-    <button id="fullscreen-show" class="primary" type="button" aria-describedby="fullscreen-status">Show scene</button>
+    <button id="fullscreen-show" class="primary" type="button" aria-describedby="fullscreen-status">Live preview</button>
     <p id="fullscreen-status" role="status" aria-live="polite" aria-atomic="true">Choose Show scene when you want to display it.</p>
   </section>
   <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>

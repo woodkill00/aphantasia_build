@@ -1,6 +1,6 @@
 # Scene and sequence editor design
 
-Version 0.4 candidate, updated 2026-10-20. Controls are implemented in the candidate source; independent verification is in progress. This document describes the source interaction and structure; it is not a claim that browser, physical-device, accessibility, or qualified sensory acceptance has passed. The [final sequence specification](sequence-spec.md) governs the increment.
+Version 0.5 live-editing candidate, updated 2026-10-20. Controls are implemented in the candidate source; independent verification is in progress. This document describes the source interaction and structure; it is not a claim that browser, physical-device, accessibility, or qualified sensory acceptance has passed. The [final sequence specification](sequence-spec.md) governs the increment.
 
 ## Product scope
 
@@ -22,13 +22,13 @@ The candidate addresses those findings with:
 
 These changes are implemented in the candidate source and require fresh actual-frame, focus, and small-window checks. The old screenshots cannot verify the new layout.
 
-## Static editing retained
+## Live scene editing
 
-Scene edits and presets remain drafts while hidden. **Apply changes** validates/accepts; **Discard** restores the accepted scene. **Show scene** is a separate explicit action. Undo/redo covers 40 accepted scene-history entries; sequence edits and notes do not enter that history.
+Choose **Live preview** once to view the current valid draft. Object/background sliders, shape/size/position changes, object addition/removal, presets and placement repaint the actual scene immediately without Apply or another reveal request. Selection and editor open/close retain live preview. The main canvas is visible beside desktop controls, above portrait controls, or beside a compact short-window inspector; there is no second preview bitmap.
 
-Objects are dots, pixels, or circle/square/triangle outlines. Use the object selector and numeric shape/size/position/color inputs, or **Place on field** for a single hidden-field click/tap. There is no drag animation or full-field draft preview. Positions use width/height percentages; dimensions use the shorter side to preserve shape proportions. Empty static scenes can represent only a background.
+Apply remains an explicit accepted-scene/history commit; Discard restores the accepted scene. Both hide, as do undo/redo. The Live draft/Changes staged indicator distinguishes preview from committed data. Saved sequence snapshots remain independent. Invalid input stops/conceals and reports the error; a later correction cannot reveal until explicit Live preview. Hide/Escape, imports, sequence changes, fullscreen and lifecycle events stop live preview.
 
-Small labeled object/background samples update immediately from raw slider values without applying or revealing the scene. HSL is CSS color, not measured internal vision, calibrated luminance, or hardware brightness. Lightness 0 is black; saturation 0 makes hue irrelevant.
+Small object/background samples still work while hidden. HSL is CSS color, not measured internal vision, calibrated luminance, or hardware brightness. Lightness 0 is black; saturation 0 makes hue irrelevant.
 
 ## Reduced-click scene → snapshot workflow
 
@@ -46,7 +46,7 @@ The field starts hidden. **Previous**/**Next** select a step while hidden; **Sho
 
 **Play once** starts at the beginning, in the ordinary window, only with valid accepted data and resolved drafts. **Pause** keeps the exact last actually painted frame visible, including a partial blend. **Resume** is explicit and continues from that frame without catch-up. **Stop / Hide** and natural completion conceal and reset elapsed time. There is no automatic replay.
 
-All display routes use the existing explicit visibility gate and repeat-action guard. No deferred callback can open that gate. Edits, imports, selections, section changes, fullscreen, resize, blur, hidden tabs, suspension/restoration, and reduced-motion changes stop/conceal. Invalidated callbacks cannot resume. Reduced-motion preference uses manual stepping instead of automatic cuts.
+All display routes use the existing explicit visibility gate and repeat-action guard. No deferred callback can open that gate. Sequence edits/selections, invalid scene input, imports, section changes, fullscreen, resize, blur, hidden tabs, suspension/restoration, and reduced-motion changes stop/conceal. Valid manual scene edits only retain an already active live draft. Invalidated callbacks cannot resume. Reduced-motion preference uses manual stepping instead of automatic cuts.
 
 Timed Play/Resume is windowed-only so Pause and Stop stay reachable. Static scenes and manual previews may enter clean fullscreen: workspace chrome disappears, hidden fullscreen has a Show route, and a small keyboard/touch Exit remains while visible. Fullscreen changes conceal; Escape retains native browser exit behavior. Unsupported/rejected fullscreen leaves the full-window layout available.
 
