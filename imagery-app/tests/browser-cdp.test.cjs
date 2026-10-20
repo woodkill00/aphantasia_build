@@ -103,3 +103,10 @@ test('Fullscreen draft message requires both editor directions without requiring
  for(const text of ['Exit fullscreen to apply or discard staged changes before showing the scene.','Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.'])assert.doesNotThrow(()=>assertFullscreenDraftMessage(text));
  for(const text of ['Apply or discard staged changes.','Exit fullscreen.','Changes staged.'])assert.throws(()=>assertFullscreenDraftMessage(text));
 });
+
+test('independent sequence user fixture and temporal/color oracle are valid without launching a browser',()=>{
+ const {referenceSequence,referenceWeights,rgb}=require('./independent-sequence-user-scenarios.cjs'),S=require('../src/sequence-model.js');assert.deepEqual(S.parseSequence(JSON.stringify(referenceSequence)),referenceSequence);for(const [t,w]of [[0,[1,0,0]],[2999,[1,0,0]],[3500,[.5,.5,0]],[4000,[0,1,0]],[7500,[0,.5,.5]],[8000,[0,0,1]],[11000,null]])assert.deepEqual(referenceWeights(t),w);assert.deepEqual(rgb({h:210,s:30,l:50}),[89,128,166]);assert.deepEqual(rgb({h:359,s:0,l:50}),[128,128,128]);assert.deepEqual(rgb({h:240,s:50,l:0}),[0,0,0]);
+});
+test('native sequence pixel blend oracle uses independent RGB arithmetic',()=>{
+ const {rgb,mix}=require('./browser-sequence.cjs');assert.deepEqual(rgb({h:210,s:30,l:50}),[89,128,166]);assert.deepEqual(mix([0,10,200],[200,110,0],.5),[100,60,100]);assert.deepEqual(mix([0,10,200],[200,110,0],0),[0,10,200]);assert.deepEqual(mix([0,10,200],[200,110,0],1),[200,110,0]);
+});

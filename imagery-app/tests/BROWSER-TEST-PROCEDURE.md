@@ -1,6 +1,16 @@
-# Version 0.3 pending native-browser verification
+# Version 0.4 native verification prepared, not run
 
-The current candidate adds immediate local HSL samples/slider gradients and clean native fullscreen. The 65,152-byte HTML has SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Its 240 non-browser checks, browser syntax and 3-valid/14-invalid fixture check pass on Node v24.19.0. The 54 prepared real-browser groups and requested synthetic visual captures have **NOT RUN** for this artifact yet. Older passes below are historical.
+The frozen 111,934-byte HTML has SHA-256 `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e`. Its 319 non-browser checks pass. The prepared existing-CDP suite has 74 groups and 28 compact synthetic JPEG checkpoints across desktop and phone-sized touch emulation. Native v0.4 execution and visual inspection are NOT RUN; the v0.3 pass below is historical.
+
+Run `node --test imagery-app/tests/*.test.cjs`, the syntax/fixture checks in the current report, and `node imagery-app/tests/browser-cdp.cjs` through the existing sandbox-enabled CI only. No installs or security changes. Added helpers are `sequence-fixtures.cjs`, `browser-sequence.cjs` and `independent-sequence-user-scenarios.cjs`; the latter uses genuine clocks and RAF, while separately labeled controlled-clock groups test exact real Canvas boundaries. Every case reloads its document. Retain the trusted fullscreenchange Hidden/black/focus snapshot assertions unchanged.
+
+Inspect actual case failures before repair. Decode `IMAGERY_VISUAL_CAPTURE` lines, verify hashes and inspect all frames before a visual claim. Keep raw logs and failure images private; publish only reviewed summaries. Emulation is not a physical device or human usability study. A single authorized finite sequence does not authorize loops or other stimulation features.
+
+---
+
+# Version 0.3 scoped native-browser verification passed
+
+The current candidate adds immediate local HSL samples/slider gradients and clean native fullscreen. The 65,152-byte HTML has SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Its 241 local non-browser checks, browser syntax and 3-valid/14-invalid fixture check pass on Node v24.19.0. [First current CI run 39347872671](https://github.com/woodkill00/aphantasia_build/actions/runs/39347872671) passed 240 non-browser checks and 52/54 real-browser groups on Chrome 155.0.8059.39. Two short-fullscreen groups failed on a test-only sentence-order assumption; the repair requires both instructions independently, and [Complete rerun 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905) then passed 241 non-browser checks and all 54 native browser groups on the unchanged HTML, including the injected-Exit-denial tail. All 14 synthetic frames were captured and inspected. Older passes below remain historical.
 
 Use the existing sandbox-enabled CI and the same commands documented below; install nothing and do not change browser security. The existing native fullscreenchange observer and immutable trusted-event Hidden/black/focus assertions are retained. Added checks cover actual draft swatch RGB before native range change, black/gray semantics, selection/import/history color state, hidden fullscreen chrome/tab stops, keyboard Show/Exit, subdued pointer-idle Exit, first-action touch Exit, short fullscreen layout and injected Exit rejection.
 

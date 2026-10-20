@@ -1,20 +1,23 @@
 # Architecture and data contract
 
-Version 0.2.0 implementation; current non-browser and scoped headless Chrome checks passed. Updated 2026-10-19. Historical version 0.1 results are recorded separately.
+Version 0.4 candidate architecture, updated 2026-10-20. Sequence controls are implemented in the candidate source; independent verification is in progress. The [final sequence contract](sequence-spec.md) is authoritative; the historical v0.3 pass does not verify this candidate.
 
 ## Components and rendering
 
-- `imagery-app/src/model.js`: closed validation, canonical serialization, legacy migration, deterministic geometry, presets, and the interaction controller.
-- `imagery-app/src/app.js`: semantic controls, object selection/placement, Canvas 2D drawing, fullscreen/lifecycle handling, local file reading, and Blob downloads.
-- `imagery-app/src/shell.html` and `style.css`: full-window layout, collapsible editor, guidance, focus, and responsive rules.
+- `imagery-app/src/model.js`: closed static validation, canonical serialization, legacy migration, deterministic geometry, presets, and the existing visibility/history/import controller.
+- `imagery-app/src/sequence-model.js`: closed sequence validation/parser/serializer, compiled timeline, deterministic frame sampling, and injected-clock playback state. It has no DOM, canvas, RAF, network, persistence, or visibility authority.
+- `imagery-app/src/app.js`: scene and sequence controls, atomic capture, object selection/placement, Canvas 2D compositing, scheduling, fullscreen/lifecycle handling, local file reads, and Blob downloads.
+- `imagery-app/src/shell.html` and `style.css`: full-window field, compact Scene/Sequence section selection, one selected-step inspector, editor-only color samples, reachable Apply/capture actions, guidance, focus, and responsive rules.
 - `imagery-app/src/assemble.cjs`: developer-only assembler producing the self-contained `index.html`.
 - `imagery-app/tests/`: synthetic model, DOM/Canvas-double, static, CDP transport/fixture, and separately gated real-browser checks.
 
-The runtime uses inline classic scripts/styles, system fonts, and no remote assets. It redraws only for relevant events. There is no animation loop or periodic progression; the only UI timeout cleans up download URLs and cannot reveal a scene.
+The runtime uses inline classic scripts/styles, system fonts, and no remote assets. Static/manual displays redraw on relevant events. Only an explicitly started, finite, single-pass sequence schedules animation frames. At most one RAF is pending; no idle playback loop, autoplay, pulse oscillator, or automatic replay is authorized. The download-URL cleanup timer has no display authority.
 
-The canvas fills the window behind the editor and persistent viewing controls. Optional browser fullscreen targets their shared root so Hide/End remain inside it. Entry, exit, rejection, and fullscreen events conceal; unsupported or rejected fullscreen leaves the full-window layout available. Closing/opening the editor also conceals. The top **Viewing guidance** shortcut opens/focuses the guidance; the skip link opens/focuses scene controls. Fullscreen transitions focus the appropriate entry/exit control; Escape does not suppress the browser's own fullscreen exit.
+Timed playback remains windowed so Pause and Stop are reachable. Static/manual previews may use clean fullscreen: normal workspace chrome is suppressed, a keyboard/touch Exit remains, and hidden fullscreen provides a separate explicit Show route. Fullscreen entry/exit/failure and editor toggles conceal. Escape does not suppress native fullscreen exit. The decorative hidden-state circle is removed from the candidate source; hidden canvas pixels stay black behind ordinary interface text/controls.
 
-Object centers use percentages of the actual width and height. Size and outline width use the shorter side, preserving circles and squares on rectangular displays. Backing-store scaling compensates for rounded buffer dimensions; it is capped at 4,096 pixels per dimension and 8,388,608 total pixels, with device-pixel ratio capped at 2. These are resource bounds, not display-quality or safety guarantees.
+Object centers use percentages of actual width and height. Size and outline width use the shorter side, preserving circles and squares on rectangular displays. Backing-store scaling compensates for rounded buffer dimensions; dimension caps remain 4,096 pixels and DPR at most 2. Main plus one offscreen canvas together must remain within 8,388,608 pixels, including resize allocations. No third full-size buffer is used. These are resource bounds, not display-quality or medical-safety guarantees.
+
+For a transition, render opaque scene A on the main canvas and opaque scene B on the offscreen canvas, each against the same background; composite B over A at the sampled alpha. Reset transform, alpha, and compositing every frame. Never accumulate previous pixels or fade the combined output through an inserted black frame. A direct cut has no transition phase. Crossfades can contain 12 + 12 objects; the validated per-snapshot cap remains 12.
 
 ## Version 2 scene schema
 
@@ -44,26 +47,57 @@ Migration preserves the name, gives the scene a black HSL background, and create
 
 This preserves the logical composition, not a pixel-identical old screenshot: colors are approximated, and the full-window rectangular field maps center percentages across its actual dimensions while keeping shapes aspect-correct. Imports are accepted hidden. All new exports use version 2; no version 1 export is offered.
 
-## Editing, visibility, and asynchronous work
+## Version 1 sequence schema
 
-Accepted scene data, a draft, 40-entry session history, visibility, and import tokens live in the controller. Selection and form/placement state live in the UI. Add/remove/move/size/shape/color/name changes and presets are staged; **Apply changes** commits through validation and **Discard** restores accepted data. Selection keeps existing staged edits. Invalid input retains the last accepted scene and must be fixed or discarded before Show/export. Undo/redo navigate accepted scenes, not individual draft keystrokes.
+This is separate from static scene version 1/2. The root has exactly `format: "imagery-field-sequence"`, `version: 1`, `sampler: "ordered-crossfade-1"`, and `sequence`. `sequence` has exactly `name`, `background`, and `steps`.
 
-The field starts hidden. Scene edits, selection, placement, apply/discard, presets, imports, history, fullscreen changes, and editor toggles conceal. Hidden rendering clears both objects and the chosen background to black; controls and the hidden-state message remain. Placement uses one click/tap while hidden, reopens the editor afterward, and has numeric position alternatives. There is no drag animation or live scene preview.
+- Sequence name, step name, and step identifier use the existing nonblank 1–64-code-unit name restrictions, including control/bidi-character rejection. Step identifiers are unique within the sequence.
+- `background` has the unchanged static HSL restrictions. It is shared by every step and remains constant during playback; valid nonblack backgrounds are supported.
+- `steps` is an ordered dense array of 1–32 entries. Each entry has exactly `id`, `name`, `holdMs`, `transitionMs`, and `objects`.
+- `objects` is a nonempty snapshot of 1–12 objects, validated through `ImageryModel.canonicalScene`. Object IDs must be unique within that snapshot, not across different steps. Static background-only scenes remain valid but cannot be sequence steps.
+- `holdMs` is an integer from 1,000–600,000, in 500 ms increments. `transitionMs` is an integer from 0–60,000 in 500 ms increments for nonfinal steps; the final step's transition is exactly zero.
+- The sum of all holds and outgoing transitions must be at most 3,600,000 ms. The default new hold is 3,000 ms; the default outgoing crossfade is 1,000 ms. Zero means a direct cut. These are supported engineering capacities, not medical thresholds, doses, or a recommended viewing schedule.
 
-Show is explicit and synchronous, requires no pending draft, and never queues a future reveal. Hide/End/Escape conceal immediately and cancel placement/pending import work. A 3,000 ms anti-repeat guard blocks early reveal attempts; it is an engineering restriction, not a viewing/recovery interval. Holding a button activation key does not repeatedly activate it.
+`ImagerySequence.canonicalSequence` validates and freezes an independent canonical document. `validateSequence` returns a success/error result; `parseSequence` rejects malformed text, decoded duplicate keys, and nesting deeper than 32; `serializeSequence` revalidates before writing JSON. Unknown fields, accessors, sparse/extended arrays, wrong scalar types, invalid totals, and unsupported capabilities are rejected. Canonical documents and input/output JSON remain bounded to 1 MiB UTF-8. Notes, playback state, URLs, callback names, expressions, loop flags, and hidden capabilities are not part of this format. Imported data is never executed or fetched.
 
-Blur, hidden-tab, resize, pagehide, freeze, fullscreen changes, and restored-page handlers conceal. No delayed file or fullscreen completion can reveal. Import tokens prevent stale reads from replacing state after a newer invalidating action. Validation errors keep accepted data. Untrusted text reaches text/value sinks; status text is capped at 300 code units. Actual event delivery and control usability still require browser/device testing.
+## Editing and atomic capture
+
+The existing controller owns accepted scene data, a draft, 40-entry scene-only history, visibility, and import tokens. UI state owns object selection, raw fields, placement, the accepted sequence, selected step, and sequence generation. Scene add/remove/move/size/shape/color/name changes and presets remain staged. **Apply changes** commits through validation; **Discard** restores the accepted scene. Invalid raw scene input must be resolved before static Show/export or timed Play. Undo/redo navigates accepted scenes and never changes sequence snapshots or notes.
+
+Valid sequence name/timing edits commit immediately while stopped/hidden; there is no Apply sequence button. Invalid raw sequence fields retain accepted data and show a specific error. Play, sequence export, capture, and structural changes are blocked until the error is corrected or discarded. Steps are immutable copies: later scene edits do not silently modify them.
+
+**Add scene as step** and **Replace selected step** combine scene application and snapshot capture when a draft exists. Preflight the static scene and the complete normalized sequence before committing either. A failure preserves both accepted documents and scene history, while canceling/concealing. The first capture seeds the shared background; later mismatched backgrounds are rejected. Loading a selected step into the scene editor copies it and blocks unresolved scene drafts.
+
+Reorder/delete/append normalize only boundary transitions: the new final step gets zero; a former final moved earlier gets the default 1,000 ms; other values remain. Validate the whole candidate and announce adjustments. Reject atomically if the resulting total or another rule fails.
+
+## Timeline and display authority
+
+`compileTimeline` returns a frozen validated document, total duration, and half-open hold/transition phases. `frameAt` returns deterministic phase, source/destination indices, alpha, elapsed/remaining time, and completion. Zero-duration transitions have no phase or gap. The injected-clock `createTimeline` API exposes `start`, `tick`, `markPainted`, `pause`, `resume`, `stop`, and `getState`; it does not schedule work or reveal a display. Stale/unissued frames cannot be acknowledged as painted.
+
+The exact 11-second reference is circle hold [0,3), circle→square crossfade [3,4), square hold [4,7), square→triangle crossfade [7,8), triangle hold [8,11), then hidden. Half-open boundaries mean 4 seconds is square hold and 11 seconds is complete. Halfway blends are sampled at 3.5 and 7.5 seconds. These values define an editable test/example timeline, not an exposure regimen.
+
+One existing scene visibility gate controls static Show, manual Show step, and timed Play, including the unchanged 3,000 ms repeat-action guard. The field begins hidden; no draft edit, import, selection, frame callback, or delayed completion can call Show on the user's behalf. A blocked explicit reveal never queues a future reveal. The guard is an engineering restriction, not a recovery interval.
+
+Play needs a valid sequence and resolved static/sequence fields, runs only in the window, and requires an explicit action. A callback may paint only if the captured scene epoch and sequence generation still match, the visibility gate is open, and playback remains running. It cannot reveal content. Pause cancels pending scheduling and freezes the last frame acknowledged as actually painted, including its exact elapsed position; it does not resample at click time and leaves the image visible. Resume is explicit and rebases the clock without catch-up.
+
+Stop/Hide/End/Escape, scene/sequence edits, imports, selection/mode changes, fullscreen changes, resize, blur, hidden tabs, freeze, pagehide, restoration, and reduced-motion changes invalidate generation and cancel RAF before concealing synchronously. Completion conceals to black and resets elapsed time without replay. Reduced-motion preference permits manual stepping rather than replacing fades with automatic cuts. Preference changes never automatically resume.
+
+Static placement remains one hidden-field click/tap with numeric alternatives. Small labeled color samples update directly from draft color sliders without touching the visibility gate. Untrusted names/statuses use text/value sinks; status text is bounded to 300 code units. Actual event delivery, composited pixels, and control reachability require independent browser checks.
 
 ## Files, notes, and privacy
 
-The accepted scene is explicitly exported as JSON and can be imported later. Draft changes must be applied or discarded first. Downloads are requested, not confirmed as durable disk writes. There is no autosave, browser storage, backend, account, telemetry, or runtime network dependency; refreshing/closing can lose unexported work.
+The accepted scene and sequence are separately exported/imported JSON documents. Static drafts must be applied/discarded before static export; invalid sequence fields must be resolved before sequence export. Imports stop and conceal, and stale reads cannot replace newer accepted state. Downloads are requested, not confirmed as durable disk writes. There is no autosave, browser storage, backend, account, telemetry, or runtime network dependency; refreshing/closing can lose unexported scenes, sequences, and notes.
 
-Notes are independent of scene editing/history/import. Their separate export contains only `format: imagery-field-note`, `version: 1`, `category`, and `text`. Categories are `unsure`, `none`, `external-perception`, `residual-aftereffect`, `voluntary-imagery`, `conceptual-knowledge`, and `mixed`; text is at most 4,000 code units and cannot contain a null character. Export requires an exact preview and explicit selection; category/text changes invalidate that selection. Notes are never included in scene files and are not imported.
+Notes are independent of scene/sequence editing and imports, and scene history. Their separate export contains only `format: imagery-field-note`, `version: 1`, `category`, and `text`. Categories are `unsure`, `none`, `external-perception`, `residual-aftereffect`, `voluntary-imagery`, `conceptual-knowledge`, and `mixed`; text is at most 4,000 code units and cannot contain a null character. Export requires an exact preview and explicit selection; category/text changes invalidate that selection. Notes are never included in scene or sequence files and are not imported.
 
-End viewing preserves data in the open page. Neither End nor closing the page is secure deletion: browser session restoration, extensions, device backups, and syncing may retain or copy content. Scene names and notes can contain personal text; inspect exports before sharing. Public examples and tests use synthetic data.
+End viewing preserves data in the open page. Neither End nor closing the page is secure deletion: browser session restoration, extensions, device backups, and syncing may retain or copy content. Scene, sequence, and step names and notes can contain personal text; inspect exports before sharing. Public examples and tests use synthetic data.
 
 ## Verification and boundaries
 
-Version 0.2 passed 216 non-browser checks and 38 sandbox-enabled headless Chrome groups in [CI run 39343535180](https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180), on the artifact identified in the [root README](../README.md). The first browser attempt passed 36/38; a harness-only native-fullscreen-event observation repair preserved immediate event-state assertions and the unchanged app then passed all groups. The local launch blocker and historical version 0.1 result remain separate evidence. Physical devices, Safari, ordinary OS dialogs, manual accessibility, and qualified sensory/content review remain separate gates. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md).
+The sequence candidate requires its own independent source, synthetic, native-browser, controlled-clock pixel, and real-scheduling evidence. A source implementation is not a verified pass. At minimum test malformed sequence data, immutable capture/replacement and rollback, final-transition normalization, maximum capacity, exact half-open boundaries, overlap and 12 + 12 compositing, direct cuts, exact painted-frame Pause, stale callbacks, every cancellation route, reduced motion, fullscreen interruption, and independent scene/sequence/note exports.
 
-Version 0.2 supports a small flat collection of simple objects. Arbitrary groups, freeform paths, textures, shaders, animation, durable storage, timed protocols, diagnostics, participant systems, and efficacy measures remain outside scope.
+The separate v0.3 artifact passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), Chrome 155.0.8059.39, source head `57b8f2c2811dc246abca55d9630c0581551d448d`. The [root README](../README.md) identifies its exact HTML hash and historical v0.1/v0.2 results. Two independent scripted journeys and 14 inspected frames informed the layout changes; these are not human-study results or sequence acceptance.
+
+Physical devices, Safari, ordinary OS dialogs, complete manual accessibility, and qualified sensory/content review remain separate gates. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md). Software checks do not establish safety or efficacy.
+
+The only authorized timed display is the finite presentation in [the sequence specification](sequence-spec.md). Arbitrary groups/freeform paths, textures/shaders, effect curves, live strobe/pulse modes, durable storage, diagnostics, participant systems, and efficacy measures remain outside the implemented scope. Broader effect-curve authoring and offscreen output analysis are future proposals, not an implemented capability or medical clearance. Hosted deployment is not part of this increment.

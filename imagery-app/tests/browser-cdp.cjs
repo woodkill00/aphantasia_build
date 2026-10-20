@@ -62,6 +62,8 @@ function hslRgb({h,s,l}) {
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const {scene: fixtureScene, legacy} = require('./fixtures.cjs');
 const {runIndependentScenarios}=require('./independent-user-scenarios.cjs');
+const {runSequenceScenarios}=require('./browser-sequence.cjs');
+const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
 const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
   const valid = scene({name:'Synthetic imported scene', shape:'square'});
@@ -371,14 +373,14 @@ class Page {
     assert.equal(await this.evaluate(()=>window.__rangeEvents.some(e=>e.type==='change')),false,'range should conceal during input, before commit');
     await this.hidden();const changed=await this.assertSwatch(prefix);assert.notDeepEqual(changed.values,prior.values,'native range input must change its draft value');assert.equal((await this.swatch(other)).rgb,unchanged.rgb,'the other swatch must remain unchanged');assert.equal(await this.property('#draft-label','textContent'),'Changes staged');await this.send('Input.dispatchMouseEvent',{type:'mouseReleased',...point,button:'left',clickCount:1});
   }
-  async file(filename, value, waitForRead = true) {
+  async file(filename, value, waitForRead = true, selector = '#scene-import') {
     const filePath = path.join(this.downloads, filename);
     fs.writeFileSync(filePath, typeof value === 'string' ? value : JSON.stringify(value));
-    await this.importPath(filePath, waitForRead); return filePath;
+    await this.importPath(filePath, waitForRead, selector); return filePath;
   }
-  async importPath(filePath, waitForRead = true) {
+  async importPath(filePath, waitForRead = true, selector = '#scene-import') {
     const {root:documentNode} = await this.send('DOM.getDocument');
-    const {nodeId} = await this.send('DOM.querySelector', {nodeId:documentNode.nodeId, selector:'#scene-import'});
+    const {nodeId} = await this.send('DOM.querySelector', {nodeId:documentNode.nodeId, selector});
     assert.ok(nodeId, 'file input missing');
     await this.send('DOM.setFileInputFiles', {nodeId,files:filePath ? [filePath] : []});
     if (waitForRead) await until(async () => !/^Reading the local/.test(await this.property('#status','textContent')), 'native File.text completion');
@@ -713,6 +715,8 @@ async function run() {
           const old=legacy({shape:'dots',dotCount:5,size:20});await page.file('legacy-v1.json',old);await page.hidden();const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(got.json,M.canonicalScene(old));assert.equal(got.json.scene.objects.length,5);
         });
         await runIndependentScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
+        await runSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
+        await runIndependentSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});
         console.log(`${report.results.at(-1).status} ${device.name}: page runtime, dialog, and remote-request log`);
       } finally { await page.close(); }

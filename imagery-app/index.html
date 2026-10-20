@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Imagery Field · Static exploration</title>
+<title>Imagery Field · Scene & sequence studio</title>
 <style>:root{color-scheme:dark;--panel:#151c1a;--panel-soft:#1b2420;--line:#3d4b43;--text:#e9ede7;--muted:#aab9ad;--accent:#c2d5a7;--accent-ink:#1b2818;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#000;color:var(--text)}body{overflow:hidden}button,input,select,textarea{font:inherit;min-width:0}button,input,select,textarea,summary{scroll-margin:14px}button{min-height:44px;padding:10px 15px;border:1px solid #657568;border-radius:8px;background:#26322b;color:var(--text);font-weight:600;line-height:1.25;cursor:pointer;white-space:normal}button:hover{background:#34443a}button:disabled{opacity:.48;cursor:default}button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}button.primary:hover{background:#d2e2bc}button.hide-button{border-color:#d5dfca;background:#3d4d3e}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #f4d99d;outline-offset:3px}button[aria-pressed=true]{border-color:var(--accent);background:#40563c}button.primary[aria-pressed=true]{color:var(--accent-ink);background:#d2e2bc}[hidden]{display:none!important}.stage-root{isolation:isolate;position:relative;width:100%;height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px;padding:12px;overflow:hidden;background:#000}.stage-root:fullscreen{width:100%;height:100%;background:#000}#scene-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-2;touch-action:manipulation}#scene-canvas.placing{cursor:crosshair}.hidden-label{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center;color:#9ca99f;pointer-events:none;z-index:-1;padding:24px;font-size:1rem}.hidden-label small{color:#69796e;font-size:.78rem}.quiet-mark{font-size:44px;line-height:1;margin-bottom:6px;color:#788b7c}.masthead{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;z-index:2}.brand{display:flex;align-items:center;gap:11px;min-width:0}.brand-mark{font-size:40px;line-height:32px;color:var(--accent)}.wordmark{font-size:.75rem;letter-spacing:.13em;font-weight:650;line-height:1.6}.edition{display:block;color:var(--muted);font-size:.55rem;letter-spacing:.11em}.pill{font-size:.7rem;color:#d9e4d3;border:1px solid #5e6d60;padding:5px 9px;border-radius:20px;margin-left:4px}.workspace-actions{display:flex;gap:8px;flex-wrap:wrap}.workspace-actions button{font-size:.78rem}.stage-body{position:relative;min-width:0;min-height:0;display:flex;justify-content:flex-end;pointer-events:none;z-index:1}.editor-panel{pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;width:min(380px,100%);height:100%;overflow:auto;overscroll-behavior:contain;padding:24px;scrollbar-color:#6b7d6a #18211b;scrollbar-gutter:stable;min-width:0}.section-heading{display:flex;justify-content:space-between;gap:10px;align-items:start}h1{font-family:ui-serif,Georgia,serif;font-weight:400;font-size:1.8rem;line-height:1.15;letter-spacing:-.02em;margin:7px 0 15px}h2{font-family:ui-serif,Georgia,serif;font-weight:400;font-size:1.4rem;line-height:1.2;margin:8px 0 14px}p{line-height:1.55;overflow-wrap:anywhere}.eyebrow{color:var(--accent);text-transform:uppercase;font-size:.63rem;letter-spacing:.13em;margin:0}.draft-label{font-size:.64rem;color:var(--muted);text-align:right;margin-top:2px;max-width:65px}.lede{font-size:.83rem;color:#d2ddd1;margin:0 0 12px}.scope{font-size:.72rem;color:var(--muted);border-left:2px solid #657b5f;padding-left:10px;margin:12px 0 22px}label{font-size:.76rem;font-weight:550;display:block;margin:12px 0 6px;color:#d9e2d5}input:not([type=checkbox]),select,textarea{width:100%;border:1px solid #58695b;border-radius:6px;min-height:44px;background:#0f1612;color:var(--text);padding:9px 10px;font-size:.85rem}select{padding-right:8px}input[type=range]{accent-color:var(--accent);padding:0;border:0;background:transparent;cursor:pointer;min-height:34px;display:block}input[type=file]{font-size:.74rem;padding:8px;max-width:100%}input[type=file]::file-selector-button{font:inherit;max-width:100%;white-space:normal}textarea{min-height:120px;resize:vertical}.group{margin:24px 0 20px;padding:0;border:0;min-width:0}.group legend{width:100%;border-bottom:1px solid var(--line);padding:0 0 9px;font-size:.85rem;font-weight:650}.group legend span{float:right;color:var(--muted);font-size:.72rem;font-weight:400}.add-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px}.add-row>*{min-width:0}.add-row button{font-size:.73rem;padding:10px}.control-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px}.control-grid>*{min-width:0}.control-grid label{font-size:.71rem}.hint{font-size:.71rem;color:var(--muted);margin:9px 0 12px;line-height:1.55}.small-actions,.apply-row,.history-row{display:flex;gap:8px;flex-wrap:wrap}.small-actions button,.history-row button,.apply-row button{font-size:.75rem}.apply-row{position:relative;background:var(--panel);padding:12px 0;margin-top:10px;border-top:1px solid var(--line);z-index:2}.apply-row button:first-child{flex:1}.history-row{align-items:center;margin:12px 0}.history-row .hint{flex:1;min-width:75px;margin:0;font-size:.63rem}.slider-label{display:flex;gap:10px;justify-content:space-between;align-items:center;font-size:.74rem}.slider-label output{font-variant-numeric:tabular-nums;color:var(--accent);font-size:.76rem}.description,.portable-card,.notes-card,.guidance{border-top:1px solid var(--line);margin-top:22px;padding-top:20px}.description p{font-size:.75rem;color:var(--muted)}summary{cursor:pointer;min-height:44px;font-size:.8rem;padding:10px 0;line-height:1.5}summary:focus-visible{outline-offset:0}.file-actions{display:grid;gap:7px;grid-template-columns:minmax(0,1fr)}.file-actions button{font-size:.78rem}.file-label{margin-top:3px}.summary-title{display:block;font-family:ui-serif,Georgia,serif;font-size:1.15rem;font-weight:400;color:var(--text);margin-top:4px}.notes-card summary{display:flex;justify-content:space-between;gap:10px}.notes-content p,.guidance p{font-size:.74rem;color:var(--muted)}.notes-content pre{font: .7rem/1.5 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#0b110d;padding:12px;border:1px solid var(--line);border-radius:7px;max-height:240px;overflow:auto}.check-label{display:flex;align-items:center;gap:8px;min-height:44px}.check-label input{width:20px;height:20px;accent-color:var(--accent);flex:none}.footnote{font-size:.65rem;color:var(--muted);border-top:1px solid var(--line);margin:22px 0 0;padding-top:20px}.viewing-bar{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid #71816c;border-radius:12px;padding:12px;z-index:3}.view-actions{display:flex;gap:8px;flex:none}.view-actions button{font-size:.82rem;min-width:85px}.viewing-bar p{font-size:.75rem;color:#d5e0d0;margin:0;min-width:0;max-height:4.6em;overflow:auto;flex:1;line-height:1.5}#status.error{color:#f2c6aa}.skip-link{position:absolute;top:12px;left:12px;z-index:10;background:var(--accent);color:var(--accent-ink);padding:12px;transform:translateY(-180%);font-size:.8rem}.skip-link:focus{transform:none}.noscript{position:fixed;inset:0 0 auto;background:#352e22;padding:20px;z-index:100}@media(max-width:650px){.stage-root{padding:8px;gap:8px}.masthead{padding:8px 10px;gap:8px}.workspace-actions{margin-left:auto}.workspace-actions button{font-size:.69rem;padding:8px 10px}.brand{gap:6px}.brand-mark{font-size:30px}.wordmark{font-size:.65rem}.edition{font-size:.5rem}.pill{font-size:.6rem;padding:4px 6px}.editor-panel{width:min(380px,100%);padding:20px}.viewing-bar{flex-direction:column;align-items:stretch;gap:8px;padding:10px}.view-actions button{flex:1;min-width:0;font-size:.75rem;padding:10px 7px}.viewing-bar p{font-size:.69rem;max-height:3em;min-height:1.5em;flex:auto}}@media(max-width:359px){.editor-panel{padding:15px}.masthead{gap:6px}.workspace-actions{width:100%;justify-content:flex-end}.workspace-actions button{flex:1}.add-row{grid-template-columns:minmax(0,1fr)}.add-row button{width:100%}.small-actions button{flex:1;padding:8px}.control-grid{gap:0 8px}.viewing-bar{padding:8px}.view-actions{gap:5px}}@media(max-height:420px) and (min-width:500px){.stage-root{padding:6px;gap:6px}.masthead{padding:4px 10px}.brand-mark{font-size:30px}.edition{display:none}.viewing-bar{padding:6px 10px;gap:12px;flex-direction:row}.view-actions button{font-size:.7rem;min-width:65px;padding:8px}.viewing-bar p{font-size:.65rem;max-height:3em}.editor-panel{padding:16px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}@media(forced-colors:active){button,input,select,textarea,.editor-panel,.masthead,.viewing-bar{border:1px solid CanvasText}.pill{border-color:CanvasText}}
 
 #scene-canvas:focus-visible{outline:3px solid #f4d99d;outline-offset:-5px}
@@ -47,21 +47,41 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 @media(hover:none),(pointer:coarse){.fullscreen-exit{opacity:1}}
 @media(max-height:300px){.fullscreen-start{padding:50px 16px 12px;gap:8px;overflow:auto;justify-content:flex-start}.fullscreen-start p{font-size:.68rem}.fullscreen-exit{top:4px;right:4px}}
 @media(forced-colors:active){.color-swatch{forced-color-adjust:none}.fullscreen-exit{opacity:1;background:ButtonFace;color:ButtonText;border-color:ButtonText}.fullscreen-exit:focus-visible{box-shadow:none;outline-color:Highlight}input.color-slider{appearance:auto;-webkit-appearance:auto;background-image:none!important}}
+
+/* Compact authoring sections and always-reachable commit/capture controls. */
+.editor-panel{display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:0;overflow:hidden;scrollbar-gutter:auto;width:min(400px,100%)}
+.section-selector{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.section-selector button{flex:1;font-size:.8rem}.section-selector span{font-size:.7rem;margin-left:5px}
+.editor-scroll{overflow:auto;overscroll-behavior:contain;min-height:0;padding:18px 20px;scroll-padding-block:16px;scrollbar-color:#6b7d6a #18211b;scrollbar-gutter:stable}
+.editor-actions{padding:8px 12px;border-top:1px solid var(--line);background:var(--panel);z-index:2}
+.editor-actions .apply-row{margin:0;padding:0;border:0}.editor-actions .apply-row:not([hidden]){margin-bottom:6px}
+.capture-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}.capture-actions button{font-size:.7rem;padding:8px}
+#controls h1,#sequence-title{font-size:1.65rem;margin:6px 0 12px}.section-heading{align-items:center}
+.inline-error{font-size:.76rem;line-height:1.5;padding:10px;border-left:3px solid #e4b497;color:#f2c6aa;background:#2c231f}
+#sequence-load{margin-top:12px;width:100%;font-size:.75rem}#sequence-example{width:100%;font-size:.78rem}
+.sequence-view-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1}.manual-actions,.playback-actions{display:flex;gap:6px}.sequence-view-actions button{font-size:.77rem;min-width:70px}.sequence-view-actions .hint{margin:0;font-size:.69rem}#sequence-progress{font-variant-numeric:tabular-nums;min-width:70px}#reduced-motion-note{width:100%}
+.viewing-bar:has(#sequence-view-actions:not([hidden])){flex-wrap:wrap;gap:8px}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{flex-basis:100%;font-size:.7rem;max-height:3em}
+@media(max-width:650px){.editor-scroll{padding:14px 16px}.editor-actions{padding:7px 10px}.section-selector{padding:7px 10px}.sequence-view-actions{gap:6px;display:grid;grid-template-columns:minmax(0,1fr) auto}.manual-actions{grid-column:1/-1}.manual-actions button{flex:1}.playback-actions{min-width:0}.playback-actions button{min-width:0}.sequence-view-actions button{min-height:44px;padding:8px;font-size:.72rem}#sequence-progress{text-align:right;font-size:.65rem}#reduced-motion-note{grid-column:1/-1}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{flex-basis:auto;min-height:1.5em}}
+@media(max-height:500px){.editor-actions{padding:4px 7px}.capture-actions button,.editor-actions .apply-row button{padding:5px;font-size:.66rem}.section-selector{padding:4px 7px}.editor-scroll{padding:10px}.sequence-view-actions{gap:5px}.viewing-bar:has(#sequence-view-actions:not([hidden])){padding:5px;gap:4px}}
+@media(max-width:500px) and (max-height:300px){.editor-panel{grid-template-rows:auto minmax(56px,1fr) auto;overflow:auto}.section-selector{padding:2px}.editor-scroll{padding:6px}.editor-actions{padding:2px}.capture-actions button,.editor-actions .apply-row button{font-size:.6rem}.manual-actions button,.playback-actions button{font-size:.64rem}.sequence-view-actions{grid-template-columns:1fr auto;gap:2px}.sequence-view-actions .manual-actions{grid-column:auto}.sequence-view-actions #sequence-progress{display:none}.viewing-bar:has(#sequence-view-actions:not([hidden])) #status{max-height:1.5em}}
 </style>
 </head>
 <body>
 <div id="stage-root" class="stage-root">
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="-1" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
-  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span class="quiet-mark">○</span><span>The field is hidden</span><small>Compose, apply, then show when you choose.</small></div>
+  <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Compose, apply, then show when you choose.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
   <header id="masthead" class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">STATIC STUDIO / 0.3</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">SCENE + SEQUENCE / 0.4</span></div><span id="visibility-label" class="pill">Hidden</span></div>
     <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
   <main id="stage-body" class="stage-body">
-    <aside id="editor-panel" class="editor-panel" aria-label="Scene editor">
+    <aside id="editor-panel" class="editor-panel" aria-label="Scene and sequence editor">
+      <nav class="section-selector" aria-label="Editor section"><button id="workspace-scene" type="button" aria-pressed="true" aria-controls="scene-panel">Scene</button><button id="workspace-sequence" type="button" aria-pressed="false" aria-controls="sequence-panel">Sequence <span id="sequence-count">0</span></button></nav>
+      <div id="editor-scroll" class="editor-scroll">
+      <div id="scene-panel">
       <section id="controls" tabindex="-1" aria-labelledby="controls-title">
-        <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Make room<br>for your own design.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
+        <div class="section-heading"><div><p class="eyebrow">Your composition</p><h1 id="controls-title">Build a scene.</h1></div><span id="draft-label" class="draft-label">Applied</span></div>
         <p class="lede">Place individual dots, pixels and outlines across the whole field. Adjust its background to describe what you want to represent.</p>
         <p class="scope">Engineering preview. Not a treatment or diagnostic test; it does not establish imagery gains.</p>
         <label for="preset">Start with a preset</label>
@@ -96,16 +116,40 @@ input.color-slider:disabled{opacity:.45;cursor:default}
             <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="40" step="1" value="0">
             <p class="hint">At 0% lightness, the background is black. At 0% saturation, hue has no visible effect. Color lightness does not set your screen’s brightness.</p>
           </fieldset>
-          <div class="apply-row"><button id="apply-changes" class="primary" type="submit">Apply changes</button><button id="discard" type="button">Discard</button></div>
+  
         </form>
-        <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step session history</span></div>
-        <p class="hint">Edits hide the full field immediately; only the small color samples update live. Apply changes, then choose Show. Nothing moves or advances automatically.</p>
+        <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step scene history</span></div>
+        <p class="hint">Edits hide the full field immediately; only the small color samples update live. Apply changes, then choose Show. Nothing is shown automatically.</p>
         <details class="description"><summary>Applied scene description</summary><p id="scene-description"></p></details>
       </section>
       <section class="portable-card" aria-labelledby="portable-title">
         <p class="eyebrow">Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p class="hint">No autosave, account, browser storage or network. Download work before closing or reloading this page.</p>
         <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label></div>
         <p class="hint">Opens version 1 or 2, up to 1 MiB. Downloads use version 2. Version 1 colors are approximated in HSL. Notes are never included.</p>
+      </section>
+      </div>
+      <section id="sequence-panel" aria-labelledby="sequence-title" hidden>
+        <p class="eyebrow">Ordered snapshots</p><h1 id="sequence-title">One pass, your pace.</h1>
+        <p class="lede">Capture scene copies, set each hold and transition, then step manually or play once.</p>
+        <p class="scope">Presentation authoring, not a treatment. Timing and capacity limits are engineering choices, not medically safe thresholds.</p>
+        <button id="sequence-example" type="button">Load 11-second example</button>
+        <p class="hint">Circle → square → triangle. Loading replaces this sequence, stays hidden and never starts playback.</p>
+        <label for="sequence-name">Sequence name</label><input id="sequence-name" type="text" maxlength="64" autocomplete="off" value="My sequence" aria-describedby="sequence-error">
+        <p id="sequence-summary" class="hint">No steps yet. Add the scene, or load the example.</p>
+        <label for="sequence-step-select">Selected snapshot</label><select id="sequence-step-select" aria-describedby="sequence-summary"></select>
+        <div id="sequence-inspector">
+          <label for="sequence-step-name">Step name</label><input id="sequence-step-name" type="text" maxlength="64" autocomplete="off" aria-describedby="sequence-error">
+          <div class="control-grid"><div><label for="sequence-hold">Hold · seconds</label><input id="sequence-hold" type="number" min="1" max="600" step="0.5" inputmode="decimal" value="3" aria-describedby="sequence-timing-hint sequence-error"></div><div><label for="sequence-transition">Transition · seconds</label><input id="sequence-transition" type="number" min="0" max="60" step="0.5" inputmode="decimal" value="0" aria-describedby="sequence-timing-hint sequence-final-hint sequence-error"></div></div>
+          <p id="sequence-timing-hint" class="hint">Hold 1–600 seconds, plus the outgoing transition of 0–60 seconds, in 0.5-second increments. Hold excludes the transition. A zero transition is a direct cut.</p>
+          <p id="sequence-final-hint" class="hint">The final step ends hidden; its transition is zero.</p>
+          <div class="small-actions"><button id="sequence-move-up" type="button">Move earlier</button><button id="sequence-move-down" type="button">Move later</button><button id="sequence-delete" type="button">Delete step</button></div>
+          <button id="sequence-load" type="button">Load step into scene editor</button>
+          <p class="hint">Snapshots are independent copies. Scene edits change a step only when you choose Replace. Every step shares the background captured first.</p>
+          <details class="description"><summary>Selected step description</summary><p id="sequence-description"></p></details>
+        </div>
+        <p id="sequence-error" class="inline-error" role="status" aria-live="polite" hidden></p>
+        <button id="sequence-discard" type="button" hidden>Discard invalid sequence fields</button>
+        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate version 1 sequence files, up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
@@ -125,10 +169,16 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     </details>
   </section>
       <p class="footnote">Object, geometry, color and resource bounds keep this prototype reviewable. They are engineering choices, not medically established safety thresholds. Static displays can still cause symptoms.</p>
+      </div>
+      <div id="editor-actions" class="editor-actions">
+        <div id="scene-apply-actions" class="apply-row"><button id="apply-changes" class="primary" type="submit" form="scene-form">Apply changes</button><button id="discard" type="button">Discard</button></div>
+        <div class="capture-actions"><button id="capture-add" type="button">Add scene as step</button><button id="capture-replace" type="button" disabled>Replace selected step</button></div>
+      </div>
     </aside>
   </main>
   <section id="viewing-bar" class="viewing-bar" aria-label="Viewing controls">
-    <div class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
+    <div id="sequence-view-actions" class="sequence-view-actions" hidden><div class="manual-actions"><button id="sequence-previous" type="button" aria-label="Select previous step">Previous</button><button id="sequence-show" type="button" class="primary">Show step</button><button id="sequence-next" type="button" aria-label="Select next step">Next</button></div><div class="playback-actions"><button id="sequence-play" type="button">Play once</button><button id="sequence-pause" type="button" hidden>Pause</button><button id="sequence-resume" type="button" hidden>Resume</button><button id="sequence-stop" type="button" class="hide-button">Stop / Hide</button></div><span id="sequence-progress" class="hint">Stopped</span><p id="reduced-motion-note" class="hint" hidden>Reduced motion is on. Select Previous or Next, then Show step.</p></div>
+    <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Show scene</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
     <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
   </section>
   <section id="fullscreen-start" class="fullscreen-start" aria-labelledby="fullscreen-title" hidden>
@@ -326,18 +376,364 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   return Object.freeze({FORMAT,VERSION,SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
 }));
 </script>
-<script>/* Static full-window editor. All data-changing actions conceal before render.
-   No scene animation, network access, persistence or delayed reveal. */
+<script>/* One-pass sequence data and timeline engine. No display or scheduling authority.
+   Counts and timing limits are engineering bounds, not exposure prescriptions. */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./model.js'));
+  else root.ImagerySequence = factory(root.ImageryModel);
+}(typeof globalThis !== 'undefined' ? globalThis : this, function (M) {
+  'use strict';
+  const FORMAT = 'imagery-field-sequence';
+  const VERSION = 1;
+  const SAMPLER = 'ordered-crossfade-1';
+  const MAX_IMPORT_BYTES = 1048576;
+  const MAX_STEPS = 32;
+  const MIN_HOLD_MS = 1000;
+  const MAX_HOLD_MS = 600000;
+  const MAX_TRANSITION_MS = 60000;
+  const TIME_INCREMENT_MS = 500;
+  const MAX_TOTAL_MS = 3600000;
+  const DEFAULT_HOLD_MS = 3000;
+  const DEFAULT_TRANSITION_MS = 1000;
+  const MAX_DEPTH = 32;
+  const compiledTimelines = new WeakSet();
+
+  function record(value, keys, label) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) ||
+        ![Object.prototype, null].includes(Object.getPrototypeOf(value))) {
+      throw new Error(label + ' must be an ordinary object.');
+    }
+    const own = Reflect.ownKeys(value);
+    if (own.length !== keys.length || own.some(key => typeof key !== 'string' || !keys.includes(key))) {
+      throw new Error(label + ' has missing or unsupported fields.');
+    }
+    const result = Object.create(null);
+    for (const key of keys) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+        throw new Error(label + ' cannot contain accessors.');
+      }
+      result[key] = descriptor.value;
+    }
+    return result;
+  }
+
+  function list(value, min, max, label) {
+    if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype ||
+        value.length < min || value.length > max) {
+      throw new Error(label + ' must be an array with ' + min + '\u2013' + max + ' entries.');
+    }
+    const keys = Reflect.ownKeys(value);
+    if (keys.length !== value.length + 1 || keys.some(key => key !== 'length' &&
+        (typeof key !== 'string' || !/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= value.length))) {
+      throw new Error(label + ' has missing or unsupported fields.');
+    }
+    const result = [];
+    for (let i = 0; i < value.length; i++) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, String(i));
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+        throw new Error(label + ' cannot contain holes or accessors.');
+      }
+      result.push(descriptor.value);
+    }
+    return result;
+  }
+
+  function name(value, label) {
+    if (typeof value !== 'string' || value.length < 1 || value.length > 64 || !value.trim() ||
+        /[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(value)) {
+      throw new Error(label + ' must be 1\u201364 characters without control characters.');
+    }
+    return value;
+  }
+
+  function time(value, min, max, label) {
+    if (!Number.isSafeInteger(value) || value < min || value > max || value % TIME_INCREMENT_MS !== 0) {
+      throw new Error(label + ' must be a whole number from ' + min + ' to ' + max +
+        ' ms, in ' + TIME_INCREMENT_MS + ' ms increments.');
+    }
+    return value === 0 ? 0 : value;
+  }
+
+  // Count UTF-8 even in an environment without TextEncoder. Lone surrogates
+  // encode as the replacement character, just as TextEncoder encodes them.
+  function checkBytes(text) {
+    let bytes = 0;
+    if (text.length > MAX_IMPORT_BYTES) throw new Error('Sequence file must be no larger than 1 MiB.');
+    for (let i = 0; i < text.length; i++) {
+      const code = text.charCodeAt(i);
+      if (code < 0x80) bytes++;
+      else if (code < 0x800) bytes += 2;
+      else if (code >= 0xd800 && code <= 0xdbff && i + 1 < text.length &&
+          text.charCodeAt(i + 1) >= 0xdc00 && text.charCodeAt(i + 1) <= 0xdfff) {
+        bytes += 4;
+        i++;
+      } else bytes += 3;
+      if (bytes > MAX_IMPORT_BYTES) throw new Error('Sequence file must be no larger than 1 MiB.');
+    }
+  }
+
+  function freeze(value) {
+    if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+      Object.keys(value).forEach(key => freeze(value[key]));
+      Object.freeze(value);
+    }
+    return value;
+  }
+
+  function canonicalSequence(value) {
+    const file = record(value, ['format', 'version', 'sampler', 'sequence'], 'Sequence file');
+    if (file.format !== FORMAT) throw new Error('Unsupported sequence format.');
+    if (file.version !== VERSION || file.sampler !== SAMPLER) {
+      throw new Error('Unsupported sequence version or sampler.');
+    }
+    const sequence = record(file.sequence, ['name', 'background', 'steps'], 'Sequence');
+    const sequenceName = name(sequence.name, 'Sequence name');
+    const sourceSteps = list(sequence.steps, 1, MAX_STEPS, 'Sequence steps');
+    const ids = new Set();
+    let total = 0, background;
+    const steps = sourceSteps.map((entry, index) => {
+      const label = 'Step ' + (index + 1);
+      const step = record(entry, ['id', 'name', 'holdMs', 'transitionMs', 'objects'], label);
+      const id = name(step.id, label + ' identifier');
+      if (ids.has(id)) throw new Error('Step identifiers must be unique within the sequence.');
+      ids.add(id);
+      const stepName = name(step.name, label + ' name');
+      const holdMs = time(step.holdMs, MIN_HOLD_MS, MAX_HOLD_MS, label + ' hold');
+      const final = index === sourceSteps.length - 1;
+      const transitionMs = time(step.transitionMs, 0, final ? 0 : MAX_TRANSITION_MS,
+        final ? 'Final step transition' : label + ' transition');
+      total += holdMs + transitionMs;
+      if (!Number.isSafeInteger(total) || total > MAX_TOTAL_MS) {
+        throw new Error('Sequence total must be no greater than ' + MAX_TOTAL_MS + ' ms.');
+      }
+      // Keep every static geometry/color/object rule authoritative and unchanged.
+      // Each snapshot is independently bounded; a crossfade may use 12 + 12.
+      list(step.objects, 1, M.MAX_OBJECTS, label + ' objects');
+      const scene = M.canonicalScene({format: M.FORMAT, version: M.VERSION, sampler: M.SAMPLER,
+        scene: {name: stepName, background: sequence.background, objects: step.objects}}).scene;
+      if (index === 0) background = scene.background;
+      return {id, name: scene.name, holdMs, transitionMs, objects: scene.objects};
+    });
+    const result = {format: FORMAT, version: VERSION, sampler: SAMPLER,
+      sequence: {name: sequenceName, background, steps}};
+    checkBytes(JSON.stringify(result));
+    return freeze(result);
+  }
+
+  function validateSequence(value) {
+    try { return {ok: true, sequence: canonicalSequence(value)}; }
+    catch (error) { return {ok: false, error: error.message}; }
+  }
+
+  function checkJSONStructure(text) {
+    // Syntax has already been checked by JSON.parse. This iterative pass checks
+    // decoded duplicate keys in every object, including objects inside arrays.
+    const stack = [];
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (c === '{' || c === '[') {
+        stack.push(c === '{' ? {kind: 'object', keys: new Set(), expectKey: true} : {kind: 'array'});
+        if (stack.length > MAX_DEPTH) throw new Error('Sequence nesting exceeds the format resource bound.');
+      } else if (c === '}' || c === ']') stack.pop();
+      else if (c === ',') {
+        const frame = stack[stack.length - 1];
+        if (frame && frame.kind === 'object') frame.expectKey = true;
+      } else if (c === '"') {
+        const start = i;
+        for (i++; i < text.length; i++) {
+          if (text[i] === '\\') { i++; continue; }
+          if (text[i] === '"') break;
+        }
+        const frame = stack[stack.length - 1];
+        if (frame && frame.kind === 'object' && frame.expectKey) {
+          const key = JSON.parse(text.slice(start, i + 1));
+          if (frame.keys.has(key)) throw new Error('Duplicate JSON fields are not supported.');
+          frame.keys.add(key);
+          frame.expectKey = false;
+        }
+      }
+    }
+  }
+
+  function parseSequence(text) {
+    if (typeof text !== 'string') throw new Error('Sequence data must be JSON text.');
+    checkBytes(text);
+    let value;
+    try { value = JSON.parse(text); }
+    catch (error) { throw new Error('This is not a valid JSON sequence file.'); }
+    checkJSONStructure(text);
+    return canonicalSequence(value);
+  }
+
+  function serializeSequence(value) {
+    const text = JSON.stringify(canonicalSequence(value), null, 2);
+    checkBytes(text);
+    return text;
+  }
+
+  function compileTimeline(value) {
+    const document = canonicalSequence(value);
+    const phases = [];
+    let durationMs = 0;
+    document.sequence.steps.forEach((step, index) => {
+      phases.push({phase: 'hold', stepIndex: index, nextStepIndex: null,
+        startMs: durationMs, endMs: durationMs + step.holdMs});
+      durationMs += step.holdMs;
+      if (step.transitionMs > 0) {
+        phases.push({phase: 'transition', stepIndex: index, nextStepIndex: index + 1,
+          startMs: durationMs, endMs: durationMs + step.transitionMs});
+        durationMs += step.transitionMs;
+      }
+    });
+    const timeline = freeze({document, durationMs, phases});
+    compiledTimelines.add(timeline);
+    return timeline;
+  }
+
+  function frameAt(timeline, elapsedMs) {
+    if (!compiledTimelines.has(timeline)) throw new Error('Use a validated compiled sequence timeline.');
+    if (typeof elapsedMs !== 'number' || !Number.isFinite(elapsedMs) || elapsedMs < 0) {
+      throw new Error('Elapsed time must be a finite nonnegative number.');
+    }
+    const durationMs = timeline.durationMs;
+    const elapsed = Math.min(elapsedMs, durationMs);
+    if (elapsed >= durationMs) return Object.freeze({phase: 'finished', stepIndex: null,
+      nextStepIndex: null, alpha: 0, elapsedMs: durationMs, remainingMs: 0, durationMs, done: true});
+    // At most 63 phases. There are no zero-duration phases or gaps, including cuts.
+    const phase = timeline.phases.find(entry => elapsed >= entry.startMs && elapsed < entry.endMs);
+    return Object.freeze({phase: phase.phase, stepIndex: phase.stepIndex, nextStepIndex: phase.nextStepIndex,
+      alpha: phase.phase === 'transition' ? (elapsed - phase.startMs) / (phase.endMs - phase.startMs) : 0,
+      elapsedMs: elapsed, remainingMs: durationMs - elapsed, durationMs, done: false});
+  }
+
+  function createTimeline(nowFn) {
+    if (typeof nowFn !== 'function') throw new Error('An injected monotonic clock function is required.');
+    let timeline = null, status = 'stopped', generation = 0;
+    let elapsedMs = 0, paintedElapsedMs = 0, anchorElapsedMs = 0, anchorNow = 0;
+    let frame = null, paintedFrame = null, lastNow = -Infinity;
+    // Only genuine frames emitted by this player in this generation may be
+    // acknowledged as painted. Weak keys do not retain a whole run of frames.
+    const issued = new WeakMap();
+
+    function now() {
+      const value = nowFn();
+      if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error('Invalid sequence clock.');
+      lastNow = Math.max(lastNow, value);
+      return lastNow;
+    }
+
+    function issue(elapsed) {
+      const result = Object.freeze({...frameAt(timeline, elapsed), generation});
+      issued.set(result, generation);
+      return result;
+    }
+
+    function getState() {
+      return Object.freeze({status, generation, elapsedMs, paintedElapsedMs,
+        durationMs: timeline ? timeline.durationMs : 0, frame});
+    }
+
+    function stop() {
+      generation++;
+      status = 'stopped';
+      elapsedMs = paintedElapsedMs = anchorElapsedMs = 0;
+      frame = paintedFrame = null;
+      return getState();
+    }
+
+    return Object.freeze({
+      getState,
+      start(value) {
+        const compiled = compiledTimelines.has(value) ? value : compileTimeline(value);
+        const currentNow = now();
+        generation++;
+        timeline = compiled;
+        status = 'running';
+        elapsedMs = paintedElapsedMs = anchorElapsedMs = 0;
+        anchorNow = currentNow;
+        paintedFrame = null;
+        frame = issue(0);
+        return getState();
+      },
+      tick() {
+        if (status !== 'running') return getState();
+        // Subtraction can overflow only for an adversarial finite clock jump;
+        // clamping still terminates the bounded timeline rather than replaying.
+        const next = Math.min(timeline.durationMs, anchorElapsedMs + (now() - anchorNow));
+        elapsedMs = Math.max(elapsedMs, next);
+        if (elapsedMs >= timeline.durationMs) {
+          generation++;
+          status = 'finished';
+          frame = issue(timeline.durationMs);
+          elapsedMs = paintedElapsedMs = anchorElapsedMs = 0;
+          paintedFrame = null;
+        } else frame = issue(elapsedMs);
+        return getState();
+      },
+      markPainted(candidate) {
+        if (status !== 'running' || !candidate || issued.get(candidate) !== generation ||
+            candidate.done || candidate.elapsedMs < paintedElapsedMs || candidate.elapsedMs > elapsedMs) return false;
+        paintedFrame = candidate;
+        paintedElapsedMs = candidate.elapsedMs;
+        return true;
+      },
+      pause() {
+        if (status !== 'running') return getState();
+        // No clock read: the only authoritative paused image is the last image
+        // the caller confirmed it actually painted, not the click-time blend.
+        generation++;
+        elapsedMs = paintedElapsedMs;
+        anchorElapsedMs = elapsedMs;
+        status = 'paused';
+        frame = paintedFrame ? Object.freeze({...paintedFrame, generation}) : issue(0);
+        return getState();
+      },
+      resume() {
+        if (status !== 'paused') return getState();
+        const currentNow = now();
+        generation++;
+        anchorNow = currentNow;
+        anchorElapsedMs = elapsedMs;
+        status = 'running';
+        frame = issue(elapsedMs);
+        return getState();
+      },
+      stop
+    });
+  }
+
+  return Object.freeze({FORMAT, VERSION, SAMPLER, MAX_IMPORT_BYTES, MAX_STEPS,
+    MIN_HOLD_MS, MAX_HOLD_MS, MAX_TRANSITION_MS, TIME_INCREMENT_MS, MAX_TOTAL_MS,
+    DEFAULT_HOLD_MS, DEFAULT_TRANSITION_MS, canonicalSequence, validateSequence,
+    parseSequence, serializeSequence, compileTimeline, frameAt, createTimeline});
+}));
+</script>
+<script>/* Local scene editor and explicit finite, single-pass sequence presentation.
+   One visibility gate. Every edit/lifecycle interruption cancels before concealment. */
 (function () {
   'use strict';
-  const M=window.ImageryModel;
+  const M=window.ImageryModel,S=window.ImagerySequence;
   const $=id=>document.getElementById(id);
-  const controller=M.createController(()=>performance.now());
+  let lastGateClock=0,gateClockFault=false;
+  function gateClock(){
+    try{const value=performance.now();if(Number.isFinite(value)){lastGateClock=Math.max(lastGateClock,value);return lastGateClock;}}catch(e){/* Keep concealment available even if the clock fails. */}
+    gateClockFault=true;return lastGateClock;
+  }
+  const controller=M.createController(gateClock);
   const canvas=$('scene-canvas'),root=$('stage-root');
-  let context=null;
-  try {context=canvas.getContext('2d',{alpha:false});}catch(e){/* Data controls remain available. */}
+  const offscreen=document.createElement('canvas');
+  offscreen.width=1;offscreen.height=1;
+  let context=null,offscreenContext=null;
+  try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:false});}catch(e){/* Data controls remain available. */}
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
   let working=controller.getState().current;
+  let section='scene',sequence=null,stepIndex=0,sequenceError='',displayKind='scene';
+  let generation=0,rafId=null,paintedFrame=null,lastPhaseKey='';
+  const timeline=S.createTimeline(()=>performance.now());
+  const reducedMotion=typeof window.matchMedia==='function'?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
+  let motionReduced=!!(reducedMotion&&reducedMotion.matches);
   const objectURLs=new Set();
   const objectFields=['shape','position-x','position-y','size','object-hue','object-saturation','object-lightness'];
   const fieldIDs=['scene-name',...objectFields,'background-hue','background-saturation','background-lightness'];
@@ -354,26 +750,48 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const width=Number.isFinite(rect.width)&&rect.width>0?rect.width:1;
     const height=Number.isFinite(rect.height)&&rect.height>0?rect.height:1;
     const dpr=Math.min(2,Math.max(1,Number(window.devicePixelRatio)||1));
-    const ratio=Math.min(dpr,M.MAX_CANVAS_DIMENSION/width,M.MAX_CANVAS_DIMENSION/height,Math.sqrt(M.MAX_CANVAS_PIXELS/(width*height)));
+    const ratio=Math.min(dpr,M.MAX_CANVAS_DIMENSION/width,M.MAX_CANVAS_DIMENSION/height,Math.sqrt(M.MAX_CANVAS_PIXELS/(2*width*height)));
     return {width,height,bufferWidth:Math.max(1,Math.floor(width*ratio)),bufferHeight:Math.max(1,Math.floor(height*ratio))};
   }
-  function draw(state){
+  function resetContext(ctx){ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';}
+  function prepareBuffers(){
     const d=dimensions();
-    if(canvas.width!==d.bufferWidth||canvas.height!==d.bufferHeight){canvas.width=d.bufferWidth;canvas.height=d.bufferHeight;}
-    if(!context)return;
-    context.setTransform(1,0,0,1,0,0);context.fillStyle='#000';context.fillRect(0,0,canvas.width,canvas.height);
-    if(!state.visible)return;
-    const accepted=M.canonicalScene(state.current);
-    context.fillStyle=M.colorCSS(accepted.scene.background);context.fillRect(0,0,canvas.width,canvas.height);
-    // Geometry uses CSS-pixel dimensions. The two backing-store factors exactly
-    // cancel the CSS stretching even when the capped buffer is rounded down.
-    context.setTransform(canvas.width/d.width,0,0,canvas.height/d.height,0,0);context.lineJoin='round';
+    if(canvas.width!==d.bufferWidth||canvas.height!==d.bufferHeight||offscreen.width!==d.bufferWidth||offscreen.height!==d.bufferHeight){
+      // Shrink both first: even intermediate resize allocations respect the cap.
+      canvas.width=1;canvas.height=1;offscreen.width=1;offscreen.height=1;
+      canvas.width=d.bufferWidth;canvas.height=d.bufferHeight;offscreen.width=d.bufferWidth;offscreen.height=d.bufferHeight;
+    }
+    return d;
+  }
+  function paintScene(ctx,target,documentValue,d){
+    const accepted=M.canonicalScene(documentValue);resetContext(ctx);
+    ctx.fillStyle=M.colorCSS(accepted.scene.background);ctx.fillRect(0,0,target.width,target.height);
+    ctx.setTransform(target.width/d.width,0,0,target.height/d.height,0,0);ctx.lineJoin='round';
     M.geometry(accepted,d.width,d.height).forEach(item=>{
-      context.fillStyle=item.color;context.strokeStyle=item.color;context.beginPath();
-      if(item.kind==='dot'){context.arc(item.x,item.y,item.radius,0,Math.PI*2);context.fill();}
-      else if(item.kind==='circle'){context.lineWidth=item.lineWidth;context.arc(item.x,item.y,item.radius,0,Math.PI*2);context.stroke();}
-      else{context.lineWidth=item.lineWidth;item.points.forEach((p,i)=>i?context.lineTo(p[0],p[1]):context.moveTo(p[0],p[1]));context.closePath();if(item.filled)context.fill();else context.stroke();}
+      ctx.fillStyle=item.color;ctx.strokeStyle=item.color;ctx.beginPath();
+      if(item.kind==='dot'){ctx.arc(item.x,item.y,item.radius,0,Math.PI*2);ctx.fill();}
+      else if(item.kind==='circle'){ctx.lineWidth=item.lineWidth;ctx.arc(item.x,item.y,item.radius,0,Math.PI*2);ctx.stroke();}
+      else{ctx.lineWidth=item.lineWidth;item.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();if(item.filled)ctx.fill();else ctx.stroke();}
     });
+    resetContext(ctx);
+  }
+  function stepScene(index){
+    const step=sequence.sequence.steps[index];
+    return M.canonicalScene({format:M.FORMAT,version:M.VERSION,sampler:M.SAMPLER,scene:{name:step.name,background:sequence.sequence.background,objects:step.objects}});
+  }
+  function draw(state){
+    const d=prepareBuffers();if(!context)return false;
+    resetContext(context);context.fillStyle='#000';context.fillRect(0,0,canvas.width,canvas.height);
+    if(!state.visible)return true;
+    if(displayKind==='timed'&&paintedFrame){
+      const frame=paintedFrame;paintScene(context,canvas,stepScene(frame.stepIndex),d);
+      if(frame.phase==='transition'){
+        if(!offscreenContext)throw new Error('The transition canvas is unavailable.');
+        paintScene(offscreenContext,offscreen,stepScene(frame.nextStepIndex),d);
+        resetContext(context);context.globalAlpha=frame.alpha;context.drawImage(offscreen,0,0);resetContext(context);
+      }
+    }else paintScene(context,canvas,displayKind==='step'?stepScene(stepIndex):state.current,d);
+    return true;
   }
   // These bounded editor samples represent only the current form colors. They
   // never change the accepted scene, call Show, or paint a scene preview.
@@ -406,10 +824,16 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     updateColorSample('object');updateColorSample('background');
   }
   function render(){
-    const state=controller.getState();draw(state);
+    let state=controller.getState();
+    if(gateClockFault&&state.visible){cancelPlayback();controller.hide();state=controller.getState();}
+    try{draw(state);}catch(e){
+      // If even clearing fails, remove the raster surface; the root is black.
+      cancelPlayback();controller.hide();canvas.hidden=true;context=null;state=controller.getState();
+      say('The canvas could not be drawn. The field is hidden; data controls remain available.',true);
+    }
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
     $('show-scene').setAttribute('aria-pressed',String(state.visible));
-    canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object. The scene is hidden. Escape cancels.':state.visible?M.describe(state.current):'Scene hidden. No design is displayed.');
+    canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object. The scene is hidden. Escape cancels.':state.visible?(displayKind==='scene'?M.describe(state.current):sequenceDescription()):'Scene hidden. No design is displayed.');
     $('undo').disabled=state.undoCount===0;$('redo').disabled=state.redoCount===0;
     $('draft-label').textContent=formDirty?'Changes staged':'Applied';
     $('scene-description').textContent=M.describe(state.current);
@@ -429,7 +853,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('hidden-label').hidden=state.visible||full;
     $('fullscreen-start').hidden=!full||state.visible;
     $('fullscreen').hidden=full;$('exit-fullscreen').hidden=!full;
-    updateOutputs();
+    updateOutputs();renderSequence();
   }
   function cancelPlacement(){placing=false;}
   function selected(){return working.scene.objects.find(o=>o.id===selectedId);}
@@ -463,12 +887,12 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(o){o.shape=$('shape').value;o.x=number('position-x');o.y=number('position-y');o.size=number('size');o.color={h:number('object-hue'),s:number('object-saturation'),l:number('object-lightness')};}
     return next;
   }
-  function hide(message){cancelPlacement();controller.hide();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
+  function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
   function stageWorking(message){
     formDirty=true;const result=controller.stage(working);render();say(result.ok?message:result.error+' Your applied scene is unchanged.',!result.ok);return result.ok;
   }
   function edited(event){
-    controller.hide();cancelPlacement();
+    conceal();cancelPlacement();
     if(event.target.id==='shape'){
       const max=$('shape').value==='dot'||$('shape').value==='pixel'?8:28;$('size').max=String(max);if(number('size')>max)$('size').value=String(max);
     }
@@ -476,12 +900,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   fieldIDs.forEach(id=>$(id).addEventListener('input',edited));
   $('object-select').addEventListener('change',()=>{
-    const nextId=$('object-select').value;controller.hide();cancelPlacement();working=readFields();
+    const nextId=$('object-select').value;conceal();cancelPlacement();working=readFields();
     if(working.scene.objects.some(o=>o.id===nextId))selectedId=nextId;
     fillSelected();render();say('Selected '+(selectedId||'background only')+'. Existing staged changes are kept; the field is hidden.');
   });
+  $('add-shape').addEventListener('change',()=>hide('New object type selected. The field is hidden.'));
   $('add-object').addEventListener('click',()=>{
-    controller.hide();cancelPlacement();working=readFields();
+    conceal();cancelPlacement();working=readFields();
     const checked=M.validateScene(working);
     if(!checked.ok){render();say('Fix the staged fields before adding an object. '+checked.error,true);return;}
     if(working.scene.objects.length>=M.MAX_OBJECTS){render();say('This prototype supports up to 12 objects.',true);return;}
@@ -491,13 +916,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     working.scene.objects.push(o);selectedId=o.id;fillSelected();stageWorking('New '+shape+' staged at the center. Set its position or choose Place on field.');
   });
   $('delete-object').addEventListener('click',()=>{
-    controller.hide();cancelPlacement();working=readFields();
+    conceal();cancelPlacement();working=readFields();
     const index=working.scene.objects.findIndex(o=>o.id===selectedId);if(index<0){render();return;}
     working.scene.objects.splice(index,1);selectedId=working.scene.objects[Math.min(index,working.scene.objects.length-1)]?.id||null;
     fillSelected();stageWorking('Object removed from the draft. Apply changes to keep this composition.');
   });
   $('place-object').addEventListener('click',()=>{
-    const wasPlacing=placing;controller.hide();cancelPlacement();working=readFields();
+    const wasPlacing=placing;conceal();cancelPlacement();working=readFields();
     const checked=M.validateScene(working);if(!checked.ok){render();say('Fix the staged fields before placing an object. '+checked.error,true);return;}
     if(!selected()){render();return;}
     placing=!wasPlacing;if(placing)editorOpen=false;render();
@@ -514,45 +939,47 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Apply changes, then Show when you choose.');$('position-x').focus();
   });
   $('skip-controls').addEventListener('click',event=>{
-    event.preventDefault();controller.hide();cancelPlacement();editorOpen=true;render();$('controls').focus();say('Scene controls focused. The field is hidden.');
+    event.preventDefault();conceal();cancelPlacement();editorOpen=true;section='scene';render();$('controls').focus();say('Scene controls focused. The field is hidden.');
   });
   $('viewing-guidance').addEventListener('click',()=>{
-    controller.hide();cancelPlacement();editorOpen=true;render();$('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();say('Viewing guidance focused. The field is hidden.');
+    conceal();cancelPlacement();editorOpen=true;render();$('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();say('Viewing guidance focused. The field is hidden.');
   });
   $('editor-toggle').addEventListener('click',()=>{
-    controller.hide();cancelPlacement();editorOpen=!editorOpen;render();
+    conceal();cancelPlacement();editorOpen=!editorOpen;render();
     say(editorOpen?'Editor open. The field is hidden.':'Editor closed. Choose Show to use the whole field.');
-    if(editorOpen)$('controls').focus();else $('editor-toggle').focus();
+    if(editorOpen){const heading=$(section==='scene'?'controls':'sequence-title');heading.setAttribute('tabindex','-1');heading.focus();}else $('editor-toggle').focus();
   });
   $('preset').addEventListener('change',()=>{
     const index=Number($('preset').value);if($('preset').value===''||!Number.isInteger(index)||!M.presets()[index])return;
-    cancelPlacement();controller.hide();const next=M.presets()[index];controller.stage(next);fillFields(next);formDirty=true;render();say('Preset staged. Choose Apply changes, then Show scene when you choose.');
+    cancelPlacement();conceal();const next=M.presets()[index];controller.stage(next);fillFields(next);formDirty=true;render();say('Preset staged. Choose Apply changes, then Show scene when you choose.');
   });
   $('scene-form').addEventListener('submit',event=>{
-    event.preventDefault();cancelPlacement();controller.hide();
+    event.preventDefault();cancelPlacement();conceal();
     const result=controller.apply(readFields());
     if(!result.ok){render();say(result.error,true);return;}
     formDirty=false;fillFields(result.state.current);render();say('Changes applied. The scene is hidden; choose Show scene to display it.');
   });
   $('discard').addEventListener('click',()=>{
-    cancelPlacement();controller.hide();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
+    cancelPlacement();conceal();controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
   });
   function showScene(){
-    cancelPlacement();controller.invalidateImport();
+    if(controller.getState().visible&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Show scene again after the repeat-action lock.');return;}
+    cancelPlayback();cancelPlacement();controller.invalidateImport();
+    if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.');return;}
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
     if(formDirty){render();say((document.fullscreenElement===root?'Apply or discard staged changes before showing the scene. Exit fullscreen to return to the editor.':'Apply or discard staged changes before showing the scene.'),true);return;}
-    const result=controller.show();render();say(result.ok?'Scene visible. Hide or press Escape at any time.':result.error,!result.ok);
+    displayKind='scene';const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}render();say(result.ok?'Scene visible. Hide or press Escape at any time.':result.error,!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('show-scene').addEventListener('click',showScene);
-  $('fullscreen-show').addEventListener('click',showScene);
+  $('fullscreen-show').addEventListener('click',()=>section==='sequence'?showStep():showScene());
   $('hide-scene').addEventListener('click',()=>hide());
   $('end-viewing').addEventListener('click',()=>{
-    cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
+    cancelPlayback();cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
     $('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();
   });
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
-    cancelPlacement();controller.hide();const result=controller[action]();
+    cancelPlacement();conceal();const result=controller[action]();
     if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
     render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Show scene when you choose.':result.error,!result.ok);
   }));
@@ -566,7 +993,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     hide(enter?'Entering fullscreen with the field hidden.':'Leaving fullscreen with the field hidden.');
     const operation=++fullscreenOperation,owner=enter?root:document,method=enter?'requestFullscreen':'exitFullscreen';
     if(typeof owner[method]!=='function'){fullscreenFailure('Browser fullscreen could not be changed.');return;}
-    try{await owner[method]();if(operation===fullscreenOperation){controller.hide();cancelPlacement();render();say('Display mode changed. The field is hidden; choose Show when you choose.');}}
+    try{await owner[method]();if(operation===fullscreenOperation){conceal();cancelPlacement();render();say('Display mode changed. The field is hidden; choose Show when you choose.');}}
     catch(e){if(operation===fullscreenOperation)fullscreenFailure('Fullscreen could not be changed.');}
   }
   $('fullscreen').addEventListener('click',()=>changeFullscreen(true));
@@ -582,7 +1009,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.');});
   window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.'));
-  window.addEventListener('pagehide',()=>{cancelPlacement();controller.hide();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
+  window.addEventListener('pagehide',()=>{cancelPlacement();conceal();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
   document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Show scene when you choose.'));
   window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Show scene to resume.');});
   window.addEventListener('resize',()=>hide('Scene hidden after the window size changed. Choose Show scene when you choose.'));
@@ -605,7 +1032,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   $('scene-import').addEventListener('change',async()=>{
     const file=$('scene-import').files&&$('scene-import').files[0];$('scene-import').value='';if(!file)return;
-    cancelPlacement();const token=controller.beginImport();render();
+    cancelPlayback();cancelPlacement();const token=controller.beginImport();render();
     if(file.size>M.MAX_IMPORT_BYTES){controller.invalidateImport();say('Scene file must be no larger than 1 MiB. Your applied scene is unchanged.',true);return;}
     say('Reading the local scene file. The field stays hidden.');
     try{
@@ -622,7 +1049,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(typeof text!=='string' || text.length>4000 || /[\u0000]/.test(text))throw new Error('The note must be at most 4,000 characters and cannot contain null characters.');
     return {format:'imagery-field-note',version:1,category,text};
   }
-  $('notes').addEventListener('input',clearPreview);$('note-category').addEventListener('change',clearPreview);
+  function noteEdited(){clearPreview();hide('The field is hidden while you edit your note.');}
+  $('notes').addEventListener('input',noteEdited);$('note-category').addEventListener('change',noteEdited);
   $('preview-notes').addEventListener('click',()=>{
     hide('Scene hidden while you review your note.');
     try {notePreview=readNote();$('notes-preview').textContent=JSON.stringify(notePreview,null,2);$('notes-export-area').hidden=false;$('include-note').checked=false;$('export-notes').disabled=true;say('Review the note below, then explicitly include it to enable its separate download.');}catch(e){clearPreview();say(e.message,true);}
@@ -635,7 +1063,261 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       hide('Scene hidden for note download.');download(notePreview,'imagery-field-note-v1.json');
     }catch(e){say(e.message,true);}
   });
-  fillFields(controller.getState().current);render();
+  // Sequence documents stay separate from static scene history and optional notes.
+  let acceptedSequenceName='My sequence',compiledSequence=null;
+  function cancelPlayback(){
+    generation++;
+    if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
+    timeline.stop();paintedFrame=null;lastPhaseKey='';displayKind='scene';
+  }
+  function conceal(){cancelPlayback();controller.hide();}
+  function sequenceDescription(){
+    if(!sequence)return 'No sequence steps.';
+    if(displayKind==='timed'&&paintedFrame){
+      const f=paintedFrame,a=sequence.sequence.steps[f.stepIndex];
+      return f.phase==='transition'?'Crossfade from '+a.name+' to '+sequence.sequence.steps[f.nextStepIndex].name+', '+Math.round(f.alpha*100)+' percent. '+M.describe(stepScene(f.stepIndex))+' '+M.describe(stepScene(f.nextStepIndex)):M.describe(stepScene(f.stepIndex));
+    }
+    return M.describe(stepScene(stepIndex));
+  }
+  function fillStepList(){
+    const select=$('sequence-step-select');select.replaceChildren();
+    if(sequence)sequence.sequence.steps.forEach((step,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=(i+1)+'. '+step.name;select.appendChild(option);});
+    else{const option=document.createElement('option');option.value='';option.textContent='No snapshots yet';select.appendChild(option);}
+    select.value=sequence?String(stepIndex):'';
+  }
+  function fillSequenceFields(){
+    $('sequence-name').value=sequence?sequence.sequence.name:acceptedSequenceName;
+    fillStepList();const step=sequence&&sequence.sequence.steps[stepIndex];
+    $('sequence-step-name').value=step?step.name:'';
+    $('sequence-hold').value=String(step?step.holdMs/1000:3);
+    $('sequence-transition').value=String(step?step.transitionMs/1000:0);
+  }
+  function renderSequence(){
+    const count=sequence?sequence.sequence.steps.length:0,invalid=!!sequenceError,full=document.fullscreenElement===root;
+    const playback=timeline.getState(),running=playback.status==='running',paused=playback.status==='paused';
+    $('hidden-hint').textContent=section==='sequence'?'Capture or load snapshots, then choose Show step or Play once.':'Compose, apply, then show when you choose.';
+    $('workspace-scene').setAttribute('aria-pressed',String(section==='scene'));
+    $('workspace-sequence').setAttribute('aria-pressed',String(section==='sequence'));
+    $('scene-panel').hidden=section!=='scene';$('sequence-panel').hidden=section!=='sequence';
+    $('scene-apply-actions').hidden=section!=='scene';$('sequence-count').textContent=String(count);
+    $('capture-add').textContent=formDirty?'Apply scene and add step':'Add scene as step';
+    $('capture-replace').textContent=formDirty?'Apply scene and replace step':'Replace selected step';
+    $('capture-add').disabled=invalid||count>=S.MAX_STEPS;$('capture-replace').disabled=invalid||!count;
+    $('sequence-inspector').hidden=!count;$('sequence-step-select').disabled=!count||invalid;
+    $('sequence-transition').disabled=!count||stepIndex===count-1;
+    $('sequence-final-hint').hidden=!count||stepIndex!==count-1;
+    $('sequence-summary').textContent=count?count+' / '+S.MAX_STEPS+' snapshots · '+(compiledSequence.durationMs/1000)+' seconds total · shared background HSL '+sequence.sequence.background.h+'° / '+sequence.sequence.background.s+'% / '+sequence.sequence.background.l+'%':'No steps yet. Add the scene, or load the example.';
+    $('sequence-description').textContent=count?M.describe(stepScene(stepIndex)):'';
+    $('sequence-error').textContent=sequenceError;$('sequence-error').hidden=!invalid;$('sequence-discard').hidden=!invalid;
+    ['sequence-name','sequence-step-name','sequence-hold','sequence-transition'].forEach(id=>$(id).setAttribute('aria-invalid',String(invalid)));
+    $('sequence-move-up').disabled=invalid||!count||stepIndex===0;$('sequence-move-down').disabled=invalid||!count||stepIndex===count-1;
+    ['sequence-delete','sequence-load','sequence-export'].forEach(id=>{$(id).disabled=invalid||!count;});
+    $('sequence-show').disabled=invalid||!count||running||paused;
+    $('sequence-previous').disabled=invalid||!count||stepIndex===0;$('sequence-next').disabled=invalid||!count||stepIndex===count-1;
+    $('sequence-example').disabled=invalid;
+    $('sequence-play').disabled=invalid||!count||motionReduced||full||!context||!offscreenContext;
+    $('sequence-play').hidden=running||paused;$('sequence-pause').hidden=!running;$('sequence-resume').hidden=!paused;
+    $('sequence-view-actions').hidden=section!=='sequence';$('scene-view-actions').hidden=section==='sequence';
+    $('reduced-motion-note').hidden=!motionReduced;
+    $('fullscreen-show').textContent=section==='sequence'?'Show selected step':'Show scene';
+    if(running||paused){
+      const f=paintedFrame,elapsed=f?f.elapsedMs:0;
+      $('sequence-progress').textContent=(paused?'Paused':'Playing')+' · '+(elapsed/1000).toFixed(1)+' / '+(compiledSequence.durationMs/1000)+' s';
+    }else $('sequence-progress').textContent='Stopped';
+    // Completion/cancellation must not strand keyboard focus on a removed
+    // Pause/Resume control. Never move focus away from an editing field.
+    if(section==='sequence'&&!full){
+      const active=document.activeElement;
+      if(['sequence-play','sequence-pause','sequence-resume','sequence-show'].some(id=>active===$(id)&&($(id).hidden||$(id).disabled)))$('sequence-stop').focus();
+    }
+  }
+  function setAcceptedSequence(value,compiled){
+    sequence=value;compiledSequence=compiled||S.compileTimeline(value);acceptedSequenceName=value.sequence.name;
+    stepIndex=Math.min(stepIndex,value.sequence.steps.length-1);sequenceError='';fillSequenceFields();
+  }
+  function sequencePrecondition(){
+    if(sequenceError){say('Fix or discard the invalid sequence fields first. '+sequenceError,true);return false;}
+    return true;
+  }
+  function readSequenceFields(){
+    if(!sequence){
+      const check=copy(controller.getState().current);check.scene.name=$('sequence-name').value;
+      M.canonicalScene(check);return null;
+    }
+    const next=copy(sequence),step=next.sequence.steps[stepIndex];next.sequence.name=$('sequence-name').value;
+    step.name=$('sequence-step-name').value;step.holdMs=number('sequence-hold')*1000;
+    step.transitionMs=stepIndex===next.sequence.steps.length-1?0:number('sequence-transition')*1000;
+    return S.canonicalSequence(next);
+  }
+  function editSequence(){
+    conceal();cancelPlacement();
+    try{
+      const accepted=readSequenceFields();
+      if(accepted){const compiled=S.compileTimeline(accepted);sequence=accepted;compiledSequence=compiled;acceptedSequenceName=accepted.sequence.name;fillStepList();}
+      else acceptedSequenceName=$('sequence-name').value;
+      sequenceError='';render();say('Sequence change saved in this page. The field is hidden.');
+    }catch(e){sequenceError=e.message;render();say(sequenceError+' Accepted sequence unchanged.',true);}
+  }
+  ['sequence-name','sequence-step-name','sequence-hold','sequence-transition'].forEach(id=>$(id).addEventListener('input',editSequence));
+  $('sequence-discard').addEventListener('click',()=>{conceal();sequenceError='';fillSequenceFields();render();say('Invalid sequence fields discarded. Accepted snapshots are unchanged.');});
+  function chooseSection(next){
+    conceal();cancelPlacement();section=next;render();$('editor-scroll').scrollTop=0;
+    say(next==='sequence'?'Sequence editor. Select a step, then Show step, or choose Play once.':'Scene editor. Changes remain hidden until Apply and Show.');
+  }
+  $('workspace-scene').addEventListener('click',()=>chooseSection('scene'));
+  $('workspace-sequence').addEventListener('click',()=>chooseSection('sequence'));
+  function normalizeSteps(steps,formerFinalId){
+    const adjusted=[];
+    steps.forEach((step,i)=>{
+      const value=i===steps.length-1?0:(step.id===formerFinalId?S.DEFAULT_TRANSITION_MS:step.transitionMs);
+      if(step.transitionMs!==value){step.transitionMs=value;adjusted.push(step.name+' transition '+value/1000+'s');}
+    });
+    return adjusted.length?' Adjusted '+adjusted.join('; ')+'.':'';
+  }
+  function capture(replace){
+    conceal();cancelPlacement();
+    if(!sequencePrecondition()){render();return;}
+    try{
+      const scene=M.canonicalScene(readFields());
+      if(!scene.scene.objects.length)throw new Error('A sequence step needs at least one object.');
+      if(sequence&&JSON.stringify(scene.scene.background)!==JSON.stringify(sequence.sequence.background))throw new Error('This scene background differs from the sequence. Match its shared background before capturing.');
+      if(replace&&!sequence)throw new Error('Add a step before replacing it.');
+      const next=sequence?copy(sequence):{format:'imagery-field-sequence',version:1,sampler:'ordered-crossfade-1',sequence:{name:acceptedSequenceName,background:scene.scene.background,steps:[]}};
+      const steps=next.sequence.steps,formerFinalId=steps.length?steps[steps.length-1].id:null;
+      let newIndex;
+      if(replace){newIndex=stepIndex;steps[newIndex]={...steps[newIndex],name:scene.scene.name,objects:copy(scene.scene.objects)};}
+      else{
+        let id=1;while(steps.some(step=>step.id==='step-'+id))id++;
+        steps.push({id:'step-'+id,name:scene.scene.name,holdMs:S.DEFAULT_HOLD_MS,transitionMs:0,objects:copy(scene.scene.objects)});newIndex=steps.length-1;
+      }
+      const adjustments=normalizeSteps(steps,formerFinalId),accepted=S.canonicalSequence(next),compiled=S.compileTimeline(accepted);
+      // Both preflights finish before either accepted document/history mutates.
+      const result=controller.apply(scene);if(!result.ok)throw new Error(result.error);
+      formDirty=false;fillFields(result.state.current);stepIndex=newIndex;setAcceptedSequence(accepted,compiled);section='sequence';render();
+      say((replace?'Selected snapshot replaced.':'Scene captured as step '+(stepIndex+1)+'.')+adjustments+' The field is hidden.');
+    }catch(e){render();say(e.message+' Neither accepted document was changed.',true);}
+  }
+  $('capture-add').addEventListener('click',()=>capture(false));$('capture-replace').addEventListener('click',()=>capture(true));
+  function selectStep(index){
+    conceal();cancelPlacement();if(!sequencePrecondition()){render();return;}
+    if(!sequence||!Number.isInteger(index)||index<0||index>=sequence.sequence.steps.length){render();return;}
+    stepIndex=index;fillSequenceFields();render();say('Step '+(index+1)+' selected and hidden. Choose Show step to display it.');
+  }
+  $('sequence-step-select').addEventListener('change',()=>selectStep(Number($('sequence-step-select').value)));
+  $('sequence-previous').addEventListener('click',()=>selectStep(stepIndex-1));$('sequence-next').addEventListener('click',()=>selectStep(stepIndex+1));
+  function changeSteps(action){
+    conceal();cancelPlacement();if(!sequencePrecondition()||!sequence){render();return;}
+    try{
+      const next=copy(sequence),steps=next.sequence.steps,formerFinalId=steps[steps.length-1].id;
+      let nextIndex=stepIndex;
+      if(action==='delete'){steps.splice(stepIndex,1);nextIndex=Math.min(stepIndex,steps.length-1);}
+      else{nextIndex=stepIndex+(action==='up'?-1:1);if(nextIndex<0||nextIndex>=steps.length){render();return;}[steps[stepIndex],steps[nextIndex]]=[steps[nextIndex],steps[stepIndex]];}
+      if(!steps.length){sequence=null;compiledSequence=null;stepIndex=0;fillSequenceFields();render();$('capture-add').focus();say('Last snapshot deleted. The scene and notes are unchanged.');return;}
+      const adjustments=normalizeSteps(steps,formerFinalId),accepted=S.canonicalSequence(next),compiled=S.compileTimeline(accepted);
+      stepIndex=nextIndex;setAcceptedSequence(accepted,compiled);render();say('Sequence updated and hidden.'+adjustments);
+    }catch(e){render();say(e.message+' Accepted sequence unchanged.',true);}
+  }
+  $('sequence-move-up').addEventListener('click',()=>changeSteps('up'));$('sequence-move-down').addEventListener('click',()=>changeSteps('down'));$('sequence-delete').addEventListener('click',()=>changeSteps('delete'));
+  $('sequence-load').addEventListener('click',()=>{
+    conceal();cancelPlacement();if(!sequencePrecondition()||!sequence){render();return;}
+    if(formDirty){render();say('Apply or discard the scene edits before loading a step copy.',true);return;}
+    const result=controller.apply(stepScene(stepIndex));if(!result.ok){render();say(result.error,true);return;}
+    formDirty=false;fillFields(result.state.current);section='scene';render();$('editor-scroll').scrollTop=0;$('controls').focus();say('Step copied into the scene editor. Its saved snapshot is unchanged.');
+  });
+  $('sequence-example').addEventListener('click',()=>{
+    conceal();cancelPlacement();if(!sequencePrecondition()){render();return;}
+    const scenes=M.presets().slice(2,5);
+    const next=S.canonicalSequence({format:'imagery-field-sequence',version:1,sampler:'ordered-crossfade-1',sequence:{name:'Circle, square, triangle',background:scenes[0].scene.background,steps:scenes.map((scene,i)=>({id:'step-'+(i+1),name:scene.scene.name,holdMs:3000,transitionMs:i===2?0:1000,objects:scene.scene.objects}))}});
+    stepIndex=0;setAcceptedSequence(next);render();say('11-second example loaded and hidden. Circle 3s, fade 1s, square 3s, fade 1s, triangle 3s. Choose Show step or Play once.');
+  });
+  function canPresent(){
+    controller.getState();
+    if(gateClockFault){hide('The display clock failed. Reload this page before viewing; keep any unsaved files first.');return false;}
+    if(!sequencePrecondition())return false;
+    if(!sequence){say('Capture a scene or load the example first.',true);return false;}
+    if(formDirty){say('Apply, discard, or capture the scene edits before displaying the sequence.',true);return false;}
+    if(!context){say('Canvas is unavailable. The sequence stays hidden.',true);return false;}
+    return true;
+  }
+  function showStep(){
+    if(controller.getState().visible&&displayKind!=='step'){hide('Preview mode changed. The field is hidden; choose Show step again after the repeat-action lock.');return;}
+    cancelPlacement();if(!canPresent()){render();return;}
+    cancelPlayback();const result=controller.show();
+    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(result.ok)displayKind='step';render();say(result.ok?'Step '+(stepIndex+1)+' visible: '+sequence.sequence.steps[stepIndex].name+'. Stop / Hide or Escape conceals it.':result.error,!result.ok);
+    if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
+  }
+  $('sequence-show').addEventListener('click',showStep);
+  function paintPlayback(frame){
+    const state=controller.getState();if(gateClockFault)throw new Error('The display clock failed. Reload before viewing.');
+    paintedFrame=frame;if(!draw(state))throw new Error('Canvas could not paint the sequence.');
+    if(!timeline.markPainted(frame))throw new Error('The sequence frame was canceled.');
+    const key=frame.phase+':'+frame.stepIndex;
+    if(key!==lastPhaseKey){lastPhaseKey=key;canvas.setAttribute('aria-label',sequenceDescription());say(frame.phase==='transition'?'Transition from '+sequence.sequence.steps[frame.stepIndex].name+' to '+sequence.sequence.steps[frame.nextStepIndex].name+'. Pause keeps the displayed frame visible.':'Playing step '+(frame.stepIndex+1)+': '+sequence.sequence.steps[frame.stepIndex].name+'. Stop / Hide is available.');}
+    renderSequence();
+  }
+  function scheduleFrame(){
+    const gate=controller.getState();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(rafId!==null||timeline.getState().status!=='running'||!gate.visible||displayKind!=='timed')return;
+    const capturedEpoch=gate.epoch,capturedGeneration=generation,engineGeneration=timeline.getState().generation;
+    rafId=window.requestAnimationFrame(()=>{
+      // A stale callback must not even clear a newer generation's pending handle.
+      if(capturedGeneration!==generation)return;
+      rafId=null;const state=controller.getState(),playback=timeline.getState();
+      if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+      if(state.epoch!==capturedEpoch||!state.visible||displayKind!=='timed'||playback.status!=='running'||playback.generation!==engineGeneration)return;
+      try{
+        const next=timeline.tick();
+        if(next.status==='finished'||next.frame.done){hide('Sequence finished. Field hidden. Playback reset; nothing will replay.');return;}
+        if(capturedGeneration!==generation||controller.getState().epoch!==capturedEpoch)return;
+        paintPlayback(next.frame);scheduleFrame();
+      }catch(e){hide('Playback stopped. '+e.message);}
+    });
+  }
+  $('sequence-play').addEventListener('click',()=>{
+    if(timeline.getState().status!=='stopped'){return;}
+    if(!canPresent()){render();return;}
+    if(controller.getState().visible){hide('Manual preview hidden. Choose Play once again after the repeat-action lock.');return;}
+    if(document.fullscreenElement===root){say('Exit fullscreen to play once. Fullscreen supports manual step previews only.',true);return;}
+    if(motionReduced){say('Reduced motion is on. Use Previous or Next, then Show step.',true);return;}
+    if(!offscreenContext||typeof window.requestAnimationFrame!=='function'){say('Timed playback is unavailable in this browser. Use manual step previews.',true);return;}
+    cancelPlacement();cancelPlayback();const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}if(!result.ok){render();say(result.error,true);return;}
+    try{const started=timeline.start(compiledSequence);displayKind='timed';paintPlayback(started.frame);render();scheduleFrame();$('sequence-pause').focus();}
+    catch(e){hide('Playback stopped. '+e.message);}
+  });
+  $('sequence-pause').addEventListener('click',()=>{
+    if(timeline.getState().status!=='running'||!controller.getState().visible)return;
+    generation++;if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
+    try{timeline.pause();render();say('Paused at the last displayed frame. It remains visible. Resume continues; Stop / Hide conceals.');$('sequence-resume').focus();}
+    catch(e){hide('Playback stopped. '+e.message);}
+  });
+  $('sequence-resume').addEventListener('click',()=>{
+    if(timeline.getState().status!=='paused'||!controller.getState().visible||motionReduced||document.fullscreenElement===root)return;
+    try{generation++;timeline.resume();render();scheduleFrame();say('Sequence resumed from the paused frame.');$('sequence-pause').focus();}
+    catch(e){hide('Playback stopped. '+e.message);}
+  });
+  $('sequence-stop').addEventListener('click',()=>hide('Sequence stopped. Field hidden; playback reset.'));
+  if(reducedMotion){
+    const changed=event=>{motionReduced=!!event.matches;hide(motionReduced?'Reduced motion is on. Playback stopped; use manual Previous / Next and Show step.':'Motion preference changed. Playback stopped and will not resume automatically.');};
+    if(typeof reducedMotion.addEventListener==='function')reducedMotion.addEventListener('change',changed);
+    else if(typeof reducedMotion.addListener==='function')reducedMotion.addListener(changed);
+  }
+  $('sequence-export').addEventListener('click',()=>{
+    conceal();cancelPlacement();render();if(!sequencePrecondition()||!sequence)return;
+    try{download(S.canonicalSequence(sequence),'imagery-field-sequence-v1.json');}catch(e){say(e.message,true);}
+  });
+  $('sequence-import').addEventListener('change',async()=>{
+    const file=$('sequence-import').files&&$('sequence-import').files[0];$('sequence-import').value='';if(!file)return;
+    conceal();cancelPlacement();const token=controller.getState().epoch,seqToken=generation;render();
+    if(file.size>S.MAX_IMPORT_BYTES){say('Sequence file must be no larger than 1 MiB. Accepted sequence unchanged.',true);return;}
+    say('Reading the local sequence file. The field stays hidden.');
+    try{
+      const text=await file.text();if(controller.getState().epoch!==token||generation!==seqToken)return;
+      const accepted=S.parseSequence(text),compiled=S.compileTimeline(accepted);stepIndex=0;setAcceptedSequence(accepted,compiled);section='sequence';render();say('Sequence opened and hidden. Choose Show step or Play once.');
+    }catch(e){if(controller.getState().epoch!==token||generation!==seqToken)return;render();say(e.message+' Accepted sequence unchanged.',true);}
+  });
+
+  fillFields(controller.getState().current);fillSequenceFields();render();
   if(!context)say('Canvas is unavailable in this browser. No scene is displayed. JSON editing and downloads remain available.',true);
 }());
 </script>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T00:23:00Z",
+  "updated": "2026-10-20T00:51:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -789,7 +789,7 @@
         "Independent acceptance and native browser evidence"
       ],
       "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
-      "status": "in_progress",
+      "status": "received_reviewed",
       "next": {
         "pass": "Consumer reviews, integrates and tests",
         "fail": "Responsible owner repairs its writable files",
@@ -806,7 +806,8 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "Wait for actual native and visual feedback before repair or acceptance"
     },
     {
       "id": "IF-031",
@@ -851,7 +852,13 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "evidence": [
+        "240/240 non-browser pass",
+        "54 native groups and14 reference captures prepared",
+        "CI39347872671 running"
+      ],
+      "nextAction": "Inspect actual native results, retain failures, repair with evidence"
     },
     {
       "id": "IF-032",
@@ -913,7 +920,9 @@
       ],
       "dependencies": [
         "IF-031",
-        "IF-032"
+        "IF-032",
+        "IF-037",
+        "IF-038"
       ],
       "writeBoundary": [
         "project-queue.json",
@@ -930,7 +939,7 @@
         "Existing privacy, schema and concealment regressions pass",
         "Independent acceptance and native browser evidence"
       ],
-      "authority": "Owner requested live slider color feedback and almost-chrome-free fullscreen. No deployment or security changes. Prior merge authorization was specific to previous completed PR.",
+      "authority": "Owner explicitly requested continued work until implemented, tested and merged with main; no hosted deployment.",
       "status": "queued",
       "next": {
         "pass": "Consumer reviews, integrates and tests",
@@ -970,7 +979,7 @@
         "Explicit scope decision before temporal implementation"
       ],
       "authority": "Owner requested timed scenes, ordered shapes, fades, flash/pulse consideration, independent user/visual testing and designer/coder discussion. Risk research and design authorized; no unrestricted flash/pulse implementation or external deployment.",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Coordinator resolves proposal and authorized implementation scope",
         "fail": "Owner repairs analysis or names evidence limitation",
@@ -987,7 +996,11 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "Scope ordinary one-pass presentation; defer flash/pulse generators",
+      "evidence": [
+        "docs/timing-boundaries.md"
+      ]
     },
     {
       "id": "IF-035",
@@ -1009,7 +1022,7 @@
         "Explicit scope decision before temporal implementation"
       ],
       "authority": "Owner requested timed scenes, ordered shapes, fades, flash/pulse consideration, independent user/visual testing and designer/coder discussion. Risk research and design authorized; no unrestricted flash/pulse implementation or external deployment.",
-      "status": "in_progress",
+      "status": "accepted_used",
       "next": {
         "pass": "Coordinator resolves proposal and authorized implementation scope",
         "fail": "Owner repairs analysis or names evidence limitation",
@@ -1026,7 +1039,8 @@
       "usage": {
         "tokens": null,
         "cost": null
-      }
+      },
+      "nextAction": "Review rendered sequence behavior when native captures arrive"
     },
     {
       "id": "IF-036",
@@ -1053,6 +1067,221 @@
         "pass": "Coordinator resolves proposal and authorized implementation scope",
         "fail": "Owner repairs analysis or names evidence limitation",
         "missingInput": "Name precise missing access or consequential decision; continue other work"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        },
+        {
+          "status": "prepared",
+          "scope": "Independent native sequence user journeys, awaiting first sequence CI",
+          "base": "docs/sequence-spec.md"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "nextAction": "Inspect actual sequence screenshots and independent native results"
+    },
+    {
+      "id": "IF-037",
+      "title": "Implement pure one-pass timeline engine",
+      "goal": "Implement pure one-pass timeline engine",
+      "priority": "P0",
+      "owner": "build_sequence_timeline_engine",
+      "consumer": "independent tester, reviewer and coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d; final scope docs/sequence-spec.md",
+      "expectedOutputs": [
+        "imagery-app/src/sequence-model.js"
+      ],
+      "dependencies": [
+        "IF-034",
+        "IF-035",
+        "IF-036"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/sequence-model.js"
+      ],
+      "acceptanceChecks": [
+        "Closed schema and deterministic timeline",
+        "Atomic snapshots and independent exports",
+        "Single explicit visibility gate with stale-callback cancellation",
+        "Correct blended pixels and aggregate resource bound",
+        "Pause last painted frame; Stop immediate black; no replay",
+        "Independent native and visual acceptance"
+      ],
+      "authority": "Owner requested ordered timed scenes and fades, independent visual/designer/coder review and implementation. Review completed; final one-pass scope documented. Owner now authorizes merge after all checks pass.",
+      "status": "accepted_used",
+      "next": {
+        "pass": "Independent test/review and integrate",
+        "fail": "Owner repairs its source files",
+        "missingInput": "Coordinate exact API and continue independent source/test preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "sequence-model.js SHA256 b8070fac8acc2355b768abf3de435d9a1bcfcfbaa2c202debba5d529e2fa4197",
+        "25 independent model tests,8000 seeded oracle samples,independent source review"
+      ],
+      "nextAction": "Repair only integration defects evidenced by tester/reviewer"
+    },
+    {
+      "id": "IF-038",
+      "title": "Implement sequence editor and playback UI",
+      "goal": "Implement sequence editor and playback UI",
+      "priority": "P0",
+      "owner": "build_sequence_playback_ui",
+      "consumer": "independent tester, reviewer and coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d; final scope docs/sequence-spec.md",
+      "expectedOutputs": [
+        "imagery-app/src/app.js",
+        "imagery-app/src/shell.html",
+        "imagery-app/src/style.css",
+        "imagery-app/src/assemble.cjs",
+        "imagery-app/index.html"
+      ],
+      "dependencies": [
+        "IF-037",
+        "IF-035",
+        "IF-036"
+      ],
+      "writeBoundary": [
+        "imagery-app/src/app.js",
+        "imagery-app/src/shell.html",
+        "imagery-app/src/style.css",
+        "imagery-app/src/assemble.cjs",
+        "imagery-app/index.html"
+      ],
+      "acceptanceChecks": [
+        "Closed schema and deterministic timeline",
+        "Atomic snapshots and independent exports",
+        "Single explicit visibility gate with stale-callback cancellation",
+        "Correct blended pixels and aggregate resource bound",
+        "Pause last painted frame; Stop immediate black; no replay",
+        "Independent native and visual acceptance"
+      ],
+      "authority": "Owner requested ordered timed scenes and fades, independent visual/designer/coder review and implementation. Review completed; final one-pass scope documented. Owner now authorizes merge after all checks pass.",
+      "status": "received_reviewed",
+      "next": {
+        "pass": "Independent test/review and integrate",
+        "fail": "Owner repairs its source files",
+        "missingInput": "Coordinate exact API and continue independent source/test preparation"
+      },
+      "attempts": [
+        {
+          "status": "started",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      },
+      "evidence": [
+        "Current HTML111934bytes SHA256 be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e",
+        "319/319 current non-browser checks pass",
+        "Independent source review conditional pass; native verification pending"
+      ],
+      "nextAction": "Run native user journeys/pixel checks and repair evidenced defects"
+    },
+    {
+      "id": "IF-039",
+      "title": "Document sequence editor usage",
+      "goal": "Document sequence editor usage",
+      "priority": "P1",
+      "owner": "document_sequence_editor_usage",
+      "consumer": "coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d plus docs/sequence-spec.md implementation",
+      "expectedOutputs": [
+        "README.md",
+        "imagery-app/README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/portable-runtime.md",
+        "docs/editor-redesign.md"
+      ],
+      "dependencies": [
+        "IF-037",
+        "IF-038"
+      ],
+      "writeBoundary": [
+        "README.md",
+        "imagery-app/README.md",
+        "docs/architecture.md",
+        "docs/plan.md",
+        "docs/portable-runtime.md",
+        "docs/editor-redesign.md"
+      ],
+      "acceptanceChecks": [
+        "Exact source and evidence reconciled",
+        "No sensitive data in public artifacts",
+        "No unsupported clinical or verification claims"
+      ],
+      "authority": "Requested implementation documentation and public-repository privacy verification",
+      "status": "received_reviewed",
+      "next": {
+        "pass": "Integrate final reviewed evidence",
+        "fail": "Owner repairs own output or source owner fixes finding",
+        "missingInput": "Await frozen candidate and exact outgoing allowlist"
+      },
+      "attempts": [
+        {
+          "status": "received",
+          "modelRequested": "gpt-6-astra",
+          "reasoningRequested": "xhigh",
+          "execution": "spawn accepted"
+        }
+      ],
+      "usage": {
+        "tokens": null,
+        "cost": null
+      }
+    },
+    {
+      "id": "IF-040",
+      "title": "Review sequence export privacy",
+      "goal": "Review sequence export privacy",
+      "priority": "P1",
+      "owner": "review_sequence_export_privacy",
+      "consumer": "coordinator",
+      "sourceBase": "57b8f2c2811dc246abca55d9630c0581551d448d plus docs/sequence-spec.md implementation",
+      "expectedOutputs": [
+        "Hash-bound privacy assessment"
+      ],
+      "dependencies": [
+        "IF-037",
+        "IF-038"
+      ],
+      "writeBoundary": [
+        "Separate working review only"
+      ],
+      "acceptanceChecks": [
+        "Exact source and evidence reconciled",
+        "No sensitive data in public artifacts",
+        "No unsupported clinical or verification claims"
+      ],
+      "authority": "Requested implementation documentation and public-repository privacy verification",
+      "status": "in_progress",
+      "next": {
+        "pass": "Integrate final reviewed evidence",
+        "fail": "Owner repairs own output or source owner fixes finding",
+        "missingInput": "Await frozen candidate and exact outgoing allowlist"
       },
       "attempts": [
         {
@@ -1166,10 +1395,14 @@
     "base": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
     "concurrencySlots": 7,
     "coordinatorCounts": true,
-    "activeWorkerLanes": 6,
+    "activeWorkerLanes": 5,
     "requestedModel": "gpt-6-astra",
     "requestedReasoning": "xhigh",
     "remoteBranch": "feat/live-colors-clean-fullscreen",
-    "recovery": "Remote main verified, previous sources intact, previous tasks completed, no active prior assignments. New independent source/test/review ownership."
+    "recovery": "v0.3 accepted at241+54native checks. Sequence engine accepted and UI source frozen at be1be8a2;319nonbrowser pass. Native temporal/user-journey runner integration and reports finishing. No sequence browser pass claimed. Documentation returns accepted pending final evidence. Privacy review pending exact final tree. Owner authorized merge after all checks pass.",
+    "sourceHead": "b16cc2683145389abe53e30ae201d978d26c99c9",
+    "pullRequest": 2,
+    "candidateRun": 39347872671,
+    "htmlSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a"
   }
 }

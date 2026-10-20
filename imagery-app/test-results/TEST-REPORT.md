@@ -1,12 +1,39 @@
+# Version 0.4 candidate verification
+
+Date: 2026-10-20. **319/319 non-browser checks PASS. Native v0.4 browser and visual checks are NOT RUN.**
+
+Frozen HTML: 111,934 bytes; SHA-256 `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e`. Local Node v24.19.0, Linux. These results cover the authorized finite one-pass sequence extension and retained static/fullscreen behavior. The accepted v0.3 evidence is preserved below and does not establish v0.4 compatibility.
+
+Executed checks: 113 static-scene model/controller, 25 independent sequence-engine, 151 DOM/Canvas/clock doubles, 11 static artifact, and 19 CDP transport/fixture/oracle checks. Browser-helper syntax, 3 accepted/14 rejected static fixtures, and the independent sequence fixture with seven reference-time cases pass. Commands:
+
+```sh
+node --test imagery-app/tests/*.test.cjs
+node --check imagery-app/tests/browser-cdp.cjs
+node --check imagery-app/tests/browser-sequence.cjs
+node --check imagery-app/tests/independent-sequence-user-scenarios.cjs
+node imagery-app/tests/browser-cdp.cjs --check-fixtures
+node imagery-app/tests/independent-sequence-user-scenarios.cjs --check-fixture
+```
+
+Independent engine tests cover closed validation and parser limits, 32 steps, 1-hour total, two 12-object frames, exact half-open 11-second boundaries and direct cuts, 8,000 seeded reference samples, last-painted Pause, resume offsets, exact-frame acknowledgments, stale generations, invalid clocks and atomic invalid starts. Isolated engine coverage is 99.10% lines, 93.37% branches and 100% functions. The initial engine adaptation passed 19/24 due to four state-versus-frame return assumptions and one overbroad static regex. Those test assumptions were corrected to the documented API; no engine source change was needed.
+
+DOM-double coverage adds atomic scene-plus-step capture, snapshot independence, immediate valid edits and invalid raw input, import races, one pending RAF, two-buffer composition, reduced motion, lifecycle cancellation, stale callbacks, and manual/timed crossover concealment. Regressions now cover persistent and one-shot NaN/throwing clocks and focus recovery after completion/Escape. Doubles establish ordering and guards, not native layout or pixels.
+
+The prepared native suite has 74 groups, 37 each for desktop and phone-sized touch emulation. Sequence groups include real Canvas RGB composition at controlled boundaries, 12+12 overlaps, direct cuts, actual real-time Pause/Resume/completion, native fullscreen/media interruption, fixed-action focus/hit testing at narrow and short viewports, independent native snapshot-edit/save journeys, and a genuine unmodified 11-second run. Each case reloads the document; test-clock replacements cannot leak into real-time groups. Prior immutable trusted fullscreenchange Hidden/black/focus assertions remain unchanged. Twenty-eight compact synthetic JPEG checkpoints are prepared for actual inspection. No v0.4 native or visual pass is claimed yet.
+
+The previous local sandbox-enabled launch remains blocked; no new local launch, package installation, browser-security bypass, workflow action or upload mechanism was attempted. Root-managed existing GitHub CI is the native execution route. Physical devices, OS dialogs, Safari, full accessibility, calibrated color, qualified sensory review and efficacy remain unverified.
+
+---
+
 # Version 0.3 candidate verification
 
-Date: 2026-10-20. Current status: **240 non-browser checks PASS; real-browser and visual review NOT RUN for this candidate.**
+Date: 2026-10-20. Current status: **241 non-browser checks and all 54 native Chrome groups PASS on the exact v0.3 artifact.**
 
-Candidate HTML: 65,152 bytes; SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Repository baseline: `f614c2733ac6c8df838e9dd3d7ffdf6dd746745a`. The commit carrying this candidate will be recorded when available. The baseline rerun passed 216/216 on Node v24.19.0 before test changes.
+Candidate HTML: 65,152 bytes; SHA-256 `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a`. Repository baseline: `f614c2733ac6c8df838e9dd3d7ffdf6dd746745a`. First tested source head: `b16cc2683145389abe53e30ae201d978d26c99c9`; PR test-merge checkout: `61570e66e0e7258af20fe9728a72e147faa58e46`. The baseline rerun passed 216/216 on Node v24.19.0 before test changes.
 
 ## Executed non-browser checks
 
-On Linux with Node v24.19.0, the frozen candidate passed 240/240: 113 model, 100 DOM/Canvas-double, 11 static, and 16 CDP harness/fixture/oracle checks. Browser suite syntax and separate fixtures passed (3 valid accepted; 14 invalid rejected). Commands:
+On Linux with Node v24.19.0, the frozen candidate passed 241/241 after the harness repair: 113 model, 100 DOM/Canvas-double, 11 static, and 17 CDP harness/fixture/oracle checks. Browser suite syntax and separate fixtures passed (3 valid accepted; 14 invalid rejected). Commands:
 
 ```sh
 node --test imagery-app/tests/model.test.cjs imagery-app/tests/ui.test.cjs imagery-app/tests/static.test.cjs imagery-app/tests/browser-cdp.test.cjs
@@ -22,7 +49,11 @@ New tests cover per-input object/background HSL samples without Apply or full-fi
 
 The expanded suite prepares 54 real-Chrome groups (27 per desktop and phone-sized viewport/touch-emulation configuration). It adds an independent HSL-to-RGB oracle; native range input observations before change; actual computed swatches; hidden studio/tab-order checks; keyboard Show/Exit; pointer-idle and first-touch Exit; short fullscreen controls; injected Exit denial; and native fullscreen entry/Exit/Escape. The prior trusted fullscreenchange assertions are unchanged: the app must synchronously leave Hidden state, all-black canvas pixels, and correct mode-control focus at the observed native event. Polling only waits for event delivery, never for expected concealment.
 
-Fourteen compact JPEG frames of the same synthetic reference scene are prepared for review through the existing CI job log. This is not yet visual evidence: no current-version frames have been captured or inspected. Native browser CI is pending. No new local browser launch was attempted because the previous sandbox-enabled launch blocker remains; no package, workflow, or browser-security workaround was used.
+[First v0.3 CI run 39347872671](https://github.com/woodkill00/aphantasia_build/actions/runs/39347872671), on sandbox-enabled Chrome 155.0.8059.39 and Node v22.23.3, passed 240 non-browser checks and 52/54 browser groups. The two short-fullscreen groups failed because the test required “Exit fullscreen” to precede “apply or discard,” while the correct displayed guidance supplied those directions in the opposite order. This is a verified test-order assumption, not a missing direction. The repaired helper now separately requires both directions; its regression rejects a message missing either. Runtime sources and HTML are unchanged. The groups stopped before injected Exit denial, so that remaining tail was NOT RUN on the first attempt; the complete rerun below subsequently executed and passed it.
+
+All 14 requested shared-reference JPEG frames were captured, decoded, hash verified, and inspected by the tester (154,158 total JPEG bytes). The actual frames show the purple H260/S30/L50 sample and color-gradient tracks, a purple-only middle-square change, consistent outline geometry, clean fullscreen with just upper-right Exit, hidden fullscreen with explicit Show, and black scene after Exit. Desktop and phone-sized touch emulation were inspected; images are reduced/compressed, and exact Canvas RGB/black pixels are checked separately. Real scripted scroll observations show about 740 CSS pixels between object hue and Apply, a concrete future UI-placement opportunity. This is not a human usability study.
+
+The first run recorded zero page runtime errors, unexpected dialogs, or remote app requests. Browser closure and profile removal passed. No new local browser launch was attempted because the previous sandbox-enabled launch blocker remains; no package, workflow, or browser-security workaround was used. [Complete v0.3 rerun 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905) passed 241 non-browser checks and all 54 native groups on Chrome 155.0.8059.39 / Node v22.23.3. Source head: `57b8f2c2811dc246abca55d9630c0581551d448d`; PR test-merge checkout: `345a041818b452f8da648d30834817e1c6a43598`. Both injected-Exit-denial tails now executed and passed. Cleanup, runtime/dialog/request checks passed. The runtime HTML was unchanged between runs.
 
 Computed swatch checks establish CSS color and sample dimensions. They do not by themselves establish that a sample remains within the editor scrollport during every mobile slider gesture. The slider gradients are additional immediate feedback. Real pixels and user-perspective interaction review remain necessary.
 

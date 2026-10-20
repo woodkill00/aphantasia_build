@@ -50,3 +50,11 @@ This supports a scoped engineering preview. Physical devices, other browser engi
 Independent source review accepted HTML `98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a` (65,152 bytes) for native browser testing. The source and generated HTML match. Bounded live color swatches and range gradients do not reveal the full-field scene; fullscreen suppresses normal chrome and retains an accessible Exit plus explicit Show while hidden. No idle timer or scene animation was introduced.
 
 Review repairs clarified rejected-exit recovery while fullscreen remains active and added a dark-backed focus indicator against variable scene colors. Actual browser and screenshot acceptance remains pending for this candidate; earlier v0.2 results do not transfer automatically.
+
+## Version 0.4 sequence candidate — 2026-10-20
+
+Independent source review accepted candidate `be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e` (111,934 bytes) for native verification. Generated HTML matches the source parts and the static model remains unchanged. The pure sequence engine independently passed 25 tests including 8,000 seeded timing-oracle samples; the current aggregate non-browser suite passed 319 checks.
+
+Review found and closed visible mode-switch guard bypass, focus recovery and clock-fault issues. Single visibility authority, generation/epoch cancellation, painted-frame Pause, opaque-frame blending and aggregate two-buffer allocation were reviewed. Actual native temporal pixels, responsive controls, and user journeys remain acceptance gates for this candidate.
+
+The earlier v0.3 candidate independently passed 241 non-browser and 54 native groups in run 39348407905. Two independent scripted user journeys and actual inspection of 14 screenshots identified excessive color-to-Apply scrolling and an ambiguous decorative hidden-state ring. The sequence UI implements compact section selection, reachable actions and removal of that ring. This is engineering QA, not a human usability study or medical clearance.

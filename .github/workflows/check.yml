@@ -32,7 +32,7 @@ jobs:
           /usr/bin/google-chrome --version
       - name: Model, UI-double, and static tests
         shell: bash
-        run: node --test imagery-app/tests/model.test.cjs imagery-app/tests/ui.test.cjs imagery-app/tests/static.test.cjs imagery-app/tests/browser-cdp.test.cjs
+        run: node --test imagery-app/tests/*.test.cjs
       - name: Syntax and synthetic fixture checks
         shell: bash
         run: |

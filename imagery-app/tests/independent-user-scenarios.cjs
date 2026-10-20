@@ -32,7 +32,7 @@ async function runIndependentScenarios({page,runCase,out,captureLog=false}) {
   const events=[];
   async function observe(label) {
     const state=await page.evaluate(()=>({
-      editorScroll:document.getElementById('editor-panel').scrollTop,
+      editorScroll:document.getElementById('editor-scroll').scrollTop,
       visibility:document.getElementById('visibility-label').textContent,
       draft:document.getElementById('draft-label').textContent,
       focus:document.activeElement?.id||null,
@@ -101,7 +101,7 @@ async function runIndependentScenarios({page,runCase,out,captureLog=false}) {
   async function capture(name,{editor=false}={}) {
     if(!captureLog&&process.env.BROWSER_SCREENSHOTS!=='1'&&process.env.BROWSER_SCREENSHOT_LOG!=='1')return;
     const metrics=await page.evaluate(editor=>{
-      const panel=document.getElementById('editor-panel').getBoundingClientRect();
+      const panel=document.getElementById('editor-scroll').getBoundingClientRect();
       const swatch=document.getElementById('object-color-swatch').getBoundingClientRect(),last=document.getElementById('object-lightness').getBoundingClientRect();
       const top=Math.max(panel.top,swatch.top-12),bottom=Math.min(panel.bottom,last.bottom+12);
       const r=editor?{left:panel.left,top,width:panel.width,height:bottom-top}:{left:0,top:0,width:innerWidth,height:innerHeight};
