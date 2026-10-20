@@ -13,20 +13,52 @@ async function runDirectEditorScenarios({page,runCase}){
   else{const names={down:'mousePressed',move:'mouseMoved',up:'mouseReleased'};await page.send('Input.dispatchMouseEvent',{type:names[type],x,y,button:'left',buttons:type==='up'?0:1,clickCount:1});}
  }
  async function sample(x,y){return page.evaluate(([x,y])=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(Math.floor(c.width*x/100),Math.floor(c.height*y/100),1,1).data).slice(0,3)},[x,y]);}
- async function settledDirectClick(selector){
-  await page.evaluate(async selector=>{const e=document.querySelector(selector);e.scrollIntoView({block:'center',inline:'center',behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));window.__directTapTrace=[];for(const type of ['pointerdown','pointerup','pointercancel','click'])for(const capture of [true,false])document.addEventListener(type,event=>{if(window.__directTapTrace.length>=32)return;const r=e.getBoundingClientRect(),c=document.getElementById('scene-canvas').getBoundingClientRect();window.__directTapTrace.push({type,capture,target:event.target.id,trusted:event.isTrusted,x:event.clientX,y:event.clientY,button:{x:r.x,y:r.y,w:r.width,h:r.height},canvas:{x:c.x,y:c.y,w:c.width,h:c.height},scroll:document.getElementById('editor-scroll').scrollTop});},{capture});},selector);
-  try{await page.click(selector);}catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>window.__directTapTrace)));}
+ async function beginDirectTrace(){
+  await page.evaluate(()=>{
+   const button=document.getElementById('undo-move'),canvas=document.getElementById('scene-canvas');
+   window.__directTapTrace=[];
+   const snapshot=r=>({x:r.x,y:r.y,w:r.width,h:r.height});
+   for(const type of ['touchstart','touchmove','touchend','touchcancel','pointerdown','pointermove','pointerup','pointercancel','gotpointercapture','lostpointercapture','mousedown','mouseup','click'])for(const capture of [true,false])document.addEventListener(type,event=>{
+    if(window.__directTapTrace.length>=160)return;
+    window.__directTapTrace.push({type,capture,time:event.timeStamp,target:event.target.id,trusted:event.isTrusted,defaultPrevented:event.defaultPrevented,cancelable:event.cancelable,pointerId:event.pointerId,pointerType:event.pointerType,x:event.clientX,y:event.clientY,touches:event.changedTouches?Array.from(event.changedTouches,t=>({id:t.identifier,x:t.clientX,y:t.clientY})):null,path:event.composedPath().slice(0,8).map(e=>e.id||e.nodeName||'window'),button:snapshot(button.getBoundingClientRect()),canvas:snapshot(canvas.getBoundingClientRect()),buttonConnected:button.isConnected,sameButton:button===document.getElementById('undo-move'),disabled:button.disabled,scroll:document.getElementById('editor-scroll').scrollTop});
+   },{capture,passive:true});
+  });
+ }
+ async function settledDirectClick(selector,dwellMs=0){
+  await page.evaluate(async selector=>{const e=document.querySelector(selector);e.scrollIntoView({block:'center',inline:'center',behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));},selector);
+  try{
+   if(!dwellMs||!page.device.touch)await page.click(selector);
+   else {
+    // One separately identified trusted tap. Dwell is the only input change;
+    // never retry a missing click or synthesize a DOM activation.
+    const point=await page.evaluate(selector=>{
+     const e=document.querySelector(selector);if(!e||e.disabled)throw Error('Missing or disabled '+selector);
+     const r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);
+     if(hit!==e&&!e.contains(hit))throw Error('Occluded '+selector);
+     window.__directDwellClick=null;e.addEventListener('click',event=>{window.__directDwellClick={trusted:event.isTrusted};},{once:true});return {x,y};
+    },selector);
+    await page.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point,radiusX:1,radiusY:1,force:1,id:1}]});
+    await sleep(dwellMs);
+    await page.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    const deadline=Date.now()+7000;let delivered;
+    do {delivered=await page.evaluate(()=>window.__directDwellClick);if(delivered)break;await sleep(30);}while(Date.now()<deadline);
+    assert.ok(delivered,'Timed out waiting for trusted dwell click delivery to '+selector);assert.equal(delivered.trusted,true,'interaction must be browser-trusted');
+   }
+  }catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>window.__directTapTrace)));}
  }
  const near=(a,b)=>a.forEach((value,i)=>assert.ok(Math.abs(value-b[i])<=3,`actual pixel ${a} expected ${b}`));
- await runCase('v8 trusted drag updates actual pixels before release and one move undo preserves applied scene',async()=>{
-  const value=fixture();await start(value);const acceptedUndoBefore=await page.property('#undo','disabled');const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
+ async function dragUndoScenario({captureName,dwellMs=0}){
+  const value=fixture();await start(value);const acceptedUndoBefore=await page.property('#undo','disabled');await beginDirectTrace();const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
   await page.evaluate(()=>{window.__directTrust=[];for(const type of ['pointerdown','pointermove','pointerup'])document.getElementById('scene-canvas').addEventListener(type,e=>window.__directTrust.push({type,trusted:e.isTrusted}));});
   await input('down',p.x,p.y);await input('move',q.x,q.y);await sleep(40);
   assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);assert.ok(Math.abs(Number(await page.property('#position-y','value'))-45)<.1);await page.visible();near(await sample(47,45),rgb(value.scene.objects[0].color));near(await sample(35,50),rgb(value.scene.background));
   await input('up',q.x,q.y);await sleep(40);assert.ok((await page.evaluate(()=>window.__directTrust)).every(e=>e.trusted));assert.equal(await page.property('#undo-move','disabled'),false);assert.equal(await page.property('#undo','disabled'),acceptedUndoBefore,'draft move must not change accepted history');
-  await page.visualCapture('v8-dragged-live-item');await settledDirectClick('#undo-move');await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
+  if(captureName)await page.visualCapture(captureName);await settledDirectClick('#undo-move',dwellMs);await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
   await page.click('#discard');const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);
- });
+ }
+ await runCase('v8 trusted drag updates actual pixels before release and one move undo preserves applied scene',()=>dragUndoScenario({captureName:'v8-dragged-live-item'}));
+ await runCase('v8 diagnostic fresh drag Undo without intervening screenshot',()=>dragUndoScenario({captureName:null}));
+ await runCase('v8 diagnostic fresh drag Undo with single 80ms touch dwell',()=>dragUndoScenario({captureName:'v8-diagnostic-dwell-before-undo',dwellMs:80}));
  await runCase('v8 native click selects topmost item and explicit overlap cycling selects underlying item',async()=>{
   const value=fixture();value.scene.objects.push(styledObject({id:'object-2',shape:'circle',x:35,y:50,size:12}));await start(value);const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5};await input('down',p.x,p.y);await input('up',p.x,p.y);await sleep(40);
   assert.equal(await page.property('#object-select','value'),'object-2');assert.equal(await page.property('#editor-panel','hidden'),false);assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#cycle-overlap');assert.equal(await page.property('#object-select','value'),'object-1');await page.visible();await page.visualCapture('v8-overlap-selection-controls');
