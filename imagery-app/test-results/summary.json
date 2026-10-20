@@ -4,19 +4,20 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 276755,
-    "sha256": "bca1887a7e95694a38a96f4094f6ab96a3ff6241571e9460f2a6809a88b29953"
+    "bytes": 276906,
+    "sha256": "4bce4179933cdb1281e60f56c3b2fba180ca840247f3907fe487bf6183982ace"
   },
   "browser": {
-    "status": "REPAIR_CANDIDATE_NATIVE_VISUAL_PENDING",
+    "status": "TOUCH_DEFAULT_EXPERIMENT_NATIVE_PENDING",
     "preparedGroups": 124,
     "expectedCaptures": 104,
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
-    "previousHead": "198b0fcef2ee3919e556bb930f4afc778f543564",
-    "previousPassed": 117,
-    "previousFailed": 1,
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39412858934",
+    "previousHead": "08d4bf9d453604116b2b9e1a33bdd94dac7993b8",
+    "previousPassed": 120,
+    "previousFailed": 4,
     "previousCapturesInspected": 98,
-    "findings": "Mobile drag-to-Undo compatibility click missing; actual narrow action labels clipped. Current shared input experiment and readable wrapping plus stronger aperture/text checks require exact-head native and visual review."
+    "findings": "All new aperture/text assertions passed; four mobile drag-to-Undo variants failed. Touch-default experiment and focused Undo capture correction require fresh exact-head native and visual evidence.",
+    "previousCapturesVerified": 104
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1021,11 +1022,9 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 738,
-    "passed": 738,
-    "failed": 0,
-    "skipped": 0,
-    "node": "24.19.0"
+    "total": 739,
+    "passed": 739,
+    "failed": 0
   },
   "documentation": {
     "status": "PASS",

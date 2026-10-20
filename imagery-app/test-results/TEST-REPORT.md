@@ -2,6 +2,8 @@
 
 Current implementation includes direct editing; explicit scene-v4/sequence-v3 authored ratios and ten bounded shape families; four original editable presets and layer order; local experimental PNG/JPEG approximation; optional session-memory private journal; and disabled research information. This is unreleased development, not the published v0.7.0 package.
 
+[Run 39412858934](https://github.com/woodkill00/aphantasia_build/actions/runs/39412858934) passed 738 Node checks and 120/124 native groups. All four mobile drag-to-Undo variants failed; all104 captures were hash/byte verified and new aperture/text assertions passed. Packaging was skipped. The next candidate removes redundant touch pointerdown/move cancellation, preserves touch-action:none and all existing native assertions, and restores focused Undo before its final narrow capture. This is a reviewed experiment, not established root cause or native acceptance.
+
 ## Current acceptance boundary
 
 Independent scoped code reviews and Node regressions cover closed models, preserved legacy outputs, gesture rollback, rotated edge clamping, single-shadow filled silhouettes, literal journal export preview/approval, stale work invalidation and a single read/decode intake lease. Those checks are not native rendering, browser decoder, device, assistive-technology, natural-image usefulness or clinical evidence.
