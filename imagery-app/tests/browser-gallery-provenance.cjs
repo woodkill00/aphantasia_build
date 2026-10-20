@@ -144,34 +144,52 @@ async function runGalleryProvenanceScenarios({page, runCase}) {
   });
 
   await runCase('v9 gallery narrow filters thumbnail and complete Use label remain reachable', async () => {
+    async function targetMetrics(id, scrollIntoView = true) {
+      return page.evaluate((id, scrollIntoView) => {
+        const element = document.getElementById(id);
+        if (scrollIntoView) element.scrollIntoView({block: 'center', behavior: 'instant'});
+        const box = element.getBoundingClientRect(), scroll = document.getElementById('editor-scroll'), aperture = scroll.getBoundingClientRect();
+        const rect = r => ({left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height});
+        const points = [[box.left + 4, box.top + 4], [box.right - 4, box.top + 4],
+          [box.left + 4, box.bottom - 4], [box.right - 4, box.bottom - 4], [box.left + box.width / 2, box.top + box.height / 2]];
+        const range = document.createRange(); range.selectNodeContents(element);
+        return {id, box: rect(box), text: element.tagName === 'BUTTON' ? Array.from(range.getClientRects(), rect) : [],
+          visible: {left: Math.max(0, aperture.left + scroll.clientLeft), right: Math.min(innerWidth, aperture.left + scroll.clientLeft + scroll.clientWidth),
+            top: Math.max(0, aperture.top + scroll.clientTop), bottom: Math.min(innerHeight, aperture.top + scroll.clientTop + scroll.clientHeight)},
+          hit: points.every(([x, y]) => {const hit = document.elementFromPoint(x, y); return hit === element || element.contains(hit);})};
+      }, id, scrollIntoView);
+    }
+    function assertWholeTarget(metrics, thumbnail = false) {
+      const {box, visible} = metrics;
+      assert.ok(metrics.hit && box.left >= visible.left && box.right <= visible.right && box.top >= visible.top && box.bottom <= visible.bottom,
+        'Gallery target clips behind inspector chrome: ' + JSON.stringify(metrics));
+      if (thumbnail) {assert.equal(box.width, 64); assert.equal(box.height, 48);}
+      else assert.ok(box.width >= 44 && box.height >= 44, JSON.stringify(metrics));
+      for (const text of metrics.text) assert.ok(text.left >= box.left && text.right <= box.right && text.top >= box.top && text.bottom <= box.bottom,
+        'Gallery action label clips: ' + JSON.stringify(metrics));
+    }
     await page.viewport(320, 568); await page.hidden(); await page.noOverflow(320);
     for (const id of ['gallery-filter-items', 'gallery-filter-colors', 'gallery-filter-symmetry', 'gallery-filter-overlap', 'gallery-filter-timing', 'gallery-toggle-thumbnails', 'gallery-reset-filters']) {
       await page.focus('#' + id);
-      const metrics = await page.evaluate(id => {
-        const element = document.getElementById(id); element.scrollIntoView({block: 'center', behavior: 'instant'});
-        const box = element.getBoundingClientRect(), hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
-        return {left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height, hit: hit === element || element.contains(hit)};
-      }, id);
-      assert.ok(metrics.left >= 0 && metrics.right <= 320 && metrics.top >= 0 && metrics.bottom <= 568 && metrics.width >= 44 && metrics.height >= 44 && metrics.hit, JSON.stringify({id, metrics}));
+      assertWholeTarget(await targetMetrics(id));
     }
     await page.nativeSelect('#gallery-filter-colors', '1');
     await page.nativeSelect('#gallery-filter-symmetry', 'vertical');
     await page.click('#gallery-toggle-thumbnails');
+    await page.focus('#gallery-use-symmetric-pair');
+    assertWholeTarget(await targetMetrics('gallery-use-symmetric-pair'));
+    assertWholeTarget(await targetMetrics('gallery-thumbnail-symmetric-pair'), true);
+    await page.noOverflow(320);
+    // The short viewport establishes individual reachability. It cannot show
+    // this entire row at once without clipping under pinned inspector actions.
+    // Keep the stronger whole-group capture explicitly labeled as 320×760.
+    await page.viewport(320, 760); await thumbnailsHidden(); await page.noOverflow(320);
+    await page.click('#gallery-toggle-thumbnails'); await page.focus('#gallery-use-symmetric-pair');
     await page.evaluate(() => document.getElementById('gallery-entry-symmetric-pair').scrollIntoView({block: 'center', behavior: 'instant'}));
-    const metrics = await page.evaluate(() => {
-      const row = document.getElementById('gallery-entry-symmetric-pair'), button = document.getElementById('gallery-use-symmetric-pair');
-      const canvas = document.getElementById('gallery-thumbnail-symmetric-pair'), b = button.getBoundingClientRect(), c = canvas.getBoundingClientRect();
-      const range = document.createRange(); range.selectNodeContents(button);
-      return {row: {width: row.getBoundingClientRect().width}, button: {left: b.left, right: b.right, top: b.top, bottom: b.bottom},
-        text: Array.from(range.getClientRects(), r => ({left: r.left, right: r.right, top: r.top, bottom: r.bottom})),
-        canvas: {left: c.left, right: c.right, top: c.top, bottom: c.bottom, width: c.width, height: c.height},
-        hit: document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2) === button};
-    });
-    assert.ok(metrics.hit && metrics.button.left >= 0 && metrics.button.right <= 320 && metrics.button.top >= 0 && metrics.button.bottom <= 568, JSON.stringify(metrics));
-    assert.equal(metrics.canvas.width, 64); assert.equal(metrics.canvas.height, 48);
-    assert.ok(metrics.canvas.left >= 0 && metrics.canvas.right <= 320 && metrics.canvas.top >= 0 && metrics.canvas.bottom <= 568, JSON.stringify(metrics));
-    for (const text of metrics.text) assert.ok(text.left >= metrics.button.left && text.right <= metrics.button.right && text.top >= metrics.button.top && text.bottom <= metrics.button.bottom, JSON.stringify(metrics));
-    await page.noOverflow(320); await page.visualCapture('v9-narrow-gallery-native-thumbnail-controls');
+    assertWholeTarget(await targetMetrics('gallery-entry-symmetric-pair', false));
+    assertWholeTarget(await targetMetrics('gallery-use-symmetric-pair', false));
+    assertWholeTarget(await targetMetrics('gallery-thumbnail-symmetric-pair', false), true);
+    await page.noOverflow(320); await page.visualCapture('v9-narrow-gallery-320x760-whole-thumbnail-and-use');
     await page.click('#hide-scene'); await thumbnailsHidden();
   });
 

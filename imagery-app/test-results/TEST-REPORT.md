@@ -2,6 +2,8 @@
 
 Unreleased development. The published package remains v0.7.0. Current engineering includes ten bounded authored shape families, five fixed ratios, twelve original presets, explicit bounded static gallery thumbnails, experimental local image approximation, private journal-v2 with separately opted-in SHA-256 identity and visible-duration metadata, and disabled research information only. This is not all possible geometry, a clinical tool or an activated study.
 
+[Run 39413117772](https://github.com/woodkill00/aphantasia_build/actions/runs/39413117772) passed 829 Node checks and 135/136 native groups in585.313 seconds, with normal cleanup and116 hash/byte-verified captures. Immediate mobile drag-to-Undo failed; packaging was skipped. Actual visual review found a narrow gallery thumbnail clipped under pinned Apply chrome despite viewport-only assertions. The new test preserves individual320×568 reachability with actual scroll-aperture and corner hit checks, and adds an honestly labeled320×760 simultaneous row/Use/thumbnail capture. The current shared input experiment removes redundant touch pointerdown/move cancellation without dropping assertions. Fresh exact-head native and visual evidence remains required.
+
 ## Current acceptance boundary
 
 Pure models, DOM doubles and code review are useful but not native rendering, physical exposure, device, assistive-technology or human usefulness evidence. The current prepared suite contains 136 native groups and 116 synthetic captures, including inherited diagnostic groups; none is claimed passed on this new runtime yet. All current head identity and aggregate totals are recorded in summary.json and must be refreshed after source changes.

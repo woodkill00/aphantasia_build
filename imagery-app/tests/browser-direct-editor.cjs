@@ -20,7 +20,7 @@ async function runDirectEditorScenarios({page,runCase}){
    const snapshot=r=>({x:r.x,y:r.y,w:r.width,h:r.height});
    for(const type of ['touchstart','touchmove','touchend','touchcancel','pointerdown','pointermove','pointerup','pointercancel','gotpointercapture','lostpointercapture','mousedown','mouseup','click'])for(const capture of [true,false])document.addEventListener(type,event=>{
     if(window.__directTapTrace.length>=160)return;
-    window.__directTapTrace.push({type,capture,time:event.timeStamp,target:event.target.id,trusted:event.isTrusted,defaultPrevented:event.defaultPrevented,cancelable:event.cancelable,pointerId:event.pointerId,pointerType:event.pointerType,x:event.clientX,y:event.clientY,touches:event.changedTouches?Array.from(event.changedTouches,t=>({id:t.identifier,x:t.clientX,y:t.clientY})):null,path:event.composedPath().slice(0,8).map(e=>e.id||e.nodeName||'window'),button:snapshot(button.getBoundingClientRect()),canvas:snapshot(canvas.getBoundingClientRect()),buttonConnected:button.isConnected,sameButton:button===document.getElementById('undo-move'),disabled:button.disabled,scroll:document.getElementById('editor-scroll').scrollTop});
+    window.__directTapTrace.push({type,capture,time:event.timeStamp,target:event.target.id,trusted:event.isTrusted,defaultPrevented:event.defaultPrevented,cancelable:event.cancelable,pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary,x:event.clientX,y:event.clientY,touches:event.changedTouches?Array.from(event.changedTouches,t=>({id:t.identifier,x:t.clientX,y:t.clientY})):null,path:event.composedPath().slice(0,8).map(e=>e.id||e.nodeName||'window'),button:snapshot(button.getBoundingClientRect()),canvas:snapshot(canvas.getBoundingClientRect()),buttonConnected:button.isConnected,sameButton:button===document.getElementById('undo-move'),disabled:button.disabled,scroll:document.getElementById('editor-scroll').scrollTop});
    },{capture,passive:true});
   });
  }
@@ -44,7 +44,7 @@ async function runDirectEditorScenarios({page,runCase}){
     do {delivered=await page.evaluate(()=>window.__directDwellClick);if(delivered)break;await sleep(30);}while(Date.now()<deadline);
     assert.ok(delivered,'Timed out waiting for trusted dwell click delivery to '+selector);assert.equal(delivered.trusted,true,'interaction must be browser-trusted');
    }
-  }catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>window.__directTapTrace)));}
+  }catch(error){throw Error(error.message+'; direct-tap diagnostics '+JSON.stringify(await page.evaluate(()=>({events:window.__directTapTrace,state:{x:document.getElementById('position-x').value,y:document.getElementById('position-y').value,undoMoveDisabled:document.getElementById('undo-move').disabled,redoMoveDisabled:document.getElementById('redo-move').disabled,acceptedUndoDisabled:document.getElementById('undo').disabled,visibility:document.getElementById('visibility-label').textContent,status:document.getElementById('status').textContent}}))));}
  }
  const near=(a,b)=>a.forEach((value,i)=>assert.ok(Math.abs(value-b[i])<=3,`actual pixel ${a} expected ${b}`));
  async function dragUndoScenario({captureName,dwellMs=0,postDragGapMs=0}){
@@ -78,6 +78,11 @@ async function runDirectEditorScenarios({page,runCase}){
    assert.ok(result.hit&&result.box.width>=44&&result.box.height>=44&&result.box.left>=result.visible.left&&result.box.right<=result.visible.right&&result.box.top>=result.visible.top&&result.box.bottom<=result.visible.bottom,'Action clips behind inspector chrome: '+JSON.stringify(result));
    for(const text of result.text)assert.ok(text.left>=result.box.left&&text.right<=result.box.right&&text.top>=result.box.top&&text.bottom<=result.box.bottom,'Action label clips: '+JSON.stringify(result));
   }
+  // The final disabled Redo check may scroll the focused Undo out of the
+  // aperture. Capture an actually focused, fully visible enabled control.
+  assert.equal(await page.property('#undo-move','disabled'),false);await page.focus('#undo-move');
+  const focusedUndo=await page.evaluate(()=>{const e=document.getElementById('undo-move');e.scrollIntoView({block:'center',behavior:'instant'});const r=e.getBoundingClientRect(),a=document.getElementById('editor-scroll').getBoundingClientRect();return {focused:document.activeElement===e,top:r.top,bottom:r.bottom,left:r.left,right:r.right,aperture:{top:Math.max(0,a.top),bottom:Math.min(innerHeight,a.bottom),left:Math.max(0,a.left),right:Math.min(innerWidth,a.right)},hit:[[r.left+4,r.top+4],[r.right-4,r.top+4],[r.left+4,r.bottom-4],[r.right-4,r.bottom-4],[r.left+r.width/2,r.top+r.height/2]].every(([x,y])=>{const hit=document.elementFromPoint(x,y);return hit===e||e.contains(hit);})};});
+  assert.ok(focusedUndo.focused&&focusedUndo.hit&&focusedUndo.top>=focusedUndo.aperture.top&&focusedUndo.bottom<=focusedUndo.aperture.bottom&&focusedUndo.left>=focusedUndo.aperture.left&&focusedUndo.right<=focusedUndo.aperture.right,JSON.stringify(focusedUndo));
   await page.visualCapture('v8-narrow-move-controls');await page.click('#hide-scene');await page.hidden();
  });
 }
