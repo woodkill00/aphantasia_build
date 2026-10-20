@@ -4,6 +4,10 @@ The Spec-Kit first increment adds direct selection, transactional draft dragging
 
 The geometry and journal model files are pure future-phase foundations, not integrated UI or completed roadmap features. Research submission remains unavailable. Historical screenshots remain explicitly labelled v0.7; they do not verify this candidate.
 
+## First CI findings and fixes
+
+[Run 39405701039](https://github.com/woodkill00/aphantasia_build/actions/runs/39405701039) ran the native suite and found two issues on both emulated devices: the focusable editor canvas remained in fullscreen tab order, and a new test incorrectly assumed that importing a fixture left accepted history empty. The canvas now leaves the tab order outside editing/explicit placement; the native test compares accepted history before and after a draft move and still verifies exact discard/export state. Independent focused re-review and 26 direct-editor tests pass. A new exact-head native/visual run is required; the failed run is not acceptance.
+
 ## Historical verification below
 
 # Public repository onboarding, MIT licensing and release preparation

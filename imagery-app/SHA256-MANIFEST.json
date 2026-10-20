@@ -5,17 +5,17 @@
   "scope": "Explicit public app files except manifest",
   "files": {
     "README.md": "dce25af166972db1fbf5bd072351e9f4e17c4183aa84c9aa1304c066e8eab75b",
-    "index.html": "309e27d1413e9b4e58a8792813ab3c2f8395bdb164f5d51b0823350311eebf60",
+    "index.html": "5e65f8e83e9d9469d6a37c8f59fb5baef47e066ab087fb341399b375b4d136a0",
     "review.md": "2bb7f3512f4b641a178a82b734cecce0b3dcec19368fd278ad966970959af395",
-    "src/app.js": "0e4210857600e443bb521a76763e973a966df32524f7a8bf2847ae3bd10f9575",
+    "src/app.js": "aa70f5349bc13996737216cd8552e1f603b5b9382592959fef3a5a83c0bdd6eb",
     "src/assemble.cjs": "b4728c5d3c165a2fd5062905ebbff5a98aa01b476d487cbffbf6c1ca11c88bce",
     "src/item-model.js": "4a543a7368161f35926d433f10cc140259531bbbcfae21b1d229b0fe3364362e",
     "src/model.js": "5e8feab1495706a769315422fb8a6183e8f6021c9b59c25522a9dad57b0189e6",
     "src/sequence-model.js": "b31060d916034d8200606325cad51721494b6710cd60ca06f2cbfa49eb71c558",
     "src/shell.html": "b849339315b45d1c31e959274393478525b1ca04e4ec928460ad3ba6f7d67510",
     "src/style.css": "b501c7927a14c0b492ffa3932de977524710f58e67bfe960b122deafa84b4633",
-    "test-results/TEST-REPORT.md": "6c81d8c174465fa9c1dde54956c244cedc73c3f33809ed075adf60bca1172659",
-    "test-results/summary.json": "f57c56df207291d6d5e61cda4c6c88d53830db8e37f5a72b1a523cfd8aa2075f",
+    "test-results/TEST-REPORT.md": "deb1f6a8f3377aba78b72d0c23cea92a2c16cb03a352d57e183dd9d35be1a8ac",
+    "test-results/summary.json": "d0ee13c0091a60ab647c877d3cb50169a3804cf8744cf696b59ad957737693c2",
     "tests/BROWSER-TEST-PROCEDURE.md": "d3cb4becf22218b5c2c3f810e7bd11e5707be1467e5f1706b7005b429d18e0fb",
     "tests/browser-cdp.cjs": "368641b264d95a3d29179eb0b51021f539f01c31fd6bcde0fa540ecf54bf1093",
     "tests/browser-cdp.test.cjs": "0eb454ee77a7fd4a163cd93e9ded67970dbf499ba213cb8449ae359d50b83f5b",
@@ -43,10 +43,10 @@
     "src/editor-model.js": "3905a0b824c96b5b3be4d149332496a3d34f0d7340868ffb99b9d6c9e057b63b",
     "src/geometry-model.js": "322dfca3cf61357bffe8cea97a3ed89b1613075ce540420281de9fdb3d6b024a",
     "src/journal-model.js": "890d98e8a1ab5db3a38a47872576f580869c7672c5a7df05db293ea328804732",
-    "tests/browser-direct-editor.cjs": "8538d5b5850720103a3b2ba1196992107d24bc17dbaf17025e262042ff813335",
+    "tests/browser-direct-editor.cjs": "2d1c7c50a932875a1aebb6a1272f8e4f750c47a087758f218a3aaba5c41b43b9",
     "tests/editor-model.test.cjs": "afe4b0bc042e7750206c959a6a6a4f985422615c18d9e97c399ae540a4c2ccae",
     "tests/geometry-model.test.cjs": "e1d1adb746d215d7015a58777ab49374fd0fd082a509523bd7a1a040d9dfc126",
     "tests/journal-model.test.cjs": "d88c13803706bef90f3242a1d4395bf3a1574add568b1446984a4e4ce1a62a1b",
-    "tests/ui-direct-editor.test.cjs": "0dd5fe90fff599901f54ebe2e118fcdd741b560cffea515eb15d19baf7541e60"
+    "tests/ui-direct-editor.test.cjs": "393c8c51689889cbf9ddab556e05bec636064865ab78c6be17346e87043a1068"
   }
 }

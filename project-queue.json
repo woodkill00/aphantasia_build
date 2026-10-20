@@ -1760,8 +1760,8 @@
     "repositoryBaseCommit": "3561bfbbd652f375531220fd9dcd92f58d5c9366",
     "targetBranch": "feature/008-interactive-scene-roadmap",
     "appPath": "imagery-app/index.html",
-    "appSha256": "309e27d1413e9b4e58a8792813ab3c2f8395bdb164f5d51b0823350311eebf60",
-    "appBytes": 178162,
+    "appSha256": "5e65f8e83e9d9469d6a37c8f59fb5baef47e066ab087fb341399b375b4d136a0",
+    "appBytes": 178256,
     "note": "Direct editor candidate from the verified v0.7 source; no temporary release publisher files inherited."
   },
   "authority": {
@@ -1853,7 +1853,7 @@
   "currentIteration": {
     "base": "3561bfbbd652f375531220fd9dcd92f58d5c9366",
     "remoteBranch": "feature/008-interactive-scene-roadmap",
-    "htmlSha256": "309e27d1413e9b4e58a8792813ab3c2f8395bdb164f5d51b0823350311eebf60",
+    "htmlSha256": "5e65f8e83e9d9469d6a37c8f59fb5baef47e066ab087fb341399b375b4d136a0",
     "status": "local_tests_review_native_ci_pending"
   }
 }

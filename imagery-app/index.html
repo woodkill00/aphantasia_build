@@ -1203,6 +1203,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('add-object').disabled=working.scene.objects.length>=M.MAX_OBJECTS;
     $('place-object').setAttribute('aria-pressed',String(placing));
     $('place-object').textContent=placing?'Cancel placement':'Place on field';
+    canvas.setAttribute('tabindex',!full&&(placing||(isLive()&&section==='scene'))?'0':'-1');
     canvas.className=placing?'placing':isLive()&&section==='scene'&&!full?'direct-edit'+(gesture&&gesture.moved?' dragging':''):'';
     $('undo-move').disabled=!moveUndo.length;$('redo-move').disabled=!moveRedo.length;
     $('cycle-overlap').disabled=!lastHit||lastHit.ids.length<2;

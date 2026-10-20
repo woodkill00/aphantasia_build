@@ -4,12 +4,14 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 178162,
-    "sha256": "309e27d1413e9b4e58a8792813ab3c2f8395bdb164f5d51b0823350311eebf60"
+    "bytes": 178256,
+    "sha256": "5e65f8e83e9d9469d6a37c8f59fb5baef47e066ab087fb341399b375b4d136a0"
   },
   "browser": {
-    "status": "BLOCKED_LOCAL_STARTUP",
-    "reason": "Sandboxed Chromium timed out before navigation; cleanup confirmed. CI native scenarios and visual review pending."
+    "status": "CI_FIXES_APPLIED_RERUN_PENDING",
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39405701039",
+    "previousHead": "40e3b5975268a3f0b64a8b4b76d372052795f701",
+    "findings": "Fullscreen canvas tabindex and an invalid empty accepted-history assumption in native setup. Both corrected and independently re-reviewed; exact-head rerun pending."
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1013,10 +1015,9 @@
   },
   "nonBrowser": {
     "status": "PASS",
-    "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 563,
-    "passed": 563,
+    "total": 564,
+    "passed": 564,
     "failed": 0,
-    "note": "All 563 checks passed after review fixes and metadata reconciliation; these include pure future geometry/journal foundations, not their UI completion."
+    "skipped": 0
   }
 }

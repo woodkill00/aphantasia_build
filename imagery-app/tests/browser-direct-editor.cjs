@@ -15,11 +15,11 @@ async function runDirectEditorScenarios({page,runCase}){
  async function sample(x,y){return page.evaluate(([x,y])=>{const c=document.getElementById('scene-canvas');return Array.from(c.getContext('2d').getImageData(Math.floor(c.width*x/100),Math.floor(c.height*y/100),1,1).data).slice(0,3)},[x,y]);}
  const near=(a,b)=>a.forEach((value,i)=>assert.ok(Math.abs(value-b[i])<=3,`actual pixel ${a} expected ${b}`));
  await runCase('v8 trusted drag updates actual pixels before release and one move undo preserves applied scene',async()=>{
-  const value=fixture();await start(value);const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
+  const value=fixture();await start(value);const acceptedUndoBefore=await page.property('#undo','disabled');const r=await rect(),p={x:r.left+r.width*.35,y:r.top+r.height*.5},q={x:p.x+r.width*.12,y:p.y-r.height*.05};
   await page.evaluate(()=>{window.__directTrust=[];for(const type of ['pointerdown','pointermove','pointerup'])document.getElementById('scene-canvas').addEventListener(type,e=>window.__directTrust.push({type,trusted:e.isTrusted}));});
   await input('down',p.x,p.y);await input('move',q.x,q.y);await sleep(40);
   assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);assert.ok(Math.abs(Number(await page.property('#position-y','value'))-45)<.1);await page.visible();near(await sample(47,45),rgb(value.scene.objects[0].color));near(await sample(35,50),rgb(value.scene.background));
-  await input('up',q.x,q.y);await sleep(40);assert.ok((await page.evaluate(()=>window.__directTrust)).every(e=>e.trusted));assert.equal(await page.property('#undo-move','disabled'),false);assert.equal(await page.property('#undo','disabled'),true);
+  await input('up',q.x,q.y);await sleep(40);assert.ok((await page.evaluate(()=>window.__directTrust)).every(e=>e.trusted));assert.equal(await page.property('#undo-move','disabled'),false);assert.equal(await page.property('#undo','disabled'),acceptedUndoBefore,'draft move must not change accepted history');
   await page.visualCapture('v8-dragged-live-item');await page.click('#undo-move');await page.hidden();assert.equal(await page.property('#position-x','value'),'35');assert.equal(await page.property('#undo-move','disabled'),true);await page.click('#redo-move');await page.hidden();assert.ok(Math.abs(Number(await page.property('#position-x','value'))-47)<.1);
   await page.click('#discard');const saved=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(saved.json,value);
  });
