@@ -1,31 +1,192 @@
 {
   "date": "2026-10-20",
-  "status": "SCOPED_TOUCHSTART_PORT_NODE_PASS_NATIVE_PENDING",
+  "status": "V08_ARRANGEMENT_IMPLEMENTED_LOCAL_NODE_SOURCE_REVIEW_PASS_NATIVE_VISUAL_PACKAGE_NOT_RUN",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 313647,
-    "sha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b"
+    "bytes": 322869,
+    "sha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
+    "releaseStatus": "UNRELEASED_DEVELOPMENT_CANDIDATE"
+  },
+  "nonBrowser": {
+    "status": "PASS",
+    "command": "node --test imagery-app/tests/*.test.cjs",
+    "nodeVersion": "v24.19.0",
+    "total": 935,
+    "passed": 935,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0,
+    "durationMs": 13835.289512,
+    "scope": "Local full dependency-free suite on the recorded runtime; not native, screenshot or clean-checkout package acceptance."
+  },
+  "independentReview": {
+    "status": "ACCEPTED_SOURCE_AND_TEST_CODE_ONLY",
+    "appSha256": "113235f2620a108c5203b4e07b4b2912180b3c6aa0f04da6684ab2934a6d32fd",
+    "runtimeSha256": "cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f",
+    "nativeArrangementTestSha256": "f49c11af4961adaaca26f5f850e4b55dc1e544b0fde0c2484db4386c3962ea86",
+    "focusedPassed": 114,
+    "focusedFailed": 0,
+    "independentAdversarialPassed": 9,
+    "independentAdversarialFailed": 0,
+    "note": "Independent locked-selection token and rapid native-test source review found no source blocker. Actual arrangement native, rendered-capture and package acceptance remain NOT RUN."
   },
   "browser": {
-    "status": "NOT_RUN_CURRENT_HEAD",
-    "preparedGroups": 140,
-    "expectedCaptures": 120,
-    "note": "Scoped guarded canvas touchstart repair from independently accepted P1 is ported. Current larger runtime requires its own exact-head native, visual and packaging gates. Prior failures remain historical.",
-    "historicalExpandedRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
-    "historicalPassed": 117,
-    "historicalFailed": 1,
-    "historicalCapturesInspected": 98,
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39413117772",
-    "previousHead": "88325147bfaab515abf42be2ee435ebe99781263",
-    "previousPassed": 135,
-    "previousFailed": 1,
-    "previousCapturesVerified": 116,
-    "p1Reference": {
-      "head": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
+    "status": "NOT_RUN_CURRENT_RUNTIME",
+    "preparedGroups": 160,
+    "expectedCaptures": 142,
+    "note": "Prepared source/test-code review is not native execution. P1 pass is separate prerequisite evidence, not acceptance of this changed runtime. PR 12/13 prior failures remain failures while repairs and retakes are pending."
+  },
+  "visual": {
+    "status": "NOT_RUN_CURRENT_RUNTIME",
+    "expectedCaptures": 142
+  },
+  "package": {
+    "status": "NOT_RUN_CURRENT_RUNTIME",
+    "note": "Local packaging unit tests are included in the Node suite; the actual clean-checkout portable-file gate is not yet run for this arrangement candidate."
+  },
+  "documentation": {
+    "status": "PASS",
+    "command": "node scripts/check-docs.cjs",
+    "markdownFiles": 35,
+    "localLinks": 233,
+    "scope": "Offline local links/fragments only; not native behavior or final acceptance."
+  },
+  "acceptedPrerequisiteEvidence": [
+    {
+      "pullRequest": 11,
+      "sourceHead": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
       "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824",
+      "status": "SUCCESS",
+      "nodePassed": 591,
+      "nodeTotal": 591,
       "nativePassed": 116,
-      "status": "PASS_SEPARATE_SMALLER_RUNTIME"
+      "nativeTotal": 116,
+      "captures": 92,
+      "package": "PASS",
+      "independentVisualReview": {
+        "status": "ACCEPTED_SCOPED_DIRECT_EDITOR_CAPTURES",
+        "capturesInspected": 8,
+        "uniqueCaptures": 6
+      },
+      "originalFirstTrustedUndoMoveToReleaseMs": 73.2,
+      "rapidFirstTrustedUndoMoveToReleaseMs": 35.8,
+      "trace": "Original and required rapid-release paths delivered the first trusted Undo without browser fling activation or tap suppression.",
+      "mergeCommit": "b8fccdd17240cd89d92872d80200306d64a0b8f3",
+      "note": "Accepted P1 prerequisite only. This pass does not accept the changed arrangement runtime or make prior PR 12/13 failures green."
+    }
+  ],
+  "priorCandidateEvidence": [
+    {
+      "pullRequest": 11,
+      "sourceHead": "2b77f41239469cf2af0605524552d904cbfacf7b",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39414688866",
+      "nodePassed": 566,
+      "nativePassed": 108,
+      "nativeTotal": 112,
+      "status": "FAIL",
+      "note": "Four mobile Undo variants failed. Focused Undo visual repair was independently inspected; that did not resolve click delivery. Later diagnostic run 39416525048 established Chromium fling-controller tap suppression, and accepted P1 run 39418445824 repaired the tested path. This original run remains FAIL."
+    },
+    {
+      "pullRequest": 12,
+      "sourceHead": "ed7a0d7217a9729267beadfdd4304c8ef2d48c45",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39414923557",
+      "nodePassed": 739,
+      "nativePassed": 120,
+      "nativeTotal": 124,
+      "status": "FAIL",
+      "captures": 104,
+      "visual": "All capture payloads verified; 17 changed captures individually inspected and 87 byte-identical to earlier inspected captures. No remaining scoped visual blocker.",
+      "package": "SKIPPED_AFTER_NATIVE_FAILURE",
+      "note": "Four mobile Undo variants failed. Earlier 117/118 attempt remains historical; neither attempt is acceptance of current source."
+    },
+    {
+      "pullRequest": 13,
+      "sourceHead": "88325147bfaab515abf42be2ee435ebe99781263",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39413117772",
+      "nodePassed": 829,
+      "nativePassed": 135,
+      "nativeTotal": 136,
+      "status": "FAIL",
+      "captures": 116,
+      "visual": "All payloads verified and inspected. Whole gallery thumbnail was clipped under pinned Apply at 320x568; later test-only capture/aperture repair preserved individual 320x568 reachability checks.",
+      "package": "SKIPPED_AFTER_NATIVE_FAILURE",
+      "note": "Immediate mobile drag-to-Undo failed. Native runtime 585.313 seconds; no timeout."
+    },
+    {
+      "pullRequest": 13,
+      "sourceHead": "65c96ebcae397884deb032d9bc430ddad61d68b7",
+      "sourceTree": "57d4ae6b049f0ad18e407921f014d50079582db8",
+      "testMerge": "3b453e50a7d81031813b27fc7f9108fbf4af4b0a",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39415125146",
+      "jobId": 118602174728,
+      "artifactBytes": 312959,
+      "artifactSha256": "5a6e6114f87b20335ba755f9ec7cbf98187a6ed332b8886f52a10bee82d7c002",
+      "nodePassed": 830,
+      "nativePassed": 135,
+      "nativeTotal": 136,
+      "status": "FAIL",
+      "captures": 116,
+      "visual": "All actual captures decoded and matched byte counts/SHA256; all inspected, with 12 gallery/provenance captures and narrow Undo/layers/whole-note controls individually reviewed. Repaired whole gallery group at 320x760 fully visible on both emulated devices; no additional scoped visual blocker.",
+      "nativeSeconds": 591.044,
+      "browser": "Headless Chrome 155.0.8059.39 on Linux",
+      "nodeVersion": "v22.23.3",
+      "sandbox": "Default Chrome sandbox retained",
+      "cleanup": {
+        "browserClosed": true,
+        "profileRemoved": true
+      },
+      "package": "SKIPPED_AFTER_NATIVE_FAILURE",
+      "note": "Immediate mobile drag-to-Undo failed. All three fresh diagnostic variants and six new gallery/provenance groups per device passed. Correct enabled target received pointerdown/up but no trusted click. This run itself did not establish the root cause; later diagnostic run 39416525048 did. This original run remains FAIL."
+    },
+    {
+      "pullRequest": 11,
+      "sourceHead": "8fef7dd862dc7e33e0f3f171ab88c1cbd60bb2f2",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39416525048",
+      "status": "FAIL",
+      "nativePassed": 113,
+      "nativeTotal": 114,
+      "finding": "Chromium input trace proved browser fling-controller tap suppression after a 74.6 ms move-to-release interval on the tested path; held release at 203.5 ms and other releases above 80 ms passed.",
+      "resolution": "Scoped canvas touchstart cancellation repaired this tested P1 path; see acceptedPrerequisiteEvidence. No physical-device claim."
+    }
+  ],
+  "historicalGalleryProvenanceCandidate": {
+    "note": "Superseded pre-arrangement snapshot retained as history, not current acceptance.",
+    "date": "2026-10-20",
+    "status": "V08_GALLERY_PROVENANCE_NATIVE_VISUAL_PENDING",
+    "artifact": {
+      "file": "imagery-app/index.html",
+      "version": "0.8.0",
+      "bytes": 312959,
+      "sha256": "5a6e6114f87b20335ba755f9ec7cbf98187a6ed332b8886f52a10bee82d7c002"
+    },
+    "browser": {
+      "status": "TOUCH_DEFAULT_AND_GALLERY_APERTURE_REPAIR_PENDING",
+      "preparedGroups": 136,
+      "expectedCaptures": 116,
+      "note": "Prior native run failed immediate mobile Undo, with other variants passing on that runner. Narrow gallery thumbnail capture clipped beneath pinned actions. Current touch-default experiment and stronger gallery aperture checks require fresh native execution.",
+      "historicalExpandedRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
+      "historicalPassed": 117,
+      "historicalFailed": 1,
+      "historicalCapturesInspected": 98,
+      "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39413117772",
+      "previousHead": "88325147bfaab515abf42be2ee435ebe99781263",
+      "previousPassed": 135,
+      "previousFailed": 1,
+      "previousCapturesVerified": 116
+    },
+    "nonBrowser": {
+      "status": "PASS",
+      "command": "node --test imagery-app/tests/*.test.cjs",
+      "total": 830,
+      "passed": 830,
+      "failed": 0
+    },
+    "documentation": {
+      "status": "PASS",
+      "markdownFiles": 34,
+      "localLinks": 220
     }
   },
   "historicalV07": {
@@ -1028,17 +1189,5 @@
       ]
     }
   },
-  "nonBrowser": {
-    "status": "PASS",
-    "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 855,
-    "passed": 855,
-    "failed": 0,
-    "skipped": 0
-  },
-  "documentation": {
-    "status": "PASS",
-    "markdownFiles": 34,
-    "localLinks": 220
-  }
+  "limits": "Synthetic Linux Chrome file-URL desktop/touch emulation and inspected frames are not physical-device, cross-engine, comprehensive AT, natural-photo/correction-effort, calibrated exposure, clinical or governed-participant evidence."
 }

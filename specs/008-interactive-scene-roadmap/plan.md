@@ -18,6 +18,20 @@ Freeze the new schema and authored-ratio contract before changing the renderer o
 
 Layer/lock/overlap and optional snap/align operate on the same draft write path. Add original static presets with IDs/revisions, descriptions and provenance, not medical labels. New fixed-ratio layouts use letterboxing with mapped hit regions; old files remain viewport-relative. Test snapshot/item playback integration, round trips and invalid parameters at every boundary.
 
+### Fourth increment: session locks, snap and centering
+
+Implementation and verification are pending. Build on the prior gallery/provenance candidate without inheriting its evidence as a pass: its latest recorded PR 13 run still failed the immediate mobile drag-to-Undo case. Preserve that failure and the separate preceding-stack failures in the public queue.
+
+1. Implement a pure session lock guard with at most 12 defensive canonical item snapshots. Compare a proposed complete scene against snapshots, not an already-mutated working object. Guard item deletion/mutation and targeted layer reordering; allow duplication into a new unlocked independent item.
+2. Integrate one coherent final disabled-state policy after geometry, timing and precision-control rules. Locked selection remains possible through the canvas, semantic list, overlap cycling and timing tracks. Preserve text-field keyboard behavior; keep Unlock all and concealment controls reachable.
+3. Audit every candidate route, including tampered disabled fields, sliders/precision companions, timing helpers, captured gestures/placement, nudges, draft history, Discard, Apply and capture. Preflight history candidates before consuming stacks. Block accepted history while locks exist and explain why.
+4. Centralize successful scene-replacement clearing and its notice. Keep failed/canceled/stale imports atomic. Sequence-only import retains editor locks; successful Load step clears them. Apply/capture and ordinary field refresh retain them. Invalidate asynchronous edits when lock/snap state changes.
+5. Add Off/1/5/10 drag-and-placement snap using the actual content rectangle and nearest feasible grid index within inset bounds. Preserve offsets and finite two-decimal canonical coordinates, reject letterbox taps and cancel active gestures before a snap change. Do not snap typed positions, nudges or centering.
+6. Add Center horizontally/vertically/both as validated single draft-move operations. No-op creates no history; hidden state remains hidden. Do not add distribution, rendered grids, schema fields, saved preferences, timers or provenance-visible marks.
+7. Run focused model and hostile-event DOM tests, then full exact-source regression. Native evidence must cover trusted locked selection/drag refusal/unlock, all supported ratio mappings and boundary snapping, whole focused controls inside the actual scroll aperture, corner hit tests, and reachable Unlock all/Hide at narrow and short sizes. Inspect the actual captures, with focus re-established immediately before capture.
+
+The prior PR 13 native run took 591.044 seconds against a ten-minute native-step budget. Additional checks need a measured, explicitly reviewed CI budget decision, not omitted scenarios or weaker assertions. A timeout remains a failed attempt. No CI/security change, merge, deployment or release is authorized by this plan alone.
+
 ## P3: local image approximation
 
 Prototype against synthetic supported scenes before natural-image claims. Validate selected raster file/decode dimensions, crop and palette; create bounded working pixels. Run bounded computation with progress, cancellation and stale-result generation checks. Produce only ordinary scene data, never imported SVG markup or remotely generated code. Review candidates before atomic Apply; no timer/reveal authority belongs to conversion.

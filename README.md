@@ -19,7 +19,9 @@ The [v0.7.0 release](https://github.com/woodkill00/aphantasia_build/releases/tag
 
 **Version 0.8 is unreleased and under verification.** The development source includes direct selection/dragging, fixed-ratio authored scenes with ten bounded shape families, layers and twelve original editable examples with a text-first, opt-in static-thumbnail gallery, an experimental local PNG/JPEG approximation tool, and an optional session-only journal with separately opt-in display provenance. Research submission stays disabled. These features are **not in the published v0.7.0 ZIP**.
 
-Start with the [0.8 feature guide and limits](docs/roadmap-features.md). Exact-head native-browser and inspected visual acceptance remain pending; old v0.7 results do not verify this source. The [Spec-Kit roadmap](specs/008-interactive-scene-roadmap/spec.md), [task map](specs/008-interactive-scene-roadmap/tasks.md), and [public work register](project-queue.json) separate implementation, acceptance and deferred work.
+Start with the [0.8 feature guide and limits](docs/roadmap-features.md). A fourth increment, session-only item locks, drag/placement snap and centering, is being implemented; its behavior and verification are still pending. No persistent locks, visible grid or distribution tool is promised.
+
+The prior gallery/provenance candidate's [latest recorded native run](https://github.com/woodkill00/aphantasia_build/actions/runs/39415125146) passed 135 of 136 groups but failed immediate mobile drag-to-Undo; all 116 captured frames were inspected and package verification was skipped. That is not overall acceptance and does not verify the fourth increment. The [Spec-Kit roadmap](specs/008-interactive-scene-roadmap/spec.md), [task map](specs/008-interactive-scene-roadmap/tasks.md), and [public work register](project-queue.json) separate implementation, acceptance and deferred work. Old v0.7 results do not verify this source.
 
 ## What you can do
 

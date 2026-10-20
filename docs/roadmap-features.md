@@ -28,7 +28,7 @@ Hollow interiors count as targets; shadows and letterbox bars do not. Small hit 
 
 Authored scene-v4 adds ellipse, rectangle, rounded rectangle, polygon and star alongside dot, pixel, circle, square and triangle: ten finite families, not every mathematical shape. Dimensions, rotation, body fill/outline, polygon/star parameters and original effects/timing pass the shared closed validator. Width/height are bounded by family; unsupported fields, arbitrary paths, markup and nonfinite values are rejected. The [architecture](architecture.md#authored-scene-v4-and-sequence-v3-contract) records exact ranges.
 
-Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Locking, snap, guides, align/distribute and grouping are not available.
+Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Session locks, snap and centering are the fourth increment under implementation, as described below; their acceptance is pending. Visible guides, distribution and grouping remain deferred.
 
 The **Original preset gallery** begins as a text-only list of twelve original MIT examples. Filter by item count, item color count, vertical symmetry, geometric overlap and authored timing. Color count excludes the shared background and disabled effects; symmetry includes colors; overlap includes containment as well as crossing shapes. These are descriptive filters, not clinical outcomes or a recommended order.
 
@@ -46,6 +46,18 @@ Each entry has a stable ID, revision 1, description, original provenance, MIT li
 **Show static thumbnails** is a separate explicit opt-in. At most twelve 64×48-pixel canvases are allocated, without DPR multiplication: 36,864 pixels total, or 147,456 RGBA bytes, separate from the existing main/offscreen scene buffers. Hide/End/Escape, filter changes and page interruptions conceal them and shrink their backing stores to 1×1. Nothing automatically re-enables them. Thumbnails use validated geometric paths, not arbitrary SVG/markup, remote assets or animation. **Use draft** stages an editable composition while hidden; Live preview, Apply, download and optional timed playback remain separate actions.
 
 Scene-v4 uses explicit authored canvas metadata. Sequence-v3 repeats the shared canvas in every snapshot and rejects any mismatch. Legacy sequence-v2 remains viewport-relative. An incompatible format family, background or ratio cannot silently alter either document on capture. Snapshot sequence playback still uses its own holds/transitions, not nested item clocks. The published v0.7 app cannot open authored v4/v3 files; keep original files if compatibility matters.
+
+### Fourth increment: session lock, snap and center contract
+
+**Implementation and testing pending.** This is a bounded extension of IF-050, not a new released feature or evidence that the whole roadmap is complete.
+
+Locks protect the selected item's complete stored record for this session: geometry, position, appearance and its own timing. They do not freeze background, canvas proportions, shared pulse period, other items or the final composite. A locked topmost item stays selectable but cannot be dragged; text identifies its lock. A duplicate is a new unlocked independent copy. Unlock all is always available, as are Hide/Stop/End/Escape and ordinary exports.
+
+Apply and snapshot Add/Replace retain locks. Accepted-scene Undo/Redo are disabled with an explanation while any lock remains. Draft move history and Discard preflight the resulting scene and reject any change/removal of locked records without consuming history. Successful whole-scene replacement clears locks with notice; rejected/canceled/stale replacements retain them. Sequence import alone does not replace the editor scene or clear locks, but successful Load step does. The [user guide](../imagery-app/README.md#session-locks-and-arrangement-implementation-pending) lists all replacement routes.
+
+Snap starts Off, with 1/5/10 normalized-content-unit choices for drag and tap-placement only. It preserves the grab offset and chooses a feasible grid position within geometry/effect bounds; letterbox taps remain invalid. Changing snap does not reposition an item. Typed X/Y, nudges, keyboard movement and Center horizontally/vertically/both remain exact and unsnapped. Centering sets the intended axis or axes to 50 in one validated draft-move operation, with no history entry for a no-op and no implicit Apply or reveal.
+
+Lock/snap changes cancel active gestures/placement and invalidate stale editing results. Session controls add no scene fields, saved preferences, grid pixels or clocks. Toggling them with no active gesture must leave the canonical scene fingerprint unchanged. Distribution, grids/guides and grouping are not part of this increment. The [acceptance matrix](../specs/008-interactive-scene-roadmap/tasks.md#if-050-fourth-increment-acceptance-matrix) requires exact-source model/UI/native checks and inspected captures.
 
 ## P3: local raster approximation, deliberately experimental
 
@@ -83,14 +95,16 @@ Real collection needs a responsible operator, applicable population/jurisdiction
 
 Independent component reviews identified and prompted repairs to direct-edit transaction identity/overlap caching, rotated-edge coordinate quantization, adversarial typed-array/closed-field validation, image cancellation across app actions and overlapping decode resource ownership. Their model, fuzz and DOM-double results are summarized in [analysis](../specs/008-interactive-scene-roadmap/analysis.md); they are not native or human-study evidence.
 
-The earlier PR 12 candidate recorded 737 passing Node checks and 117 of 118 native groups, not a clean native pass. A mobile Undo failure and visually identified button-layout issues have candidate repairs, but those repairs and the new gallery/provenance increment need exact-head native execution and inspected captures. Focused integrated provenance tests use real Node SHA-256 with DOM doubles; they are not native display-time evidence. Final exact-head regression, native-browser CI, integrated review and inspected rendered captures remain required for the expanded candidate. Planned native scenarios include actual synthetic PNG decode and an explicitly approved journal download, rather than only substituted decoders/DOM mocks. Do not count test code as an executed pass. Historical v0.7 results in [compatibility](compatibility.md) identify a different artifact.
+The latest recorded prior gallery/provenance candidate, PR 13 head `65c96ebcae397884deb032d9bc430ddad61d68b7`, passed 830 Node checks and 135 of 136 native groups in [run 39415125146](https://github.com/woodkill00/aphantasia_build/actions/runs/39415125146). Immediate mobile drag-to-Undo still failed, so overall native acceptance failed and packaging was skipped. All 116 actual capture payloads matched their hashes/lengths and were inspected; the repaired whole gallery group and focused Undo controls were visible. The six new gallery/provenance groups per emulated device passed, including native pixels, real browser SHA-256 and exact local journal download. This is scoped Linux Chrome evidence, not overall acceptance or evidence for new lock/snap/center code.
+
+The public queue also preserves the earlier PR 12 117/118 result and its later 120/124 failure, plus PR 11's unresolved mobile Undo failures. A passing diagnostic variant does not erase the failing original case. The fourth increment requires its own frozen source, full regression, native execution, inspected captures and independent review. Test code existing is not a passing run. Historical v0.7 results in [compatibility](compatibility.md) identify a different artifact.
 
 Still separate or deferred:
 
 - Arbitrary SVG/freeform paths/curves, arcs/rings/lines, text, 3D/fractals, larger item budgets and an exhaustive shape inventory.
-- Lock/snap/guide/align/group tools and broader catalogs beyond the twelve original examples.
+- Session locks, drag/placement snap and centering are being implemented and are not yet accepted. Distribution, visible grids/guides, grouping and broader catalogs beyond the twelve original examples remain deferred.
 - Raster formats beyond PNG/JPEG, richer tracing/manual anchors, empirical natural-image and correction-effort usefulness acceptance.
-- Native verification of optional display provenance, calibrated physical exposure/gaze measurement and governed research activation. The optional software interval summary is not a measurement of attention or light dose.
+- Reverification of provenance after fourth-increment integration, calibrated physical exposure/gaze measurement and governed research activation. The optional software interval summary is not a measurement of attention or light dose.
 - Physical-device touch/pen, cross-engine and OS file workflows, actual zoom and comprehensive assistive-technology/accessibility acceptance.
 - Qualified sensory/content review, clinical efficacy, diagnostic validity and participant research.
 

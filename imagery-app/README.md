@@ -179,7 +179,19 @@ Shadows are not selection targets. Hollow shapes are selectable through their in
 
 Use the four nudge buttons or focus the preview and use arrow keys (1 position unit, Shift for 0.1). Text fields retain ordinary arrow-key behavior. Typed coordinates and **Place on field** remain available without dragging. **Undo move** and **Redo move** affect only the draft, conceal the preview and are separate from applied scene history; they retain up to 40 moves. Other edits reset move history. **Apply changes** is still required before ordinary scene download; moving a preview does not silently save or apply it.
 
-**Move back one layer** / **Move forward one layer** change the selected item's draw order by one position. Later items draw over earlier ones. **Duplicate object** makes an overlapping editable copy with a fresh ID. There are no lock, snap, guide or align/distribute controls in this candidate.
+**Move back one layer** / **Move forward one layer** change the selected item's draw order by one position. Later items draw over earlier ones. **Duplicate object** makes an overlapping editable copy with a fresh ID.
+
+### Session locks and arrangement: implementation pending
+
+The fourth development increment is adding the following controls. This is its intended contract, not a claim that the current build has passed verification. It is not in the published v0.7.0 download.
+
+- **Lock selected item** protects that item's stored shape, position, appearance and own timing for this page session. It does not freeze the whole picture: background, canvas ratio, shared pulse period and other items can still change. Locked items stay selectable and are identified in text. Duplicate may create a new unlocked copy without changing the locked source.
+- **Unlock all items** remains available. Applied-scene **Undo/Redo** are unavailable while any lock exists, with an explanation beside those controls. Apply and Add/Replace snapshot capture keep locks. **Undo move/Redo move** and Discard are allowed only when they preserve every locked record; otherwise unlock first.
+- Successfully replacing the scene clears locks and announces this. That includes New/Convert, either preset selector, gallery Use, scene import, Load step into scene editor, image Use and Undo image draft replacement. Failed, canceled or stale replacements keep the prior scene and locks. Opening a sequence alone keeps editor locks; successfully loading a step clears them.
+- **Snap: Off / 1 / 5 / 10** affects drag and tap-placement only, in normalized content units. It starts Off and does not move existing items when changed. Letterbox margins are not placement targets. Typed positions, directional buttons, focused-preview arrow keys and centering remain exact and unsnapped.
+- **Center horizontally**, **Center vertically** and **Center both axes** set the selected unlocked item's X, Y or both to 50. Each actual change is one draft move, not Apply; an unchanged position adds no history. A hidden preview stays hidden.
+
+Lock, unlock or snap changes cancel an active move/placement rather than completing it. Locks never block Hide, Stop, End, Escape or ordinary downloads. Locks and snap settings are session-only and are not saved in scene/sequence files. No visible grid, guide, distribution or grouping tool is included. See the [contract and acceptance map](../specs/008-interactive-scene-roadmap/tasks.md#if-050-fourth-increment-acceptance-matrix).
 
 ## Fixed-ratio scenes and examples
 

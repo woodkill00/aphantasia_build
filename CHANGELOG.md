@@ -5,13 +5,16 @@ User-visible changes are listed here. Version labels describe engineering increm
 ## 0.8 — Unreleased; roadmap candidate under verification
 
 - Direct click/tap selection, transactional live dragging, overlap cycling and non-drag numeric/tap/nudge/keyboard routes, with separate bounded draft move undo/redo.
-- Explicit scene-v4 fixed-ratio authoring: ten bounded shape families, five ratios with letterboxing, rotation/fill/dimensions, layer reordering and four original editable presets. Legacy viewport scene-v3 behavior remains unchanged.
+- Explicit scene-v4 fixed-ratio authoring: ten bounded shape families, five ratios with letterboxing, rotation/fill/dimensions and layer reordering. Twelve original editable examples now have a text-first gallery and separately enabled static thumbnails; the first four scene payloads are unchanged. Legacy viewport scene-v3 behavior remains unchanged.
 - Sequence-v3 preserves a shared authored canvas in every snapshot and rejects incompatible captures atomically; legacy sequence-v2 remains supported.
 - Experimental local still PNG/JPEG approximation with header/decode budgets, a 3/6/12-item bounded cooperative search, crop/palette/seed controls, explicit Generate and hidden Use editable draft with one-step draft-replacement undo. No original-image export or upload; derived shapes can reveal content.
-- Optional session-only journal, initially off, with 20-record bound, skipped defaults, selected exact export preview and separate approval. Scene/exposure provenance is explicitly unavailable in the UI. No storage, autosave or collection.
+- Optional session-only journal, initially off, with 20-record bound, skipped defaults, selected exact export preview and separate approval. Journal-v2 has separately opt-in canonical scene/sequence SHA-256 and bounded visible-duration summaries; unavailable/pending states never inherit an older result. No storage, autosave or collection.
 - Disabled research-submission information and governance prerequisites. No endpoint, operational Send route, real participant collection, statistics or efficacy claims.
-- Spec-Kit traceability, independent model-review findings and [implemented/deferred feature guide](docs/roadmap-features.md). Locks/snap/align, fuller semantic galleries, richer paths/formats and empirical usefulness studies remain deferred.
+- Fourth increment under implementation, not yet verified: session-only stored-item locks and Unlock all, Off/1/5/10 drag/placement snap, and horizontal/vertical/both centering. Apply/capture retain locks; successful whole-scene replacement clears them with notice. No persistent settings, visible grid or distribution is included.
+- Spec-Kit traceability, independent model-review findings and [implemented/deferred feature guide](docs/roadmap-features.md). Distribution/guides/groups, broader galleries, richer paths/formats and empirical usefulness studies remain deferred.
 - Exact-head native-browser CI, actual visual acceptance and final integrated review remain required. Scoped synthetic/model/mock evidence is not a whole-candidate pass; historical v0.7 evidence is not reused as acceptance. No 0.8 release or hosting is claimed.
+
+Prior candidate evidence is not erased: PR 13 source `65c96ebcae397884deb032d9bc430ddad61d68b7` passed 830 Node checks but [failed one of 136 native groups](https://github.com/woodkill00/aphantasia_build/actions/runs/39415125146), immediate mobile drag-to-Undo. All 116 actual captures were hash-verified and inspected, including the repaired whole gallery group; packaging was skipped after the native failure. These results do not verify the new arrangement increment.
 
 ## Unreleased documentation and distribution preparation
 
