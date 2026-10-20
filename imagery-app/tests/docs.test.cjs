@@ -99,8 +99,8 @@ test('DOCS: beginner guidance describes the current source download, version and
   assert.match(readme, /Code\s*→\s*Download ZIP/);
   assert.match(readme, /imagery-app\/index\.html/);
   assert.ok(fs.statSync(path.join(ROOT, 'imagery-app/index.html')).isFile());
-  assert.match(guide, /Version 0\.8 engineering preview/);
-  assert.doesNotMatch(guide.split('## In this guide')[0], /candidate|await|pending/i);
+  assert.match(guide, /Version 0\.8 \*\*unreleased development candidate\*\*/);
+  assert.match(guide.split('## In this guide')[0], /unreleased development candidate.*acceptance pending/i);
   for (const text of [readme, guide]) {
     assert.match(text, /no autosave/i);
     assert.match(text, /Apply changes/);

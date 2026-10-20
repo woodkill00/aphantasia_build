@@ -1,14 +1,17 @@
 # Imagery Field user guide
 
-Version 0.8 engineering preview. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
+Version 0.8 **unreleased development candidate**, with exact-head native-browser and visual acceptance pending. The published v0.7.0 ZIP does not include its new features. This is the canonical guide to opening the app, editing scenes, using optional timing, and keeping your files. It is not a treatment, diagnostic test, or validated way to develop mental imagery. Static displays, fades, and engineering limits do not guarantee safety.
 
-**No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, and notes.
+**No autosave:** Apply accepts a scene for this session; only a successful download keeps a file. Closing or refreshing may lose unexported scenes, sequences, notes and journal records.
 
 ## In this guide
 
 - [Before viewing](#before-viewing) and [open the app](#open-the-app)
 - [First scene and download](#first-scene-and-download)
-- [Build a static scene](#build-a-static-scene)
+- [Build a static scene](#build-a-static-scene) and [direct preview editing](#direct-preview-editing)
+- [Fixed-ratio scenes and examples](#fixed-ratio-scenes-and-examples)
+- [Approximate a local picture](#approximate-a-local-picture)
+- [Private session journal](#private-session-journal)
 - [Style an item and schedule its appearance](#style-an-item-and-schedule-its-appearance)
 - [Capture and edit a sequence](#capture-and-edit-a-sequence)
 - [Manual preview and one-pass playback](#manual-preview-and-one-pass-playback)
@@ -28,7 +31,7 @@ If you have photosensitive epilepsy or visual patterns trigger seizures, migrain
 2. Open **index.html** in a browser with JavaScript enabled. If it opens as text or an attachment preview, use your computer's **Open with** option to choose a browser.
 3. The starter scene is visible immediately as a static **Live preview**, with no timer, fade or pulse. Use **Hide** whenever you want a blank field. Read **Viewing guidance** before timed playback or further viewing.
 
-For in-app help, choose **Viewing guidance**. The wider header identifies the version as **ITEM STUDIO / 0.7**; at compact widths that branding may be hidden, so also retain the README or source version you downloaded.
+For in-app help, choose **Viewing guidance**. At compact widths the version branding may be hidden, so retain the README and source version you downloaded. A version label alone does not establish which source passed testing.
 
 No installation, Docker, terminal, account, or local server is required. The HTML is self-contained and designed to work offline. Do not disable browser security or bypass a security warning to open it.
 
@@ -55,13 +58,13 @@ Only the static live preview starts automatically. Timed playback always needs y
 
 Use **Scene** to open the scene controls. Your current valid draft is already visible at startup. After you hide it or a handled interruption conceals it, choose **Resume live preview** to show it again. There is no Apply requirement for viewing it. The same scene canvas is arranged beside the desktop inspector or above the portrait inspector, so edits remain visible while you use controls.
 
-1. Choose a preset, or select **New object** and **Add object**. You can keep up to 12 dots, pixels, or circle/square/triangle outlines. New objects start at the center.
+1. Choose a preset, or select **New object** and **Add object**. Keep up to 12 items. Legacy viewport scenes offer dots, pixels and circle/square/triangle outlines; explicitly created or converted [fixed-ratio scenes](#fixed-ratio-scenes-and-examples) offer expanded geometry. New objects start at the center.
 2. Choose **Selected object**, then change its shape, size, position, or hue/saturation/color-lightness sliders. **Remove object** deletes it from the draft; removing all objects leaves a valid background-only static scene.
-3. Type **Horizontal position** and **Vertical position**, or choose **Place on field**. Placement closes the editor; click/tap the field once to stage a position and reopen the editor. An active live preview remains visible. **Esc**, **Hide**, or **End viewing** cancels placement. Numeric inputs are the keyboard alternative; there is no dragging.
+3. Type **Horizontal position** and **Vertical position**, or choose **Place on field**. Placement closes the editor; click/tap the field once to stage a position and reopen the editor. An active live preview remains visible. **Esc**, **Hide**, or **End viewing** cancels placement. Numeric inputs, nudge controls and [direct selection/dragging](#direct-preview-editing) provide other movement routes.
 4. New presets start with background HSL **4°, 60%, 4%**; background saturation still ranges from **0–100%**, and imported files retain their own background. Adjust the **Background field** sliders. Click/tap the numeric value to type a precise number, or use the adjacent minus/plus buttons for one fine step. The number, slider and buttons stay synchronized. Object/background color samples and slider tracks update immediately from draft values. During Live preview, the actual scene also updates immediately on each valid input, before releasing a slider. While hidden, only the samples update. These are external color previews, not measurements of internal vision. **Color lightness does not change screen brightness.** At 0% lightness the background is black; at 0% saturation hue has no visible effect.
 5. Choose **Apply changes** to accept the scene for history/download, or **Discard** to abandon its draft. Neither is needed while previewing. These actions hide the field; choose **Resume live preview** when wanted. Invalid input stops and hides preview; correcting it does not restart it. **Undo**/**Redo** restores applied scenes within the 40-step session history. Scene history does not undo sequence edits.
 
-Positions range from 0–100% with up to two decimal places, but the entire object must fit inside the validated edge inset. Size is a whole-number percentage of the field's shorter side: 1–8 for dots/pixels and 1–28 for outlines. Dots are filled circles; pixels are filled squares. Switching an outline to a dot/pixel caps its size at 8. Object hue is 0–359°, saturation 0–70%, and lightness 10–70%; background hue is 0–359°, saturation 0–100%, and lightness 0–40%. These are engineering restrictions, not medically safe settings.
+Positions range from 0–100% with up to two decimal places, but the entire object must fit inside the validated edge inset. In legacy viewport scenes, Size is a whole-number percentage of the field's shorter side: 1–8 for dots/pixels and 1–28 for outlines. Dots are filled circles; pixels are filled squares. Switching an outline to a dot/pixel caps its size at 8. Object hue is 0–359°, saturation 0–70%, and lightness 10–70%; background hue is 0–359°, saturation 0–100%, and lightness 0–40%. These are engineering restrictions, not medically safe settings.
 
 ![A synthetic green square next to a typed hue value of 120, its slider and fine-step minus/plus buttons.](../docs/images/precision-controls.jpg)
 
@@ -71,7 +74,7 @@ Positions range from 0–100% with up to two decimal places, but the entire obje
 
 The item inspector separates Appearance and Timing. Enable **Outline** and/or **Shadow**, then set each effect's own color. Outline width, shadow offset and blur are percentages of the field's shorter side. Effects may be clipped at the field edge; enabling an effect never silently moves an item. Both effects fade with their item.
 
-**Duplicate item** makes an exact appearance/timing copy with a new identifier. It initially overlaps the original. Use geometry or timing controls to separate them. **Start after previous item** copies the previous item's end into this item's start once; it does not create a continuing link between items.
+**Duplicate object** makes an exact appearance/timing copy with a new identifier. It initially overlaps the original. Use geometry or timing controls to separate them. **Start after previous item** copies the previous item's end into this item's start once; it does not create a continuing link between items.
 
 For each item, set **Start**, **Fade in**, **Hold**, and **Fade out**, in seconds. Hold excludes the fades. The item's end is their sum; the preview's end is the latest end among all items. Two items can overlap or start together. Select an item through its timeline track or the object selector, then use the same numeric controls to edit it.
 
@@ -83,10 +86,10 @@ Timed item previews remain windowed with reachable controls. Reduced-motion pref
 
 ## Capture and edit a sequence
 
-The editor uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. The current responsive layout passed scoped native focus/raster checks and actual-frame review, including full selected precision rows at narrow/short sizes and the compact phone-sized header. This is not physical-device or actual OS-zoom acceptance.
+The editor uses compact **Scene**/**Sequence** sections, one selected-step inspector, and Apply/capture controls outside the scrolling editor content. The historical v0.7 responsive layout passed scoped native focus/raster checks and actual-frame review. The expanded 0.8 controls need their own exact-source native and visual acceptance. Neither result substitutes for physical-device or actual OS-zoom acceptance.
 
 - **Add scene as step** appends an independent copy of the scene. With a scene draft, its label becomes **Apply scene and add step**; it applies and captures a valid draft in one action, with no separate Apply click. The scene and proposed sequence are both checked before either is accepted. A rejected capture retains both accepted documents and scene history, and the field stays hidden.
-- The first captured step sets the shared background. Later captures must have the same background; a mismatch is rejected with an explanation. A background-only scene cannot become a step. Later scene edits never silently change snapshots.
+- The first captured step sets the shared background and format. Later captures must use the same background and either all legacy viewport scenes or all authored fixed-ratio scenes. Authored snapshots must also share the same canvas ratio. Mismatches are rejected atomically, without silently converting or cropping either document. A background-only scene cannot become a step. Later scene edits never silently change snapshots.
 - In **Sequence**, use **Selected snapshot** to select a step. **Replace selected step** explicitly replaces that snapshot using the same atomic apply/capture process; its label becomes **Apply scene and replace step** when there are scene edits. **Load step into scene editor** makes a copy for scene editing; first resolve any existing scene draft.
 - Edit **Sequence name**, **Step name**, **Hold · seconds**, or **Transition · seconds**. Valid sequence changes commit immediately while stopped/hidden. There is no Apply sequence button. Invalid raw fields preserve accepted data, show an error, and block playback, sequence export, capture, and structural changes until corrected or discarded with **Discard invalid sequence fields**.
 - **Move earlier**, **Move later**, and **Delete step** change the list. Deleting the last remaining step leaves an empty editor that cannot be played or exported. The new final step's transition becomes zero; a former final step moved earlier receives the default 1-second transition. Other transition values are retained. Adjustments are announced and the whole candidate must validate before acceptance.
@@ -129,15 +132,15 @@ The only pulse in this version is the finite shared-clock opacity effect describ
 
 Use the matching controls for each document:
 
-- **Download scene JSON** / **Open scene JSON**: version 3 files contain the scene background, shared pulse period, styled objects and per-item timing. Valid version 1/2 files migrate after validation, preserving saved backgrounds and base appearance while adding disabled effects/default timing. Version 1 palette approximation remains documented. New scene exports use version 3.
-- **Download sequence JSON** / **Open sequence JSON**: sequence version 2 files contain the shared background, ordered styled snapshots, names, snapshot hold/crossfade timing and each snapshot's shared item-pulse period. Version 1 sequences migrate after validation. They contain no notes, playback position/state, loop settings, URLs, or executable expressions. Static files and sequence files are distinct formats, even where version numbers coincide.
-- Optional note files use the separate process below. They are not imported.
+- **Download scene JSON** / **Open scene JSON**: legacy viewport scenes remain version 3. Explicit fixed-ratio scenes use version 4 and also retain their canvas ratio and shape geometry. Both include background, shared pulse period, effects and per-item timing. Valid version 1/2 files migrate to version 3 only after original validation; they are never silently converted to fixed ratio. Version 1 palette approximation remains documented.
+- **Download sequence JSON** / **Open sequence JSON**: legacy viewport sequences use version 2; fixed-ratio sequences use version 3, with a shared canvas contract repeated and checked in every snapshot. Both retain background, styled snapshots, names, snapshot holds/crossfades and item-pulse periods. Valid version 1 sequences migrate to version 2. No sequence includes notes, journal records, playback state, loop settings, URLs or executable expressions. Static files and sequence files are distinct formats, even where version numbers coincide.
+- Optional note files and optional journal files use separate preview/selection/download processes below. They are export-only. Original image bytes, filename and metadata are not included in scene/sequence exports; derived shapes may still disclose image content.
 
-Current scene-v3 and sequence-v2 files support background saturation up to 100%. Legacy scene-v2/sequence-v1 inputs still must satisfy their original 60% maximum before migration; invalid legacy values are rejected rather than clamped. Older app versions cannot load new documents whose background saturation exceeds their former 60% maximum.
+Current scene-v3/v4 and sequence-v2/v3 files support background saturation up to 100%. Legacy scene-v2/sequence-v1 inputs still must satisfy their original 60% maximum before migration; invalid legacy values are rejected rather than clamped. The published v0.7 app cannot open scene-v4 or sequence-v3. Earlier app versions may also reject backgrounds above their former 60% saturation maximum. Keep the original file when trying a newer format; no downgrade export is offered.
 
 Scene and sequence inputs are bounded to 1 MiB of UTF-8 JSON and validated before acceptance. Successful imports leave the field stopped/hidden. Invalid, canceled, or superseded reads preserve accepted data. Resolve invalid fields before exporting. Check your browser's Downloads to confirm a file was kept; the app can request a download but cannot confirm it reached disk. Saving a file does not modify the HTML.
 
-There is no durable autosave or browser storage. Closing/refreshing can lose unexported scenes, sequences, and notes. Keep the page open if a download fails.
+There is no durable autosave or browser storage. Closing/refreshing can lose unexported scenes, sequences, notes, journal records and retained image work. Keep the page open if a download fails. **Use editable draft**, **Apply changes** and **Download scene JSON** are three different actions; only a successful download keeps a file.
 
 ## Optional observations and privacy
 
@@ -160,7 +163,9 @@ Avoid unnecessary identifying/medical details. The note export contains its form
 
 ## Testing and limits
 
-The merged version 0.7 runtime passed 457 non-browser checks, 98 native Chrome groups, and independent inspection of 78 rendered captures in the [final integration run](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917), dated 20 October 2026. The [compatibility record](../docs/compatibility.md) identifies the exact tested runtime and remaining gaps. The [test report](test-results/TEST-REPORT.md) retains earlier attempts and failures; a later documentation or packaging change does not inherit verification merely by retaining this version label.
+The expanded version 0.8 source is under verification. Node/model/DOM-double checks and independent code review are not native-browser, visual, accessibility or empirical-usability acceptance. See the [feature evidence boundaries](../docs/roadmap-features.md#verification-and-deferred-work) and current [public work register](../project-queue.json).
+
+For historical context only, the merged version 0.7 runtime passed 457 non-browser checks, 98 native Chrome groups, and independent inspection of 78 rendered captures in the [final integration run](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917), dated 20 October 2026. The [compatibility record](../docs/compatibility.md) identifies the exact tested runtime and remaining gaps. The [test report](test-results/TEST-REPORT.md) retains earlier attempts and failures; a later documentation or packaging change does not inherit verification merely by retaining this version label.
 
 Physical phones, Safari/Firefox, ordinary OS file-opening/chooser workflows, actual OS/browser zoom, screen-reader workflows, and full accessibility remain unverified. The 640×450 scenario is effective viewport reflow, not actual zoom. Software checks and screenshot review provide no clinical clearance or evidence of safety or effectiveness.
 
@@ -168,8 +173,52 @@ Need help? Read [troubleshooting](../docs/troubleshooting.md) or [support](../SU
 
 ## Direct preview editing
 
-Click or tap a visible item to select it and open its inspector. Drag the item to move it; its coordinates and live preview update together. Release completes one draft move. Escape, Hide, viewport changes or interrupted pointer capture cancel the move and hide the preview. Shadows are not selection targets; hollow shapes can be selected through their interior. Use the item list or **Select next overlapping item** for overlaps.
+During static **Live preview**, click or tap a visible item to select the topmost eligible item and open its inspector. Movement begins after a 4 CSS-pixel drag threshold; the grab offset is retained, and coordinates and live pixels update together. Release completes one draft move. Escape, Hide, viewport changes or interrupted pointer capture cancel the move and hide the preview. Timed playback is not a direct-editing surface.
 
-Use the four nudge buttons or focus the preview and use arrow keys (1 position unit, Shift for 0.1). Typed coordinates and **Place on field** remain available without dragging. **Undo move** and **Redo move** affect only the draft, conceal the preview and are separate from applied scene history. Other edits reset move history. **Apply changes** is still required before the ordinary scene download; moving a preview does not silently save or apply it.
+Shadows are not selection targets. Hollow shapes are selectable through their interior, with a small hit tolerance for thin/tiny items. Background clicks and fixed-ratio letterbox bars do not move an item. Use **Selected object** or **Select next overlapping item** when overlaps make pointer selection ambiguous.
 
-The next-stage [Spec-Kit plan](../specs/008-interactive-scene-roadmap/plan.md) separates implemented direct editing from future geometry, photo conversion, local journaling and governed research requirements. Check the [public work register](../project-queue.json) and current evidence before assuming a planned feature is available.
+Use the four nudge buttons or focus the preview and use arrow keys (1 position unit, Shift for 0.1). Text fields retain ordinary arrow-key behavior. Typed coordinates and **Place on field** remain available without dragging. **Undo move** and **Redo move** affect only the draft, conceal the preview and are separate from applied scene history; they retain up to 40 moves. Other edits reset move history. **Apply changes** is still required before ordinary scene download; moving a preview does not silently save or apply it.
+
+**Move back one layer** / **Move forward one layer** change the selected item's draw order by one position. Later items draw over earlier ones. **Duplicate object** makes an overlapping editable copy with a fresh ID. There are no lock, snap, guide or align/distribute controls in this candidate.
+
+## Fixed-ratio scenes and examples
+
+The startup scene and imported legacy scenes remain viewport-relative. Their layout is not silently reinterpreted.
+
+- **Convert this draft to fixed ratio** retains the draft's items and creates a square authored draft. The layout can change, so inspect it before Apply.
+- **New fixed-ratio scene** replaces the staged composition with a fresh single-point square starting scene. Keep important work in a downloaded file first.
+- Then choose **Authored aspect ratio**: 1:1, 4:3, 3:4, 16:9 or 9:16. The complete canvas fits inside the preview with black margins, not cropping or stretching. Margins are not scene content or placement targets.
+
+Fixed-ratio scene-v4 supports dot, pixel, circle, square, triangle, ellipse, rectangle, rounded rectangle, polygon and star. **Size** controls width and **Height** controls height, as percentages of the authored canvas's shorter side. Circle/square/dot/pixel keep equal dimensions. Width/height are 1–28 whole units, or 1–8 for dots/pixels. Rotation is 0–359 whole degrees. **Body** chooses outline or filled; dots/pixels stay filled. Polygons offer 3–32 sides, stars 3–16 points and inner ratio 0.20–0.80, and rounded rectangles corner ratio 0–0.50. Whole shapes and conservative effect bounds must fit the validated inset; reduce geometry/effects or move inward if validation fails.
+
+**Authored scene examples** offers four original editable compositions: Balanced contours, Sparse symmetric points, Sequential shapes, and Mixed steady and pulse. The first two use steady items; the latter two demonstrate finite timing, which runs only after **Play items once**. Choosing an example never starts playback. These are a small original catalog, not a filterable thumbnail gallery, a house/tree/boat semantic catalog, or ranked treatments. The preset catalog records stable IDs/revisions and MIT provenance; editable scene exports deliberately do not assert an unchanged stimulus identity.
+
+A fixed ratio helps preserve composition, not physical size, viewing distance, luminance or sensory safety. See the [data contract](../docs/architecture.md#authored-scene-v4-and-sequence-v3-contract).
+
+## Approximate a local picture
+
+This is an **experimental bounded shape sketch**, not photo reconstruction, semantic recognition or an imagery assessment. Its pixel-error summary is not evidence of useful correction effort, natural-image quality or efficacy.
+
+1. Keep important scene work first. Choose **Open local image tools**, then a still PNG or JPEG: at most 8 MiB encoded, 4096 pixels on either side and 8,388,608 decoded pixels total. Animated PNG, GIF, SVG and other formats are not supported; malformed or over-budget input is rejected.
+2. The image is checked before decoding, checked again after orientation-aware decode, and reduced to a retained thumbnail of at most 128 pixels per side. The source remains hidden. **Show source thumbnail** displays it only when requested and discards any candidate; Generate hides it again.
+3. Set a maximum of 3, 6 or 12 items, a reproducible seed, canvas ratio, source-bounded or muted palette, and numeric crop/focus percentages. The crop is contained inside the canvas without stretching; unused space keeps the dark background.
+4. Choose **Generate candidate** explicitly. Progress reflects a bounded search, not remaining wall-clock time. It yields between small work slices and can be cancelled. Review its textual shape list and pixel-error summary. The prior scene is unchanged by generation.
+5. **Use editable draft** stages ordinary scene-v4 shapes, still hidden; it does not Apply, download, or start timing. Explicitly resume Live preview to inspect and edit the result. Before another scene edit, **Undo image draft replacement** restores the previous valid draft and selection, still hidden; it is separate from move undo and applied-scene history. Use is rejected if the existing scene fields are invalid. Choose **Apply changes**, then **Download scene JSON**, to keep the new result. **Discard** returns to the accepted scene, not a backup of every earlier staged edit.
+
+**Cancel / discard candidate** leaves scene work unchanged; **Clear source** also removes the retained thumbnail and resets conversion options. Hide, End, import, a new edit or a page interruption invalidates pending candidates. A stale completion cannot reveal or apply anything. File read/decode itself cannot be forcibly aborted; another intake waits until the outstanding decode has settled and released its resource.
+
+No image upload, remote URL input, cloud model, storage or original-image export is used. Filename and metadata do not enter scene exports. **Derived shapes may still disclose image content** and are not anonymous. Browser decoder memory is implementation-dependent; the app's limits are engineering caps, not a universal memory/performance promise. See the [resource ledger](../docs/architecture.md#local-image-resource-and-cancellation-contract).
+
+## Private session journal
+
+Open **Private session journal** and optionally check **Enable optional session reflections**. It is off initially and the editor works without it. Nothing is recorded until **Add reflection to session**. Every answer defaults to **Skipped**; None, Uncertain and Not asked remain distinct choices where offered. Do not repeat a display to answer.
+
+The separate fields describe external perception, visual persistence, voluntary imagery, nonvisual memory, comfort before/after, discomfort, early stopping, preference and ease of use. They are custom exploratory descriptions, not a validated questionnaire, diagnosis, causal finding, score or evidence of imagery improvement. Scene identity and exposure timing are **unavailable** in this UI; it records no timestamp, original picture, full scene or device details.
+
+Up to 20 reflections are retained in this page, with at most 2,000 characters per optional note. Adding one resets unfinished answers to Skipped and does not select it for export. Turning reflections off discards unfinished answers but keeps added records until deleted or cleared.
+
+To download: select the wanted reflections, choose **Preview selected journal export**, inspect the exact JSON, separately check that you reviewed and approve it, then choose **Download approved journal JSON**. Each download needs a current preview and approval. Edits invalidate the preview. Scene/sequence/note downloads do not include the journal; journal files are not imported.
+
+**Clear session journal** removes this page's records and unfinished answers, not files already downloaded. There is no autosave or browser storage; close/refresh can lose every unexported record. Downloads may contain private text and are not anonymous. Page clearing is not guaranteed secure deletion from browser restoration, extensions or backups.
+
+**Research submission is not available.** There is no endpoint, background upload queue or working Send control. Enabling reflection or approving a local download is not research consent. Actual collection remains blocked pending an identified operator, applicable ethics/privacy/security review, instrument rights, a reviewed protocol/statistical plan, retention/withdrawal rules and explicit activation. No participant data, efficacy rankings or statistics are collected by this candidate.

@@ -2,13 +2,16 @@
 
 User-visible changes are listed here. Version labels describe engineering increments, not a promise that a tagged Release or downloadable release asset exists. Exact test attempts, failures, environments and artifact hashes live in the [test report](imagery-app/test-results/TEST-REPORT.md).
 
-## 0.8 — direct-editor increment under verification
+## 0.8 — Unreleased; roadmap candidate under verification
 
-- Click/tap selection, transactional live dragging, overlap cycling and non-drag nudge/keyboard controls.
-- Separate bounded draft move undo/redo; Apply and downloaded scene semantics unchanged.
-- Spec-Kit constitution, clarified staged specification, 64-proposal traceability and explicit research-governance gates.
-- Pure bounded geometry and private-journal foundations have synthetic tests but are not yet exposed as completed UI features.
-- Local browser startup is blocked; exact-head CI and actual visual acceptance are still required. Historical v0.7 evidence is not reused as acceptance.
+- Direct click/tap selection, transactional live dragging, overlap cycling and non-drag numeric/tap/nudge/keyboard routes, with separate bounded draft move undo/redo.
+- Explicit scene-v4 fixed-ratio authoring: ten bounded shape families, five ratios with letterboxing, rotation/fill/dimensions, layer reordering and four original editable presets. Legacy viewport scene-v3 behavior remains unchanged.
+- Sequence-v3 preserves a shared authored canvas in every snapshot and rejects incompatible captures atomically; legacy sequence-v2 remains supported.
+- Experimental local still PNG/JPEG approximation with header/decode budgets, a 3/6/12-item bounded cooperative search, crop/palette/seed controls, explicit Generate and hidden Use editable draft with one-step draft-replacement undo. No original-image export or upload; derived shapes can reveal content.
+- Optional session-only journal, initially off, with 20-record bound, skipped defaults, selected exact export preview and separate approval. Scene/exposure provenance is explicitly unavailable in the UI. No storage, autosave or collection.
+- Disabled research-submission information and governance prerequisites. No endpoint, operational Send route, real participant collection, statistics or efficacy claims.
+- Spec-Kit traceability, independent model-review findings and [implemented/deferred feature guide](docs/roadmap-features.md). Locks/snap/align, fuller semantic galleries, richer paths/formats and empirical usefulness studies remain deferred.
+- Exact-head native-browser CI, actual visual acceptance and final integrated review remain required. Scoped synthetic/model/mock evidence is not a whole-candidate pass; historical v0.7 evidence is not reused as acceptance. No 0.8 release or hosting is claimed.
 
 ## Unreleased documentation and distribution preparation
 
@@ -64,4 +67,4 @@ Merged on main; final scoped verification passed 457 code checks, 98 native Chro
 
 ## Continuing limitations
 
-No autosave, accounts, backend or runtime network dependency. Timed playback is windowed, explicit and one-pass, not looping. Scenes, sequences and optional notes are separate files. Physical devices, other browser engines, full accessibility and clinical/sensory validation remain unestablished. Software limits are not medically safe thresholds.
+No autosave, accounts, backend or runtime network dependency. Timed playback is windowed, explicit and one-pass, not looping. Scenes, sequences, optional notes and optional journals are separate files. Physical devices, other browser engines, full accessibility and clinical/sensory validation remain unestablished. Software limits are not medically safe thresholds.

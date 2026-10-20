@@ -134,6 +134,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 #scene-canvas.dragging{cursor:grabbing}
 .nudge-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--control-gap);margin-block:var(--control-gap)}
 .nudge-actions button{min-width:0;padding:8px;font-size:.74rem}
+
+/* Optional tools share the inspector's measured spacing and intrinsic reflow. */
+.local-tools,.journal-card{margin-block:calc(var(--control-gap) * 2);padding:var(--editor-pad);min-width:0;max-width:100%;box-sizing:border-box}.journal-content,.journal-questions,#image-panel{min-width:0}.journal-content>*+#image-panel{margin-top:var(--control-gap)}.journal-content pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:calc(50vh - var(--editor-pad));overflow:auto}.journal-content .check-label{display:flex;align-items:center;gap:var(--control-gap);min-height:44px}.journal-content .check-label span{min-width:0;overflow-wrap:anywhere}#image-source-thumbnail{max-width:100%;height:auto;border:1px solid var(--line)}#image-tools-container input,#image-tools-container select{min-width:0;max-width:100%}.journal-content button,#image-tools-container button{min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere}.journal-content fieldset{min-width:0}.journal-content select,.journal-content textarea{max-width:100%;min-width:0}
 </style>
 </head>
 <body>
@@ -156,6 +159,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         <p class="scope">Static preview is on by default. Hide or Escape stops it immediately. Use comfortable brightness and stop if patterns cause symptoms. Engineering preview, not a treatment or diagnostic test.</p>
         <label for="preset">Start with a preset</label>
         <select id="preset"><option value="">Choose a design…</option><option value="0">A small constellation</option><option value="1">A single point</option><option value="2">Circle contour</option><option value="3">Square contour</option><option value="4">Triangle contour</option></select>
+        <div class="small-actions"><button id="new-authored-scene" type="button">New fixed-ratio scene</button><button id="upgrade-scene" type="button">Convert this draft to fixed ratio</button></div>
+        <p id="canvas-mode-hint" class="hint">Legacy viewport scene. Conversion is explicit and may change proportions; review before Apply.</p>
+        <label for="canvas-ratio">Authored aspect ratio</label><select id="canvas-ratio"><option value="1:1">Square · 1:1</option><option value="4:3">Landscape · 4:3</option><option value="3:4">Portrait · 3:4</option><option value="16:9">Wide · 16:9</option><option value="9:16">Tall · 9:16</option></select>
+        <label for="authored-preset">Authored scene examples</label><select id="authored-preset"><option value="">Choose an editable example…</option></select><p id="authored-preset-hint" class="hint">Original geometric examples, not treatments or ranked recommendations. Choosing one never starts timed playback.</p>
         <form id="scene-form" novalidate>
           <label for="scene-name">Scene name</label><input id="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation">
           <fieldset class="group"><legend>Objects <span id="object-count">3 / 12</span></legend>
@@ -168,11 +175,19 @@ input.color-slider:disabled{opacity:.45;cursor:default}
               <div><label for="position-x">Horizontal position</label><input id="position-x" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
               <div><label for="position-y">Vertical position</label><input id="position-y" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
             </div>
+            <div id="authored-geometry" class="control-grid" hidden>
+              <div><label for="geometry-height">Height</label><input id="geometry-height" type="number" min="1" max="28" step="1" value="4"></div>
+              <div><label for="geometry-rotation">Rotation · degrees</label><input id="geometry-rotation" type="number" min="0" max="359" step="1" value="0"></div>
+              <div><label for="geometry-fill">Body</label><select id="geometry-fill"><option value="outline">Outline</option><option value="filled">Filled</option></select></div>
+              <div><label for="geometry-sides">Polygon sides / star points</label><input id="geometry-sides" type="number" min="3" max="32" step="1" value="5"></div>
+              <div><label for="geometry-inner">Star inner ratio</label><input id="geometry-inner" type="number" min="0.2" max="0.8" step="0.01" value="0.5"></div>
+              <div><label for="geometry-corner">Corner radius ratio</label><input id="geometry-corner" type="number" min="0" max="0.5" step="0.01" value="0.2"></div>
+            </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="nudge-actions" role="group" aria-label="Move selected object by one position unit"><button id="nudge-left" type="button" aria-label="Move selected object left by one position unit">← Left</button><button id="nudge-up" type="button" aria-label="Move selected object up by one position unit">↑ Up</button><button id="nudge-down" type="button" aria-label="Move selected object down by one position unit">↓ Down</button><button id="nudge-right" type="button" aria-label="Move selected object right by one position unit">Right →</button></div>
             <div class="small-actions"><button id="cycle-overlap" type="button" disabled>Select next overlapping item</button><button id="undo-move" type="button" disabled>Undo move</button><button id="redo-move" type="button" disabled>Redo move</button></div>
             <p class="hint" id="direct-edit-hint">Click a visible item to edit it, or drag to move. Arrow keys on the preview move the selected item by 1; Shift moves by 0.1. Move history is separate from applied scene history and resets after other edits. Nothing is saved until you download.</p>
-            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="delete-object" type="button">Remove object</button></div>
+            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="layer-back" type="button">Move back one layer</button><button id="layer-front" type="button">Move forward one layer</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
             <p id="object-color-hint" class="hint">Live preview updates the actual objects while on. After Hide, choose Resume live preview. The small sample also works while hidden.</p>
@@ -200,7 +215,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       <section class="portable-card" aria-labelledby="portable-title">
         <p class="eyebrow">Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p class="hint">No autosave, account, browser storage or network. Download work before closing or reloading this page.</p>
         <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label></div>
-        <p class="hint">Opens versions 1, 2 or 3, up to 1 MiB. Downloads use version 3. Version 1 colors are approximated in HSL. Notes are never included.</p>
+        <p class="hint">Opens scene versions 1–4, up to 1 MiB. Legacy viewport downloads use v3; explicitly authored fixed-ratio scenes use v4. Version 1 colors are approximated in HSL. Notes are never included.</p>
       </section>
       </div>
       <section id="sequence-panel" aria-labelledby="sequence-title" hidden>
@@ -224,8 +239,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         </div>
         <p id="sequence-error" class="inline-error" role="status" aria-live="polite" hidden></p>
         <button id="sequence-discard" type="button" hidden>Discard invalid sequence fields</button>
-        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate version 2 sequence files (opens version 1 or 2), up to 1 MiB. No notes, playback state, storage or network.</p></section>
+        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate sequence files: legacy v2 or authored-canvas v3 (opens v1–v3), up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
+  <section class="notes-card local-tools" aria-labelledby="image-tools-title"><h2 id="image-tools-title">Sketch a local picture</h2><p class="hint">Optional experimental approximation with editable shapes. No image is uploaded. Open these tools only when you want to choose a local image.</p><button id="open-image-tools" type="button" aria-expanded="false">Open local image tools</button><button id="undo-image-replacement" type="button" disabled>Undo image draft replacement</button><div id="image-tools-container" hidden></div></section>
+  <section id="journal-container" aria-label="Optional private reflections"></section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
       <div class="notes-content"><p>No score, interpretation, or expected outcome. “None” and “unsure” are valid. You can leave this empty. Avoid names, medical histories, or information about other people.</p>
@@ -267,18 +284,37 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>
 </div>
 <noscript><div class="noscript">JavaScript is required for this local editor. The scene is hidden.</div></noscript>
-<script>/* Imagery Field 0.7.0. Styled scene model and interaction controller.
+<script>/* Bounded design geometry. Pure numeric data; no DOM, execution or reveal authority. */
+(function(root,factory){'use strict';if(typeof module==='object'&&module.exports)module.exports=factory();else root.ImageryGeometry=factory();}(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const SHAPES=Object.freeze(['dot','pixel','circle','square','triangle','ellipse','rectangle','rounded-rectangle','polygon','star']);
+ const RATIOS=Object.freeze({'1:1':1,'4:3':4/3,'3:4':3/4,'16:9':16/9,'9:16':9/16});
+ function record(v,keys,label){if(!v||typeof v!=='object'||Array.isArray(v)||![Object.prototype,null].includes(Object.getPrototypeOf(v)))throw Error(label+' must be an ordinary object.');const own=Reflect.ownKeys(v);if(own.length!==keys.length||own.some(k=>typeof k!=='string'||!keys.includes(k)))throw Error(label+' has unsupported or missing fields.');for(const k of own)if(!Object.hasOwn(Object.getOwnPropertyDescriptor(v,k),'value'))throw Error(label+' cannot contain accessors.');}
+ function integer(v,min,max,label){if(!Number.isInteger(v)||v<min||v>max)throw Error(label+' must be a whole number from '+min+' to '+max+'.');return v;}
+ function decimal(v,min,max,label){if(typeof v!=='number'||!Number.isFinite(v)||v<min||v>max||Math.abs(v*100-Math.round(v*100))>1e-8)throw Error(label+' is outside its supported range or precision.');return v===0?0:v;}
+ function canonicalCanvas(value){record(value,['mode','ratio'],'Authored canvas');if(value.mode!=='fixed'||typeof value.ratio!=='string'||!Object.hasOwn(RATIOS,value.ratio))throw Error('Choose a supported fixed authored aspect ratio.');return {mode:'fixed',ratio:value.ratio};}
+ function contentRect(canvas,width,height){if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)throw Error('Field dimensions must be finite and positive.');if(!canvas)return {x:0,y:0,width,height};const ratio=RATIOS[canonicalCanvas(canvas).ratio],w=Math.min(width,height*ratio),h=w/ratio;return {x:(width-w)/2,y:(height-h)/2,width:w,height:h};}
+ function defaults(shape,size){if(!SHAPES.includes(shape))throw Error('Unsupported design shape.');return canonical(shape,size,{height:size,rotation:0,fill:shape==='dot'||shape==='pixel',...(shape==='polygon'?{sides:5}:{}),...(shape==='star'?{sides:5,innerRatio:0.5}:{}),...(shape==='rounded-rectangle'?{cornerRadius:0.2}:{})});}
+ function canonical(shape,size,value){if(!SHAPES.includes(shape))throw Error('Unsupported design shape.');integer(size,1,shape==='dot'||shape==='pixel'?8:28,'Width');const extra=shape==='polygon'?['sides']:shape==='star'?['sides','innerRatio']:shape==='rounded-rectangle'?['cornerRadius']:[];record(value,['height','rotation','fill',...extra],'Shape geometry');const g={height:integer(value.height,1,shape==='dot'||shape==='pixel'?8:28,'Height'),rotation:integer(value.rotation,0,359,'Rotation'),fill:value.fill};if(typeof g.fill!=='boolean')throw Error('Fill must be true or false.');if(['dot','pixel','circle','square'].includes(shape)&&g.height!==size)throw Error('This shape requires equal width and height.');if(['dot','pixel'].includes(shape)&&!g.fill)throw Error('Dots and pixels are filled shapes.');if(extra.includes('sides'))g.sides=integer(value.sides,3,shape==='star'?16:32,'Sides');if(extra.includes('innerRatio'))g.innerRatio=decimal(value.innerRatio,0.2,0.8,'Star inner ratio');if(extra.includes('cornerRadius'))g.cornerRadius=decimal(value.cornerRadius,0,0.5,'Corner radius');return g;}
+ function points(shape,size,input){const g=canonical(shape,size,input),w=size/2,h=g.height/2,p=[];if(['dot','circle','ellipse'].includes(shape)){for(let i=0;i<64;i++){const a=i*Math.PI/32;p.push([w*Math.cos(a),h*Math.sin(a)]);}}else if(shape==='triangle')p.push([0,-h],[w,h],[-w,h]);else if(shape==='polygon'||shape==='star'){const count=g.sides*(shape==='star'?2:1);for(let i=0;i<count;i++){const a=-Math.PI/2+i*2*Math.PI/count,k=shape==='star'&&i%2?g.innerRatio:1;p.push([w*Math.cos(a)*k,h*Math.sin(a)*k]);}}else if(shape==='rounded-rectangle'&&g.cornerRadius>0){const r=Math.min(size,g.height)*g.cornerRadius;for(const [cx,cy,start] of [[w-r,-h+r,-Math.PI/2],[w-r,h-r,0],[-w+r,h-r,Math.PI/2],[-w+r,-h+r,Math.PI]])for(let i=0;i<=8;i++){const a=start+i*Math.PI/16;p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}}else p.push([-w,-h],[w,-h],[w,h],[-w,h]);const a=g.rotation*Math.PI/180,c=Math.cos(a),s=Math.sin(a);return p.map(([x,y])=>[x*c-y*s,x*s+y*c]);}
+ function extent(shape,size,g){const pts=points(shape,size,g);return Math.max(...pts.map(([x,y])=>Math.max(Math.abs(x),Math.abs(y))))+(g.fill?0:0.5);}
+ function build(object,rect){record(rect,['x','y','width','height'],'Content rectangle');if(![rect.x,rect.y,rect.width,rect.height].every(Number.isFinite)||rect.width<=0||rect.height<=0)throw Error('Content rectangle must have finite coordinates and positive dimensions.');const g=canonical(object.shape,object.size,object.geometry),u=Math.min(rect.width,rect.height)/100,x=rect.x+object.x*rect.width/100,y=rect.y+object.y*rect.height/100;return {kind:'polygon',points:points(object.shape,object.size,g).map(([px,py])=>[x+px*u,y+py*u]),lineWidth:u,filled:g.fill};}
+ return Object.freeze({SHAPES,RATIOS,canonicalCanvas,contentRect,defaults,canonical,points,extent,build});
+}));
+
+/* Imagery Field 0.7.0. Styled scene model and interaction controller.
    Counts, geometry, colors and buffer limits are engineering choices only.
    They are not calibrated luminance, sensory safety or exposure thresholds. */
 (function (root, factory) {
   'use strict';
-  if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.ImageryModel = factory();
-}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./geometry-model.js'));
+  else root.ImageryModel = factory(root.ImageryGeometry);
+}(typeof globalThis !== 'undefined' ? globalThis : this, function (G) {
   'use strict';
   const FORMAT = 'imagery-static-scene';
   const VERSION = 3;
   const SAMPLER = 'styled-objects-3';
+  const AUTHORED_VERSION = 4, AUTHORED_SAMPLER = 'authored-objects-4';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_OBJECTS = 12;
   const MAX_ITEM_TIME_MS = 600000;
@@ -338,11 +374,31 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(timing.startMs+lifetime>MAX_ITEM_TOTAL_MS)throw new Error('Item end exceeds the one-hour timeline resource limit.');
     return {outline,shadow,timing};
   }
-  function objectExtent(o) {return o.size/2+(['dot','pixel'].includes(o.shape)?0:0.5);}
+  function objectExtent(o) {
+    if(o.geometry) {
+      const e=effects(o);
+      // Authored scenes reserve a conservative effect envelope. Blur tails are
+      // not mathematically finite; 3×blur is an engineering bound, not calibration.
+      return G.extent(o.shape,o.size,o.geometry)+(e.outline.enabled?e.outline.width:0)+
+        (e.shadow.enabled?Math.max(Math.abs(e.shadow.offsetX),Math.abs(e.shadow.offsetY))+3*e.shadow.blur:0);
+    }
+    return o.size/2+(['dot','pixel'].includes(o.shape)?0:0.5);
+  }
   function defaultObject(id='object-1',shape='dot') {
     const o={id,shape,x:50,y:50,size:['dot','pixel'].includes(shape)?2:20,color:{h:208,s:11,l:48},...defaultEffects()};
     return canonicalScene({format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:'New item',background:clone(DEFAULT_BACKGROUND),pulsePeriodMs:DEFAULT_PULSE_PERIOD_MS,objects:[o]}}).scene.objects[0];
   }
+  function defaultAuthoredObject(id='object-1',shape='circle') {
+    const size=['dot','pixel'].includes(shape)?2:20;
+    const o={id,shape,x:50,y:50,size,color:{h:208,s:11,l:48},...defaultEffects(),geometry:G.defaults(shape,size)};
+    return canonicalScene({format:FORMAT,version:AUTHORED_VERSION,sampler:AUTHORED_SAMPLER,scene:{name:'New authored item',background:clone(DEFAULT_BACKGROUND),pulsePeriodMs:DEFAULT_PULSE_PERIOD_MS,canvas:{mode:'fixed',ratio:'1:1'},objects:[o]}}).scene.objects[0];
+  }
+  // Explicit author action only: changing from viewport to a fixed canvas changes layout.
+  function upgradeScene(value,canvas) {
+    const s=canonicalScene(value).scene;
+    return canonicalScene({format:FORMAT,version:AUTHORED_VERSION,sampler:AUTHORED_SAMPLER,scene:{...s,canvas:G.canonicalCanvas(canvas),objects:s.objects.map(o=>({...o,geometry:o.geometry||G.defaults(o.shape,o.size)}))}});
+  }
+  function contentRect(value,width=100,height=100) {const s=canonicalScene(value).scene;return G.contentRect(s.canvas||null,width,height);}
   function colorCSS(value) {return 'hsl('+value.h+' '+value.s+'% '+value.l+'%)';}
   function legacy(value) {
     if(value.sampler!=='sparse-fixed-1')throw new Error('Unsupported version 1 sampler.');
@@ -366,9 +422,11 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(value.format!==FORMAT)throw new Error('Unsupported scene format.');
     if(value.version===1)return canonicalScene(legacy(value));
     const old=value.version===2&&value.sampler==='static-objects-2';
-    if(!old&&(value.version!==VERSION||value.sampler!==SAMPLER))throw new Error('Unsupported scene version or sampler. Only versions 1, 2 and 3 are supported.');
+    const authored=value.version===AUTHORED_VERSION&&value.sampler===AUTHORED_SAMPLER;
+    if(!old&&!authored&&(value.version!==VERSION||value.sampler!==SAMPLER))throw new Error('Unsupported scene version or sampler. Only versions 1, 2, 3 and 4 are supported.');
     const s=value.scene;
-    object(s,old?['name','background','objects']:['name','background','pulsePeriodMs','objects'],'Scene');name(s.name);
+    object(s,old?['name','background','objects']:['name','background','pulsePeriodMs','objects',...(authored?['canvas']:[])],'Scene');name(s.name);
+    const canvas=authored?G.canonicalCanvas(s.canvas):null;
     const pulsePeriodMs=old?DEFAULT_PULSE_PERIOD_MS:pulsePeriod(s.pulsePeriodMs);
     // Current backgrounds use the full saturation range; historical inputs
     // retain their original closed bounds before migration. Never clamp imports.
@@ -381,18 +439,19 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       const descriptor=Object.getOwnPropertyDescriptor(list,String(i));
       if(!descriptor||!Object.prototype.hasOwnProperty.call(descriptor,'value'))throw new Error('Object array cannot contain holes or accessors.');
       const o=descriptor.value;
-      object(o,old?['id','shape','x','y','size','color']:['id','shape','x','y','size','color','outline','shadow','timing'],'Object');
+      object(o,old?['id','shape','x','y','size','color']:['id','shape','x','y','size','color','outline','shadow','timing',...(authored?['geometry']:[])],'Object');
       if(typeof o.id!=='string'||!/^object-[1-9][0-9]{0,5}$/.test(o.id)||ids.has(o.id))throw new Error('Each object needs a unique object-1 style identifier.');
       ids.add(o.id);
-      if(!SHAPES.includes(o.shape))throw new Error('Choose dot, pixel, circle, square, or triangle.');
+      if(!(authored?G.SHAPES:SHAPES).includes(o.shape))throw new Error(authored?'Choose a supported authored geometry family.':'Choose dot, pixel, circle, square, or triangle.');
       position(o.x,'Horizontal position');position(o.y,'Vertical position');
       const filled=o.shape==='dot'||o.shape==='pixel';
       integer(o.size,1,filled?8:28,'Object size');
+      const shapeGeometry=authored?G.canonical(o.shape,o.size,o.geometry):null;
       const extent=objectExtent(o);
       if(o.x-extent<1||o.x+extent>99||o.y-extent<1||o.y+extent>99)throw new Error('Keep the complete object within the 1-unit field inset. Move it inward or reduce its size.');
-      objects.push({id:o.id,shape:o.shape,x:o.x,y:o.y,size:o.size,color:color(o.color,false),...(old?defaultEffects():effects(o))});
+      objects.push({id:o.id,shape:o.shape,x:o.x,y:o.y,size:o.size,color:color(o.color,false),...(old?defaultEffects():effects(o)),...(authored?{geometry:shapeGeometry}:{})});
     }
-    return {format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:s.name,background,pulsePeriodMs,objects}};
+    return {format:FORMAT,version:authored?AUTHORED_VERSION:VERSION,sampler:authored?AUTHORED_SAMPLER:SAMPLER,scene:{name:s.name,background,pulsePeriodMs,objects,...(authored?{canvas}:{})}};
   }
   function validateScene(value) {try{return {ok:true,scene:canonicalScene(value)};}catch(e){return {ok:false,error:e.message};}}
   function rejectDuplicateKeys(text) {
@@ -433,9 +492,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function geometry(value,width=100,height=100) {
     const s=canonicalScene(value).scene;
     if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)throw new Error('Field dimensions must be finite positive numbers.');
-    const unit=Math.min(width,height)/100;
+    const rect=G.contentRect(s.canvas||null,width,height),unit=Math.min(rect.width,rect.height)/100;
     return s.objects.map(o=>{
       const x=o.x*width/100,y=o.y*height/100,r=o.size*unit/2,base={id:o.id,color:colorCSS(o.color),outline:{enabled:o.outline.enabled,width:o.outline.width*unit,color:colorCSS(o.outline.color)},shadow:{enabled:o.shadow.enabled,offsetX:o.shadow.offsetX*unit,offsetY:o.shadow.offsetY*unit,blur:o.shadow.blur*unit,color:colorCSS(o.shadow.color)}};
+      if(s.canvas)return {...base,...G.build(o,rect)};
       if(o.shape==='dot')return {...base,kind:'dot',x,y,radius:r};
       if(o.shape==='circle')return {...base,kind:'circle',x,y,radius:r,lineWidth:unit};
       const points=o.shape==='triangle'?[[x,y-r],[x+r,y+r],[x-r,y+r]]:[[x-r,y-r],[x+r,y-r],[x+r,y+r],[x-r,y+r]];
@@ -447,9 +507,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const objects=s.objects.length?s.objects.map((o,i)=>{
       const style=(o.outline.enabled?', outline width '+o.outline.width+' H'+o.outline.color.h+' S'+o.outline.color.s+' L'+o.outline.color.l:'')+(o.shadow.enabled?', shadow offset '+o.shadow.offsetX+'/'+o.shadow.offsetY+' blur '+o.shadow.blur+' H'+o.shadow.color.h+' S'+o.shadow.color.s+' L'+o.shadow.color.l:'');
       const t=o.timing,timing=', authored timing start '+t.startMs+' ms, fade in '+t.fadeInMs+' ms, hold '+t.holdMs+' ms, fade out '+t.fadeOutMs+' ms'+(t.pulse.enabled?', shared pulse minimum opacity '+Math.round(t.pulse.minOpacity*100)+'%':'');
-      return (i+1)+': '+o.shape+', size '+o.size+', at '+o.x+', '+o.y+', color H'+o.color.h+' S'+o.color.s+' L'+o.color.l+style+timing;
+      return (i+1)+': '+o.shape+', size '+o.size+(o.geometry?', height '+o.geometry.height+', rotation '+o.geometry.rotation+' degrees, '+(o.geometry.fill?'filled':'contour')+(o.geometry.sides?', '+o.geometry.sides+' sides':'')+(o.geometry.innerRatio!==undefined?', inner ratio '+o.geometry.innerRatio:'')+(o.geometry.cornerRadius!==undefined?', corner radius '+o.geometry.cornerRadius:''):'')+', at '+o.x+', '+o.y+', color H'+o.color.h+' S'+o.color.s+' L'+o.color.l+style+timing;
     }).join('; '):'no objects';
-    return s.name+': '+s.objects.length+' object'+(s.objects.length===1?'':'s')+'. Background H'+b.h+' S'+b.s+' L'+b.l+'. '+objects+'. Positions are percentages; sizes use the field’s shorter side.';
+    return s.name+(s.canvas?' (authored '+s.canvas.ratio+' canvas)':'')+': '+s.objects.length+' object'+(s.objects.length===1?'':'s')+'. Background H'+b.h+' S'+b.s+' L'+b.l+'. '+objects+'. Positions are percentages; sizes use the '+(s.canvas?'authored canvas':'field')+'’s shorter side.';
   }
   function createController(nowFn, initialScene) {
     const clock = nowFn || (() => (typeof performance !== 'undefined' ? performance.now() : Date.now()));
@@ -506,7 +566,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       finishImport(token,text) {if(pending===null || token!==pending || token!==epoch)return result(false,'That file read was canceled by a newer action.');pending=null;let checked;try{checked=parseScene(text);}catch(e){return result(false,e.message);}return commit(checked);}
     });
   }
-  return Object.freeze({FORMAT,VERSION,SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_ITEM_TIME_MS,MAX_ITEM_TOTAL_MS,ITEM_TIME_INCREMENT_MS,MIN_PULSE_PERIOD_MS,MAX_PULSE_PERIOD_MS,DEFAULT_PULSE_PERIOD_MS,DEFAULT_BACKGROUND,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,defaultEffects,defaultObject,objectExtent,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
+  return Object.freeze({FORMAT,VERSION,SAMPLER,AUTHORED_VERSION,AUTHORED_SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_ITEM_TIME_MS,MAX_ITEM_TOTAL_MS,ITEM_TIME_INCREMENT_MS,MIN_PULSE_PERIOD_MS,MAX_PULSE_PERIOD_MS,DEFAULT_PULSE_PERIOD_MS,DEFAULT_BACKGROUND,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,defaultEffects,defaultObject,defaultAuthoredObject,upgradeScene,contentRect,objectExtent,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
 }));
 </script>
 <script>/* One-pass sequence data and timeline engine. No display or scheduling authority.
@@ -520,6 +580,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   const FORMAT = 'imagery-field-sequence';
   const VERSION = 2;
   const SAMPLER = 'ordered-crossfade-2';
+  const AUTHORED_VERSION=3, AUTHORED_SAMPLER='ordered-crossfade-3';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_STEPS = 32;
   const MIN_HOLD_MS = 1000;
@@ -619,17 +680,18 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const file = record(value, ['format', 'version', 'sampler', 'sequence'], 'Sequence file');
     if (file.format !== FORMAT) throw new Error('Unsupported sequence format.');
     const legacy = file.version === 1 && file.sampler === 'ordered-crossfade-1';
-    if (!legacy && (file.version !== VERSION || file.sampler !== SAMPLER)) {
+    const authored=file.version===AUTHORED_VERSION&&file.sampler===AUTHORED_SAMPLER;
+    if (!legacy && !authored && (file.version !== VERSION || file.sampler !== SAMPLER)) {
       throw new Error('Unsupported sequence version or sampler.');
     }
-    const sequence = record(file.sequence, ['name', 'background', 'steps'], 'Sequence');
+    const sequence = record(file.sequence, ['name', 'background', 'steps', ...(authored?['canvas']:[])], 'Sequence');
     const sequenceName = name(sequence.name, 'Sequence name');
     const sourceSteps = list(sequence.steps, 1, MAX_STEPS, 'Sequence steps');
     const ids = new Set();
     let total = 0, background;
     const steps = sourceSteps.map((entry, index) => {
       const label = 'Step ' + (index + 1);
-      const step = record(entry, legacy ? ['id', 'name', 'holdMs', 'transitionMs', 'objects'] : ['id', 'name', 'holdMs', 'transitionMs', 'pulsePeriodMs', 'objects'], label);
+      const step = record(entry, legacy ? ['id', 'name', 'holdMs', 'transitionMs', 'objects'] : ['id', 'name', 'holdMs', 'transitionMs', 'pulsePeriodMs', 'objects', ...(authored?['canvas']:[])], label);
       const id = name(step.id, label + ' identifier');
       if (ids.has(id)) throw new Error('Step identifiers must be unique within the sequence.');
       ids.add(id);
@@ -645,13 +707,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       // Keep every static geometry/color/object rule authoritative and unchanged.
       // Each snapshot is independently bounded; a crossfade may use 12 + 12.
       list(step.objects, 1, M.MAX_OBJECTS, label + ' objects');
-      const scene = M.canonicalScene({format: M.FORMAT, version: legacy ? 2 : M.VERSION, sampler: legacy ? 'static-objects-2' : M.SAMPLER,
-        scene: {name: stepName, background: sequence.background, ...(!legacy ? {pulsePeriodMs:step.pulsePeriodMs} : {}), objects: step.objects}}).scene;
+      const scene = M.canonicalScene({format: M.FORMAT, version: legacy ? 2 : authored?M.AUTHORED_VERSION:M.VERSION, sampler: legacy ? 'static-objects-2' : authored?M.AUTHORED_SAMPLER:M.SAMPLER,
+        scene: {name: stepName, background: sequence.background, ...(!legacy ? {pulsePeriodMs:step.pulsePeriodMs} : {}), objects: step.objects, ...(authored?{canvas:step.canvas}:{})}}).scene;
+      if(authored) {
+        const reference=M.canonicalScene({format:M.FORMAT,version:M.AUTHORED_VERSION,sampler:M.AUTHORED_SAMPLER,scene:{...scene,canvas:sequence.canvas}}).scene.canvas;
+        if(JSON.stringify(reference)!==JSON.stringify(scene.canvas))throw new Error('Sequence snapshots must share the same authored canvas.');
+      }
       if (index === 0) background = scene.background;
-      return {id, name: scene.name, holdMs, transitionMs, pulsePeriodMs:scene.pulsePeriodMs, objects: scene.objects};
+      return {id, name: scene.name, holdMs, transitionMs, pulsePeriodMs:scene.pulsePeriodMs, objects: scene.objects, ...(authored?{canvas:scene.canvas}:{})};
     });
-    const result = {format: FORMAT, version: VERSION, sampler: SAMPLER,
-      sequence: {name: sequenceName, background, steps}};
+    const result = {format: FORMAT, version: authored?AUTHORED_VERSION:VERSION, sampler: authored?AUTHORED_SAMPLER:SAMPLER,
+      sequence: {name: sequenceName, background, steps, ...(authored?{canvas:steps[0].canvas}:{})}};
     checkBytes(JSON.stringify(result));
     return freeze(result);
   }
@@ -838,7 +904,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     });
   }
 
-  return Object.freeze({FORMAT, VERSION, SAMPLER, MAX_IMPORT_BYTES, MAX_STEPS,
+  return Object.freeze({FORMAT, VERSION, SAMPLER, AUTHORED_VERSION, AUTHORED_SAMPLER, MAX_IMPORT_BYTES, MAX_STEPS,
     MIN_HOLD_MS, MAX_HOLD_MS, MAX_TRANSITION_MS, TIME_INCREMENT_MS, MAX_TOTAL_MS,
     DEFAULT_HOLD_MS, DEFAULT_TRANSITION_MS, canonicalSequence, validateSequence,
     parseSequence, serializeSequence, compileTimeline, frameAt, createTimeline});
@@ -999,23 +1065,1115 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   function hits(scene,width,height,x,y,tolerance=6){
     if(![width,height,x,y,tolerance].every(Number.isFinite)||width<=0||height<=0||tolerance<0||tolerance>24)return [];
-    if(x<0||y<0||x>width||y>height)return [];
+    const rect=M.contentRect(scene,width,height);if(x<rect.x||y<rect.y||x>rect.x+rect.width||y>rect.y+rect.height)return [];
     return M.geometry(scene,width,height).filter(item=>hit(item,x,y,tolerance)).map(item=>item.id).reverse();
   }
   function translate(scene,id,dx,dy,width,height){
     const result=M.canonicalScene(scene),o=result.scene.objects.find(item=>item.id===id);
     if(!o||![dx,dy,width,height].every(Number.isFinite)||width<=0||height<=0)throw new Error('A valid selected object and field are required.');
-    const extent=M.objectExtent(o),min=1+extent,max=99-extent,clamp=value=>Math.round(Math.max(min,Math.min(max,value))*100)/100;
-    o.x=clamp(o.x+dx*100/width);o.y=clamp(o.y+dy*100/height);return M.canonicalScene(result);
+    const extent=M.objectExtent(o),min=Math.ceil((1+extent)*100)/100,max=Math.floor((99-extent)*100)/100,clamp=value=>Math.round(Math.max(min,Math.min(max,value))*100)/100;
+    const rect=M.contentRect(result,width,height);o.x=clamp(o.x+dx*100/rect.width);o.y=clamp(o.y+dy*100/rect.height);return M.canonicalScene(result);
   }
   return Object.freeze({DRAG_THRESHOLD,HISTORY_LIMIT,point,hits,translate});
 }));
+</script>
+<script>/* Original authored composition examples. MIT, copyright (c) 2026 woodkill00.
+   Pure scene data only: no presentation, scheduling, persistence or network. */
+(function(root,factory){
+  'use strict';
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./model.js'));
+  else root.ImageryPresets=factory(root.ImageryModel);
+}(typeof globalThis!=='undefined'?globalThis:this,function(M){
+  'use strict';
+  const catalog=Object.freeze([
+    Object.freeze({id:'balanced-contours',revision:1,title:'Balanced contours',description:'A circle and rounded rectangle balanced around a small central diamond. Three steady contour items; static preview does not run timing.',timingKind:'steady'}),
+    Object.freeze({id:'symmetric-points',revision:1,title:'Sparse symmetric points',description:'Five small filled points arranged symmetrically around the center. Five steady items; static preview does not run timing.',timingKind:'steady'}),
+    Object.freeze({id:'sequential-shapes',revision:1,title:'Sequential shapes',description:'Three muted shapes with staggered, finite fades and steady holds. Static preview shows all three; Play items once runs the authored timing.',timingKind:'sequential-fades'}),
+    Object.freeze({id:'mixed-steady-pulse',revision:1,title:'Mixed steady and pulse',description:'A steady circle beside a star with optional slow opacity pulse. Static preview shows both steadily; explicit item playback ends after eight seconds.',timingKind:'mixed-steady-pulse'})
+  ]);
+  function list(){return catalog.map(value=>({...value,provenance:'Original repository-authored geometric composition; no external image or questionnaire.',license:'MIT'}));}
+  function item(id,shape,x,y,size,color,geometry={},timing={}){
+    const value=M.defaultAuthoredObject(id,shape);
+    return {...value,x,y,size,color,geometry:{...value.geometry,height:size,...geometry},timing:{...value.timing,...timing}};
+  }
+  function create(id){
+    const entry=catalog.find(value=>value.id===id);
+    if(!entry)throw Error('Choose a supported preset identifier.');
+    const blue={h:208,s:18,l:44},green={h:145,s:18,l:44},sand={h:40,s:22,l:46};
+    let objects;
+    if(id==='balanced-contours')objects=[
+      item('object-1','circle',30,50,16,blue),
+      item('object-2','rounded-rectangle',70,50,18,green,{height:14,cornerRadius:0.25}),
+      item('object-3','square',50,50,6,sand,{rotation:45})
+    ];
+    else if(id==='symmetric-points')objects=[[50,50],[35,35],[65,35],[35,65],[65,65]].map(([x,y],i)=>item('object-'+(i+1),'dot',x,y,3,i===0?sand:blue));
+    else if(id==='sequential-shapes')objects=[
+      item('object-1','circle',28,50,16,blue,{}, {startMs:0,fadeInMs:1000,holdMs:2000,fadeOutMs:1000}),
+      item('object-2','triangle',50,50,16,sand,{}, {startMs:3000,fadeInMs:1000,holdMs:2000,fadeOutMs:1000}),
+      item('object-3','rectangle',72,50,16,green,{height:12},{startMs:6000,fadeInMs:1000,holdMs:2000,fadeOutMs:1000})
+    ];
+    else objects=[
+      item('object-1','circle',35,50,18,blue,{}, {holdMs:8000}),
+      item('object-2','star',65,50,20,sand,{sides:5,innerRatio:0.5},{holdMs:8000,pulse:{enabled:true,minOpacity:0.8}})
+    ];
+    // No catalog identity is embedded in editable scene data. Altered derivatives
+    // therefore cannot accidentally claim an unchanged experimental stimulus ID.
+    return M.canonicalScene({format:M.FORMAT,version:M.AUTHORED_VERSION,sampler:M.AUTHORED_SAMPLER,scene:{name:entry.title,background:{...M.DEFAULT_BACKGROUND},pulsePeriodMs:4000,canvas:{mode:'fixed',ratio:'4:3'},objects}});
+  }
+  return Object.freeze({list,create});
+}));
+</script>
+<script>/* Local image header preflight. A successful header is not permission to upload or display. */
+(function(root,factory){'use strict';if(typeof module==='object'&&module.exports)module.exports=factory();else root.ImageryImageFile=factory();}(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const MAX_BYTES=8388608,MAX_DIMENSION=4096,MAX_PIXELS=8388608;
+ function inspect(bytes){
+  if(!bytes||Object.getPrototypeOf(bytes)!==Uint8Array.prototype||['length','byteLength','byteOffset','buffer','slice'].some(key=>Object.hasOwn(bytes,key)))throw Error('Image bytes must be an ordinary Uint8Array without overridden fields.');
+  const typed=Object.getPrototypeOf(Uint8Array.prototype),length=Object.getOwnPropertyDescriptor(typed,'length').get.call(bytes),offset=Object.getOwnPropertyDescriptor(typed,'byteOffset').get.call(bytes),buffer=Object.getOwnPropertyDescriptor(typed,'buffer').get.call(bytes);
+  if(Object.getPrototypeOf(buffer)!==ArrayBuffer.prototype||length<24||length>MAX_BYTES)throw Error('Choose a PNG or JPEG image no larger than 8 MiB.');
+  const v=new DataView(buffer,offset,length),word=p=>String.fromCharCode(v.getUint8(p),v.getUint8(p+1),v.getUint8(p+2),v.getUint8(p+3));let width,height,type;
+  if([137,80,78,71,13,10,26,10].every((x,i)=>bytes[i]===x)){
+   type='image/png';if(v.getUint32(8)!==13||word(12)!=='IHDR')throw Error('Invalid PNG header.');
+   width=v.getUint32(16);height=v.getUint32(20);let p=8,seenData=false;
+   while(p+12<=length){const n=v.getUint32(p),kind=word(p+4);if(n>length-p-12)throw Error('Truncated PNG chunk.');if(kind==='acTL')throw Error('Animated PNG is not supported. Choose a still image.');if(kind==='IDAT')seenData=true;p+=n+12;if(kind==='IEND')break;}
+   if(!seenData)throw Error('PNG pixel data is missing.');
+  }else if(bytes[0]===255&&bytes[1]===216){
+   type='image/jpeg';let p=2;
+   while(p<length){if(bytes[p++]!==255)throw Error('Invalid JPEG marker.');while(p<length&&bytes[p]===255)p++;const marker=bytes[p++];if(marker===217||marker===218)break;if(marker===1||(marker>=208&&marker<=215))continue;if(p+2>length)throw Error('Truncated JPEG segment.');const n=v.getUint16(p);if(n<2||p+n>length)throw Error('Truncated JPEG segment.');if([192,193,194].includes(marker)){if(n<8)throw Error('Invalid JPEG frame.');height=v.getUint16(p+3);width=v.getUint16(p+5);break;}p+=n;}
+  }else throw Error('Only PNG and JPEG still-image files are supported. SVG, GIF and other formats are not decoded.');
+  if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>MAX_DIMENSION||height>MAX_DIMENSION||width*height>MAX_PIXELS)throw Error('Image dimensions must be at most 4096 per side and 8,388,608 pixels total.');
+  return Object.freeze({type,width,height});
+ }
+ return Object.freeze({MAX_BYTES,MAX_DIMENSION,MAX_PIXELS,inspect});
+}));
+</script>
+<script>/* Local, bounded geometric approximation. Repository-authored, MIT licensed.
+   This is a deterministic raster-error experiment, not semantic recognition,
+   imagery assessment, a medical score, or evidence of useful correction effort.
+   The caller decodes only an explicitly selected raster and supplies a thumbnail.
+   This module has no DOM, timers, network, storage, or display authority. */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ImageryImage = factory();
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const FORMAT = 'imagery-raster-approximation', VERSION = 1;
+  const ALGORITHM = 'seeded-region-primitives', ALGORITHM_VERSION = 1;
+  const LIMITS = Object.freeze({maxFileBytes:8388608,maxDecodedDimension:4096,maxDecodedPixels:8388608,maxInputDimension:128,maxInputPixels:16384,workingDimension:48,maxObjects:12,candidatesPerObject:384,maxStepCandidates:32,maxModelTypedArrayBytes:86272});
+  const RATIOS = Object.freeze({'1:1':1,'4:3':4/3,'3:4':3/4,'16:9':16/9,'9:16':9/16});
+  const SHAPES = Object.freeze(['rectangle','ellipse','triangle']);
+  const MUTED = Object.freeze([{h:208,s:11,l:48},{h:126,s:8,l:49},{h:40,s:13,l:48}].map(Object.freeze));
+  const DEFAULTS = Object.freeze({maxObjects:6,seed:1,palette:'source',canvasRatio:'1:1',background:Object.freeze({h:4,s:60,l:4}),crop:Object.freeze({x:0,y:0,width:1,height:1})});
+  const typedLength=Object.getOwnPropertyDescriptor(Object.getPrototypeOf(Uint8Array.prototype),'length').get;
+  const bufferLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get;
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const clamp = (n,lo,hi) => Math.max(lo,Math.min(hi,n));
+  const round = (n,scale=100) => Math.round(n*scale)/scale;
+  function record(value, keys, label, optional=false) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) || ![Object.prototype,null].includes(Object.getPrototypeOf(value))) throw Error(label+' must be an ordinary object.');
+    const own=Reflect.ownKeys(value);
+    if ((!optional && own.length!==keys.length) || own.some(k=>typeof k!=='string'||!keys.includes(k))) throw Error(label+' has missing or unsupported fields.');
+    for (const k of own) {const descriptor=Object.getOwnPropertyDescriptor(value,k);if (!Object.prototype.hasOwnProperty.call(descriptor,'value')||!descriptor.enumerable) throw Error(label+' requires enumerable data fields without accessors.');}
+  }
+  function integer(value,min,max,label) {if(!Number.isInteger(value)||value<min||value>max)throw Error(label+' must be a whole number from '+min+' to '+max+'.');return value;}
+  function number(value,min,max,label,scale) {if(typeof value!=='number'||!Number.isFinite(value)||value<min||value>max||(scale&&Math.abs(value*scale-Math.round(value*scale))>1e-8))throw Error(label+' is outside its supported range or precision.');return value===0?0:value;}
+  function color(value,background) {record(value,['h','s','l'],'Color');return {h:integer(value.h,0,359,'Hue'),s:integer(value.s,0,background?100:70,'Saturation'),l:integer(value.l,background?0:10,background?40:70,'Lightness')};}
+  function crop(value) {
+    record(value,['x','y','width','height'],'Crop');
+    const c={x:number(value.x,0,1,'Crop X',10000),y:number(value.y,0,1,'Crop Y',10000),width:number(value.width,0.0001,1,'Crop width',10000),height:number(value.height,0.0001,1,'Crop height',10000)};
+    if(c.x+c.width>1+1e-12||c.y+c.height>1+1e-12)throw Error('Keep the crop inside the selected image.');
+    return c;
+  }
+  function canonicalOptions(value={}) {
+    record(value,Object.keys(DEFAULTS),'Conversion options',true);
+    const o={...DEFAULTS,...value};
+    if(![3,6,12].includes(o.maxObjects))throw Error('Choose a 3, 6, or 12 item budget.');
+    integer(o.seed,0,4294967295,'Seed');
+    if(!['source','muted'].includes(o.palette))throw Error('Choose the source or muted palette.');
+    if(typeof o.canvasRatio!=='string'||!Object.prototype.hasOwnProperty.call(RATIOS,o.canvasRatio))throw Error('Choose a supported authored aspect ratio.');
+    return {maxObjects:o.maxObjects,seed:o.seed,palette:o.palette,canvasRatio:o.canvasRatio,background:color(o.background,true),crop:crop(o.crop)};
+  }
+  function validatePixels(input) {
+    record(input,['width','height','data'],'Pixel input');
+    const width=integer(input.width,1,LIMITS.maxInputDimension,'Thumbnail width'),height=integer(input.height,1,LIMITS.maxInputDimension,'Thumbnail height');
+    if(width*height>LIMITS.maxInputPixels)throw Error('Thumbnail exceeds its pixel budget.');
+    const data=input.data;
+    if(!data||![Uint8Array.prototype,Uint8ClampedArray.prototype].includes(Object.getPrototypeOf(data)))throw Error('Pixels must be an ordinary Uint8Array or Uint8ClampedArray.');
+    const expected=width*height*4;
+    // Check the intrinsic length before enumerating keys: an oversized array
+    // must not cause an unbounded Reflect.ownKeys allocation.
+    if(typedLength.call(data)!==expected)throw Error('RGBA pixels have an unexpected length.');
+    const keys=Reflect.ownKeys(data);
+    if(keys.length!==expected||keys.some(k=>typeof k!=='string'||!/^\d+$/.test(k)||Number(k)>=expected)||data.length!==expected)throw Error('RGBA pixels have an unexpected length or unsupported fields.');
+    if(Object.getPrototypeOf(data.buffer)!==ArrayBuffer.prototype)throw Error('Shared or custom pixel buffers are not supported.');
+    if(bufferLength.call(data.buffer)>LIMITS.maxInputPixels*4)throw Error('Pixel backing buffer exceeds the thumbnail budget.');
+    return {width,height,data};
+  }
+  function rgb(hsl) {
+    const h=hsl.h/60,s=hsl.s/100,l=hsl.l/100,c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs(h%2-1)),m=l-c/2;
+    const p=h<1?[c,x,0]:h<2?[x,c,0]:h<3?[0,c,x]:h<4?[0,x,c]:h<5?[x,0,c]:[c,0,x];
+    return p.map(v=>Math.round((v+m)*255));
+  }
+  function allowedColor(r,g,b,palette) {
+    if(palette==='muted') {
+      let best=MUTED[0],error=Infinity;
+      for(const candidate of MUTED){const p=rgb(candidate),e=(p[0]-r)**2+(p[1]-g)**2+(p[2]-b)**2;if(e<error){best=candidate;error=e;}}
+      return {color:{...best},clipped:false};
+    }
+    r/=255;g/=255;b/=255;
+    const hi=Math.max(r,g,b),lo=Math.min(r,g,b),d=hi-lo,l=(hi+lo)/2;
+    let h=0,s=0;
+    if(d){s=d/(1-Math.abs(2*l-1));h=60*(hi===r?((g-b)/d)%6:hi===g?(b-r)/d+2:(r-g)/d+4);}
+    const rawS=Math.round(s*100),rawL=Math.round(l*100);
+    return {color:{h:(Math.round(h)+360)%360,s:clamp(rawS,0,70),l:clamp(rawL,10,70)},clipped:rawS>70||rawL<10||rawL>70};
+  }
+  function dimensions(ratio) {const r=RATIOS[ratio],n=LIMITS.workingDimension;return r>=1?{width:n,height:Math.round(n/r)}:{width:Math.round(n*r),height:n};}
+  function prepare(input,options) {
+    const source=validatePixels(input),d=dimensions(options.canvasRatio),background=rgb(options.background),target=new Uint8ClampedArray(d.width*d.height*3),current=new Uint8ClampedArray(target.length);
+    const c=options.crop,sw=source.width*c.width,sh=source.height*c.height,scale=Math.min(d.width/sw,d.height/sh),left=(d.width-sw*scale)/2,top=(d.height-sh*scale)/2;
+    let transparentPixels=0;
+    for(let i=3;i<source.data.length;i+=4)if(source.data[i]<255)transparentPixels++;
+    // Area sampling in premultiplied form: hidden RGB in transparent pixels
+    // never contributes, and a rectangular crop is contained without stretching.
+    for(let y=0;y<d.height;y++)for(let x=0;x<d.width;x++) {
+      const i=(y*d.width+x)*3;
+      for(let k=0;k<3;k++)target[i+k]=current[i+k]=background[k];
+      const ax=Math.max(x,left),ay=Math.max(y,top),bx=Math.min(x+1,left+sw*scale),by=Math.min(y+1,top+sh*scale);
+      if(bx<=ax||by<=ay)continue;
+      const sx0=c.x*source.width+(ax-left)/scale,sy0=c.y*source.height+(ay-top)/scale,sx1=c.x*source.width+(bx-left)/scale,sy1=c.y*source.height+(by-top)/scale;
+      const sum=[0,0,0];let weight=0;
+      for(let py=Math.max(0,Math.floor(sy0));py<Math.min(source.height,Math.ceil(sy1));py++)for(let px=Math.max(0,Math.floor(sx0));px<Math.min(source.width,Math.ceil(sx1));px++) {
+        const w=Math.max(0,Math.min(px+1,sx1)-Math.max(px,sx0))*Math.max(0,Math.min(py+1,sy1)-Math.max(py,sy0)),p=(py*source.width+px)*4,a=source.data[p+3]/255;
+        weight+=w;for(let k=0;k<3;k++)sum[k]+=(source.data[p+k]*a+background[k]*(1-a))*w;
+      }
+      const coverage=(bx-ax)*(by-ay);
+      if(weight)for(let k=0;k<3;k++)target[i+k]=Math.round(sum[k]/weight*coverage+background[k]*(1-coverage));
+    }
+    return {...d,target,current,source:{width:source.width,height:source.height,crop:{...c},fit:'contain',transparentPixels}};
+  }
+  function errorAt(target,current,p) {const i=p*3;return (target[i]-current[i])**2+(target[i+1]-current[i+1])**2+(target[i+2]-current[i+2])**2;}
+  function errorTotal(target,current) {let total=0;for(let p=0;p<target.length/3;p++)total+=errorAt(target,current,p);return total;}
+  function seedRegion(work) {
+    const {target,current,width,height}=work,n=width*height;
+    let peak=0,peakError=0;
+    for(let p=0;p<n;p++){const e=errorAt(target,current,p);if(e>peakError){peak=p;peakError=e;}}
+    if(peakError===0)return null;
+    const visited=new Uint8Array(n),queue=new Uint16Array(n),anchor=peak*3;let head=0,tail=1;
+    queue[0]=peak;visited[peak]=1;
+    let minX=peak%width,maxX=minX,minY=Math.floor(peak/width),maxY=minY;
+    while(head<tail) {
+      const p=queue[head++],x=p%width,y=Math.floor(p/width);
+      minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+      for(const q of [x>0?p-1:-1,x+1<width?p+1:-1,y>0?p-width:-1,y+1<height?p+width:-1]) {
+        if(q<0||visited[q])continue;visited[q]=1;const i=q*3;
+        if(errorAt(target,current,q)<peakError*0.2||(target[i]-target[anchor])**2+(target[i+1]-target[anchor+1])**2+(target[i+2]-target[anchor+2])**2>12288)continue;
+        queue[tail++]=q;
+      }
+    }
+    const unit=Math.min(width,height)/100;
+    return {x:(minX+maxX+1)/2/width*100,y:(minY+maxY+1)/2/height*100,size:clamp(Math.round((maxX-minX+1)/unit),1,28),height:clamp(Math.round((maxY-minY+1)/unit),1,28)};
+  }
+  function shapeCandidate(shape,x,y,size,height) {
+    size=clamp(Math.round(size),1,28);height=clamp(Math.round(height),1,28);
+    const extent=Math.max(size,height)/2;
+    return {shape,x:round(clamp(x,extent+1,99-extent)),y:round(clamp(y,extent+1,99-extent)),size,geometry:{height,rotation:0,fill:true}};
+  }
+  function eachPixel(candidate,work,visit) {
+    const u=Math.min(work.width,work.height)/100,rx=candidate.size*u/2,ry=candidate.geometry.height*u/2,cx=candidate.x*work.width/100,cy=candidate.y*work.height/100;
+    const left=Math.max(0,Math.ceil(cx-rx-0.5)),right=Math.min(work.width-1,Math.floor(cx+rx-0.5)),top=Math.max(0,Math.ceil(cy-ry-0.5)),bottom=Math.min(work.height-1,Math.floor(cy+ry-0.5));
+    for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++) {
+      const dx=(x+0.5-cx)/rx,dy=(y+0.5-cy)/ry;
+      if(candidate.shape==='ellipse'&&dx*dx+dy*dy>1)continue;
+      if(candidate.shape==='triangle'&&Math.abs(dx)>(dy+1)/2)continue;
+      visit((y*work.width+x)*3);
+    }
+  }
+  function score(candidate,work,palette) {
+    const sum=[0,0,0];let count=0;
+    eachPixel(candidate,work,i=>{count++;for(let k=0;k<3;k++)sum[k]+=work.target[i+k];});
+    if(!count)return null;
+    const chosen=allowedColor(sum[0]/count,sum[1]/count,sum[2]/count,palette),paint=rgb(chosen.color);let gain=0;
+    eachPixel(candidate,work,i=>{for(let k=0;k<3;k++)gain+=(work.target[i+k]-work.current[i+k])**2-(work.target[i+k]-paint[k])**2;});
+    return {object:{...candidate,color:chosen.color},paint,gain,clipped:chosen.clipped};
+  }
+  function canonicalPlan(value) {
+    record(value,['format','version','algorithm','canvas','background','objects','quality','source'],'Approximation plan');
+    if(value.format!==FORMAT||value.version!==VERSION)throw Error('Unsupported approximation plan.');
+    const a=value.algorithm;
+    record(a,['id','version','seed','maxObjects','palette','candidatesPerObject','workingDimension','colorPolicy','complete'],'Algorithm');
+    if(a.id!==ALGORITHM||a.version!==ALGORITHM_VERSION||a.complete!==true||a.candidatesPerObject!==LIMITS.candidatesPerObject||a.workingDimension!==LIMITS.workingDimension||a.colorPolicy!=='bounded-hsl')throw Error('Unsupported algorithm contract.');
+    record(value.canvas,['mode','ratio'],'Canvas');if(value.canvas.mode!=='fixed')throw Error('Approximation canvas must have a fixed ratio.');
+    const s=value.source;record(s,['width','height','crop','fit','transparentPixels'],'Source summary');
+    const o=canonicalOptions({maxObjects:a.maxObjects,seed:a.seed,palette:a.palette,background:value.background,canvasRatio:value.canvas.ratio,crop:s.crop});
+    const list=value.objects;
+    if(!Array.isArray(list)||Object.getPrototypeOf(list)!==Array.prototype||list.length>o.maxObjects)throw Error('Approximation objects exceed their budget.');
+    const keys=Reflect.ownKeys(list);
+    if(keys.length!==list.length+1||keys.some(k=>k!=='length'&&(typeof k!=='string'||!/^\d+$/.test(k)||Number(k)>=list.length)))throw Error('Approximation objects cannot have holes or extra fields.');
+    const objects=[];
+    for(let i=0;i<list.length;i++) {
+      const desc=Object.getOwnPropertyDescriptor(list,String(i));if(!desc||!Object.prototype.hasOwnProperty.call(desc,'value'))throw Error('Approximation objects cannot contain accessors.');
+      const p=desc.value;record(p,['id','shape','x','y','size','geometry','color'],'Approximation item');
+      if(p.id!=='object-'+(i+1)||!SHAPES.includes(p.shape))throw Error('Unsupported approximation item identifier or family.');
+      record(p.geometry,['height','rotation','fill'],'Approximation geometry');
+      if(p.geometry.rotation!==0||p.geometry.fill!==true)throw Error('Approximation geometry must be a steady filled unrotated primitive.');
+      const size=integer(p.size,1,28,'Width'),height=integer(p.geometry.height,1,28,'Height'),extent=Math.max(size,height)/2;
+      const x=number(p.x,extent+1,99-extent,'X',100),y=number(p.y,extent+1,99-extent,'Y',100);
+      objects.push({id:p.id,shape:p.shape,x,y,size,geometry:{height,rotation:0,fill:true},color:color(p.color,false)});
+    }
+    integer(s.width,1,LIMITS.maxInputDimension,'Source width');integer(s.height,1,LIMITS.maxInputDimension,'Source height');
+    if(s.width*s.height>LIMITS.maxInputPixels||s.fit!=='contain')throw Error('Unsupported source summary.');
+    integer(s.transparentPixels,0,s.width*s.height,'Transparent pixel count');
+    const q=value.quality;record(q,['metric','initialError','finalError','relativeReduction','evaluatedCandidates','constrainedCandidates','objects','workingWidth','workingHeight'],'Approximation quality');
+    if(q.metric!=='normalized-rgb-mse')throw Error('Unsupported error metric.');
+    number(q.initialError,0,1,'Initial error');number(q.finalError,0,q.initialError+1e-12,'Final error');number(q.relativeReduction,0,1,'Relative error reduction');
+    const reduction=q.initialError?round((q.initialError-q.finalError)/q.initialError,1e12):0;
+    if(Math.abs(q.relativeReduction-reduction)>1e-8)throw Error('Inconsistent relative error reduction.');
+    integer(q.evaluatedCandidates,0,o.maxObjects*LIMITS.candidatesPerObject,'Evaluated candidates');integer(q.constrainedCandidates,0,q.evaluatedCandidates,'Constrained candidates');
+    const d=dimensions(o.canvasRatio);
+    if(q.objects!==objects.length||q.workingWidth!==d.width||q.workingHeight!==d.height)throw Error('Inconsistent approximation summary.');
+    return {format:FORMAT,version:VERSION,algorithm:{...a},canvas:{mode:'fixed',ratio:o.canvasRatio},background:o.background,objects,quality:{...q},source:{width:s.width,height:s.height,crop:o.crop,fit:'contain',transparentPixels:s.transparentPixels}};
+  }
+  function createJob(input,options) {
+    const o=canonicalOptions(options);let work=prepare(input,o);input=null;options=null;
+    const initialTotal=errorTotal(work.target,work.current),objects=[];
+    let state='running',result=null,randomState=o.seed>>>0,evaluated=0,constrained=0,roundCandidates=0,best=null,region=null;
+    function random(){randomState=(Math.imul(randomState,1664525)+1013904223)>>>0;return randomState/4294967296;}
+    function finish() {
+      const denominator=work.width*work.height*3*255*255,initial=round(initialTotal/denominator,1e12),final=round(errorTotal(work.target,work.current)/denominator,1e12);
+      result=canonicalPlan({format:FORMAT,version:VERSION,algorithm:{id:ALGORITHM,version:ALGORITHM_VERSION,seed:o.seed,maxObjects:o.maxObjects,palette:o.palette,candidatesPerObject:LIMITS.candidatesPerObject,workingDimension:LIMITS.workingDimension,colorPolicy:'bounded-hsl',complete:true},canvas:{mode:'fixed',ratio:o.canvasRatio},background:{...o.background},objects,quality:{metric:'normalized-rgb-mse',initialError:initial,finalError:final,relativeReduction:initial?round((initial-final)/initial,1e12):0,evaluatedCandidates:evaluated,constrainedCandidates:constrained,objects:objects.length,workingWidth:work.width,workingHeight:work.height},source:work.source});
+      state='complete';work=null;best=null;region=null;
+    }
+    function getState(){return {status:state,progress:state==='complete'?1:state==='cancelled'?0:Math.min(0.999,(objects.length+roundCandidates/LIMITS.candidatesPerObject)/o.maxObjects),evaluatedCandidates:evaluated,maxCandidates:o.maxObjects*LIMITS.candidatesPerObject,result:result?clone(result):null};}
+    function nextCandidate() {
+      if(roundCandidates<75) {
+        const k=roundCandidates,shape=SHAPES[k%3],dw=Math.floor(k/3)%5-2,dh=Math.floor(k/15)-2;
+        return shapeCandidate(shape,region.x,region.y,region.size+dw,region.height+dh);
+      }
+      const local=best&&roundCandidates%4!==0,base=local?{...best.object,height:best.object.geometry.height}:region,span=roundCandidates<192?8:roundCandidates<288?4:2;
+      return shapeCandidate(local&&random()<0.7?base.shape:SHAPES[Math.floor(random()*SHAPES.length)],base.x+(random()*2-1)*span,base.y+(random()*2-1)*span,base.size+(random()*2-1)*span,base.height+(random()*2-1)*span);
+    }
+    return Object.freeze({
+      getState,
+      step(candidateBudget=16) {
+        integer(candidateBudget,1,LIMITS.maxStepCandidates,'Step candidate budget');
+        if(state!=='running')return getState();
+        for(let i=0;i<candidateBudget&&state==='running';i++) {
+          if(!region){region=seedRegion(work);if(!region){finish();break;}}
+          const scored=score(nextCandidate(),work,o.palette);evaluated++;roundCandidates++;
+          if(scored&&scored.clipped)constrained++;
+          const distance=c=>Math.abs(c.x-region.x)+Math.abs(c.y-region.y)+Math.abs(c.size-region.size)+Math.abs(c.geometry.height-region.height);
+          if(scored&&scored.gain>0&&(!best||scored.gain>best.gain||(scored.gain===best.gain&&distance(scored.object)<distance(best.object))))best=scored;
+          if(roundCandidates===LIMITS.candidatesPerObject) {
+            if(!best){finish();break;}
+            eachPixel(best.object,work,p=>{for(let k=0;k<3;k++)work.current[p+k]=best.paint[k];});
+            objects.push({id:'object-'+(objects.length+1),...best.object});
+            best=null;region=null;roundCandidates=0;
+            if(objects.length===o.maxObjects)finish();
+          }
+        }
+        return getState();
+      },
+      cancel(){state='cancelled';result=null;work=null;best=null;region=null;objects.length=0;return getState();}
+    });
+  }
+  function approximate(input,options) {const job=createJob(input,options);let state=job.getState();while(state.status==='running')state=job.step(LIMITS.maxStepCandidates);return state.result;}
+  function toScene(plan,model,name='Local image approximation') {
+    const p=canonicalPlan(plan);
+    if(!model||typeof model.canonicalScene!=='function'||typeof model.defaultAuthoredObject!=='function')throw Error('A scene-v4 model is required to map this candidate.');
+    return model.canonicalScene({format:model.FORMAT,version:4,sampler:'authored-objects-4',scene:{name,background:p.background,pulsePeriodMs:model.DEFAULT_PULSE_PERIOD_MS,canvas:p.canvas,objects:p.objects.map(o=>({...model.defaultAuthoredObject(o.id,o.shape),...o}))}});
+  }
+  return Object.freeze({FORMAT,VERSION,ALGORITHM,ALGORITHM_VERSION,LIMITS,RATIOS,SHAPES,DEFAULTS,canonicalOptions,validatePixels,canonicalPlan,createJob,approximate,toScene});
+}));
+</script>
+<script>/* Local photo approximation controls. Repository-authored, MIT licensed.
+   This panel has no scene visibility, network, storage, or export authority. */
+(function(root,factory){
+  'use strict';
+  if(typeof module==='object'&&module.exports)module.exports=factory(root);
+  else root.ImageryImageUI=factory(root);
+}(typeof globalThis!=='undefined'?globalThis:this,function(root){
+  'use strict';
+  function mount(container,callbacks){
+    const doc=container.ownerDocument||root.document,I=root.ImageryImage,F=root.ImageryImageFile,M=root.ImageryModel;
+    if(!doc||!I||!F||!M)throw Error('Local image controls require the image, file, and scene models.');
+    const onEdit=callbacks&&callbacks.onEdit,onUseDraft=callbacks&&callbacks.onUseDraft;
+    if(typeof onEdit!=='function'||typeof onUseDraft!=='function')throw Error('Local image controls need edit and draft callbacks.');
+    let generation=0,job=null,timer=null,source=null,candidate=null,candidateOptions=null,busy=false,disposed=false,intakeActive=false;
+    const listeners=[],optionControls=[];
+    const el=(tag,id,text)=>{const n=doc.createElement(tag);if(id)n.id=id;if(text!==undefined)n.textContent=text;return n;};
+    const listen=(node,type,handler)=>{node.addEventListener(type,handler);listeners.push([node,type,handler]);};
+    const panel=el('fieldset','image-panel');panel.className='group';
+    panel.appendChild(el('legend',null,'Local image approximation'));
+    const intro=el('p',null,'Experimental shape sketch, not image recognition or an imagery assessment. Processing stays on this page: no image upload or storage. A derived sketch can still disclose image content.');
+    intro.className='hint';panel.appendChild(intro);
+    const fileLabel=el('label',null,'Choose a still PNG or JPEG');fileLabel.htmlFor='image-file';
+    const fileInput=el('input','image-file');fileInput.type='file';fileInput.accept='image/png,image/jpeg,.png,.jpg,.jpeg';
+    const fileHint=el('p','image-file-hint','At most 8 MiB, 4096 pixels per side and 8,388,608 decoded pixels. Only a thumbnail of at most 128 pixels per side is kept in memory.');fileHint.className='hint';
+    fileInput.setAttribute('aria-describedby','image-file-hint');
+    panel.append(fileLabel,fileInput,fileHint);
+    const sourceSummary=el('p','image-source-summary','No image selected.');sourceSummary.className='hint';panel.appendChild(sourceSummary);
+    const grid=el('div');grid.className='control-grid';panel.appendChild(grid);
+    function field(parent,id,label,choices,initial,attrs){
+      const wrap=el('div'),lab=el('label',null,label);lab.htmlFor=id;
+      const input=el(choices?'select':'input',id);
+      if(choices)for(const [value,text]of choices){const option=el('option',null,text);option.value=value;input.appendChild(option);}
+      else{input.type='number';for(const [k,v]of Object.entries(attrs||{}))input[k]=String(v);}
+      input.value=String(initial);wrap.append(lab,input);parent.appendChild(wrap);
+      optionControls.push([input,String(initial)]);return input;
+    }
+    const budget=field(grid,'image-budget','Maximum items',[['3','3 items'],['6','6 items'],['12','12 items']],6);
+    const seed=field(grid,'image-seed','Reproducible seed',null,1,{min:0,max:4294967295,step:1});
+    const ratio=field(grid,'image-ratio','Authored canvas ratio',Object.keys(I.RATIOS).map(x=>[x,x]),'1:1');
+    const palette=field(grid,'image-palette','Color palette',[['source','Source colors (bounded)'],['muted','Muted slate, sage, sand']],'source');
+    const cropGroup=el('fieldset');cropGroup.className='group';cropGroup.appendChild(el('legend',null,'Crop / focus area'));
+    const cropHint=el('p',null,'Percentages of the oriented thumbnail. The crop is fitted inside the chosen canvas without stretching; unused space keeps the dark background.');cropHint.className='hint';cropGroup.appendChild(cropHint);
+    const cropGrid=el('div');cropGrid.className='control-grid';cropGroup.appendChild(cropGrid);panel.appendChild(cropGroup);
+    const cropX=field(cropGrid,'image-crop-x','Left (%)',null,0,{min:0,max:99.99,step:0.01});
+    const cropY=field(cropGrid,'image-crop-y','Top (%)',null,0,{min:0,max:99.99,step:0.01});
+    const cropWidth=field(cropGrid,'image-crop-width','Width (%)',null,100,{min:0.01,max:100,step:0.01});
+    const cropHeight=field(cropGrid,'image-crop-height','Height (%)',null,100,{min:0.01,max:100,step:0.01});
+    const actions=el('div');actions.className='small-actions';
+    function button(id,text){const n=el('button',id,text);n.type='button';actions.appendChild(n);return n;}
+    const generate=button('image-generate','Generate candidate'),cancel=button('image-cancel','Cancel / discard candidate'),use=button('image-use','Use editable draft'),clear=button('image-clear','Clear source');
+    panel.appendChild(actions);
+    const progress=el('progress','image-progress');progress.max=1;progress.value=0;progress.hidden=true;progress.setAttribute('aria-label','Approximation work completed');panel.appendChild(progress);
+    const status=el('p','image-status','Choose an image, adjust options, then Generate. Nothing is applied or displayed automatically.');
+    status.className='hint';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.setAttribute('aria-atomic','true');panel.appendChild(status);
+    const resultArea=el('div','image-result');resultArea.hidden=true;
+    const resultSummary=el('p','image-result-summary');resultSummary.className='hint';
+    const resultObjects=el('ol','image-result-objects');resultObjects.className='hint';resultArea.append(resultSummary,resultObjects);panel.appendChild(resultArea);
+    const sourceToggle=el('button','image-toggle-source','Show source thumbnail');sourceToggle.type='button';sourceToggle.setAttribute('aria-expanded','false');sourceToggle.setAttribute('aria-controls','image-source-thumbnail');panel.appendChild(sourceToggle);
+    const sourceCanvas=el('canvas','image-source-thumbnail');sourceCanvas.width=1;sourceCanvas.height=1;sourceCanvas.hidden=true;sourceCanvas.setAttribute('role','img');sourceCanvas.setAttribute('aria-label','Small local source thumbnail; this is the original image, not a generated scene.');panel.appendChild(sourceCanvas);
+    const comparisonHint=el('p',null,'The source stays hidden unless you choose Show source thumbnail. This cancels any candidate; Generate again after viewing. The candidate description lists its shapes and pixel error, not what the picture means. Use editable draft stages shapes only, still hidden; review with Live preview, then Apply if wanted. Clear source removes the thumbnail from this page.');
+    comparisonHint.className='hint';panel.appendChild(comparisonHint);container.appendChild(panel);
+
+    function say(text,error){status.textContent=String(text).slice(0,300);status.className=error?'hint error':'hint';}
+    function refresh(){
+      fileInput.disabled=disposed||intakeActive;
+      generate.disabled=disposed||busy||intakeActive||!source;
+      cancel.disabled=disposed||(!busy&&!intakeActive&&!candidate);
+      use.disabled=disposed||busy||!candidate;
+      clear.disabled=disposed||(!busy&&!intakeActive&&!source&&!candidate);
+      sourceToggle.disabled=disposed||!source;
+    }
+    function hideSource(){
+      sourceCanvas.hidden=true;sourceCanvas.width=1;sourceCanvas.height=1;
+      sourceToggle.textContent='Show source thumbnail';sourceToggle.setAttribute('aria-expanded','false');
+    }
+    function forgetSource(){
+      if(source)source.data.fill(0);
+      source=null;hideSource();sourceSummary.textContent='No image selected.';
+    }
+    function invalidate(reason){
+      generation++;
+      if(timer!==null){root.clearTimeout(timer);timer=null;}
+      if(job){job.cancel();job=null;}
+      busy=false;candidate=null;candidateOptions=null;progress.hidden=true;progress.value=0;
+      resultArea.hidden=true;resultSummary.textContent='';resultObjects.replaceChildren();
+      hideSource();fileInput.value='';refresh();
+      if(reason&&!disposed)say(reason);
+    }
+    function beginChange(reason){onEdit();invalidate(reason);}
+    function readNumber(input){const raw=input.value.trim();return raw===''?NaN:Number(raw);}
+    function options(){
+      return I.canonicalOptions({maxObjects:readNumber(budget),seed:readNumber(seed),palette:palette.value,canvasRatio:ratio.value,crop:{x:readNumber(cropX)/100,y:readNumber(cropY)/100,width:readNumber(cropWidth)/100,height:readNumber(cropHeight)/100}});
+    }
+    function current(token){return !disposed&&token===generation;}
+    function validDimensions(width,height){
+      if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>F.MAX_DIMENSION||height>F.MAX_DIMENSION||width*height>F.MAX_PIXELS)throw Error('Decoded image dimensions must be at most 4096 per side and 8,388,608 pixels total.');
+    }
+    async function selectFile(){
+      if(disposed)return;
+      let file=fileInput.files&&fileInput.files[0],bytes=null,bitmap=null,scratch=null;
+      // Reading and decoding cannot be aborted by a generation token. Keep one
+      // resource lease until the original read/decode has actually settled and
+      // its bitmap is closed. Disabled controls alone do not guard synthetic or
+      // programmatic change events, so reject those while the lease is held.
+      if(intakeActive){
+        beginChange('Previous image intake is still finishing. Its result was cancelled. Wait, then choose the new file again.');
+        file=null;fileInput.value='';return;
+      }
+      beginChange();forgetSource();refresh();const token=generation;
+      if(!file){say('No image selected. Previous source and candidate were cleared.');return;}
+      intakeActive=true;busy=true;refresh();say('Checking the local image before decoding…');
+      try{
+        if(!Number.isInteger(file.size)||file.size<1||file.size>F.MAX_BYTES)throw Error('Choose a PNG or JPEG image no larger than 8 MiB.');
+        if(file.type&&!['image/png','image/jpeg'].includes(file.type))throw Error('Only PNG and JPEG still images are supported.');
+        if(typeof file.arrayBuffer!=='function'||typeof root.createImageBitmap!=='function')throw Error('Local image decoding is unavailable in this browser. No image was converted.');
+        bytes=new Uint8Array(await file.arrayBuffer());
+        if(!current(token))return;
+        if(bytes.byteLength!==file.size)throw Error('Image byte count changed while reading.');
+        const header=F.inspect(bytes);validDimensions(header.width,header.height);
+        if(file.type&&file.type!==header.type)throw Error('The image type does not match its file header.');
+        bytes=null;
+        bitmap=await root.createImageBitmap(file,{imageOrientation:'from-image'});file=null;
+        if(!current(token))return;
+        validDimensions(bitmap.width,bitmap.height);
+        const scale=Math.min(1,128/bitmap.width,128/bitmap.height),width=Math.max(1,Math.floor(bitmap.width*scale)),height=Math.max(1,Math.floor(bitmap.height*scale));
+        if(width>128||height>128||width*height>16384)throw Error('Thumbnail exceeds its processing budget.');
+        scratch=doc.createElement('canvas');scratch.width=width;scratch.height=height;
+        const ctx=scratch.getContext('2d',{willReadFrequently:true});
+        if(!ctx)throw Error('Local image conversion needs a working Canvas 2D context.');
+        ctx.drawImage(bitmap,0,0,width,height);
+        const data=ctx.getImageData(0,0,width,height).data;
+        source=I.validatePixels({width,height,data});
+        sourceSummary.textContent='Local source: '+bitmap.width+' × '+bitmap.height+' oriented pixels; retained thumbnail '+width+' × '+height+'. Source hidden.';
+        say('Local thumbnail ready. Choose Generate to create a candidate; the scene remains unchanged.');
+      }catch(error){
+        if(current(token)){forgetSource();say(error&&error.message||'The local image could not be decoded.',true);}
+      }finally{
+        // No object URL is created. Release the File/raw bytes and decoder buffer.
+        bytes=null;file=null;
+        if(bitmap&&typeof bitmap.close==='function')bitmap.close();
+        bitmap=null;if(scratch){scratch.width=1;scratch.height=1;}scratch=null;
+        // A cancellation can clear busy/results, never this lease. Even a stale
+        // completion must release it here, without replacing the newer status.
+        intakeActive=false;fileInput.value='';
+        if(current(token))busy=false;
+        refresh();
+      }
+    }
+    function describe(plan){
+      const q=plan.quality,a=plan.algorithm;
+      resultSummary.textContent='Approximate candidate: '+plan.objects.length+' of '+a.maxObjects+' items; canvas '+plan.canvas.ratio+'. Algorithm '+a.id+' v'+a.version+', seed '+a.seed+'. Normalized RGB pixel error '+q.finalError.toFixed(6)+' (baseline '+q.initialError.toFixed(6)+'). This is not semantic recognition, a usefulness measure, or evidence of efficacy.';
+      resultObjects.replaceChildren();
+      for(const object of plan.objects)resultObjects.appendChild(el('li',null,object.id+': filled '+object.shape+', center '+object.x+'% / '+object.y+'%, width '+object.size+'%, height '+object.geometry.height+'%, HSL '+object.color.h+'° / '+object.color.s+'% / '+object.color.l+'%.'));
+      if(!plan.objects.length)resultObjects.appendChild(el('li',null,'No shape improves this bounded pixel-error fit. The candidate contains only the dark background.'));
+      resultArea.hidden=false;
+    }
+    function run(){
+      if(disposed)return;
+      beginChange();
+      if(!source){say('Choose a supported image first.',true);return;}
+      let chosen;
+      try{chosen=options();job=I.createJob(source,chosen);}
+      catch(error){say(error.message,true);refresh();return;}
+      const token=generation,fingerprint=JSON.stringify(chosen);
+      busy=true;progress.hidden=false;progress.value=0;refresh();say('Generating a bounded local candidate…');
+      function step(){
+        if(!current(token)||!job)return;
+        timer=null;
+        try{
+          const state=job.step(16);
+          if(!current(token))return;
+          progress.value=state.progress;
+          if(state.status==='complete'){
+            if(JSON.stringify(options())!==fingerprint){invalidate('Options changed. Generate again to review a current candidate.');return;}
+            candidate=I.canonicalPlan(state.result);candidateOptions=fingerprint;job=null;busy=false;
+            describe(candidate);progress.value=1;refresh();
+            say('Candidate complete, not applied. Review its description, then choose Use editable draft if wanted.');
+          }else if(state.status==='running'){
+            say('Generating candidate: '+Math.floor(state.progress*100)+'% of the bounded search budget.');
+            timer=root.setTimeout(step,0);
+          }else invalidate('Conversion cancelled. No candidate was applied.');
+        }catch(error){invalidate();say(error.message||'Conversion could not finish.',true);}
+      }
+      // Even the first search slice yields; no timer has reveal authority.
+      timer=root.setTimeout(step,0);
+    }
+    function useCandidate(){
+      if(disposed||!candidate||busy)return;
+      let scene;
+      try{
+        if(JSON.stringify(options())!==candidateOptions)throw Error('Options changed. Generate again before using this candidate.');
+        scene=I.toScene(candidate,M);
+      }catch(error){beginChange();say(error.message,true);return;}
+      beginChange();
+      try{onUseDraft(scene);say('Editable shapes staged, not applied. The source image is not part of the scene. Use Live preview explicitly to review.');}
+      catch(error){say(error.message||'The candidate could not be staged; the prior scene is unchanged.',true);}
+    }
+    function clearSource(){
+      if(disposed)return;
+      beginChange();forgetSource();
+      for(const [input,value]of optionControls)input.value=value;
+      refresh();say('Source and candidate cleared from this page. Options reset. Existing scene work is unchanged.');
+    }
+    function toggleSource(){
+      if(disposed||!source)return;
+      const wasVisible=!sourceCanvas.hidden;
+      beginChange();
+      if(wasVisible){say('Source thumbnail hidden. Generate again if you want a candidate.');return;}
+      try{
+        sourceCanvas.width=source.width;sourceCanvas.height=source.height;
+        const ctx=sourceCanvas.getContext('2d');
+        if(!ctx)throw Error('Source thumbnail display is unavailable.');
+        const data=ctx.createImageData(source.width,source.height);data.data.set(source.data);ctx.putImageData(data,0,0);
+        sourceCanvas.hidden=false;sourceToggle.textContent='Hide source thumbnail';sourceToggle.setAttribute('aria-expanded','true');
+        say('Source thumbnail shown by request; prior candidate discarded. Generate creates a new candidate and hides this thumbnail.');
+      }catch(error){hideSource();say(error.message,true);}
+    }
+    listen(fileInput,'change',selectFile);
+    for(const [input]of optionControls)listen(input,input.tagName.toLowerCase()==='select'?'change':'input',()=>{if(!disposed)beginChange('Options changed. Generate again; no candidate is applied.');});
+    listen(generate,'click',run);listen(cancel,'click',()=>{if(!disposed)beginChange('Conversion cancelled and candidate discarded. Existing scene work is unchanged.');});
+    listen(use,'click',useCandidate);listen(clear,'click',clearSource);listen(sourceToggle,'click',toggleSource);
+    const lifecycle=()=>{if(!disposed)invalidate('Image work cancelled after a page interruption. Source thumbnail hidden; Generate again when ready.');};
+    listen(doc,'visibilitychange',lifecycle);listen(root,'pagehide',lifecycle);
+    refresh();
+    return Object.freeze({
+      invalidate,
+      clear:clearSource,
+      destroy(){
+        if(disposed)return;
+        invalidate();forgetSource();disposed=true;refresh();
+        for(const [node,type,handler]of listeners)if(typeof node.removeEventListener==='function')node.removeEventListener(type,handler);
+        panel.remove();
+      }
+    });
+  }
+  return Object.freeze({mount});
+}));
+</script>
+<script>/* Optional private, session-only reflections. Custom exploratory categories:
+   not a validated instrument, diagnosis, outcome score, or research service.
+   This module has no display, clock, persistence, network or download authority. */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ImageryJournal = factory();
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const FORMAT = 'imagery-private-journal';
+  const VERSION = 1;
+  const MAX_ENTRIES = 20;
+  const MAX_NOTE_LENGTH = 2000;
+  const MAX_EXPORT_BYTES = 131072;
+  const MAX_EXPOSURE_MS = 3600000;
+  const EXPERIENCES = Object.freeze(['perception', 'afterimage', 'voluntaryImagery', 'nonvisualMemory']);
+  const RESPONSE_VALUES = Object.freeze(['not-asked', 'skipped', 'none', 'uncertain', 'present']);
+  const COMFORT_VALUES = Object.freeze(['not-asked', 'skipped', 'uncertain', 'comfortable', 'mild-discomfort', 'moderate-discomfort', 'severe-discomfort']);
+  const SYMPTOMS = Object.freeze(['eyestrain', 'headache', 'dizzinessNausea', 'distress', 'otherDiscomfort']);
+  const SYMPTOM_VALUES = Object.freeze(['not-asked', 'skipped', 'none', 'pre-existing', 'new-or-worse', 'uncertain']);
+  const STOP_VALUES = Object.freeze(['not-asked', 'skipped', 'uncertain', 'no', 'yes']);
+  const PREFERENCE_VALUES = Object.freeze(['not-asked', 'skipped', 'uncertain', 'disliked', 'neutral', 'liked']);
+  const EASE_VALUES = Object.freeze(['not-asked', 'skipped', 'uncertain', 'difficult', 'neither', 'easy']);
+  const SUBMISSION = Object.freeze({
+    enabled: false,
+    status: 'not-available',
+    prerequisites: Object.freeze([
+      'identified-responsible-operator',
+      'applicable-jurisdictions-and-population',
+      'competent-ethics-determination',
+      'reviewed-protocol-and-statistical-plan',
+      'instrument-rights-and-scoring-review',
+      'privacy-and-security-review',
+      'granular-consent-and-payload-preview',
+      'retention-deletion-and-withdrawal-policy',
+      'incident-and-adverse-experience-handling',
+      'separate-explicit-activation-authorization'
+    ])
+  });
+  function record(value, keys, label) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) ||
+        ![Object.prototype, null].includes(Object.getPrototypeOf(value))) {
+      throw new Error(label + ' must be an ordinary record.');
+    }
+    const own = Reflect.ownKeys(value);
+    if (own.length !== keys.length || own.some(key => typeof key !== 'string' || !keys.includes(key))) {
+      throw new Error(label + ' has missing or unsupported fields.');
+    }
+    const result = Object.create(null);
+    for (const key of keys) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+        throw new Error(label + ' cannot contain accessors.');
+      }
+      result[key] = descriptor.value;
+    }
+    return result;
+  }
+  function choice(value, allowed, label) {
+    if (typeof value !== 'string' || !allowed.includes(value)) throw new Error(label + ' is unsupported.');
+    return value;
+  }
+  function integer(value, min, max, label) {
+    if (!Number.isSafeInteger(value) || value < min || value > max) throw new Error(label + ' is out of range.');
+    return value === 0 ? 0 : value;
+  }
+  function flag(value, label) {
+    if (typeof value !== 'boolean') throw new Error(label + ' must be true or false.');
+    return value;
+  }
+  function freeze(value) {
+    if (value && typeof value === 'object') {
+      for (const key of Object.keys(value)) freeze(value[key]);
+      Object.freeze(value);
+    }
+    return value;
+  }
+  function states(value, keys, allowed, label) {
+    const input = record(value, keys, label), result = {};
+    for (const key of keys) result[key] = choice(input[key], allowed, label + ' ' + key);
+    return result;
+  }
+  function sceneReference(value) {
+    // Inspect the status descriptor without invoking a getter.
+    if (!value || typeof value !== 'object') throw new Error('Scene reference is required.');
+    const descriptor = Object.getOwnPropertyDescriptor(value, 'status');
+    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) throw new Error('Scene reference status is required.');
+    if (descriptor.value === 'unavailable') {
+      record(value, ['status'], 'Scene reference');
+      return {status: 'unavailable'};
+    }
+    const input = record(value, ['status', 'format', 'version', 'sha256', 'rendererVersion'], 'Scene reference');
+    choice(input.status, ['available'], 'Scene reference status');
+    choice(input.format, ['imagery-static-scene'], 'Scene reference format');
+    integer(input.version, 1, 4, 'Scene reference version');
+    if (typeof input.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(input.sha256)) throw new Error('Scene reference requires a lowercase SHA-256 digest.');
+    if (typeof input.rendererVersion !== 'string' || !/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(?:-[a-z0-9.-]{1,24})?$/.test(input.rendererVersion)) throw new Error('Renderer version is unsupported.');
+    // The caller must compute this from its actual frozen scene. A valid digest
+    // string is not proof of equivalent rendering, anonymity or calibrated light.
+    return {status: 'available', format: input.format, version: input.version, sha256: input.sha256, rendererVersion: input.rendererVersion};
+  }
+  function exposureReference(value) {
+    if (!value || typeof value !== 'object') throw new Error('Exposure summary is required.');
+    const descriptor = Object.getOwnPropertyDescriptor(value, 'status');
+    if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) throw new Error('Exposure status is required.');
+    if (descriptor.value === 'unavailable') {
+      record(value, ['status'], 'Exposure summary');
+      return {status: 'unavailable'};
+    }
+    const input = record(value, ['status', 'mode', 'plannedMs', 'visibleMs', 'interrupted', 'endedReason'], 'Exposure summary');
+    choice(input.status, ['available'], 'Exposure status');
+    return {
+      status: 'available',
+      mode: choice(input.mode, ['static', 'items', 'sequence'], 'Exposure mode'),
+      plannedMs: input.plannedMs === null ? null : integer(input.plannedMs, 0, MAX_EXPOSURE_MS, 'Planned duration'),
+      visibleMs: integer(input.visibleMs, 0, MAX_EXPOSURE_MS, 'Visible duration'),
+      interrupted: flag(input.interrupted, 'Interrupted'),
+      endedReason: choice(input.endedReason, ['user-stop', 'completed', 'hidden-tab', 'resize', 'edit', 'technical-failure', 'unknown'], 'End reason')
+    };
+  }
+  function canonicalRecord(value) {
+    const input = record(value, ['scene', 'exposure', 'experiences', 'comfort', 'symptoms', 'stoppedEarly', 'preference', 'easeOfUse', 'note'], 'Reflection');
+    const comfort = states(input.comfort, ['before', 'after'], COMFORT_VALUES, 'Comfort');
+    if (typeof input.note !== 'string' || input.note.length > MAX_NOTE_LENGTH ||
+        /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(input.note)) {
+      throw new Error('Optional note must be at most 2,000 characters without control or direction-override characters.');
+    }
+    return freeze({
+      scene: sceneReference(input.scene),
+      exposure: exposureReference(input.exposure),
+      experiences: states(input.experiences, EXPERIENCES, RESPONSE_VALUES, 'Experience'),
+      comfort,
+      symptoms: states(input.symptoms, SYMPTOMS, SYMPTOM_VALUES, 'Symptom'),
+      stoppedEarly: choice(input.stoppedEarly, STOP_VALUES, 'Early stop'),
+      preference: choice(input.preference, PREFERENCE_VALUES, 'Preference'),
+      easeOfUse: choice(input.easeOfUse, EASE_VALUES, 'Ease of use'),
+      note: input.note
+    });
+  }
+  function emptyRecord() {
+    return canonicalRecord({
+      scene: {status: 'unavailable'},
+      exposure: {status: 'unavailable'},
+      experiences: Object.fromEntries(EXPERIENCES.map(key => [key, 'skipped'])),
+      comfort: {before: 'skipped', after: 'skipped'},
+      symptoms: Object.fromEntries(SYMPTOMS.map(key => [key, 'skipped'])),
+      stoppedEarly: 'skipped',
+      preference: 'skipped',
+      easeOfUse: 'skipped',
+      note: ''
+    });
+  }
+  function denseIds(value) {
+    if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype || !value.length || value.length > MAX_ENTRIES) {
+      throw new Error('Select between one and twenty journal entries.');
+    }
+    const own = Reflect.ownKeys(value);
+    if (own.length !== value.length + 1 || own.some(key => key !== 'length' && (typeof key !== 'string' || !/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= value.length))) {
+      throw new Error('Entry selection must be a dense ordinary array.');
+    }
+    const result = [], seen = new Set();
+    for (let index = 0; index < value.length; index++) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) throw new Error('Entry selection cannot contain holes or accessors.');
+      const id = descriptor.value;
+      if (typeof id !== 'string' || !/^entry-[1-9][0-9]{0,8}$/.test(id) || seen.has(id)) throw new Error('Entry selection has an invalid or repeated identifier.');
+      seen.add(id); result.push(id);
+    }
+    return result;
+  }
+  function byteLength(text) {
+    // Export length bound is independent of whether TextEncoder is available.
+    let bytes = 0;
+    for (const character of text) {
+      const code = character.codePointAt(0);
+      bytes += code <= 0x7f ? 1 : code <= 0x7ff ? 2 : code <= 0xffff ? 3 : 4;
+    }
+    return bytes;
+  }
+  function createJournal() {
+    let entries = [], nextId = 1, revision = 0;
+    const previews = new WeakMap();
+    function state() { return freeze({revision, entries: entries.slice()}); }
+    return Object.freeze({
+      getState: state,
+      add(value) {
+        if (entries.length >= MAX_ENTRIES) throw new Error('This session holds at most twenty reflections. Export or delete entries before adding another.');
+        if (nextId > 999999999) throw new Error('Session identifier capacity reached.');
+        const reflection = canonicalRecord(value);
+        const entry = freeze({id: 'entry-' + nextId, reflection});
+        entries.push(entry); nextId++; revision++;
+        return entry;
+      },
+      remove(id) {
+        if (typeof id !== 'string' || !entries.some(entry => entry.id === id)) throw new Error('Choose an existing journal entry to delete.');
+        entries = entries.filter(entry => entry.id !== id); revision++;
+        return state();
+      },
+      clear() { entries = []; revision++; return state(); },
+      previewExport(ids) {
+        const selection = denseIds(ids);
+        const selected = selection.map(id => {
+          const entry = entries.find(item => item.id === id);
+          if (!entry) throw new Error('A selected journal entry is no longer available.');
+          return entry;
+        });
+        const document = freeze({format: FORMAT, version: VERSION, purpose: 'private-exploratory-reflection', entries: selected});
+        const text = JSON.stringify(document, null, 2) + '\n';
+        if (byteLength(text) > MAX_EXPORT_BYTES) throw new Error('Selected reflection export exceeds its resource bound.');
+        const preview = freeze({revision, document, text});
+        previews.set(preview, revision);
+        return preview;
+      },
+      confirmExport(preview, include) {
+        if (include !== true) throw new Error('Explicitly include the selected reflections after reviewing their exact export.');
+        if (!preview || typeof preview !== 'object' || !previews.has(preview) || previews.get(preview) !== revision) {
+          throw new Error('The journal changed or this preview is invalid. Review a new export.');
+        }
+        // Consume the preview so an old checkbox cannot silently authorize a
+        // second export. The caller handles an explicitly requested download.
+        previews.delete(preview);
+        return preview.text;
+      }
+    });
+  }
+  return Object.freeze({
+    FORMAT, VERSION, MAX_ENTRIES, MAX_NOTE_LENGTH, MAX_EXPORT_BYTES, MAX_EXPOSURE_MS,
+    EXPERIENCES, RESPONSE_VALUES, COMFORT_VALUES, SYMPTOMS, SYMPTOM_VALUES, STOP_VALUES, PREFERENCE_VALUES, EASE_VALUES,
+    SUBMISSION, canonicalRecord, emptyRecord, createJournal
+  });
+}));
+</script>
+<script>/* Optional private reflection controls. Session memory only: no scene, clock,
+   persistence or submission authority. All user content is rendered as text. */
+(function (root) {
+  'use strict';
+  let nextMount = 0;
+  function mount(container, options = {}) {
+    const J = root.ImageryJournal;
+    if (!J || !container || typeof container.appendChild !== 'function') {
+      throw new Error('A journal model and container are required.');
+    }
+    const document = container.ownerDocument || root.document;
+    const onEdit = typeof options.onEdit === 'function' ? options.onEdit : function () {};
+    const journal = J.createJournal(), selected = new Set(), listeners = new Set(), urls = new Set(), timers = new Set();
+    const prefix = nextMount++ === 0 ? 'journal-' : 'journal-' + nextMount + '-';
+    let preview = null, editRevision = 0, previewRevision = -1, destroyed = false;
+    const fields = Object.create(null);
+    function node(tag, text, className) {
+      const element = document.createElement(tag);
+      if (text !== undefined) element.textContent = text;
+      if (className) element.className = className;
+      return element;
+    }
+    function identify(element, name) { element.id = prefix + name; return element; }
+    function listen(element, type, callback) {
+      const handler = event => { if (!destroyed) callback(event); };
+      element.addEventListener(type, handler);
+      listeners.add([element, type, handler]);
+    }
+    function button(name, text, callback) {
+      const element = identify(node('button', text), name);
+      element.type = 'button';
+      listen(element, 'click', callback);
+      return element;
+    }
+    function paragraph(parent, text) { parent.appendChild(node('p', text, 'hint')); }
+    function labelledCheckbox(parent, name, text) {
+      const label = node('label', undefined, 'check-label');
+      const input = identify(node('input'), name);
+      input.type = 'checkbox'; input.checked = false;
+      label.htmlFor = input.id;
+      label.appendChild(input); label.appendChild(node('span', text));
+      parent.appendChild(label);
+      return input;
+    }
+    const shell = node('details', undefined, 'journal-card notes-card');
+    shell.appendChild(node('summary', 'Private session journal'));
+    const content = node('div', undefined, 'journal-content notes-content');
+    shell.appendChild(content); container.appendChild(shell);
+    paragraph(content, 'Optional, private reflections for this open page only. The editor works without them. Nothing is recorded until you choose Add reflection.');
+    paragraph(content, 'No autosave or transmission. Closing or refreshing this page can lose every unexported reflection. Clear removes this page’s records, not any files you previously downloaded.');
+    const enabled = labelledCheckbox(content, 'enable', 'Enable optional session reflections');
+    paragraph(content, 'Turning this off discards unfinished answers, but keeps added reflections until you delete or clear them.');
+    const questions = identify(node('fieldset', undefined, 'group journal-questions'), 'questions');
+    questions.appendChild(node('legend', 'Optional reflection'));
+    questions.hidden = true; questions.disabled = true; content.appendChild(questions);
+    paragraph(questions, 'These custom exploratory descriptions are not a validated questionnaire, diagnosis or imagery-improvement score. Every answer may be skipped. Do not repeat a display to answer.');
+    paragraph(questions, 'Scene identity and exposure timing are unavailable in this journal. No timestamp, original picture, scene content or device details are recorded.');
+    const labels = {
+      'not-asked': 'Not asked', skipped: 'Skipped', none: 'None', uncertain: 'Uncertain',
+      present: 'Present', comfortable: 'Comfortable', 'mild-discomfort': 'Mild discomfort',
+      'moderate-discomfort': 'Moderate discomfort', 'severe-discomfort': 'Severe discomfort',
+      'pre-existing': 'Already present', 'new-or-worse': 'New or worse', no: 'No', yes: 'Yes',
+      disliked: 'Disliked', neutral: 'Neutral', liked: 'Liked', difficult: 'Difficult',
+      neither: 'Neither difficult nor easy', easy: 'Easy'
+    };
+    function select(parent, name, labelText, values) {
+      const wrapper = node('div', undefined, 'journal-field');
+      const label = node('label', labelText);
+      const input = identify(node('select'), name);
+      label.htmlFor = input.id;
+      for (const value of values) {
+        const option = node('option', labels[value]); option.value = value;
+        input.appendChild(option);
+      }
+      input.value = 'skipped'; fields[name] = input;
+      listen(input, 'change', () => edit());
+      wrapper.appendChild(label); wrapper.appendChild(input); parent.appendChild(wrapper);
+    }
+    const comfort = node('div', undefined, 'journal-grid control-grid');
+    questions.appendChild(comfort);
+    select(comfort, 'before', 'Comfort before viewing (optional)', J.COMFORT_VALUES);
+    select(comfort, 'after', 'Comfort after viewing (optional)', J.COMFORT_VALUES);
+    const experiences = [
+      ['perception', 'External perception: seeing the displayed design'],
+      ['afterimage', 'Afterimage: visual persistence after viewing'],
+      ['voluntaryImagery', 'Voluntary imagery: deliberately imagining without the design'],
+      ['nonvisualMemory', 'Nonvisual memory: remembering without a visual image']
+    ];
+    for (const [name, label] of experiences) select(questions, name, label, J.RESPONSE_VALUES);
+    paragraph(questions, 'These experiences are separate. Reporting one does not establish another.');
+    const symptoms = node('fieldset', undefined, 'group');
+    symptoms.appendChild(node('legend', 'Optional discomfort descriptions'));
+    questions.appendChild(symptoms);
+    for (const [name, label] of [
+      ['eyestrain', 'Eyestrain'], ['headache', 'Headache'], ['dizzinessNausea', 'Dizziness or nausea'],
+      ['distress', 'Distress'], ['otherDiscomfort', 'Other discomfort']
+    ]) select(symptoms, name, label, J.SYMPTOM_VALUES);
+    paragraph(symptoms, 'These descriptions do not identify a cause. Hide, End and Escape remain available without answering.');
+    select(questions, 'stoppedEarly', 'Stopped earlier than intended', J.STOP_VALUES);
+    select(questions, 'preference', 'Preference for this experience', J.PREFERENCE_VALUES);
+    select(questions, 'easeOfUse', 'Ease of using the editor', J.EASE_VALUES);
+    const noteLabel = node('label', 'Optional note (up to 2,000 characters)');
+    const note = identify(node('textarea'), 'note');
+    noteLabel.htmlFor = note.id; note.maxLength = J.MAX_NOTE_LENGTH;
+    note.autocomplete = 'off'; note.spellcheck = false; note.value = '';
+    note.setAttribute('aria-describedby', prefix + 'note-hint');
+    fields.note = note;
+    questions.appendChild(noteLabel); questions.appendChild(note);
+    const noteHint = identify(node('p', 'Only include information you want in this temporary journal. Notes remain plain text.', 'hint'), 'note-hint');
+    questions.appendChild(noteHint);
+    listen(note, 'input', () => edit());
+    const add = button('add', 'Add reflection to session', addReflection);
+    questions.appendChild(add);
+    const recordsHeading = identify(node('h3', 'Session reflections'), 'records-title');
+    content.appendChild(recordsHeading);
+    const count = identify(node('p', 'No reflections added. Maximum 20 per session.', 'hint'), 'count');
+    content.appendChild(count);
+    const entries = identify(node('ol', undefined, 'journal-entries'), 'entries');
+    entries.setAttribute('aria-labelledby', recordsHeading.id); content.appendChild(entries);
+    const clear = button('clear', 'Clear session journal', clearJournal);
+    clear.disabled = true; content.appendChild(clear);
+    const exportGroup = node('fieldset', undefined, 'group journal-export');
+    exportGroup.appendChild(node('legend', 'Separate journal download'));
+    paragraph(exportGroup, 'Select reflections above, then inspect their exact JSON. Only selected entries are included. Scene and sequence downloads do not include this journal. Downloaded files may contain private notes and are not anonymous.');
+    const makePreview = button('preview', 'Preview selected journal export', showPreview);
+    makePreview.disabled = true; exportGroup.appendChild(makePreview);
+    const previewPanel = identify(node('div'), 'preview-panel');
+    previewPanel.hidden = true;
+    const previewTitle = identify(node('h4', 'Exact selected export'), 'preview-title');
+    previewPanel.appendChild(previewTitle);
+    const previewText = identify(node('pre', ''), 'preview-text');
+    previewText.tabIndex = 0; previewText.setAttribute('aria-labelledby', previewTitle.id);
+    previewPanel.appendChild(previewText); exportGroup.appendChild(previewPanel);
+    const approval = labelledCheckbox(exportGroup, 'approve', 'I reviewed this exact preview and choose to download only these selected reflections.');
+    approval.disabled = true;
+    const download = button('download', 'Download approved journal JSON', downloadJournal);
+    download.disabled = true; exportGroup.appendChild(download); content.appendChild(exportGroup);
+    const status = identify(node('p', 'Journal is optional and off. No reflections have been recorded.', 'hint journal-status'), 'status');
+    status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite'); status.setAttribute('aria-atomic', 'true');
+    status.tabIndex = -1;
+    content.appendChild(status);
+    const research = identify(node('fieldset', undefined, 'group journal-research'), 'research');
+    research.disabled = true;
+    research.appendChild(node('legend', 'Research submission is not available'));
+    paragraph(research, 'Your local journal is not sent anywhere. There is no submission endpoint, upload queue or working Send control. Enabling reflections or approving a local download is not consent to research.');
+    paragraph(research, 'Future research would require a responsible operator, applicable ethics and privacy review, instrument rights, a reviewed protocol, retention and withdrawal rules, security review and separate explicit activation.');
+    paragraph(research, 'Any future consent would need separate choices for one report, linking reports over time and recontact. Pseudonymous records are not necessarily anonymous; anonymous aggregation may prevent deleting an individual report.');
+    content.appendChild(research);
+
+    function say(text) { status.textContent = text; }
+    function invalidateExport() {
+      editRevision++; preview = null; previewRevision = -1;
+      approval.checked = false; approval.disabled = true; download.disabled = true;
+      previewPanel.hidden = true; previewText.textContent = '';
+    }
+    function edit() {
+      invalidateExport();
+      onEdit();
+      refreshControls();
+    }
+    function resetAnswers() {
+      for (const [name, input] of Object.entries(fields)) input.value = name === 'note' ? '' : 'skipped';
+    }
+    function readReflection() {
+      return {
+        scene: {status: 'unavailable'}, exposure: {status: 'unavailable'},
+        experiences: Object.fromEntries(J.EXPERIENCES.map(name => [name, fields[name].value])),
+        comfort: {before: fields.before.value, after: fields.after.value},
+        symptoms: Object.fromEntries(J.SYMPTOMS.map(name => [name, fields[name].value])),
+        stoppedEarly: fields.stoppedEarly.value, preference: fields.preference.value,
+        easeOfUse: fields.easeOfUse.value, note: note.value
+      };
+    }
+    function refreshControls() {
+      const length = journal.getState().entries.length;
+      add.disabled = !enabled.checked || length >= J.MAX_ENTRIES;
+      clear.disabled = length === 0 && Object.entries(fields).every(([name, input]) => input.value === (name === 'note' ? '' : 'skipped'));
+      makePreview.disabled = selected.size === 0;
+      count.textContent = length === 0 ? 'No reflections added. Maximum 20 per session.' :
+        length + ' of 20 session reflections. ' + selected.size + ' selected for export.';
+    }
+    function renderEntries(focusIndex) {
+      for (const listener of listeners) {
+        const [element, type, handler] = listener;
+        if (entries.contains(element)) {
+          element.removeEventListener(type, handler); listeners.delete(listener);
+        }
+      }
+      entries.replaceChildren();
+      const focusTargets = [];
+      for (const entry of journal.getState().entries) {
+        const number = entry.id.slice(6), row = node('li', undefined, 'journal-entry');
+        const include = labelledCheckbox(row, 'include-' + entry.id, 'Include reflection ' + number + ' in export');
+        include.checked = selected.has(entry.id);
+        listen(include, 'change', () => {
+          edit();
+          if (include.checked) selected.add(entry.id); else selected.delete(entry.id);
+          refreshControls();
+          say(selected.size + ' reflection' + (selected.size === 1 ? '' : 's') + ' selected. Review a new preview before downloading.');
+        });
+        const detail = node('details'), summary = node('summary', 'Review reflection ' + number);
+        detail.appendChild(summary);
+        detail.appendChild(node('pre', JSON.stringify(entry.reflection, null, 2)));
+        row.appendChild(detail);
+        const remove = button('delete-' + entry.id, 'Delete reflection ' + number, () => {
+          edit();
+          const index = journal.getState().entries.findIndex(item => item.id === entry.id);
+          try {
+            journal.remove(entry.id); selected.delete(entry.id); renderEntries(index);
+            say('Reflection ' + number + ' deleted from this page. Previously downloaded files are unchanged.');
+          } catch (error) { say(error.message); }
+        });
+        row.appendChild(remove); entries.appendChild(row); focusTargets.push(remove);
+      }
+      refreshControls();
+      if (focusIndex !== undefined) (focusTargets[Math.min(focusIndex, focusTargets.length - 1)] || enabled).focus();
+    }
+    function addReflection() {
+      if (!enabled.checked) return;
+      edit();
+      try {
+        journal.add(readReflection()); resetAnswers(); renderEntries();
+        say(journal.getState().entries.length >= J.MAX_ENTRIES ?
+          'Reflection added. The 20-reflection session limit is reached. Delete entries to add more.' :
+          'Reflection added only to this page. Answers reset to skipped; no export selection was added.');
+        if (journal.getState().entries.length >= J.MAX_ENTRIES) status.focus();
+      } catch (error) { say(error.message); }
+    }
+    function clearJournal() {
+      edit(); journal.clear(); selected.clear(); resetAnswers(); renderEntries();
+      releaseDownloads(); enabled.focus();
+      say('Session journal and unfinished answers cleared. Previously downloaded files are unchanged.');
+    }
+    function showPreview() {
+      edit();
+      try {
+        const ids = journal.getState().entries.filter(entry => selected.has(entry.id)).map(entry => entry.id);
+        preview = journal.previewExport(ids); previewRevision = editRevision;
+        previewText.textContent = preview.text; previewPanel.hidden = false;
+        approval.disabled = false; approval.checked = false; download.disabled = true;
+        say('Exact export preview ready. Review it, then separately approve this local download.');
+      } catch (error) { say(error.message); }
+    }
+    function revoke(url) {
+      if (!urls.delete(url)) return;
+      try { root.URL.revokeObjectURL(url); } catch (_) { /* No reveal or retry authority. */ }
+    }
+    function releaseDownloads() {
+      for (const timer of timers) root.clearTimeout(timer);
+      timers.clear(); for (const url of Array.from(urls)) revoke(url);
+    }
+    function downloadJournal() {
+      if (!preview || previewRevision !== editRevision || approval.checked !== true || approval.disabled) {
+        invalidateExport(); say('Review a current export preview and explicitly approve it before downloading.'); return;
+      }
+      let url, anchor;
+      try {
+        if (typeof root.Blob !== 'function' || !root.URL || typeof root.URL.createObjectURL !== 'function' ||
+            typeof root.URL.revokeObjectURL !== 'function') throw new Error('Local file download is unavailable in this browser.');
+        const text = journal.confirmExport(preview, true);
+        url = root.URL.createObjectURL(new root.Blob([text], {type: 'application/json'}));
+        urls.add(url);
+        anchor = node('a'); anchor.href = url; anchor.download = 'imagery-field-journal-v1.json'; anchor.hidden = true;
+        document.body.appendChild(anchor); anchor.click();
+        say('Local download requested. Check your browser downloads. Another download requires a new preview and approval.');
+      } catch (_) {
+        say('The local download could not be started. Records remain in this page; review a new preview before retrying.');
+      } finally {
+        if (anchor) anchor.remove();
+        invalidateExport();
+        if (url) {
+          const timer = root.setTimeout(() => { timers.delete(timer); revoke(url); }, 1000);
+          timers.add(timer);
+        }
+      }
+    }
+    listen(enabled, 'change', () => {
+      edit(); questions.hidden = !enabled.checked; questions.disabled = !enabled.checked;
+      if (!enabled.checked) resetAnswers();
+      refreshControls();
+      say(enabled.checked ? 'Optional reflections enabled. Nothing is recorded until Add reflection.' :
+        'Reflections turned off; unfinished answers discarded. Added entries remain available to delete, clear or export.');
+    });
+    listen(approval, 'change', () => {
+      if (approval.disabled || !preview || previewRevision !== editRevision) {
+        invalidateExport(); return;
+      }
+      download.disabled = !approval.checked;
+      say(approval.checked ? 'This exact local export is approved. Choose Download to request the file.' :
+        'Export approval removed. No file has been requested.');
+    });
+    refreshControls();
+    return Object.freeze({
+      getState: journal.getState,
+      invalidateExport() {
+        if (destroyed) return;
+        const hadPreview = preview !== null;
+        invalidateExport();
+        if (hadPreview) say('The export preview was cleared by a change. Review and approve a new preview before downloading.');
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true; invalidateExport(); resetAnswers(); selected.clear(); journal.clear();
+        for (const [element, type, handler] of listeners) element.removeEventListener(type, handler);
+        listeners.clear();
+        releaseDownloads();
+        entries.replaceChildren(); shell.remove();
+      }
+    });
+  }
+  root.ImageryJournalUI = Object.freeze({mount});
+}(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
 <script>/* Local scene editor and explicit finite, single-pass sequence presentation.
    One visibility gate. Live manual draft edits preserve an explicitly visible field; interruptions conceal. */
 (function () {
   'use strict';
-  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor;
+  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor,G=window.ImageryGeometry,P=window.ImageryPresets;
   const $=id=>document.getElementById(id);
   let lastGateClock=0,gateClockFault=false;
   function gateClock(){
@@ -1028,6 +2186,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   offscreen.width=1;offscreen.height=1;
   let context=null,offscreenContext=null;
   try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:true});}catch(e){/* Data controls remain available. */}
+  let journalUI=null,imageUI=null,imageReplacement=null;
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
   let gesture=null,moveUndo=[],moveRedo=[],lastHit=null,moveStaging=false;
   let working=controller.getState().current;
@@ -1042,6 +2201,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   const sliderIDs=colorPrefixes.flatMap(prefix=>['hue','saturation','lightness'].map(channel=>prefix+'-'+channel)).concat(['outline-width','shadow-offset-x','shadow-offset-y','shadow-blur']);
   const objectFields=['shape','position-x','position-y','size','object-hue','object-saturation','object-lightness','outline-enabled','outline-width','outline-hue','outline-saturation','outline-lightness','shadow-enabled','shadow-offset-x','shadow-offset-y','shadow-blur','shadow-hue','shadow-saturation','shadow-lightness','item-start','item-fade-in','item-hold','item-fade-out','pulse-enabled','pulse-min-opacity'];
   const fieldIDs=['scene-name',...objectFields,'background-hue','background-saturation','background-lightness','pulse-period'];
+  const geometryFields=['geometry-height','geometry-rotation','geometry-fill','geometry-sides','geometry-inner','geometry-corner'];
   const rawPrecision=new Map();
   const categories=Object.freeze(['unsure','none','external-perception','residual-aftereffect','voluntary-imagery','conceptual-knowledge','mixed']);
   const copy=value=>JSON.parse(JSON.stringify(value));
@@ -1085,13 +2245,20 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     ctx.lineTo(left,bottom+width);ctx.arc(left,bottom,width,Math.PI/2,Math.PI);
     ctx.lineTo(left-width,top);ctx.arc(left,top,width,Math.PI,Math.PI*1.5);ctx.closePath();
   }
+  function authoredOuterSilhouette(ctx,item,width){
+    // Nonzero-winding union: body plus edge rectangles and vertex disks.
+    // One fill casts one solid shadow, including concave filled shapes.
+    let points=item.points;const area=points.reduce((sum,p,i)=>{const q=points[(i+1)%points.length];return sum+p[0]*q[1]-q[0]*p[1];},0);if(area<0)points=points.slice().reverse();
+    ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();
+    points.forEach((a,i)=>{const b=points[(i+1)%points.length],dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);if(length){const nx=-dy*width/length,ny=dx*width/length;ctx.moveTo(a[0]-nx,a[1]-ny);ctx.lineTo(b[0]-nx,b[1]-ny);ctx.lineTo(b[0]+nx,b[1]+ny);ctx.lineTo(a[0]+nx,a[1]+ny);ctx.closePath();}ctx.moveTo(a[0]+width,a[1]);ctx.arc(a[0],a[1],width,0,Math.PI*2);ctx.closePath();});
+  }
   function paintObject(ctx,item,o,d,ratio){
     const unit=Math.min(d.width,d.height)/100;
     ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
     if(o.shadow.enabled){ctx.shadowColor=M.colorCSS(o.shadow.color);ctx.shadowBlur=o.shadow.blur*unit*ratio;ctx.shadowOffsetX=o.shadow.offsetX*unit*ratio;ctx.shadowOffsetY=o.shadow.offsetY*unit*ratio;}
     const filled=item.kind==='dot'||item.filled;
     if(o.outline.enabled){
-      if(filled){filledOutlinePath(ctx,item,o.outline.width*unit);ctx.fillStyle=M.colorCSS(o.outline.color);ctx.fill();}
+      if(filled){if(o.geometry){authoredOuterSilhouette(ctx,item,o.outline.width*unit);ctx.fillStyle=M.colorCSS(o.outline.color);ctx.fill();}else{filledOutlinePath(ctx,item,o.outline.width*unit);ctx.fillStyle=M.colorCSS(o.outline.color);ctx.fill();}}
       else{shapePath(ctx,item);ctx.strokeStyle=M.colorCSS(o.outline.color);ctx.lineWidth=item.lineWidth+2*o.outline.width*unit;ctx.stroke();}
       ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
     }
@@ -1099,7 +2266,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   function paintScene(ctx,target,documentValue,d,frame){
     const accepted=M.canonicalScene(documentValue);resetContext(ctx);
-    ctx.fillStyle=M.colorCSS(accepted.scene.background);ctx.fillRect(0,0,target.width,target.height);
+    const content=M.contentRect(accepted,d.width,d.height);
+    ctx.fillStyle='#000';ctx.fillRect(0,0,target.width,target.height);
+    ctx.fillStyle=M.colorCSS(accepted.scene.background);ctx.fillRect(content.x*target.width/d.width,content.y*target.height/d.height,content.width*target.width/d.width,content.height*target.height/d.height);
     const ratio=target.width/d.width;
     ctx.setTransform(ratio,0,0,target.height/d.height,0,0);ctx.lineJoin='round';
     const alphas=frame?new Map(frame.items.map(item=>[item.id,item.alpha])):null;
@@ -1112,16 +2281,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         // opacity once. Reuse the existing second canvas, never a third buffer.
         resetContext(offscreenContext);offscreenContext.clearRect(0,0,offscreen.width,offscreen.height);
         offscreenContext.setTransform(offscreen.width/d.width,0,0,offscreen.height/d.height,0,0);offscreenContext.lineJoin='round';
-        paintObject(offscreenContext,item,o,d,offscreen.width/d.width);resetContext(offscreenContext);
+        paintObject(offscreenContext,item,o,content,offscreen.width/d.width);resetContext(offscreenContext);
         resetContext(ctx);ctx.globalAlpha=alpha;ctx.drawImage(offscreen,0,0);resetContext(ctx);
         ctx.setTransform(ratio,0,0,target.height/d.height,0,0);ctx.lineJoin='round';
-      }else paintObject(ctx,item,o,d,ratio);
+      }else paintObject(ctx,item,o,content,ratio);
     });
     resetContext(ctx);
   }
   function stepScene(index){
     const step=sequence.sequence.steps[index];
-    return M.canonicalScene({format:M.FORMAT,version:M.VERSION,sampler:M.SAMPLER,scene:{name:step.name,background:sequence.sequence.background,pulsePeriodMs:step.pulsePeriodMs,objects:step.objects}});
+    const authored=sequence.version===S.AUTHORED_VERSION;
+    return M.canonicalScene({format:M.FORMAT,version:authored?M.AUTHORED_VERSION:M.VERSION,sampler:authored?M.AUTHORED_SAMPLER:M.SAMPLER,scene:{name:step.name,background:sequence.sequence.background,pulsePeriodMs:step.pulsePeriodMs,objects:step.objects,...(authored?{canvas:step.canvas}:{})}});
   }
   function draw(state){
     const d=prepareBuffers();if(!context)return false;
@@ -1205,9 +2375,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('place-object').textContent=placing?'Cancel placement':'Place on field';
     canvas.setAttribute('tabindex',!full&&(placing||(isLive()&&section==='scene'))?'0':'-1');
     canvas.className=placing?'placing':isLive()&&section==='scene'&&!full?'direct-edit'+(gesture&&gesture.moved?' dragging':''):'';
+    $('undo-image-replacement').disabled=!imageReplacement;
     $('undo-move').disabled=!moveUndo.length;$('redo-move').disabled=!moveRedo.length;
     $('cycle-overlap').disabled=!lastHit||lastHit.ids.length<2;
-    ['nudge-left','nudge-right','nudge-up','nudge-down'].forEach(id=>{$(id).disabled=!selected();});
+    ['nudge-left','nudge-right','nudge-up','nudge-down','layer-back','layer-front'].forEach(id=>{$(id).disabled=!selected();});
     $('editor-panel').hidden=!editorOpen;
     $('editor-toggle').setAttribute('aria-expanded',String(editorOpen));
     $('editor-toggle').textContent=editorOpen?'Close editor':'Open editor';
@@ -1227,7 +2398,14 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('object-select').value=selectedId||'';$('object-select').disabled=!working.scene.objects.length;
   }
   function fillSelected(){
-    const o=selected();
+    const o=selected(),authored=working.version===M.AUTHORED_VERSION;
+    ['shape','add-shape'].forEach(id=>{const value=$(id).value;$(id).replaceChildren();(authored?G.SHAPES:M.SHAPES).forEach(shape=>{const opt=document.createElement('option');opt.value=shape;opt.textContent=shape;$(id).appendChild(opt);});if((authored?G.SHAPES:M.SHAPES).includes(value))$(id).value=value;});
+    $('canvas-ratio').disabled=!authored;$('canvas-ratio').value=authored?working.scene.canvas.ratio:'1:1';
+    $('canvas-mode-hint').textContent=authored?'Fixed-ratio v4 draft. Black margins are outside the authored canvas. Apply commits this format for download.':'Legacy viewport scene. Conversion is explicit and may change proportions; review before Apply.';
+    $('authored-geometry').hidden=!authored;
+    geometryFields.forEach(id=>$(id).disabled=!authored||!o);
+    if(authored&&o){const g=o.geometry;$('geometry-height').value=String(g.height);$('geometry-rotation').value=String(g.rotation);$('geometry-fill').value=g.fill?'filled':'outline';$('geometry-sides').value=String(g.sides||5);$('geometry-inner').value=String(g.innerRatio||0.5);$('geometry-corner').value=String(g.cornerRadius??0.2);$('geometry-height').disabled=['dot','pixel','circle','square'].includes(o.shape);$('geometry-fill').disabled=['dot','pixel'].includes(o.shape);$('geometry-sides').disabled=!['polygon','star'].includes(o.shape);$('geometry-sides').max=o.shape==='star'?'16':'32';$('geometry-inner').disabled=o.shape!=='star';$('geometry-corner').disabled=o.shape!=='rounded-rectangle';}
+
     [...objectFields,'place-object','delete-object','duplicate-object','item-after-previous'].forEach(id=>{$(id).disabled=!o;});
     if(o){
       $('shape').value=o.shape;$('position-x').value=String(o.x);$('position-y').value=String(o.y);$('size').value=String(o.size);
@@ -1257,6 +2435,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(o){o.shape=$('shape').value;o.x=number('position-x');o.y=number('position-y');o.size=number('size');o.color={h:number('object-hue'),s:number('object-saturation'),l:number('object-lightness')};
       o.outline={enabled:$('outline-enabled').checked,width:number('outline-width'),color:{h:number('outline-hue'),s:number('outline-saturation'),l:number('outline-lightness')}};
       o.shadow={enabled:$('shadow-enabled').checked,offsetX:number('shadow-offset-x'),offsetY:number('shadow-offset-y'),blur:number('shadow-blur'),color:{h:number('shadow-hue'),s:number('shadow-saturation'),l:number('shadow-lightness')}};
+      if(next.version===M.AUTHORED_VERSION)o.geometry={height:['dot','pixel','circle','square'].includes(o.shape)?o.size:number('geometry-height'),rotation:number('geometry-rotation'),fill:['dot','pixel'].includes(o.shape)||$('geometry-fill').value==='filled',...(['polygon','star'].includes(o.shape)?{sides:number('geometry-sides')}:{}),...(o.shape==='star'?{innerRatio:number('geometry-inner')}:{}),...(o.shape==='rounded-rectangle'?{cornerRadius:number('geometry-corner')}:{})};
       o.timing={startMs:milliseconds('item-start'),fadeInMs:milliseconds('item-fade-in'),holdMs:milliseconds('item-hold'),fadeOutMs:milliseconds('item-fade-out'),pulse:{enabled:$('pulse-enabled').value==='pulse',minOpacity:number('pulse-min-opacity')/100}};
     }
     return next;
@@ -1264,6 +2443,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
   function isLive(){return displayKind==='live'&&controller.getState().visible;}
   function beginManualEdit(){
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();
     cancelDirectGesture();
     if(isLive())controller.invalidateImport();
     else if(controller.getState().visible)conceal();
@@ -1279,12 +2459,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   function edited(event){
     beginManualEdit();
+    if(event.target.id==='size'&&working.version===M.AUTHORED_VERSION&&['dot','pixel','circle','square'].includes($('shape').value))$('geometry-height').value=$('size').value;
     if(event.target.id==='shape'){
       const max=$('shape').value==='dot'||$('shape').value==='pixel'?8:28;$('size').max=String(max);if(number('size')>max)$('size').value=String(max);
     }
-    working=readFields();updateObjectList();stageWorking('Changes staged. Choose Resume live preview to see this draft immediately.');
+    working=readFields();if(event.target.id==='shape')fillSelected();updateObjectList();stageWorking('Changes staged. Choose Resume live preview to see this draft immediately.');
   }
-  fieldIDs.forEach(id=>$(id).addEventListener(id.endsWith('-enabled')?'change':'input',event=>{if(sliderIDs.includes(id))rawPrecision.delete(id);edited(event);}));
+  fieldIDs.concat(geometryFields).forEach(id=>$(id).addEventListener(id.endsWith('-enabled')?'change':'input',event=>{if(sliderIDs.includes(id))rawPrecision.delete(id);edited(event);}));
   sliderIDs.forEach(id=>{
     const range=$(id),numeric=$(id+'-value');
     numeric.addEventListener('input',()=>{
@@ -1309,11 +2490,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const checked=M.validateScene(working);
     if(!checked.ok){render();say('Fix the staged fields before adding an object. '+checked.error,true);return;}
     if(working.scene.objects.length>=M.MAX_OBJECTS){render();say('This prototype supports up to 12 objects.',true);return;}
-    const shape=$('add-shape').value;if(!M.SHAPES.includes(shape)){render();say('Choose one of the listed object shapes.',true);return;}
+    const shape=$('add-shape').value;if(!(working.version===M.AUTHORED_VERSION?G.SHAPES:M.SHAPES).includes(shape)){render();say('Choose one of the listed object shapes.',true);return;}
     let n=1;while(working.scene.objects.some(o=>o.id==='object-'+n))n++;
-    const o=M.defaultObject('object-'+n,shape);
+    const o=working.version===M.AUTHORED_VERSION?M.defaultAuthoredObject('object-'+n,shape):M.defaultObject('object-'+n,shape);
     working.scene.objects.push(o);selectedId=o.id;fillSelected();stageWorking('New '+shape+' staged at the center. Set its position or choose Place on field.');
   });
+  function reorderObject(direction){beginManualEdit();try{working=M.canonicalScene(readFields());const index=working.scene.objects.findIndex(o=>o.id===selectedId),next=index+direction;if(index<0||next<0||next>=working.scene.objects.length){render();say('This item is already at that edge of the layer order.');return;}[working.scene.objects[index],working.scene.objects[next]]=[working.scene.objects[next],working.scene.objects[index]];fillSelected();stageWorking('Layer order changed in the draft. Later items appear in front.');}catch(e){render();say(e.message,true);}}
+  $('layer-back').addEventListener('click',()=>reorderObject(-1));$('layer-front').addEventListener('click',()=>reorderObject(1));
   $('delete-object').addEventListener('click',()=>{
     beginManualEdit();working=readFields();
     const index=working.scene.objects.findIndex(o=>o.id===selectedId);if(index<0){render();return;}
@@ -1330,15 +2513,16 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   canvas.addEventListener('pointerup',event=>{
     if(!placing||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
-    const o=selected(),rect=canvas.getBoundingClientRect();
+    const o=selected(),outer=canvas.getBoundingClientRect(),content=M.contentRect(working,outer.width,outer.height),rect={left:outer.left+content.x,top:outer.top+content.y,width:content.width,height:content.height};
     if(!o||rect.width<=0||rect.height<=0||!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return;
-    const extent=M.objectExtent(o),min=1+extent,max=99-extent;
+    if(working.version===M.AUTHORED_VERSION&&(event.clientX<rect.left||event.clientX>rect.left+rect.width||event.clientY<rect.top||event.clientY>rect.top+rect.height)){say('Choose a position inside the authored canvas, not the black margins.',true);return;}
+    const extent=M.objectExtent(o),min=Math.ceil((1+extent)*100)/100,max=Math.floor((99-extent)*100)/100;
     const clamp=v=>Math.round(Math.max(min,Math.min(max,v))*100)/100;
     o.x=clamp((event.clientX-(rect.left||0))*100/rect.width);o.y=clamp((event.clientY-(rect.top||0))*100/rect.height);
     cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Choose Resume live preview to display it again.');$('position-x').focus();
   });
   // A drag is a draft transaction, never an Apply or a reveal action.
-  function clearMoveHistory(){moveUndo=[];moveRedo=[];lastHit=null;}
+  function clearMoveHistory(){imageReplacement=null;moveUndo=[];moveRedo=[];lastHit=null;}
   function sameScene(a,b){return JSON.stringify(a)===JSON.stringify(b);}
   function releaseCapture(active){if(!active)return;try{if(typeof canvas.hasPointerCapture==='function'&&canvas.hasPointerCapture(active.pointerId))canvas.releasePointerCapture(active.pointerId);}catch(e){/* Concealment and rollback do not depend on capture. */}}
   function cancelDirectGesture(){
@@ -1350,7 +2534,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     moveUndo.push({before:copy(before),after:copy(after),id});if(moveUndo.length>E.HISTORY_LIMIT)moveUndo.shift();moveRedo=[];
   }
   function stageMove(next){
-    if(!sameScene(working,next))lastHit=null;
+    if(!sameScene(working,next)){lastHit=null;imageReplacement=null;}
     working=copy(next);fillSelected();moveStaging=true;
     try{return stageWorking('Position changed in the draft. Apply keeps it for download.');}finally{moveStaging=false;}
   }
@@ -1399,7 +2583,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function nudge(dx,dy){
     if(!selected())return;
     beginManualEdit();const before=readFields(),checked=M.validateScene(before);if(!checked.ok){hide('Fix invalid fields before moving.');return;}
-    try{const next=E.translate(checked.scene,selectedId,dx,dy,100,100);if(stageMove(next)){recordMove(checked.scene,next);render();}}catch(e){hide('Move canceled. '+e.message);}
+    try{const rect=M.contentRect(checked.scene,100,100),next=E.translate(checked.scene,selectedId,dx*rect.width/100,dy*rect.height/100,100,100);if(stageMove(next)){recordMove(checked.scene,next);render();}}catch(e){hide('Move canceled. '+e.message);}
   }
   [['left',-1,0],['right',1,0],['up',0,-1],['down',0,1]].forEach(([direction,dx,dy])=>$('nudge-'+direction).addEventListener('click',()=>nudge(dx,dy)));
   canvas.addEventListener('keydown',event=>{
@@ -1424,6 +2608,15 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     say((editorOpen?'Editor open.':'Editor closed.')+(isLive()?' Live preview continues.':' The field is hidden; choose Resume live preview when you choose.'));
     if(editorOpen){const heading=$(section==='scene'?'controls':'sequence-title');heading.setAttribute('tabindex','-1');heading.focus();}else $('editor-toggle').focus();
   });
+  function authoredDraft(fresh){
+    beginManualEdit();
+    try{const next=M.upgradeScene(fresh?M.presets()[1]:readFields(),{mode:'fixed',ratio:'1:1'});fillFields(next);stageWorking('Fixed-ratio draft created. Review proportions and Apply before download.');}catch(e){render();say(e.message,true);}
+  }
+  $('new-authored-scene').addEventListener('click',()=>authoredDraft(true));
+  $('upgrade-scene').addEventListener('click',()=>authoredDraft(false));
+  $('canvas-ratio').addEventListener('change',()=>{const ratio=$('canvas-ratio').value;beginManualEdit();try{working=readFields();if(working.version!==M.AUTHORED_VERSION)throw Error('Convert this draft explicitly first.');working.scene.canvas={mode:'fixed',ratio};working=M.canonicalScene(working);stageWorking('Aspect ratio changed in the draft.');}catch(e){render();say(e.message,true);}});
+  P.list().forEach(preset=>{const opt=document.createElement('option');opt.value=preset.id;opt.textContent=preset.title;$('authored-preset').appendChild(opt);});
+  $('authored-preset').addEventListener('change',()=>{const id=$('authored-preset').value;if(!id)return;beginManualEdit();try{const meta=P.list().find(p=>p.id===id);fillFields(P.create(id));$('authored-preset-hint').textContent=meta.description+' No efficacy claim. Fully editable; timed playback is optional.';stageWorking('Authored preset staged, not saved. Playback did not start.');}catch(e){render();say(e.message,true);}});
   $('preset').addEventListener('change',()=>{
     const index=Number($('preset').value);if($('preset').value===''||!Number.isInteger(index)||!M.presets()[index])return;
     beginManualEdit();const next=M.presets()[index];fillFields(next);stageWorking('Preset staged. Choose Resume live preview to see it without Apply.');
@@ -1510,7 +2703,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   $('export-scene').addEventListener('click',()=>{
     if(formDirty){controller.invalidateImport();say('Apply or discard staged changes before downloading the scene.',true);return;}
     hide('Scene hidden for download.');
-    try{download(M.canonicalScene(controller.getState().current),'imagery-field-scene-v3.json');}catch(e){say(e.message,true);}
+    try{download(M.canonicalScene(controller.getState().current),'imagery-field-scene-v'+controller.getState().current.version+'.json');}catch(e){say(e.message,true);}
   });
   $('scene-import').addEventListener('change',async()=>{
     const file=$('scene-import').files&&$('scene-import').files[0];$('scene-import').value='';if(!file)return;
@@ -1626,6 +2819,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.'));
   function cancelPlayback(){
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();
     cancelDirectGesture();
     generation++;
     if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
@@ -1752,13 +2946,16 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       if(!scene.scene.objects.length)throw new Error('A sequence step needs at least one object.');
       if(sequence&&JSON.stringify(scene.scene.background)!==JSON.stringify(sequence.sequence.background))throw new Error('This scene background differs from the sequence. Match its shared background before capturing.');
       if(replace&&!sequence)throw new Error('Add a step before replacing it.');
-      const next=sequence?copy(sequence):{format:S.FORMAT,version:S.VERSION,sampler:S.SAMPLER,sequence:{name:acceptedSequenceName,background:scene.scene.background,steps:[]}};
+      const authored=scene.version===M.AUTHORED_VERSION;
+      if(sequence&&(sequence.version===S.AUTHORED_VERSION)!==authored)throw Error('Scene and sequence formats differ. Start a compatible sequence instead.');
+      if(sequence&&authored&&JSON.stringify(sequence.sequence.canvas)!==JSON.stringify(scene.scene.canvas))throw Error('Match the sequence authored ratio before capturing.');
+      const next=sequence?copy(sequence):{format:S.FORMAT,version:authored?S.AUTHORED_VERSION:S.VERSION,sampler:authored?S.AUTHORED_SAMPLER:S.SAMPLER,sequence:{name:acceptedSequenceName,background:scene.scene.background,...(authored?{canvas:copy(scene.scene.canvas)}:{}),steps:[]}};
       const steps=next.sequence.steps,formerFinalId=steps.length?steps[steps.length-1].id:null;
       let newIndex;
-      if(replace){newIndex=stepIndex;steps[newIndex]={...steps[newIndex],name:scene.scene.name,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:copy(scene.scene.objects)};}
+      if(replace){newIndex=stepIndex;steps[newIndex]={...steps[newIndex],name:scene.scene.name,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:copy(scene.scene.objects),...(authored?{canvas:copy(scene.scene.canvas)}:{})};}
       else{
         let id=1;while(steps.some(step=>step.id==='step-'+id))id++;
-        steps.push({id:'step-'+id,name:scene.scene.name,holdMs:S.DEFAULT_HOLD_MS,transitionMs:0,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:copy(scene.scene.objects)});newIndex=steps.length-1;
+        steps.push({id:'step-'+id,name:scene.scene.name,holdMs:S.DEFAULT_HOLD_MS,transitionMs:0,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:copy(scene.scene.objects),...(authored?{canvas:copy(scene.scene.canvas)}:{})});newIndex=steps.length-1;
       }
       const adjustments=normalizeSteps(steps,formerFinalId),accepted=S.canonicalSequence(next),compiled=S.compileTimeline(accepted);
       // Both preflights finish before either accepted document/history mutates.
@@ -1877,7 +3074,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   $('sequence-export').addEventListener('click',()=>{
     conceal();cancelPlacement();render();if(!sequencePrecondition()||!sequence)return;
-    try{download(S.canonicalSequence(sequence),'imagery-field-sequence-v2.json');}catch(e){say(e.message,true);}
+    try{download(S.canonicalSequence(sequence),'imagery-field-sequence-v'+sequence.version+'.json');}catch(e){say(e.message,true);}
   });
   $('sequence-import').addEventListener('change',async()=>{
     const file=$('sequence-import').files&&$('sequence-import').files[0];$('sequence-import').value='';if(!file)return;
@@ -1890,6 +3087,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }catch(e){if(controller.getState().epoch!==token||generation!==seqToken)return;render();say(e.message+' Accepted sequence unchanged.',true);}
   });
 
+  $('undo-image-replacement').addEventListener('click',()=>{if(!imageReplacement)return;const previous=imageReplacement;beginManualEdit();conceal();selectedId=previous.id;fillFields(previous.before);stageWorking('Previous draft restored and hidden. Apply keeps it for download.');});
+  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal();render();}});
+  $('open-image-tools').addEventListener('click',()=>{conceal();render();if(!imageUI)imageUI=window.ImageryImageUI.mount($('image-tools-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{const before=M.canonicalScene(readFields()),id=selectedId;conceal();fillFields(M.canonicalScene(value));section='scene';if(stageWorking('Image approximation staged and hidden. Undo image draft replacement restores the previous draft until another edit. Apply commits it for download.')){imageReplacement={before,id};render();}}});$('image-tools-container').hidden=false;$('open-image-tools').hidden=true;$('open-image-tools').setAttribute('aria-expanded','true');$('image-file').focus();});
   fillFields(controller.getState().current);fillSequenceFields();render();
   // The user requested an initially visible static editor. This synchronous,
   // one-time action schedules nothing: Hide and lifecycle stops cannot be undone

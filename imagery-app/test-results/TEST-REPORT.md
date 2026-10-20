@@ -1,14 +1,22 @@
-# Version 0.8 direct editing: current candidate
+# Version 0.8 expanded roadmap candidate
 
-The Spec-Kit first increment adds direct selection, transactional draft dragging, move undo, overlap cycling and non-drag controls. Local model/DOM tests are not browser evidence. The sandboxed local Chromium launch timed out before navigation on 20 October 2026; no native scenario or screenshot was obtained. Cleanup confirmed browser closed and profile removed. No security flags were relaxed. Exact-head CI and visual review are pending.
+Current implementation includes direct editing; explicit scene-v4/sequence-v3 authored ratios and ten bounded shape families; four original editable presets and layer order; local experimental PNG/JPEG approximation; optional session-memory private journal; and disabled research information. This is unreleased development, not the published v0.7.0 package.
 
-The geometry and journal model files are pure future-phase foundations, not integrated UI or completed roadmap features. Research submission remains unavailable. Historical screenshots remain explicitly labelled v0.7; they do not verify this candidate.
+## Current acceptance boundary
 
-## First CI findings and fixes
+Independent scoped code reviews and Node regressions cover closed models, preserved legacy outputs, gesture rollback, rotated edge clamping, single-shadow filled silhouettes, literal journal export preview/approval, stale work invalidation and a single read/decode intake lease. Those checks are not native rendering, browser decoder, device, assistive-technology, natural-image usefulness or clinical evidence.
 
-[Run 39405701039](https://github.com/woodkill00/aphantasia_build/actions/runs/39405701039) ran the native suite and found two issues on both emulated devices: the focusable editor canvas remained in fullscreen tab order, and a new test incorrectly assumed that importing a fixture left accepted history empty. The canvas now leaves the tab order outside editing/explicit placement; the native test compares accepted history before and after a draft move and still verifies exact discard/export state. Independent focused re-review and 26 direct-editor tests pass. A new exact-head native/visual run is required; the failed run is not acceptance.
+The exact current runtime is recorded in `summary.json`. The prepared native suite adds actual authored raster checks, responsive geometry controls, scene-v4/sequence-v3 downloads, synthetic PNG decoding/conversion/draft undo, private journal downloads and optional-tool reflow. It must pass on the exact head and its synthetic screenshots must be independently inspected before merge. Local Chromium startup was blocked before navigation; no sandbox weakening was attempted.
 
-[Run 39407369118](https://github.com/woodkill00/aphantasia_build/actions/runs/39407369118) passed 105/106 native groups. Fullscreen isolation and desktop drag passed, but the mobile Undo tap after drag/scroll was not delivered. The next candidate waits two native animation frames after the explicit test scroll before its single trusted tap and records event/rectangle diagnostics if it fails. This tests a compositor-timing hypothesis; it is not yet proof of the cause or acceptance. Item selection also now scrolls the selected-object controls into view after the gesture ends.
+The preceding P1 candidate's CI findings and fixes remain traceable in PR 11. Its evidence does not verify this larger runtime. Current documentation screenshots remain explicitly historical v0.7 and must not be presented as new-feature acceptance.
+
+## Independent review details and limits
+
+- Legacy differential checks: 15,000 scene-validation cases (8,150 accepted outputs at four viewports) and 3,000 sequence cases matched the old model. 18,000 extreme authored translations passed after inward edge quantization.
+- Converter: 120 seeded synthetic cases across five ratios and three budgets terminated within 4,608 candidates and produced canonical scenes. Pixel-center error never increased; this does not demonstrate natural-image fidelity or lower human correction effort.
+- Encoded image preflight uses intrinsic typed-array bounds without invoking accessor/species hooks. It checks type/dimensions/resource bounds, not complete file validity; actual browser decoding and post-orientation bounds remain required.
+- Optional journal is private page memory, max 20 records, with skipped defaults and unavailable scene/exposure metadata. There is no participant submission endpoint, hosting, automatic collection or functioning Submit action.
+- Deferred: arbitrary paths/SVG/text/3D and every possible shape, richer semantic scene gallery, natural-image/held-out benchmarks and correction-effort studies, physical devices, other browser engines, full accessibility acceptance, research governance and participant collection.
 
 ## Historical verification below
 

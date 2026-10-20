@@ -1,16 +1,25 @@
 # Architecture and data contract
 
-Version 0.7 architecture, updated 2026-10-20. The [item-timeline specification](item-timeline.md) is authoritative for scene version 3, sequence version 2, appearance effects and finite item playback. The version 2/1 contracts below are historical migration inputs; their old closed-key lists must not be mistaken for the new export formats. Scoped live-edit source/native/rendered evidence and the separate CI gate are recorded in the test report. The [sequence contract](sequence-spec.md) remains authoritative for sequence presentation; historical passes do not verify new live behavior.
+Version 0.8 **unreleased development candidate**, updated 20 October 2026. This document describes source contracts, not completed native-browser or visual acceptance. The [roadmap feature guide](roadmap-features.md) distinguishes implemented behavior and deferred requirements; the [public work register](../project-queue.json) owns live status.
 
-## Version 0.8 direct-editor candidate
+The [item-timeline specification](item-timeline.md) remains authoritative for legacy scene-v3/sequence-v2 effects and finite item timing. Those viewport-relative formats remain supported without silent conversion. Explicit authored scenes add scene-v4/sequence-v3 as specified below. The historical scene-v1/v2 and sequence-v1 sections preserve migration inputs; do not mistake their closed-key lists for current export formats.
 
-The [Spec-Kit roadmap](../specs/008-interactive-scene-roadmap/spec.md) defines the new increment. `editor-model.js` supplies pure shared-geometry hit testing and validated translation. The UI binds pointer transactions to an immutable item ID, preserves the grab offset and rolls back interrupted gestures. One completed move creates one bounded draft-history entry; this does not apply the scene or mutate accepted history. Other edits clear draft move history. Overlap candidates are invalidated when geometry changes.
+## Direct-editor transactions
 
-New geometry and journal modules are pure future-phase foundations, not yet assembled runtime features. Their synthetic tests do not claim UI/native or scientific acceptance. Existing scene-v3 / sequence-v2 formats and validators remain unchanged in this increment.
+`editor-model.js` supplies pure shared-geometry hit testing and validated translation. The UI captures an immutable item ID, starting draft and canvas rectangle, preserving the grab offset. Pointer motion below 4 CSS pixels selects without moving. A completed drag adds one operation to the separate 40-entry draft move history; it does not Apply or change accepted history. Numeric, tap-place and nudge routes use the same canonical coordinates. Arrow keys act only on the focused preview, not text fields; Shift uses 0.1 rather than 1 position unit.
+
+Hit testing chooses the last-drawn eligible item first, includes hollow interiors and a 6 CSS-pixel tolerance (12 for touch), and excludes shadows and letterbox bars. Semantic item selection and overlap cycling remain available. Non-primary input cannot start a drag; another pointer during a gesture cancels it. The inspector opens after the gesture rather than moving the active viewport. Lost capture, pointer cancellation, changed canvas geometry, Hide/Escape, imports and lifecycle interruption roll back the starting draft and invalidate stale work. Direct editing is disabled during timed/fullscreen viewing.
+
+`Undo move` / `Redo move` conceal and operate only on draft moves. Other edits clear that history and invalidate cached overlap candidates. Accepted-scene `Undo` / `Redo` and Apply remain distinct. Layer controls reorder ordinary items; locks, snap, guides and align/distribute are not implemented.
 
 ## Components and rendering
 
-- `imagery-app/src/model.js`: closed static validation, canonical serialization, legacy migration, deterministic geometry, presets, and the existing visibility/history/import controller.
+- `imagery-app/src/geometry-model.js`: closed authored geometry registry, parameter bounds, transformed vertices, effect-aware extent inputs and authored content-rectangle mapping.
+- `imagery-app/src/model.js`: closed scene-v1–v4 validation, serialization, strict legacy migration, explicit authored conversion, geometry, legacy presets and the visibility/history/import controller.
+- `imagery-app/src/editor-model.js`: pure hit testing and quantized, inset-clamped translation; no reveal authority.
+- `imagery-app/src/preset-model.js`: four original versioned authored examples and provenance, mapped through the scene validator.
+- `imagery-app/src/image-file.js`, `image-model.js`, `image-ui.js`: raster header preflight, pure bounded fitting, and an explicitly opened local intake/candidate panel. Only the app callback can stage a validated scene draft.
+- `imagery-app/src/journal-model.js`, `journal-ui.js`: independent closed reflection records, exact selected export authorization and optional session-memory controls. No scene, clock, storage, network or research authority.
 - `imagery-app/src/sequence-model.js`: closed sequence validation/parser/serializer, compiled timeline, deterministic frame sampling, and injected-clock playback state. It has no DOM, canvas, RAF, network, persistence, or visibility authority.
 - `imagery-app/src/item-model.js`: pure finite per-item timeline compilation, sampling and playback state; it has no reveal or DOM authority.
 - `imagery-app/src/app.js`: scene and sequence controls, atomic capture, object selection/placement, Canvas 2D compositing, scheduling, fullscreen/lifecycle handling, local file reads, and Blob downloads.
@@ -18,19 +27,81 @@ New geometry and journal modules are pure future-phase foundations, not yet asse
 - `imagery-app/src/assemble.cjs`: developer-only assembler producing the self-contained `index.html`.
 - `imagery-app/tests/`: synthetic model, DOM/Canvas-double, static, CDP transport/fixture, and separately gated real-browser checks.
 
-The runtime uses inline classic scripts/styles, system fonts, and no remote assets. Static/manual displays redraw on relevant events. Only an explicitly started, finite, single-pass snapshot sequence or item timeline schedules animation frames. The clocks never nest. At most one RAF is pending; no idle loop, timed autoplay or automatic replay is authorized. The valid starter draft receives one static startup render; this never starts a presentation clock. Optional item pulse uses the reviewed shared-clock opacity contract and ends with its item. The download-URL cleanup timer has no display authority.
+The runtime uses inline classic scripts/styles, system fonts, and no remote assets. Static/manual displays redraw on relevant events. Only an explicitly started, finite, single-pass snapshot sequence or item timeline schedules display animation frames. Image fitting uses bounded cooperative timeout slices that cannot reveal or schedule a presentation. The clocks never nest. At most one RAF is pending; no idle loop, timed autoplay or automatic replay is authorized. The valid starter draft receives one static startup render; this never starts a presentation clock. Optional item pulse uses the reviewed shared-clock opacity contract and ends with its item. The download-URL cleanup timer has no display authority.
 
 Timed playback remains windowed so Pause and Stop are reachable. Static/manual previews may use clean fullscreen: normal workspace chrome is suppressed, a keyboard/touch Exit remains, and hidden fullscreen provides a separate explicit Show route. Fullscreen entry/exit/failure conceal. Editor toggles preserve an active live draft; other presentation modes conceal. Escape does not suppress native fullscreen exit. The decorative hidden-state circle is removed from the candidate source; hidden canvas pixels stay black behind ordinary interface text/controls.
 
-Object centers use percentages of actual width and height. Size and outline width use the shorter side, preserving circles and squares on rectangular displays. Backing-store scaling compensates for rounded buffer dimensions; dimension caps remain 4,096 pixels and DPR at most 2. Main plus one offscreen canvas together must remain within 8,388,608 pixels, including resize allocations. No third full-size buffer is used. These are resource bounds, not display-quality or medical-safety guarantees.
+Legacy object centers use percentages of the actual field width and height. Their size and outline width use its shorter side. Authored coordinates and sizes instead use the fitted content rectangle described below. Backing-store scaling compensates for rounded buffer dimensions; dimension caps remain 4,096 pixels and DPR at most 2. Main plus one offscreen canvas together must remain within 8,388,608 pixels, including resize allocations. No third full-size buffer is used. These are resource bounds, not display-quality or medical-safety guarantees.
 
 For a transition, render opaque scene A on the main canvas and opaque scene B on the offscreen canvas, each against the same background; composite B over A at the sampled alpha. Reset transform, alpha, and compositing every frame. Never accumulate previous pixels or fade the combined output through an inserted black frame. A direct cut has no transition phase. Crossfades can contain 12 + 12 objects; the validated per-snapshot cap remains 12.
 
 ## Current background and responsive layout
 
-Scene-v3 and sequence-v2 documents accept background hue 0–359, saturation 0–100 and lightness 0–40, with new-scene default 4/60/4. Item/effect color bounds are unchanged. Legacy scene-v2/sequence-v1 inputs retain their original saturation maximum of 60 before migration. Older app versions cannot load new current-format documents with background saturation above that former maximum.
+Scene-v3/v4 and sequence-v2/v3 documents accept background hue 0–359, saturation 0–100 and lightness 0–40, with new-scene default 4/60/4. Item/effect color bounds are unchanged. Legacy scene-v2/sequence-v1 inputs retain their original saturation maximum of 60 before migration. Older app versions cannot load new current-format documents with background saturation above that former maximum.
 
 The visible preview and inspector share responsive sizing/gap tokens. Derive remaining space using CSS calc() with min/max/clamp and shrinking grid tracks rather than independent conflicting width/height constants. Narrow and short layouts must retain an unobscured preview, complete focused numeric controls and reachable concealment controls. Source layout arithmetic is a design aid; actual screenshots and interaction checks are the acceptance evidence.
+
+## Authored scene-v4 and sequence-v3 contract
+
+The scene root still has exactly `format`, `version`, `sampler`, `scene`: `imagery-static-scene`, `4`, `authored-objects-4`, and a closed scene record. Scene fields are exactly `name`, `background`, `pulsePeriodMs`, `objects`, `canvas`. Existing name, HSL, timing, identifier, 12-item and 1 MiB import limits remain. `canvas` is exactly `{mode: "fixed", ratio: ...}`; ratios are `1:1`, `4:3`, `3:4`, `16:9`, `9:16`.
+
+Each item retains `id`, `shape`, `x`, `y`, `size`, `color`, `outline`, `shadow`, `timing` and adds `geometry`. Closed geometry fields are `height`, `rotation`, `fill`, plus only the family's applicable fields:
+
+| Family | Bounds and extra fields |
+| --- | --- |
+| dot, pixel | Width (`size`) and height 1–8 whole units; equal dimensions; `fill: true`. |
+| circle, square | Width/height 1–28 whole units; equal dimensions; fill or contour. |
+| triangle, ellipse, rectangle | Width/height 1–28 whole units; independently sized; fill or contour. |
+| rounded-rectangle | Independent 1–28 dimensions; `cornerRadius` 0–0.50, at most two decimals. |
+| polygon | Independent 1–28 dimensions; `sides` integer 3–32. |
+| star | Independent 1–28 dimensions; `sides` integer 3–16; `innerRatio` 0.20–0.80, at most two decimals. |
+
+All families accept whole-degree rotation 0–359 and a Boolean fill choice except the permanently filled dot/pixel. Width/height use the content rectangle's shorter side, while centers are percentages of its separate axes. Authored curves use bounded polygonal geometry (64 vertices for circular/elliptical bodies); legacy rendering is not changed to that approximation. Rendering, bounds, descriptions and hit tests consume the same validated numeric geometry, never raw SVG.
+
+Validation reserves a conservative normalized inset using the rotated geometry extent plus enabled outline and shadow envelope (maximum absolute offset plus three times blur). This is an engineering envelope, not mathematically finite blur support, calibrated physical dimensions or safety clearance. Quantized placement/translation rounds the minimum inward with `ceil` and maximum inward with `floor`, then rounds coordinates to two decimals. Invalid imported geometry is rejected, not clamped or repaired.
+
+`contentRect` contains the authored ratio inside the available field, centered with black letterboxing. Bars are not selectable or placeable scene content. `upgradeScene` is invoked by explicit New/Convert actions, never legacy import. New fixed-ratio scenes start square with a single point; Convert retains existing items but can change their layout. Both remain reviewable drafts; Apply and download remain separate.
+
+Sequence-v3 has `format: "imagery-field-sequence"`, `version: 3`, `sampler: "ordered-crossfade-3"`. Its `sequence` adds `canvas` to `name`, `background`, `steps`; each step adds the same `canvas` to the sequence-v2 fields (`id`, `name`, `holdMs`, `transitionMs`, `pulsePeriodMs`, `objects`). Every snapshot validates as scene-v4 and must match the shared canvas exactly. A mixed legacy/authored capture or ratio mismatch fails before either scene or sequence commits. Legacy scene-v1/v2 migrate to v3; legacy sequence-v1 migrates to v2. V3 viewport scenes and v2 sequences remain those formats until an explicit compatible operation, not automatic authored upgrades.
+
+## Original preset boundary
+
+The authored catalog contains `balanced-contours`, `symmetric-points`, `sequential-shapes`, and `mixed-steady-pulse`, revision 1, with original repository provenance and MIT license metadata. Every generated document passes `canonicalScene`. These are editable examples, not medical stimuli or a full thumbnail/filterable semantic gallery. Catalog identity is deliberately not embedded in editable scene exports, so a derivative cannot falsely retain an unchanged experimental stimulus ID. Existing legacy presets remain viewport-relative. Preset selection never starts timed playback.
+
+## Local image resource and cancellation contract
+
+`image-file.js` accepts only still PNG/JPEG bytes, verifies header dimensions and rejects animation markers in PNG before invoking the browser decoder. Input MIME, when present, must match its supported header. A valid header is not a complete decode: `createImageBitmap` must still succeed, with orientation applied, and decoded dimensions are checked again. SVG, GIF, remote URLs and executable image content are not accepted.
+
+| Allocation / work | Explicit bound |
+| --- | --- |
+| Selected encoded file | 8,388,608 bytes (8 MiB). |
+| Header and decoded image | At most 4096 on either side; at most 8,388,608 pixels total. A four-byte RGBA representation alone could use 32 MiB; decoder internals are browser-dependent. |
+| Retained source thumbnail | At most 128×128 RGBA pixels, 65,536 typed-array bytes. The intake scratch canvas is shrunk after sampling; the decoder bitmap is closed. |
+| Fitting target/current buffers | Chosen aspect ratio with longest side 48; two RGB buffers, at most 13,824 bytes together. |
+| Region search scratch | At most 2304 visited bytes and 4608 queue bytes. Model/source typed-array ledger: at most 86,272 bytes. |
+| Result | At most the selected 3, 6 or 12 ordinary items. Filled rectangle, ellipse or triangle only; no source bytes/metadata in scene data. |
+| Search | At most 384 candidates per item, at most 4608 total. UI runs 16 candidates per cooperative timeout slice; pure API permits up to 32 per step. |
+| Presentation buffers | Existing main + offscreen total remains 8,388,608 pixels, separate from decode/thumbnail allocations; no third full-size presentation buffer. |
+
+The ledger is not an RSS or peak-browser-memory guarantee: file copies, object overhead, canvases, decode intermediates and browser/OS management are not fully measurable from this contract. Limits bound work, not wall-clock latency or universal device suitability. No worker thread or installed library is used; UI fitting yields cooperatively on the main thread. Representative performance/correction-effort and held-out natural-image benchmarks remain pending.
+
+The repository-authored `seeded-region-primitives` algorithm (version 1) starts from a dark background, contains the selected crop without stretch and composites transparency against that background. It proposes only bounded filled primitives and accepts pixel-error improvements. Source colors are constrained to scene HSL bounds; the alternative palette is muted slate/sage/sand. Seed, crop, palette, work dimension and candidate count identify reproducible model input, not equivalent decoding across browsers. Normalized RGB error is not semantic quality, preference, imagery improvement or clinical evidence.
+
+File reading and browser decoding cannot be interrupted by a generation token. A single intake lease stays held until the outstanding read/decode settles and its bitmap is closed, even after cancellation. New intake cannot overlap it. Search cancellation clears the scheduled slice/job and candidate; generation/revision checks reject stale completion. Shared app cancellation covers Hide/End, imports, edits and lifecycle interruptions. All conceal source thumbnails; no asynchronous completion obtains reveal or Apply authority.
+
+Generate produces only a candidate description. `Use editable draft` validates both the existing raw fields and the candidate, then stages a hidden draft while retaining the prior valid draft/selection for one-step `Undo image draft replacement`. Invalid existing fields block replacement. The replacement undo restores a hidden draft, without applying; subsequent scene edits clear it. This is distinct from move and accepted-scene history. Apply and scene download remain separate. Original bytes, filenames and image metadata do not enter the exported scene; derived shapes may still reveal content. Clear source discards retained pixels, but neither clearing nor closing promises forensic deletion by the browser/OS.
+
+## Optional journal and disabled research contract
+
+The journal is initially disabled and creates no record until `Add reflection to session`. It holds at most 20 immutable records, at most 2,000 code units per note, and at most 131,072 UTF-8 bytes per selected export. The export root is exactly `format: "imagery-private-journal"`, `version: 1`, `purpose: "private-exploratory-reflection"`, `entries`. Entries contain an ID and a closed reflection record, not a scene export.
+
+Reflection fields are `scene`, `exposure`, `experiences`, `comfort`, `symptoms`, `stoppedEarly`, `preference`, `easeOfUse`, `note`. Experiences separately identify perception, afterimage, voluntary imagery and nonvisual memory. Missingness is explicit: not-asked, skipped, none and uncertain are not interchangeable. Comfort, symptom/early-stop, preference and ease choices have their own closed enums. All answers start skipped. No validated instrument or combined score is supplied.
+
+The pure model can validate bounded available scene/exposure references, but **the integrated UI always writes `{status: "unavailable"}` for both**. It does not compute scene hashes, intended/actual exposure, interruptions or rendering provenance. Do not infer that metadata was measured because a model schema can accept it. The UI records no timestamp, source picture, full personal scene or device fingerprint.
+
+Selected entries generate exact JSON bytes. A preview is bound to current state, a separately unchecked approval, and a single download. Editing, selection changes and relevant app changes invalidate it; export consumes approval. The UI requests a local Blob download and cannot verify a durable disk write. Records are excluded from scene/sequence/note files, have no import or autosave, and persist only in page memory. Turning participation off resets unfinished answers, not existing entries; Clear removes records/answers and preview state, not prior downloads.
+
+The disabled research information is not a consent workflow or submission simulator with real records. No endpoint, Send action, upload queue, statistics or collection is present. `SUBMISSION.enabled` is false and lists external governance prerequisites. Actual research needs an identified operator, jurisdiction/population determination, applicable ethics/privacy/security/instrument/statistical review, retention/withdrawal/incidents rules and separate authorization. One-report, longitudinal linkage and recontact would need distinct consent scopes. Pseudonymity is not anonymity; irreversible anonymous aggregation may prevent individual deletion.
 
 ## Historical version 2 scene schema (migration input)
 
@@ -58,7 +129,7 @@ Version 1 imports must first satisfy the original `sparse-fixed-1` schema and ge
 
 Migration preserves the name, gives the scene a black HSL background, and creates ordered `object-1`, `object-2`, … IDs. Each legacy dot becomes an independent dot at its fixed-offset center, with diameter `2 * dotRadius`; a contour keeps its shape, center, and size. Centers are rounded to two decimal places. Legacy slate/sage/sand colors become approximate whole-number HSL values `(208,11,48)`, `(126,8,49)`, and `(40,13,48)` respectively. The intermediate composition is validated under the original version 2 rules, then extended with disabled effects and default timing to the current version 3 document.
 
-This preserves the logical composition, not a pixel-identical old screenshot: colors are approximated, and the full-window rectangular field maps center percentages across its actual dimensions while keeping shapes aspect-correct. Imports are accepted hidden. Current exports use scene version 3; the version 2 description here records the earlier migration stage. No legacy-version export is offered.
+This preserves the logical composition, not a pixel-identical old screenshot: colors are approximated, and the full-window rectangular field maps center percentages across its actual dimensions while keeping shapes aspect-correct. Imports are accepted hidden. Legacy imports export as scene-v3 until the user explicitly creates/converts an authored scene-v4. The version 2 description here records the earlier migration stage. No downgrade export is offered.
 
 ## Historical version 1 sequence schema (migration input)
 
@@ -79,7 +150,7 @@ The existing controller owns accepted scene data, a draft, 40-entry scene-only h
 
 Valid sequence name/timing edits commit immediately while stopped/hidden; there is no Apply sequence button. Invalid raw sequence fields retain accepted data and show a specific error. Play, sequence export, capture, and structural changes are blocked until the error is corrected or discarded. Steps are immutable copies: later scene edits do not silently modify them.
 
-**Add scene as step** and **Replace selected step** combine scene application and snapshot capture when a draft exists. Preflight the static scene and the complete normalized sequence before committing either. A failure preserves both accepted documents and scene history, while canceling/concealing. The first capture seeds the shared background; later mismatched backgrounds are rejected. Loading a selected step into the scene editor copies it and blocks unresolved scene drafts.
+**Add scene as step** and **Replace selected step** combine scene application and snapshot capture when a draft exists. Preflight the static scene and the complete normalized sequence before committing either. A failure preserves both accepted documents and scene history, while canceling/concealing. The first capture seeds the shared background and scene family. Later mismatched backgrounds, legacy/authored format families or authored ratios are rejected atomically. Loading a selected step into the scene editor copies it and blocks unresolved scene drafts.
 
 Reorder/delete/append normalize only boundary transitions: the new final step gets zero; a former final moved earlier gets the default 1,000 ms; other values remain. Validate the whole candidate and announce adjustments. Reject atomically if the resulting total or another rule fails.
 
@@ -103,18 +174,18 @@ Static placement uses one click/tap with numeric alternatives; it retains an alr
 
 ## Files, notes, and privacy
 
-The accepted scene and sequence are separately exported/imported JSON documents. Static drafts must be applied/discarded before static export; invalid sequence fields must be resolved before sequence export. Imports stop and conceal, and stale reads cannot replace newer accepted state. Downloads are requested, not confirmed as durable disk writes. There is no autosave, browser storage, backend, account, telemetry, or runtime network dependency; refreshing/closing can lose unexported scenes, sequences, and notes.
+The accepted scene and sequence are separately exported/imported JSON documents. Static drafts must be applied/discarded before static export; invalid sequence fields must be resolved before sequence export. Imports stop and conceal, and stale reads cannot replace newer accepted state. Downloads are requested, not confirmed as durable disk writes. There is no autosave, browser storage, backend, account, telemetry, or runtime network dependency; refreshing/closing can lose unexported scenes, sequences, notes, journals and local image work.
 
-Notes are independent of scene/sequence editing and imports, and scene history. Their separate export contains only `format: imagery-field-note`, `version: 1`, `category`, and `text`. Categories are `unsure`, `none`, `external-perception`, `residual-aftereffect`, `voluntary-imagery`, `conceptual-knowledge`, and `mixed`; text is at most 4,000 code units and cannot contain a null character. Export requires an exact preview and explicit selection; category/text changes invalidate that selection. Notes are never included in scene or sequence files and are not imported.
+Notes are independent of scene/sequence editing and imports, and scene history. Their separate export contains only `format: imagery-field-note`, `version: 1`, `category`, and `text`. Categories are `unsure`, `none`, `external-perception`, `residual-aftereffect`, `voluntary-imagery`, `conceptual-knowledge`, and `mixed`; text is at most 4,000 code units and cannot contain a null character. Export requires an exact preview and explicit selection; category/text changes invalidate that selection. Notes and journals are never included in scene or sequence files and are not imported. The journal is a second, independent optional format described below, not an extension that silently changes note exports.
 
 End viewing preserves data in the open page. Neither End nor closing the page is secure deletion: browser session restoration, extensions, device backups, and syncing may retain or copy content. Scene, sequence, and step names and notes can contain personal text; inspect exports before sharing. Public examples and tests use synthetic data.
 
 ## Verification and boundaries
 
-The sequence candidate requires its own independent source, synthetic, native-browser, controlled-clock pixel, and real-scheduling evidence. A source implementation is not a verified pass. At minimum test malformed sequence data, immutable capture/replacement and rollback, final-transition normalization, maximum capacity, exact half-open boundaries, overlap and 12 + 12 compositing, direct cuts, exact painted-frame Pause, stale callbacks, every cancellation route, reduced motion, fullscreen interruption, and independent scene/sequence/note exports.
+Version 0.8 has scoped pure-model, adversarial and DOM-double review evidence, summarized in [Spec-Kit analysis](../specs/008-interactive-scene-roadmap/analysis.md). It still requires final exact-head regression, native-browser CI and actual screenshot inspection. Earlier v0.7 results are historical and identified in [compatibility](compatibility.md) and the [test report](../imagery-app/test-results/TEST-REPORT.md); they do not verify newly assembled source.
 
-The separate v0.3 artifact passed 241 non-browser checks and 54 native-browser groups in [CI run 39348407905](https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905), Chrome 155.0.8059.39, source head `57b8f2c2811dc246abca55d9630c0581551d448d`. The [root README](../README.md) identifies its exact HTML hash and historical v0.1/v0.2 results. Two independent scripted journeys and 14 inspected frames informed the layout changes; these are not human-study results or sequence acceptance.
+Required new native evidence includes actual synthetic PNG decoding, journal Blob download payload checks, authored geometry and letterboxes, direct input/capture, invalidation after Hide/import/edit/lifecycle interruption, keyboard/focus and narrow/short layouts. Test code existing is not a passing run. Browser emulation is not a physical device; scanners and model tests do not establish accessibility conformance.
 
-Physical devices, Safari, ordinary OS dialogs, complete manual accessibility, and qualified sensory/content review remain separate gates. See the [plan](plan.md) and [test report](../imagery-app/test-results/TEST-REPORT.md). Software checks do not establish safety or efficacy.
+Physical devices, cross-engine/OS file workflows, assistive technology, actual zoom, qualified sensory/content review, natural-image/correction-effort studies and all participant research retain separate gates. The exact candidate has no clinical clearance, calibrated exposure, demonstrated efficacy or universal safety threshold. Do not relax read-only repository/integration permissions, sandboxing, package policy or CI scope to obtain evidence. Hosted deployment, release publication and real collection are not implied by implementation.
 
-Authorized timed displays are the separate finite snapshot sequence and [per-item timeline](item-timeline.md), including the bounded shared-clock opacity pulse. Arbitrary groups/freeform paths, textures/shaders, unrestricted effect curves, strobe or independent-frequency modulation, durable storage, diagnostics, participant systems, and efficacy measures remain outside the implemented scope. Broader effect-curve authoring and offscreen output analysis are future proposals, not an implemented capability or medical clearance. Hosted deployment is not part of this increment.
+Arbitrary SVG/paths, freeform curves/arcs/rings/lines, text, 3D/fractals, a complete mathematical-shape inventory, richer semantic presets, locks/snap/align/distribute, durable storage, unrestricted flash/strobe, independent-frequency modulation, diagnostics and efficacy measures remain outside this candidate. Finite item timing and snapshot sequences remain separate explicit clocks, never autoplay or replay loops.

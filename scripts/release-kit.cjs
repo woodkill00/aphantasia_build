@@ -18,9 +18,9 @@ const EXAMPLES = Object.freeze([
   'snapshot-sequence.sequence.json', 'reference-scene.json', 'reference-sequence.json'
 ]);
 const SOURCE_PARTS = Object.freeze([
-  ['/*__STYLE__*/', 'style.css'], ['/*__MODEL__*/', 'model.js'],
+  ['/*__STYLE__*/', 'style.css'], ['/*__GEOMETRY__*/', 'geometry-model.js'], ['/*__MODEL__*/', 'model.js'],
   ['/*__SEQUENCE__*/', 'sequence-model.js'], ['/*__ITEMS__*/', 'item-model.js'],
-  ['/*__EDITOR__*/', 'editor-model.js'], ['/*__APP__*/', 'app.js']
+  ['/*__EDITOR__*/', 'editor-model.js'], ['/*__PRESETS__*/', 'preset-model.js'], ['/*__IMAGE_FILE__*/', 'image-file.js'], ['/*__IMAGE_MODEL__*/', 'image-model.js'], ['/*__IMAGE_UI__*/', 'image-ui.js'], ['/*__JOURNAL_MODEL__*/', 'journal-model.js'], ['/*__JOURNAL_UI__*/', 'journal-ui.js'], ['/*__APP__*/', 'app.js']
 ]);
 const INPUTS = Object.freeze([
   'LICENSE', 'imagery-app/index.html', 'imagery-app/SHA256-MANIFEST.json',

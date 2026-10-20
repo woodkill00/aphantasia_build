@@ -11,6 +11,7 @@ function createHarness(options={}){
  class Element{
   constructor(tag,id,attrs=''){this.tagName=tag.toUpperCase();this.id=id;this.attrs=Object.fromEntries([...attrs.matchAll(/([\w-]+)="([^"]*)"/g)].map(m=>[m[1],m[2]]));this.listeners=new Map();this.value=attrs.match(/\bvalue="([^"]*)"/)?.[1]||'';this.hidden=/\bhidden\b/.test(attrs);this.disabled=/\bdisabled\b/.test(attrs);this.checked=/\bchecked\b/.test(attrs);for(const key of ['min','max','step','type'])if(this.attrs[key]!==undefined)this[key]=this.attrs[key];this.textContent='';this.className='';this.files=[];this.width=360;this.height=360;this.children=[];this.style={};this.dataset={};this.classList={add:(...keys)=>{this.className=[...new Set([...this.className.split(' ').filter(Boolean),...keys])].join(' ')},remove:(...keys)=>{this.className=this.className.split(' ').filter(k=>!keys.includes(k)).join(' ')},contains:key=>this.className.split(' ').includes(key),toggle:(key,force)=>{const on=force===undefined?!this.classList.contains(key):!!force;on?this.classList.add(key):this.classList.remove(key);return on}};}
   addEventListener(type,fn){if(!this.listeners.has(type))this.listeners.set(type,[]);this.listeners.get(type).push(fn);}
+  removeEventListener(type,fn){const list=this.listeners.get(type)||[];this.listeners.set(type,list.filter(item=>item!==fn));}
   setAttribute(key,value){this.attrs[key]=String(value);if(key==='class')this.className=String(value);}
   removeAttribute(key){delete this.attrs[key];}
   getAttribute(key){return this.attrs[key]??null;}
@@ -18,7 +19,7 @@ function createHarness(options={}){
   getContext(){if(options.canvasThrows||(options.offscreenCanvasThrows&&this.id!=='scene-canvas'))throw Error('Canvas unavailable');if(options.noCanvas)return null;if(this.id==='scene-canvas')return ctx;if(!canvasContexts.has(this))canvasContexts.set(this,makeContext([],this.id||'offscreen'));return canvasContexts.get(this);}
   focus(){document.activeElement=this;}
   closest(selector){return selector==='button'&&this.tagName==='BUTTON'?this:null;}
-  appendChild(child){child.parent=this;this.children.push(child);if(this.tagName==='SELECT'&&(this.children.length===1||child.selected))this.value=child.value;return child;}
+  appendChild(child){if(child.id)nodes.set(child.id,child);child.parent=this;this.children.push(child);if(this.tagName==='SELECT'&&(this.children.length===1||child.selected))this.value=child.value;return child;}
   replaceChildren(...children){this.children=[];this.value='';for(const child of children)this.appendChild(child);}
   get options(){return this.children;}
   append(...children){for(const child of children)this.appendChild(child);}

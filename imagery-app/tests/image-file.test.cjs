@@ -1,0 +1,10 @@
+'use strict';const test=require('node:test'),assert=require('node:assert/strict'),F=require('../src/image-file.js');
+function png(w,h,animated=false){const b=new Uint8Array(animated?57:45),v=new DataView(b.buffer);b.set([137,80,78,71,13,10,26,10]);v.setUint32(8,13);b.set(Buffer.from('IHDR'),12);v.setUint32(16,w);v.setUint32(20,h);b.set(Buffer.from(animated?'acTL':'IDAT'),37);if(animated)b.set(Buffer.from('IDAT'),49);return b;}
+function jpeg(w,h){const b=new Uint8Array(24),v=new DataView(b.buffer);b.set([255,216,255,192,0,8,8]);v.setUint16(7,h);v.setUint16(9,w);return b;}
+test('bounded PNG and JPEG dimensions are read before decode',()=>{assert.deepEqual(F.inspect(png(128,64)),{type:'image/png',width:128,height:64});assert.deepEqual(F.inspect(jpeg(640,480)),{type:'image/jpeg',width:640,height:480});});
+test('reject oversized, animated, malformed and unsupported input before decode',()=>{for(const b of [new Uint8Array(25),png(4097,1),png(4096,4096),png(0,1),png(1,1,true),jpeg(0,1),new Uint8Array(F.MAX_BYTES+1)])assert.throws(()=>F.inspect(b));const b=png(2,2);new DataView(b.buffer).setUint32(33,9999);assert.throws(()=>F.inspect(b),/Truncated/);});
+test('offset typed-array views are handled without reading unrelated buffer bytes',()=>{const b=new Uint8Array(100);b.set(png(32,16),7);assert.equal(F.inspect(b.subarray(7,52)).width,32);});
+
+test('encoded byte cap cannot be bypassed with overridden typed-array fields or subclasses',()=>{const b=new Uint8Array(F.MAX_BYTES+1);b.set(jpeg(1,1));Object.defineProperty(b,'length',{value:24});assert.throws(()=>F.inspect(b));let reads=0;const c=jpeg(1,1);Object.defineProperty(c,'length',{get(){reads++;return 24}});assert.throws(()=>F.inspect(c));assert.equal(reads,0);class Custom extends Uint8Array{}assert.throws(()=>F.inspect(new Custom(png(1,1))));});
+
+test('chunk parsing does not invoke typed-array species or constructor accessors',()=>{const b=png(1,1);let reads=0;Object.defineProperty(b,'constructor',{get(){reads++;throw Error('unexpected getter')}});assert.equal(F.inspect(b).width,1);assert.equal(reads,0);});

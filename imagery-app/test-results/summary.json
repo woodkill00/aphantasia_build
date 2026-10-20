@@ -1,19 +1,17 @@
 {
   "date": "2026-10-20",
-  "status": "V08_DIRECT_EDITOR_LOCAL_TESTS_NATIVE_PENDING",
+  "status": "V08_EXPANDED_ROADMAP_NATIVE_VISUAL_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 178349,
-    "sha256": "a7a7d6ac091e1e8454efacecba781c25516bc3ccb1f5fbc78ad0e44bc0d9925c"
+    "bytes": 276388,
+    "sha256": "eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa"
   },
   "browser": {
-    "status": "NATIVE_TOUCH_SYNCHRONIZATION_RERUN_PENDING",
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39407369118",
-    "previousHead": "953cb6eb9fbaa656d28f7dbd327800c0b694c113",
-    "passed": 105,
-    "failed": 1,
-    "findings": "Fullscreen and desktop drag passed. Mobile trusted Undo tap was not delivered after scrolling. A narrow native-frame synchronization and event trace experiment preserves one trusted dispatch; exact-head rerun pending."
+    "status": "NOT_RUN_CURRENT_RUNTIME",
+    "preparedGroups": 118,
+    "expectedCaptures": 98,
+    "note": "Exact-head CI and independent visual inspection required; local browser startup blocked."
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1017,9 +1015,16 @@
   },
   "nonBrowser": {
     "status": "PASS",
-    "total": 564,
-    "passed": 564,
+    "command": "node --test imagery-app/tests/*.test.cjs",
+    "total": 737,
+    "passed": 737,
     "failed": 0,
-    "skipped": 0
+    "skipped": 0,
+    "node": "24.19.0"
+  },
+  "documentation": {
+    "status": "PASS",
+    "markdownFiles": 34,
+    "localLinks": 220
   }
 }

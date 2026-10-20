@@ -9,6 +9,7 @@
   const FORMAT = 'imagery-field-sequence';
   const VERSION = 2;
   const SAMPLER = 'ordered-crossfade-2';
+  const AUTHORED_VERSION=3, AUTHORED_SAMPLER='ordered-crossfade-3';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_STEPS = 32;
   const MIN_HOLD_MS = 1000;
@@ -108,17 +109,18 @@
     const file = record(value, ['format', 'version', 'sampler', 'sequence'], 'Sequence file');
     if (file.format !== FORMAT) throw new Error('Unsupported sequence format.');
     const legacy = file.version === 1 && file.sampler === 'ordered-crossfade-1';
-    if (!legacy && (file.version !== VERSION || file.sampler !== SAMPLER)) {
+    const authored=file.version===AUTHORED_VERSION&&file.sampler===AUTHORED_SAMPLER;
+    if (!legacy && !authored && (file.version !== VERSION || file.sampler !== SAMPLER)) {
       throw new Error('Unsupported sequence version or sampler.');
     }
-    const sequence = record(file.sequence, ['name', 'background', 'steps'], 'Sequence');
+    const sequence = record(file.sequence, ['name', 'background', 'steps', ...(authored?['canvas']:[])], 'Sequence');
     const sequenceName = name(sequence.name, 'Sequence name');
     const sourceSteps = list(sequence.steps, 1, MAX_STEPS, 'Sequence steps');
     const ids = new Set();
     let total = 0, background;
     const steps = sourceSteps.map((entry, index) => {
       const label = 'Step ' + (index + 1);
-      const step = record(entry, legacy ? ['id', 'name', 'holdMs', 'transitionMs', 'objects'] : ['id', 'name', 'holdMs', 'transitionMs', 'pulsePeriodMs', 'objects'], label);
+      const step = record(entry, legacy ? ['id', 'name', 'holdMs', 'transitionMs', 'objects'] : ['id', 'name', 'holdMs', 'transitionMs', 'pulsePeriodMs', 'objects', ...(authored?['canvas']:[])], label);
       const id = name(step.id, label + ' identifier');
       if (ids.has(id)) throw new Error('Step identifiers must be unique within the sequence.');
       ids.add(id);
@@ -134,13 +136,17 @@
       // Keep every static geometry/color/object rule authoritative and unchanged.
       // Each snapshot is independently bounded; a crossfade may use 12 + 12.
       list(step.objects, 1, M.MAX_OBJECTS, label + ' objects');
-      const scene = M.canonicalScene({format: M.FORMAT, version: legacy ? 2 : M.VERSION, sampler: legacy ? 'static-objects-2' : M.SAMPLER,
-        scene: {name: stepName, background: sequence.background, ...(!legacy ? {pulsePeriodMs:step.pulsePeriodMs} : {}), objects: step.objects}}).scene;
+      const scene = M.canonicalScene({format: M.FORMAT, version: legacy ? 2 : authored?M.AUTHORED_VERSION:M.VERSION, sampler: legacy ? 'static-objects-2' : authored?M.AUTHORED_SAMPLER:M.SAMPLER,
+        scene: {name: stepName, background: sequence.background, ...(!legacy ? {pulsePeriodMs:step.pulsePeriodMs} : {}), objects: step.objects, ...(authored?{canvas:step.canvas}:{})}}).scene;
+      if(authored) {
+        const reference=M.canonicalScene({format:M.FORMAT,version:M.AUTHORED_VERSION,sampler:M.AUTHORED_SAMPLER,scene:{...scene,canvas:sequence.canvas}}).scene.canvas;
+        if(JSON.stringify(reference)!==JSON.stringify(scene.canvas))throw new Error('Sequence snapshots must share the same authored canvas.');
+      }
       if (index === 0) background = scene.background;
-      return {id, name: scene.name, holdMs, transitionMs, pulsePeriodMs:scene.pulsePeriodMs, objects: scene.objects};
+      return {id, name: scene.name, holdMs, transitionMs, pulsePeriodMs:scene.pulsePeriodMs, objects: scene.objects, ...(authored?{canvas:scene.canvas}:{})};
     });
-    const result = {format: FORMAT, version: VERSION, sampler: SAMPLER,
-      sequence: {name: sequenceName, background, steps}};
+    const result = {format: FORMAT, version: authored?AUTHORED_VERSION:VERSION, sampler: authored?AUTHORED_SAMPLER:SAMPLER,
+      sequence: {name: sequenceName, background, steps, ...(authored?{canvas:steps[0].canvas}:{})}};
     checkBytes(JSON.stringify(result));
     return freeze(result);
   }
@@ -327,7 +333,7 @@
     });
   }
 
-  return Object.freeze({FORMAT, VERSION, SAMPLER, MAX_IMPORT_BYTES, MAX_STEPS,
+  return Object.freeze({FORMAT, VERSION, SAMPLER, AUTHORED_VERSION, AUTHORED_SAMPLER, MAX_IMPORT_BYTES, MAX_STEPS,
     MIN_HOLD_MS, MAX_HOLD_MS, MAX_TRANSITION_MS, TIME_INCREMENT_MS, MAX_TOTAL_MS,
     DEFAULT_HOLD_MS, DEFAULT_TRANSITION_MS, canonicalSequence, validateSequence,
     parseSequence, serializeSequence, compileTimeline, frameAt, createTimeline});

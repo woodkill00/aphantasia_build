@@ -3,13 +3,14 @@
    They are not calibrated luminance, sensory safety or exposure thresholds. */
 (function (root, factory) {
   'use strict';
-  if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.ImageryModel = factory();
-}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./geometry-model.js'));
+  else root.ImageryModel = factory(root.ImageryGeometry);
+}(typeof globalThis !== 'undefined' ? globalThis : this, function (G) {
   'use strict';
   const FORMAT = 'imagery-static-scene';
   const VERSION = 3;
   const SAMPLER = 'styled-objects-3';
+  const AUTHORED_VERSION = 4, AUTHORED_SAMPLER = 'authored-objects-4';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_OBJECTS = 12;
   const MAX_ITEM_TIME_MS = 600000;
@@ -69,11 +70,31 @@
     if(timing.startMs+lifetime>MAX_ITEM_TOTAL_MS)throw new Error('Item end exceeds the one-hour timeline resource limit.');
     return {outline,shadow,timing};
   }
-  function objectExtent(o) {return o.size/2+(['dot','pixel'].includes(o.shape)?0:0.5);}
+  function objectExtent(o) {
+    if(o.geometry) {
+      const e=effects(o);
+      // Authored scenes reserve a conservative effect envelope. Blur tails are
+      // not mathematically finite; 3×blur is an engineering bound, not calibration.
+      return G.extent(o.shape,o.size,o.geometry)+(e.outline.enabled?e.outline.width:0)+
+        (e.shadow.enabled?Math.max(Math.abs(e.shadow.offsetX),Math.abs(e.shadow.offsetY))+3*e.shadow.blur:0);
+    }
+    return o.size/2+(['dot','pixel'].includes(o.shape)?0:0.5);
+  }
   function defaultObject(id='object-1',shape='dot') {
     const o={id,shape,x:50,y:50,size:['dot','pixel'].includes(shape)?2:20,color:{h:208,s:11,l:48},...defaultEffects()};
     return canonicalScene({format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:'New item',background:clone(DEFAULT_BACKGROUND),pulsePeriodMs:DEFAULT_PULSE_PERIOD_MS,objects:[o]}}).scene.objects[0];
   }
+  function defaultAuthoredObject(id='object-1',shape='circle') {
+    const size=['dot','pixel'].includes(shape)?2:20;
+    const o={id,shape,x:50,y:50,size,color:{h:208,s:11,l:48},...defaultEffects(),geometry:G.defaults(shape,size)};
+    return canonicalScene({format:FORMAT,version:AUTHORED_VERSION,sampler:AUTHORED_SAMPLER,scene:{name:'New authored item',background:clone(DEFAULT_BACKGROUND),pulsePeriodMs:DEFAULT_PULSE_PERIOD_MS,canvas:{mode:'fixed',ratio:'1:1'},objects:[o]}}).scene.objects[0];
+  }
+  // Explicit author action only: changing from viewport to a fixed canvas changes layout.
+  function upgradeScene(value,canvas) {
+    const s=canonicalScene(value).scene;
+    return canonicalScene({format:FORMAT,version:AUTHORED_VERSION,sampler:AUTHORED_SAMPLER,scene:{...s,canvas:G.canonicalCanvas(canvas),objects:s.objects.map(o=>({...o,geometry:o.geometry||G.defaults(o.shape,o.size)}))}});
+  }
+  function contentRect(value,width=100,height=100) {const s=canonicalScene(value).scene;return G.contentRect(s.canvas||null,width,height);}
   function colorCSS(value) {return 'hsl('+value.h+' '+value.s+'% '+value.l+'%)';}
   function legacy(value) {
     if(value.sampler!=='sparse-fixed-1')throw new Error('Unsupported version 1 sampler.');
@@ -97,9 +118,11 @@
     if(value.format!==FORMAT)throw new Error('Unsupported scene format.');
     if(value.version===1)return canonicalScene(legacy(value));
     const old=value.version===2&&value.sampler==='static-objects-2';
-    if(!old&&(value.version!==VERSION||value.sampler!==SAMPLER))throw new Error('Unsupported scene version or sampler. Only versions 1, 2 and 3 are supported.');
+    const authored=value.version===AUTHORED_VERSION&&value.sampler===AUTHORED_SAMPLER;
+    if(!old&&!authored&&(value.version!==VERSION||value.sampler!==SAMPLER))throw new Error('Unsupported scene version or sampler. Only versions 1, 2, 3 and 4 are supported.');
     const s=value.scene;
-    object(s,old?['name','background','objects']:['name','background','pulsePeriodMs','objects'],'Scene');name(s.name);
+    object(s,old?['name','background','objects']:['name','background','pulsePeriodMs','objects',...(authored?['canvas']:[])],'Scene');name(s.name);
+    const canvas=authored?G.canonicalCanvas(s.canvas):null;
     const pulsePeriodMs=old?DEFAULT_PULSE_PERIOD_MS:pulsePeriod(s.pulsePeriodMs);
     // Current backgrounds use the full saturation range; historical inputs
     // retain their original closed bounds before migration. Never clamp imports.
@@ -112,18 +135,19 @@
       const descriptor=Object.getOwnPropertyDescriptor(list,String(i));
       if(!descriptor||!Object.prototype.hasOwnProperty.call(descriptor,'value'))throw new Error('Object array cannot contain holes or accessors.');
       const o=descriptor.value;
-      object(o,old?['id','shape','x','y','size','color']:['id','shape','x','y','size','color','outline','shadow','timing'],'Object');
+      object(o,old?['id','shape','x','y','size','color']:['id','shape','x','y','size','color','outline','shadow','timing',...(authored?['geometry']:[])],'Object');
       if(typeof o.id!=='string'||!/^object-[1-9][0-9]{0,5}$/.test(o.id)||ids.has(o.id))throw new Error('Each object needs a unique object-1 style identifier.');
       ids.add(o.id);
-      if(!SHAPES.includes(o.shape))throw new Error('Choose dot, pixel, circle, square, or triangle.');
+      if(!(authored?G.SHAPES:SHAPES).includes(o.shape))throw new Error(authored?'Choose a supported authored geometry family.':'Choose dot, pixel, circle, square, or triangle.');
       position(o.x,'Horizontal position');position(o.y,'Vertical position');
       const filled=o.shape==='dot'||o.shape==='pixel';
       integer(o.size,1,filled?8:28,'Object size');
+      const shapeGeometry=authored?G.canonical(o.shape,o.size,o.geometry):null;
       const extent=objectExtent(o);
       if(o.x-extent<1||o.x+extent>99||o.y-extent<1||o.y+extent>99)throw new Error('Keep the complete object within the 1-unit field inset. Move it inward or reduce its size.');
-      objects.push({id:o.id,shape:o.shape,x:o.x,y:o.y,size:o.size,color:color(o.color,false),...(old?defaultEffects():effects(o))});
+      objects.push({id:o.id,shape:o.shape,x:o.x,y:o.y,size:o.size,color:color(o.color,false),...(old?defaultEffects():effects(o)),...(authored?{geometry:shapeGeometry}:{})});
     }
-    return {format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:s.name,background,pulsePeriodMs,objects}};
+    return {format:FORMAT,version:authored?AUTHORED_VERSION:VERSION,sampler:authored?AUTHORED_SAMPLER:SAMPLER,scene:{name:s.name,background,pulsePeriodMs,objects,...(authored?{canvas}:{})}};
   }
   function validateScene(value) {try{return {ok:true,scene:canonicalScene(value)};}catch(e){return {ok:false,error:e.message};}}
   function rejectDuplicateKeys(text) {
@@ -164,9 +188,10 @@
   function geometry(value,width=100,height=100) {
     const s=canonicalScene(value).scene;
     if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)throw new Error('Field dimensions must be finite positive numbers.');
-    const unit=Math.min(width,height)/100;
+    const rect=G.contentRect(s.canvas||null,width,height),unit=Math.min(rect.width,rect.height)/100;
     return s.objects.map(o=>{
       const x=o.x*width/100,y=o.y*height/100,r=o.size*unit/2,base={id:o.id,color:colorCSS(o.color),outline:{enabled:o.outline.enabled,width:o.outline.width*unit,color:colorCSS(o.outline.color)},shadow:{enabled:o.shadow.enabled,offsetX:o.shadow.offsetX*unit,offsetY:o.shadow.offsetY*unit,blur:o.shadow.blur*unit,color:colorCSS(o.shadow.color)}};
+      if(s.canvas)return {...base,...G.build(o,rect)};
       if(o.shape==='dot')return {...base,kind:'dot',x,y,radius:r};
       if(o.shape==='circle')return {...base,kind:'circle',x,y,radius:r,lineWidth:unit};
       const points=o.shape==='triangle'?[[x,y-r],[x+r,y+r],[x-r,y+r]]:[[x-r,y-r],[x+r,y-r],[x+r,y+r],[x-r,y+r]];
@@ -178,9 +203,9 @@
     const objects=s.objects.length?s.objects.map((o,i)=>{
       const style=(o.outline.enabled?', outline width '+o.outline.width+' H'+o.outline.color.h+' S'+o.outline.color.s+' L'+o.outline.color.l:'')+(o.shadow.enabled?', shadow offset '+o.shadow.offsetX+'/'+o.shadow.offsetY+' blur '+o.shadow.blur+' H'+o.shadow.color.h+' S'+o.shadow.color.s+' L'+o.shadow.color.l:'');
       const t=o.timing,timing=', authored timing start '+t.startMs+' ms, fade in '+t.fadeInMs+' ms, hold '+t.holdMs+' ms, fade out '+t.fadeOutMs+' ms'+(t.pulse.enabled?', shared pulse minimum opacity '+Math.round(t.pulse.minOpacity*100)+'%':'');
-      return (i+1)+': '+o.shape+', size '+o.size+', at '+o.x+', '+o.y+', color H'+o.color.h+' S'+o.color.s+' L'+o.color.l+style+timing;
+      return (i+1)+': '+o.shape+', size '+o.size+(o.geometry?', height '+o.geometry.height+', rotation '+o.geometry.rotation+' degrees, '+(o.geometry.fill?'filled':'contour')+(o.geometry.sides?', '+o.geometry.sides+' sides':'')+(o.geometry.innerRatio!==undefined?', inner ratio '+o.geometry.innerRatio:'')+(o.geometry.cornerRadius!==undefined?', corner radius '+o.geometry.cornerRadius:''):'')+', at '+o.x+', '+o.y+', color H'+o.color.h+' S'+o.color.s+' L'+o.color.l+style+timing;
     }).join('; '):'no objects';
-    return s.name+': '+s.objects.length+' object'+(s.objects.length===1?'':'s')+'. Background H'+b.h+' S'+b.s+' L'+b.l+'. '+objects+'. Positions are percentages; sizes use the field’s shorter side.';
+    return s.name+(s.canvas?' (authored '+s.canvas.ratio+' canvas)':'')+': '+s.objects.length+' object'+(s.objects.length===1?'':'s')+'. Background H'+b.h+' S'+b.s+' L'+b.l+'. '+objects+'. Positions are percentages; sizes use the '+(s.canvas?'authored canvas':'field')+'’s shorter side.';
   }
   function createController(nowFn, initialScene) {
     const clock = nowFn || (() => (typeof performance !== 'undefined' ? performance.now() : Date.now()));
@@ -237,5 +262,5 @@
       finishImport(token,text) {if(pending===null || token!==pending || token!==epoch)return result(false,'That file read was canceled by a newer action.');pending=null;let checked;try{checked=parseScene(text);}catch(e){return result(false,e.message);}return commit(checked);}
     });
   }
-  return Object.freeze({FORMAT,VERSION,SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_ITEM_TIME_MS,MAX_ITEM_TOTAL_MS,ITEM_TIME_INCREMENT_MS,MIN_PULSE_PERIOD_MS,MAX_PULSE_PERIOD_MS,DEFAULT_PULSE_PERIOD_MS,DEFAULT_BACKGROUND,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,defaultEffects,defaultObject,objectExtent,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
+  return Object.freeze({FORMAT,VERSION,SAMPLER,AUTHORED_VERSION,AUTHORED_SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_ITEM_TIME_MS,MAX_ITEM_TOTAL_MS,ITEM_TIME_INCREMENT_MS,MIN_PULSE_PERIOD_MS,MAX_PULSE_PERIOD_MS,DEFAULT_PULSE_PERIOD_MS,DEFAULT_BACKGROUND,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,defaultEffects,defaultObject,defaultAuthoredObject,upgradeScene,contentRect,objectExtent,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
 }));

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T10:05:00Z",
+  "updated": "2026-10-20T10:33:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1466,7 +1466,7 @@
       "id": "IF-048",
       "title": "Freeze versioned geometry and authored-canvas contracts",
       "priority": "P2",
-      "status": "contract_specified_implementation_pending",
+      "status": "implemented_reviewed_native_pending",
       "scope": "Scene-v4/sequence-v3 metadata preservation, strict legacy migrations and opt-in fixed-ratio mapping.",
       "dependencies": [
         "IF-045"
@@ -1488,7 +1488,7 @@
       "id": "IF-049",
       "title": "Implement bounded geometric families",
       "priority": "P2",
-      "status": "pure_geometry_foundation_only",
+      "status": "bounded_ten_shape_families_reviewed_native_pending",
       "scope": "Closed shared registry, fill/stroke/dimensions/rotation, first parametric families and preserved limits; advanced paths remain follow-on.",
       "dependencies": [
         "IF-048"
@@ -1508,7 +1508,7 @@
       "id": "IF-050",
       "title": "Add layer tools and original versioned presets",
       "priority": "P2",
-      "status": "not_started",
+      "status": "four_presets_layers_implemented_richer_gallery_deferred",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1528,7 +1528,7 @@
       "id": "IF-051",
       "title": "Bound local raster intake and processing",
       "priority": "P3",
-      "status": "not_started",
+      "status": "bounded_local_converter_reviewed_native_pending",
       "scope": "Raster-only local decode, resource ledger, cancellable computation, no network/storage and no metadata export.",
       "dependencies": [
         "IF-048",
@@ -1547,7 +1547,7 @@
       "id": "IF-052",
       "title": "Benchmark editable geometric approximation",
       "priority": "P3",
-      "status": "not_started",
+      "status": "synthetic_benchmarks_pass_natural_image_usability_pending",
       "scope": "Deterministic ordinary-item output; synthetic/held-out quality, resources and correction-effort no-go gates.",
       "dependencies": [
         "IF-051"
@@ -1565,7 +1565,7 @@
       "id": "IF-053",
       "title": "Integrate reviewable image conversion drafts",
       "priority": "P3",
-      "status": "not_started",
+      "status": "local_png_jpeg_ui_reviewed_native_pending",
       "scope": "Crop/palette/comparison, accessible review, atomic Apply/Discard/Undo and stale-result rejection.",
       "dependencies": [
         "IF-052",
@@ -1584,7 +1584,7 @@
       "id": "IF-054",
       "title": "Define neutral private experience records",
       "priority": "P4",
-      "status": "pure_model_tests_pass_ui_pending",
+      "status": "private_journal_model_reviewed",
       "scope": "Separate closed experience schema, missingness, scene/version association and minimal exposure accounting; no diagnostic scoring.",
       "dependencies": [
         "IF-045",
@@ -1606,7 +1606,7 @@
       "id": "IF-055",
       "title": "Implement optional session-memory journal",
       "priority": "P4",
-      "status": "not_started",
+      "status": "private_journal_ui_reviewed_native_pending",
       "scope": "Optional neutral reflection and exact separate preview/export/clear; no autosave, storage or transmission.",
       "dependencies": [
         "IF-054"
@@ -1624,7 +1624,7 @@
       "id": "IF-056",
       "title": "Specify disabled research submission boundary",
       "priority": "P5",
-      "status": "disabled_contract_only",
+      "status": "disabled_information_contract_implemented_no_submission",
       "scope": "Synthetic contract/consent demonstration only; no endpoint, upload queue, real data or functional submission.",
       "dependencies": [
         "IF-054"
@@ -1663,7 +1663,7 @@
       "id": "IF-058",
       "title": "Verify cross-feature regression and privacy invariants",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "local_regression_verification_in_progress",
       "scope": "Aggregate exact-source checks; each implemented stage still requires its own earlier tests; preserve failures.",
       "dependencies": [
         "IF-046",
@@ -1693,7 +1693,7 @@
       "id": "IF-059",
       "title": "Inspect native behavior and rendered layouts",
       "priority": "P1",
-      "status": "blocked_local_browser_ci_pending",
+      "status": "exact_head_native_visual_pending",
       "scope": "Actual browser/visual review; physical-device, OS, assistive-technology and qualified content evidence separately reported.",
       "dependencies": [
         "IF-058"
@@ -1714,7 +1714,7 @@
       "id": "IF-060",
       "title": "Reconcile user guides and exact-source evidence",
       "priority": "P1",
-      "status": "in_progress",
+      "status": "documentation_updated_current_evidence_pending",
       "scope": "Document only observed implemented behavior; update hashes, commands, versions, limitations and synthetic outgoing artifacts.",
       "dependencies": [
         "IF-059"
@@ -1739,7 +1739,7 @@
       "id": "IF-061",
       "title": "Review and integrate tested increments",
       "priority": "P1",
-      "status": "independent_code_review_pass_native_visual_pending",
+      "status": "independent_scoped_reviews_pass_native_visual_pending",
       "scope": "Independent exact-tree review and required CI; no implied publication, hosting or participant collection.",
       "dependencies": [
         "IF-060"
@@ -1757,12 +1757,12 @@
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "3561bfbbd652f375531220fd9dcd92f58d5c9366",
-    "targetBranch": "feature/008-interactive-scene-roadmap",
+    "repositoryBaseCommit": "7f78b77b63b25cdc479df06520b314ff7a1b8aa0",
+    "targetBranch": "feature/009-authored-geometry",
     "appPath": "imagery-app/index.html",
-    "appSha256": "a7a7d6ac091e1e8454efacecba781c25516bc3ccb1f5fbc78ad0e44bc0d9925c",
-    "appBytes": 178349,
-    "note": "Direct editor candidate from the verified v0.7 source; no temporary release publisher files inherited."
+    "appSha256": "eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa",
+    "appBytes": 276388,
+    "note": "Expanded unreleased roadmap candidate; no temporary release publisher, deployment or collection service."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
@@ -1849,11 +1849,11 @@
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version 0.8 first increment implemented locally with Spec-Kit scope and future pure foundations. Exact-head native CI and visual review remain pending; no new research collection.",
+  "currentStatus": "Expanded bounded roadmap implementation integrated with independent scoped code reviews. Exact-head native/visual gate remains pending. Richer families/catalog, natural-image usefulness, devices/AT and research governance remain explicitly incomplete.",
   "currentIteration": {
-    "base": "3561bfbbd652f375531220fd9dcd92f58d5c9366",
-    "remoteBranch": "feature/008-interactive-scene-roadmap",
-    "htmlSha256": "a7a7d6ac091e1e8454efacecba781c25516bc3ccb1f5fbc78ad0e44bc0d9925c",
-    "status": "local_tests_review_native_ci_pending"
+    "base": "7f78b77b63b25cdc479df06520b314ff7a1b8aa0",
+    "remoteBranch": "feature/009-authored-geometry",
+    "htmlSha256": "eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa",
+    "status": "independent_code_reviews_local_regression_pass_native_pending"
   }
 }

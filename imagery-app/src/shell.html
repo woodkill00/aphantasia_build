@@ -28,6 +28,10 @@
         <p class="scope">Static preview is on by default. Hide or Escape stops it immediately. Use comfortable brightness and stop if patterns cause symptoms. Engineering preview, not a treatment or diagnostic test.</p>
         <label for="preset">Start with a preset</label>
         <select id="preset"><option value="">Choose a design…</option><option value="0">A small constellation</option><option value="1">A single point</option><option value="2">Circle contour</option><option value="3">Square contour</option><option value="4">Triangle contour</option></select>
+        <div class="small-actions"><button id="new-authored-scene" type="button">New fixed-ratio scene</button><button id="upgrade-scene" type="button">Convert this draft to fixed ratio</button></div>
+        <p id="canvas-mode-hint" class="hint">Legacy viewport scene. Conversion is explicit and may change proportions; review before Apply.</p>
+        <label for="canvas-ratio">Authored aspect ratio</label><select id="canvas-ratio"><option value="1:1">Square · 1:1</option><option value="4:3">Landscape · 4:3</option><option value="3:4">Portrait · 3:4</option><option value="16:9">Wide · 16:9</option><option value="9:16">Tall · 9:16</option></select>
+        <label for="authored-preset">Authored scene examples</label><select id="authored-preset"><option value="">Choose an editable example…</option></select><p id="authored-preset-hint" class="hint">Original geometric examples, not treatments or ranked recommendations. Choosing one never starts timed playback.</p>
         <form id="scene-form" novalidate>
           <label for="scene-name">Scene name</label><input id="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation">
           <fieldset class="group"><legend>Objects <span id="object-count">3 / 12</span></legend>
@@ -40,11 +44,19 @@
               <div><label for="position-x">Horizontal position</label><input id="position-x" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
               <div><label for="position-y">Vertical position</label><input id="position-y" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
             </div>
+            <div id="authored-geometry" class="control-grid" hidden>
+              <div><label for="geometry-height">Height</label><input id="geometry-height" type="number" min="1" max="28" step="1" value="4"></div>
+              <div><label for="geometry-rotation">Rotation · degrees</label><input id="geometry-rotation" type="number" min="0" max="359" step="1" value="0"></div>
+              <div><label for="geometry-fill">Body</label><select id="geometry-fill"><option value="outline">Outline</option><option value="filled">Filled</option></select></div>
+              <div><label for="geometry-sides">Polygon sides / star points</label><input id="geometry-sides" type="number" min="3" max="32" step="1" value="5"></div>
+              <div><label for="geometry-inner">Star inner ratio</label><input id="geometry-inner" type="number" min="0.2" max="0.8" step="0.01" value="0.5"></div>
+              <div><label for="geometry-corner">Corner radius ratio</label><input id="geometry-corner" type="number" min="0" max="0.5" step="0.01" value="0.2"></div>
+            </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="nudge-actions" role="group" aria-label="Move selected object by one position unit"><button id="nudge-left" type="button" aria-label="Move selected object left by one position unit">← Left</button><button id="nudge-up" type="button" aria-label="Move selected object up by one position unit">↑ Up</button><button id="nudge-down" type="button" aria-label="Move selected object down by one position unit">↓ Down</button><button id="nudge-right" type="button" aria-label="Move selected object right by one position unit">Right →</button></div>
             <div class="small-actions"><button id="cycle-overlap" type="button" disabled>Select next overlapping item</button><button id="undo-move" type="button" disabled>Undo move</button><button id="redo-move" type="button" disabled>Redo move</button></div>
             <p class="hint" id="direct-edit-hint">Click a visible item to edit it, or drag to move. Arrow keys on the preview move the selected item by 1; Shift moves by 0.1. Move history is separate from applied scene history and resets after other edits. Nothing is saved until you download.</p>
-            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="delete-object" type="button">Remove object</button></div>
+            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="layer-back" type="button">Move back one layer</button><button id="layer-front" type="button">Move forward one layer</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
             <p id="object-color-hint" class="hint">Live preview updates the actual objects while on. After Hide, choose Resume live preview. The small sample also works while hidden.</p>
@@ -72,7 +84,7 @@
       <section class="portable-card" aria-labelledby="portable-title">
         <p class="eyebrow">Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p class="hint">No autosave, account, browser storage or network. Download work before closing or reloading this page.</p>
         <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label></div>
-        <p class="hint">Opens versions 1, 2 or 3, up to 1 MiB. Downloads use version 3. Version 1 colors are approximated in HSL. Notes are never included.</p>
+        <p class="hint">Opens scene versions 1–4, up to 1 MiB. Legacy viewport downloads use v3; explicitly authored fixed-ratio scenes use v4. Version 1 colors are approximated in HSL. Notes are never included.</p>
       </section>
       </div>
       <section id="sequence-panel" aria-labelledby="sequence-title" hidden>
@@ -96,8 +108,10 @@
         </div>
         <p id="sequence-error" class="inline-error" role="status" aria-live="polite" hidden></p>
         <button id="sequence-discard" type="button" hidden>Discard invalid sequence fields</button>
-        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate version 2 sequence files (opens version 1 or 2), up to 1 MiB. No notes, playback state, storage or network.</p></section>
+        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate sequence files: legacy v2 or authored-canvas v3 (opens v1–v3), up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
+  <section class="notes-card local-tools" aria-labelledby="image-tools-title"><h2 id="image-tools-title">Sketch a local picture</h2><p class="hint">Optional experimental approximation with editable shapes. No image is uploaded. Open these tools only when you want to choose a local image.</p><button id="open-image-tools" type="button" aria-expanded="false">Open local image tools</button><button id="undo-image-replacement" type="button" disabled>Undo image draft replacement</button><div id="image-tools-container" hidden></div></section>
+  <section id="journal-container" aria-label="Optional private reflections"></section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
       <div class="notes-content"><p>No score, interpretation, or expected outcome. “None” and “unsure” are valid. You can leave this empty. Avoid names, medical histories, or information about other people.</p>
@@ -139,10 +153,17 @@
   <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>
 </div>
 <noscript><div class="noscript">JavaScript is required for this local editor. The scene is hidden.</div></noscript>
-<script>/*__MODEL__*/</script>
+<script>/*__GEOMETRY__*/
+/*__MODEL__*/</script>
 <script>/*__SEQUENCE__*/</script>
 <script>/*__ITEMS__*/</script>
 <script>/*__EDITOR__*/</script>
+<script>/*__PRESETS__*/</script>
+<script>/*__IMAGE_FILE__*/</script>
+<script>/*__IMAGE_MODEL__*/</script>
+<script>/*__IMAGE_UI__*/</script>
+<script>/*__JOURNAL_MODEL__*/</script>
+<script>/*__JOURNAL_UI__*/</script>
 <script>/*__APP__*/</script>
 </body>
 </html>
