@@ -230,3 +230,17 @@ test('ONBOARDING: Hide, edit, Apply, export and reimport preserve the documented
   assert.equal(h.visible(), true);
   assert.equal(h.rafPending.size, 0);
 });
+
+
+test('DOCS: selected MIT license is preserved with third-party attribution boundaries', () => {
+  const license = read('LICENSE');
+  assert.match(license, /^MIT License\n\nCopyright \(c\) 2026 woodkill00\n/);
+  const K = require('../../scripts/release-kit.cjs');
+  assert.equal(sha256(Buffer.from(license)), K.LICENSE_SHA256);
+  for (const file of ['README.md', 'CONTRIBUTING.md', 'docs/releases.md']) {
+    assert.match(read(file), /MIT License/);
+    assert.match(read(file), /third.party/i);
+  }
+  for (const file of ['scripts/release/START-HERE.txt', 'scripts/release/USAGE.txt'])
+    assert.match(read(file), /LICENSE/);
+});

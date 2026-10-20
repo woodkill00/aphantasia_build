@@ -8,7 +8,8 @@ User-visible changes are listed here. Version labels describe engineering increm
 - Clearer Apply-versus-download, no-autosave and three-preview explanations.
 - Troubleshooting, compatibility, contribution and public-report privacy guidance.
 - Issue/PR templates, current synthetic examples and local portable-release preparation.
-- Historical verification remains preserved; publication, hosting and license decisions are separate.
+- Added the MIT License for repository-authored code, documentation and examples, copyright © 2026 woodkill00. Third-party research and attributed material retain their own rights and terms.
+- Historical verification remains preserved; Release publication and hosting are separate decisions.
 
 ## 0.7 — 2026-10-20
 

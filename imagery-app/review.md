@@ -1,3 +1,13 @@
+# Public repository and licensed portable-kit review
+
+The public documentation/onboarding increment keeps all eight v0.7 runtime/source files byte-identical to merged main `1b67f86`. Independent review accepted the concise beginner path, task-based guides, support/contribution forms, seven example round trips, four original synthetic screenshots and their exact provenance. All 498 current local checks pass; documentation links/fragments and deterministic offline packaging are independently verified.
+
+The owner-selected MIT notice is preserved verbatim for repository-authored code, documentation and examples. Third-party research and attributed material keep their own terms. Packaging includes the exact notice inside the ZIP and alongside the HTML; changed/missing/ambiguous licenses and recomputed-checksum forgeries are rejected. The supplied CI URL is explicitly not authenticated by the offline builder. No actual Release, tag, upload, hosting or settings change is performed by these files.
+
+First documentation source `5fd67d4` passed the complete read-only CI, including 98 native Chrome groups and clean-checkout packaging, in [run 39386135529](https://github.com/woodkill00/aphantasia_build/actions/runs/39386135529). That historical result predates the MIT integration. The final licensed source requires its own complete exact-head workflow before merge; consult [PR 6 checks](https://github.com/woodkill00/aphantasia_build/pull/6/checks). Runtime screenshot acceptance remains scoped to synthetic Linux Chrome/emulation, not physical devices, universal compatibility, full accessibility or clinical outcomes.
+
+<!-- HISTORICAL-V07-RUNTIME-REVIEW -->
+
 # Version 0.7 source and native-browser review
 
 The exact 167297-byte runtime `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857` passed 457 non-browser checks and all 98 native Chrome groups in [run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664), source `33bca8b59e52596f0784529b9162ea5240d1a7fb`. All 78 emitted synthetic frames were independently hash/byte verified; all 78 were independently visually inspected with no remaining scoped blocker.

@@ -44,4 +44,6 @@ The merged v0.7 runtime passed **457 code checks, 98 native Chrome groups, and r
 
 ## License
 
-No license has been selected. Public source visibility is not an open-source license or permission to reuse it under particular terms. A maintainer decision is required before adding or representing a project license.
+Repository-authored code, documentation and examples are available under the [MIT License](LICENSE), copyright © 2026 woodkill00. Reuse, modification, redistribution and commercial use are permitted subject to retaining the copyright and license notices; the software is provided without warranty.
+
+Third-party research, linked publications and any separately attributed material retain their own rights and terms. A citation does not relicense its source. The license is not a claim of medical suitability or sensory safety.

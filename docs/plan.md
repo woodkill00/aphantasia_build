@@ -62,4 +62,4 @@ CI uses preinstalled tools, normal Chrome sandboxing, read-only repository permi
 
 ## Deferred decisions
 
-A license remains a maintainer decision. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.
+Repository-authored code, documentation and examples now use the [MIT License](../LICENSE); third-party material retains its own rights and terms. Release publication and hosted delivery remain separate decisions. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.

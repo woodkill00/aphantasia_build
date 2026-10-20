@@ -44,4 +44,6 @@ are rejected; use the examples matching the selected import control.
 
 This software is experimental. Software checks do not establish clinical
 clearance, universal browser support, or accessibility conformance.
-No project license has been selected; this package grants no license.
+Licensed under MIT, copyright (c) 2026 woodkill00. Read LICENSE for the complete
+permission notice and warranty/liability disclaimers. Keep LICENSE with the
+HTML when copying or redistributing it, including the standalone download.

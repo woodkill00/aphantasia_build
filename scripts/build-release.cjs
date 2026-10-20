@@ -13,7 +13,7 @@ function main(args) {
   console.log('Prepared locally, not published: ' + result.output);
   console.log('HTML SHA-256: ' + result.htmlSha256);
   console.log('ZIP SHA-256: ' + result.zipSha256);
-  console.log('The supplied evidence URL was not remotely verified. Publication and license decisions remain separate.');
+  console.log('The supplied evidence URL was not remotely verified. MIT LICENSE is included; publication approval remains separate.');
 }
 if (require.main === module) {
   try { main(process.argv.slice(2)); }

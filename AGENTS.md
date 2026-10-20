@@ -36,4 +36,4 @@ Do not install packages, relax security, or change CI/deployment scope as an inc
 
 Record commands, versions, artifact hash, and PASS/FAIL/BLOCKED/NOT RUN. Test doubles are not a real browser. Browser emulation is not a physical device. A passing scanner is not accessibility conformance. Software results are not clinical clearance or evidence of efficacy.
 
-Keep research statements linked to primary sources, dated, and qualified. Distinguish evidence from design proposals. Do not copy questionnaires or third-party assets without checking their terms. No project license has been chosen.
+Keep research statements linked to primary sources, dated, and qualified. Distinguish evidence from design proposals. Do not copy questionnaires or third-party assets without checking their terms. Repository-authored code, documentation and examples use the MIT License in `LICENSE`, copyright (c) 2026 woodkill00. Preserve the license/copyright notices and third-party attribution; linked or quoted research and other third-party material retain their own rights and terms.

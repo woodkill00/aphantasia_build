@@ -8,6 +8,10 @@ const {execFileSync} = require('node:child_process');
 const REPOSITORY = 'woodkill00/aphantasia_build';
 const HTML_NAME = 'Imagery-Field.html';
 const ZIP_NAME = 'Imagery-Field-portable.zip';
+// Exact owner-approved MIT text, including the 2026 woodkill00 notice.
+// Update only after a deliberate license review, never by silently accepting
+// whichever text happens to be present in a checkout.
+const LICENSE_SHA256 = 'e787f2e2f0ecac57514b7d4ad51b6b5f737b042b42ce38ea73dd2ce88b5c6d0c';
 const EXAMPLES = Object.freeze([
   'README.md', 'static-starter.scene.json', 'outline-shadow.scene.json',
   'steady-overlap.scene.json', 'mixed-timing.scene.json',
@@ -19,16 +23,16 @@ const SOURCE_PARTS = Object.freeze([
   ['/*__APP__*/', 'app.js']
 ]);
 const INPUTS = Object.freeze([
-  'imagery-app/index.html', 'imagery-app/SHA256-MANIFEST.json',
+  'LICENSE', 'imagery-app/index.html', 'imagery-app/SHA256-MANIFEST.json',
   'imagery-app/src/shell.html', ...SOURCE_PARTS.map(([, name]) => 'imagery-app/src/' + name),
   'scripts/release/START-HERE.txt', 'scripts/release/USAGE.txt',
   ...EXAMPLES.map(name => 'examples/' + name)
 ]);
 const PACKAGE_NAMES = Object.freeze([
-  HTML_NAME, 'START-HERE.txt', 'USAGE.txt', 'release-metadata.json', 'CHECKSUMS.txt',
+  HTML_NAME, 'LICENSE', 'START-HERE.txt', 'USAGE.txt', 'release-metadata.json', 'CHECKSUMS.txt',
   ...EXAMPLES.map(name => 'examples/' + name)
 ].sort());
-const OUTPUT_NAMES = Object.freeze([HTML_NAME, ZIP_NAME, 'release-metadata.json', 'SHA256SUMS.txt'].sort());
+const OUTPUT_NAMES = Object.freeze([HTML_NAME, ZIP_NAME, 'LICENSE', 'release-metadata.json', 'SHA256SUMS.txt'].sort());
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 const MAX_ZIP_BYTES = 8 * 1024 * 1024;
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -94,8 +98,10 @@ function loadInputs(root, options) {
   if (git(root, ['rev-parse', '--show-toplevel']).trim() !== root) fail('Use the root of a Git checkout.');
   if (git(root, ['rev-parse', 'HEAD']).trim() !== options.sourceCommit) fail('HEAD must equal the explicitly tested source commit.');
   if (git(root, ['status', '--porcelain=v1', '--untracked-files=all']).trim()) fail('Packaging requires a clean checkout, including untracked files.');
-  if (fs.existsSync(path.join(root, 'LICENSE')) || fs.existsSync(path.join(root, 'LICENSE.md')) ||
-      fs.existsSync(path.join(root, 'LICENSE.txt'))) fail('License status changed; review release text and metadata before packaging.');
+  if (!fs.existsSync(path.join(root, 'LICENSE'))) fail('The approved MIT LICENSE is required; unlicensed packaging is not permitted.');
+  if (fs.existsSync(path.join(root, 'LICENSE.md')) || fs.existsSync(path.join(root, 'LICENSE.txt'))) {
+    fail('Unexpected additional license file; review license scope before packaging.');
+  }
   const inputs = new Map();
   for (const name of INPUTS) {
     git(root, ['ls-files', '--error-unmatch', '--', name]);
@@ -106,6 +112,7 @@ function loadInputs(root, options) {
     inputs.set(name, bytes);
   }
   const html = inputs.get('imagery-app/index.html');
+  if (sha256(inputs.get('LICENSE')) !== LICENSE_SHA256) fail('LICENSE differs from the exact approved MIT text and copyright notice.');
   if (sha256(html) !== options.testedHtmlSha256) fail('HTML does not match the explicitly tested hash.');
   const manifest = JSON.parse(inputs.get('imagery-app/SHA256-MANIFEST.json'));
   if (manifest.files['index.html'] !== options.testedHtmlSha256) fail('Runtime manifest and tested HTML hash differ.');
@@ -220,7 +227,11 @@ function packageFiles(options, loaded) {
       requiredBeforePublication: 'Review successful CI and browser evidence for this exact source commit and HTML hash'
     },
     packaging: {format: 'ZIP STORE', timestamp: '1980-01-01T00:00:00Z', entryOrder: 'ASCII ascending', fileMode: '0644'},
-    license: {status: 'Not selected', notice: 'No project license has been selected. This package contains no license grant.'},
+    license: {
+      spdx: 'MIT', name: 'MIT License', file: 'LICENSE',
+      copyright: 'Copyright (c) 2026 woodkill00', sha256: LICENSE_SHA256,
+      notice: 'Keep the copyright and permission notices with copies or substantial portions. See LICENSE for the full terms and warranty/liability disclaimers.'
+    },
     knownLimits: [
       'Experimental visual editor; no diagnostic, treatment or efficacy claims',
       'Engineering limits are not sensory-safety or medical thresholds',
@@ -233,7 +244,7 @@ function packageFiles(options, loaded) {
     ]
   };
   const entries = new Map([
-    [HTML_NAME, html], ['START-HERE.txt', inputs.get('scripts/release/START-HERE.txt')],
+    [HTML_NAME, html], ['LICENSE', inputs.get('LICENSE')], ['START-HERE.txt', inputs.get('scripts/release/START-HERE.txt')],
     ['USAGE.txt', inputs.get('scripts/release/USAGE.txt')], ['release-metadata.json', jsonBytes(metadata)],
     ...EXAMPLES.map(name => ['examples/' + name, inputs.get('examples/' + name)])
   ]);
@@ -241,7 +252,8 @@ function packageFiles(options, loaded) {
   const zip = makeZip(entries);
   const verified = verifyZip(zip);
   for (const [name, bytes] of entries) if (!bytes.equals(verified.get(name))) fail('ZIP verification byte mismatch.');
-  const output = new Map([[HTML_NAME, html], [ZIP_NAME, zip], ['release-metadata.json', entries.get('release-metadata.json')]]);
+  const output = new Map([[HTML_NAME, html], [ZIP_NAME, zip], ['LICENSE', inputs.get('LICENSE')],
+    ['release-metadata.json', entries.get('release-metadata.json')]]);
   output.set('SHA256SUMS.txt', checksums(output));
   return output;
 }
@@ -269,15 +281,18 @@ function verifyRelease(directory) {
   const external = new Map([...files].filter(([name]) => name !== 'SHA256SUMS.txt'));
   if (!files.get('SHA256SUMS.txt').equals(checksums(external))) fail('External checksums mismatch.');
   const entries = verifyZip(files.get(ZIP_NAME));
-  for (const name of [HTML_NAME, 'release-metadata.json']) if (!entries.get(name).equals(files.get(name))) fail('Standalone and ZIP bytes differ: ' + name);
+  for (const name of [HTML_NAME, 'LICENSE', 'release-metadata.json']) if (!entries.get(name).equals(files.get(name))) fail('Standalone and ZIP bytes differ: ' + name);
   if (!entries.get('CHECKSUMS.txt').equals(checksums(new Map([...entries].filter(([name]) => name !== 'CHECKSUMS.txt'))))) fail('Internal checksums mismatch.');
   const metadata = JSON.parse(files.get('release-metadata.json'));
   validateOptions({version: metadata.releaseVersion, sourceCommit: metadata.sourceCommit,
     testedHtmlSha256: metadata.artifact.sha256, evidenceUrl: metadata.testEvidence.suppliedActionsRunUrl});
   if (metadata.format !== 'imagery-field-release-kit' || metadata.version !== 1 ||
       metadata.artifact.name !== HTML_NAME || metadata.artifact.bytes !== files.get(HTML_NAME).length ||
-      metadata.artifact.sha256 !== sha256(files.get(HTML_NAME)) || metadata.license.status !== 'Not selected') fail('Release metadata mismatch.');
+      metadata.artifact.sha256 !== sha256(files.get(HTML_NAME)) ||
+      metadata.license.spdx !== 'MIT' || metadata.license.file !== 'LICENSE' ||
+      metadata.license.copyright !== 'Copyright (c) 2026 woodkill00' ||
+      metadata.license.sha256 !== LICENSE_SHA256 || sha256(files.get('LICENSE')) !== LICENSE_SHA256) fail('Release metadata or approved license mismatch.');
   return {files: [...files.keys()], entries: [...entries.keys()], htmlSha256: sha256(files.get(HTML_NAME)), zipSha256: sha256(files.get(ZIP_NAME))};
 }
-module.exports = Object.freeze({REPOSITORY, HTML_NAME, ZIP_NAME, EXAMPLES, INPUTS, PACKAGE_NAMES, OUTPUT_NAMES,
+module.exports = Object.freeze({REPOSITORY, HTML_NAME, ZIP_NAME, LICENSE_SHA256, EXAMPLES, INPUTS, PACKAGE_NAMES, OUTPUT_NAMES,
   sha256, crc32, checksums, makeZip, verifyZip, validateOptions, validateExamples, loadInputs, packageFiles, buildRelease, verifyRelease});

@@ -90,7 +90,12 @@ test('clean explicit source builds repeatable byte-identical portable artifacts'
   assert.ok([...zip.keys()].every(name => !/test-results|screenshots|src\/|notes\.json|\.git\//.test(name)));
   const metadata = JSON.parse(zip.get('release-metadata.json'));
   assert.equal(metadata.sourceCommit, f.options.sourceCommit);
-  assert.equal(metadata.license.status, 'Not selected');
+  assert.equal(metadata.license.spdx, 'MIT');
+  assert.equal(metadata.license.file, 'LICENSE');
+  assert.equal(metadata.license.copyright, 'Copyright (c) 2026 woodkill00');
+  assert.equal(metadata.license.sha256, K.LICENSE_SHA256);
+  assert.equal(K.sha256(zip.get('LICENSE')), K.LICENSE_SHA256);
+  assert.ok(zip.get('LICENSE').equals(fs.readFileSync(path.join(first.output, 'LICENSE'))));
   assert.match(metadata.testEvidence.status, /not checked/);
   assert.equal(metadata.testEvidence.suppliedActionsRunUrl, evidenceUrl);
 });
@@ -126,7 +131,7 @@ test('packaging checks committed bytes despite assume-unchanged flags', t => {
   fs.appendFileSync(path.join(f.root, 'examples/README.md'), '\nchanged\n');
   assert.throws(() => K.buildRelease(f.options), /differs from the selected commit/);
 });
-test('packaging rejects tracked symlinks and unknown license status', t => {
+test('packaging rejects tracked symlinks and a changed approved license', t => {
   const f = fixture(t), file = 'examples/README.md';
   fs.unlinkSync(path.join(f.root, file));
   fs.symlinkSync('../scripts/release/USAGE.txt', path.join(f.root, file));
@@ -135,7 +140,7 @@ test('packaging rejects tracked symlinks and unknown license status', t => {
   git(f.root, ['reset', '--hard', 'HEAD~1']); f.options.sourceCommit = git(f.root, ['rev-parse', 'HEAD']);
   fs.writeFileSync(path.join(f.root, 'LICENSE'), 'Synthetic unselected license');
   commit(f, 'LICENSE');
-  assert.throws(() => K.buildRelease(f.options), /License status changed/);
+  assert.throws(() => K.buildRelease(f.options), /LICENSE differs from the exact approved MIT text/);
 });
 test('packaging rejects stale assembly even when HTML itself has the tested hash', t => {
   const f = fixture(t), file = 'imagery-app/src/style.css';
@@ -208,4 +213,45 @@ test('CLI rejects ambiguous flags and never publishes', () => {
     const text = fs.readFileSync(path.join(repository, 'scripts', file), 'utf8');
     assert.doesNotMatch(text, /\bfetch\s*\(|https?\.request\s*\(|gh release|git push/);
   }
+});
+
+
+test('approved MIT notice is exact and required in all portable distributions', () => {
+  const license = fs.readFileSync(path.join(repository, 'LICENSE'));
+  assert.equal(K.sha256(license), K.LICENSE_SHA256);
+  assert.match(license.toString(), /^MIT License\n\nCopyright \(c\) 2026 woodkill00\n/);
+  assert.match(license.toString(), /The above copyright notice and this permission notice shall be included/);
+  for (const names of [K.INPUTS, K.PACKAGE_NAMES, K.OUTPUT_NAMES]) assert.ok(names.includes('LICENSE'));
+});
+test('packaging rejects missing or ambiguous license files before output', t => {
+  const f = fixture(t);
+  git(f.root, ['rm', '--', 'LICENSE']);
+  git(f.root, ['commit', '--no-gpg-sign', '-qm', 'Synthetic missing license']);
+  f.options.sourceCommit = git(f.root, ['rev-parse', 'HEAD']);
+  assert.throws(() => K.buildRelease(f.options), /approved MIT LICENSE is required/);
+  assert.ok(!fs.existsSync(f.options.output));
+  git(f.root, ['reset', '--hard', 'HEAD~1']);
+  f.options.sourceCommit = git(f.root, ['rev-parse', 'HEAD']);
+  fs.writeFileSync(path.join(f.root, 'LICENSE.md'), 'Synthetic ambiguous license');
+  commit(f, 'LICENSE.md');
+  assert.throws(() => K.buildRelease(f.options), /Unexpected additional license file/);
+  assert.ok(!fs.existsSync(f.options.output));
+});
+test('release verifier rejects a forged license even with consistent recomputed hashes', t => {
+  const f = fixture(t); K.buildRelease(f.options);
+  const zipFile = path.join(f.options.output, K.ZIP_NAME);
+  const entries = K.verifyZip(fs.readFileSync(zipFile));
+  const forged = Buffer.from('Synthetic replacement license\n');
+  entries.set('LICENSE', forged);
+  const metadata = JSON.parse(entries.get('release-metadata.json'));
+  metadata.license.sha256 = K.sha256(forged);
+  entries.set('release-metadata.json', Buffer.from(JSON.stringify(metadata, null, 2) + '\n'));
+  entries.set('CHECKSUMS.txt', K.checksums(new Map([...entries].filter(([name]) => name !== 'CHECKSUMS.txt'))));
+  fs.writeFileSync(zipFile, K.makeZip(entries));
+  fs.writeFileSync(path.join(f.options.output, 'LICENSE'), forged);
+  fs.writeFileSync(path.join(f.options.output, 'release-metadata.json'), entries.get('release-metadata.json'));
+  const external = new Map(K.OUTPUT_NAMES.filter(name => name !== 'SHA256SUMS.txt')
+    .map(name => [name, fs.readFileSync(path.join(f.options.output, name))]));
+  fs.writeFileSync(path.join(f.options.output, 'SHA256SUMS.txt'), K.checksums(external));
+  assert.throws(() => K.verifyRelease(f.options.output), /approved license mismatch/);
 });

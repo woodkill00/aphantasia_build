@@ -2,7 +2,7 @@
 
 Thank you for helping make this small local app easier to use and verify. Start with the [user guide](imagery-app/README.md), [project boundaries](AGENTS.md), and [public work register](project-queue.json). The register is the single project task/status list; an open item is not permission to add unrelated capabilities.
 
-**License status:** no project license has been selected. Do not assume the repository is open source or add a license without a maintainer decision.
+**License:** repository-authored code, documentation and examples use the [MIT License](LICENSE), copyright © 2026 woodkill00. Retain its notices when redistributing. Preserve third-party attribution and applicable terms; do not copy research text, questionnaires or other third-party assets into the project merely because they are linked or cited.
 
 ## Useful contributions
 

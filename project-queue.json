@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T07:17:00Z",
+  "updated": "2026-10-20T08:05:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -358,10 +358,14 @@
     {
       "id": "IF-007",
       "title": "Select project license",
-      "status": "decision_needed",
-      "scope": "Maintainer chooses whether and how to license the project.",
+      "status": "complete_for_selected_repository_material",
+      "scope": "Owner selected MIT for repository-authored code, documentation and examples; preserve third-party rights and attribution.",
       "acceptance": "Explicit recorded decision before adding a license.",
-      "evidence": [],
+      "evidence": [
+        "LICENSE",
+        "README.md#license",
+        "MIT notice copyright (c) 2026 woodkill00; exact approved text is included with portable HTML and ZIP preparation."
+      ],
       "owner": "integrator",
       "priority": "P2",
       "consumer": "author",
@@ -393,9 +397,9 @@
         "currency": null
       },
       "next": {
-        "pass": "Add only the specifically approved license and reconcile documentation.",
-        "fail": "Resolve conflicting licensing/third-party terms before applying a license.",
-        "missingInput": "Keep the no-license-selected notice and request the maintainer decision."
+        "pass": "Preserve the approved notice and third-party scope; a future license change requires a separate owner decision.",
+        "fail": "Resolve any conflicting third-party terms before redistributing that material.",
+        "missingInput": "No license-selection input remains outstanding for this increment."
       }
     },
     {
@@ -1385,25 +1389,27 @@
     {
       "id": "IF-044",
       "title": "Improve public onboarding and release preparation",
-      "status": "local_checks_pass_native_integration_required",
-      "scope": "Task-based user/contributor/support documentation, privacy-aware issue forms, current synthetic examples, four original verified static screenshots, bounded Actions dependency updates and offline deterministic release-preparation tools. Runtime bytes remain unchanged.",
+      "status": "local_mit_checks_pass_prior_native_pass_final_head_gate_separate",
+      "scope": "Task-based documentation, privacy-aware forms, current synthetic examples, four reviewed static screenshots, bounded Actions updates, MIT licensing and deterministic offline portable release-preparation tools. Runtime bytes remain unchanged.",
       "evidence": [
-        "494/494 local Node checks pass, including 19 documentation/onboarding and 18 packaging checks.",
-        "25 Markdown files and 150 local links/fragments pass offline checks.",
-        "Independent archive readers and actual CLI tests verify synthetic clean-checkout packages; no actual Release or asset publication.",
+        "498/498 local Node checks pass, including 20 documentation/onboarding and 21 packaging checks.",
+        "25 Markdown files and 155 local links/fragments pass offline checks.",
+        "First source 5fd67d4 passed 494 Node checks, 98 native groups and actual clean-checkout packaging in https://github.com/woodkill00/aphantasia_build/actions/runs/39386135529.",
+        "The later MIT integration requires a full final-head CI, including the real-checkout license-preserving packaging smoke; see https://github.com/woodkill00/aphantasia_build/pull/6/checks.",
+        "Independent archive readers verify a deterministic 14-entry MIT kit; no actual Release or asset publication.",
         "imagery-app/test-results/TEST-REPORT.md",
         "imagery-app/test-results/summary.json"
       ],
-      "nextAction": "Complete exact-head read-only CI, independently review outgoing files and evidence, then obtain maintainer merge. License, actual Releases, hosting and repository-security settings remain separate decisions."
+      "nextAction": "Merge only after final exact-head CI and review pass. Actual Release publication, hosting and repository settings remain separate operations; the MIT licensing decision is complete."
     }
   ],
   "sourceBase": {
-    "repositoryBaseCommit": "95e0483905b8aa5845127a3f9ac637720e8ad380",
-    "targetBranch": "feat/item-style-timeline",
+    "repositoryBaseCommit": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
+    "targetBranch": "docs/public-onboarding-release-kit",
     "appPath": "imagery-app/index.html",
-    "appSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
-    "appBytes": 162947,
-    "note": "Exact source 3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79 passed full native run 39366282160. Documentation-only integration retains this runtime and requires its own complete CI result."
+    "appSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
+    "appBytes": 167297,
+    "note": "Merged v0.7 runtime is unchanged by the public-repository documentation, MIT licensing and offline packaging increment. Historical source and native evidence is retained in the test report."
   },
   "authority": {
     "scope": "This is the single public project task and role register. It records ownership, technical evidence, dependencies, and next decisions.",
@@ -1437,7 +1443,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Version 0.6 item styles, precise controls and finite item timeline implemented under the documented contract."
+      "currentStatus": "Verified merged v0.7 runtime retained byte-for-byte; current work adds documentation, examples, MIT notices and offline packaging only."
     },
     {
       "role": "tester",
@@ -1454,7 +1460,7 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "424 non-browser checks, 96 native Chrome groups and 52 independently inspected actual frames passed for the exact recorded v0.6 runtime; broader acceptance gates remain separate."
+      "currentStatus": "498 local checks pass; first documentation source passed 98 native Chrome groups and packaging. Final MIT/source-head CI and wider device/accessibility acceptance are distinct gates."
     },
     {
       "role": "reviewer",
@@ -1486,20 +1492,19 @@
         "outputTokens": null,
         "cost": null
       },
-      "currentStatus": "Current source and full retry verified; documentation-only evidence integration and exact-head CI remain before maintainer merge. No deployment."
+      "currentStatus": "Current documentation, examples, MIT distribution and public-data boundary reviewed. Final exact-head full CI is required before maintainer merge. No Release, hosting or settings publication."
     }
   ],
   "activeRepairs": {},
-  "currentStatus": "Version 0.6 scoped software verification passed: 424 non-browser checks, 96 native Chrome groups, 52 verified/independently inspected actual frames. Final documentation-only integration requires exact-head green CI before merge. Physical-device, full accessibility and qualified sensory/clinical gates remain unclaimed.",
+  "currentStatus": "Public onboarding, MIT licensing and offline release preparation pass 498 local checks. The first documentation source passed full native CI and packaging; require final exact-head CI for the later MIT integration before merge. No Release publication, hosting or repository-settings change is claimed.",
   "currentIteration": {
-    "base": "95e0483905b8aa5845127a3f9ac637720e8ad380",
-    "remoteBranch": "feat/item-style-timeline",
-    "htmlSha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97",
-    "sourceHead": "3d04cb7d60cc50faa1eaa182b7f5c0b1410d6f79",
-    "nativeStatus": "PASS",
-    "runId": 39366282160,
-    "visualCaptures": 52,
-    "visualReview": "PASS",
-    "integrationStatus": "DOCUMENTATION_ONLY_EXACT_HEAD_CI_REQUIRED"
+    "base": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
+    "remoteBranch": "docs/public-onboarding-release-kit",
+    "htmlSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
+    "sourceHead": "5fd67d4b65c31aeef1b5d955a7c84b641b5fb815",
+    "priorSourceNativeStatus": "PASS",
+    "runId": 39386135529,
+    "visualCaptures": 78,
+    "integrationRequirement": "Final-head full workflow and independent review must pass; see PR6 checks for its current outcome."
   }
 }

@@ -26,6 +26,7 @@ artifact checksum, known limits and license status. CHECKSUMS.txt covers the
 other files in this folder. Checksums detect mismatches, not authenticity or
 safety. They should be compared with a separately trusted release source.
 
-No project license has been selected. This package contains no license grant.
-Public source availability is not a substitute for a license. Check the
-repository's current licensing status before reusing or redistributing it.
+This software uses the MIT License. Read LICENSE for the complete terms,
+copyright notice and warranty/liability disclaimers. Keep those notices with
+copies or substantial portions of the software. If you use the standalone
+HTML download instead of this ZIP, keep its accompanying LICENSE file too.

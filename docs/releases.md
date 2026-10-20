@@ -2,7 +2,7 @@
 
 This is a maintainer guide, not the current user's download path. Users can obtain the source ZIP and open `imagery-app/index.html` using the [getting-started instructions](../README.md#get-started). Do not advertise a release asset or `/releases/latest` link before that exact asset exists; GitHub's “latest” route also excludes prereleases.
 
-The local tools below prepare files only. They do not publish a Release, create a tag, deploy a site, choose a license or change repository settings. Those decisions require separate maintainer approval. A version label does not turn this engineering preview into a clinical or broadly verified product.
+The local tools below prepare files only. They do not publish a Release, create a tag, deploy a site or change repository settings. Those actions require separate maintainer approval. The owner has selected the [MIT License](../LICENSE) for repository-authored code, documentation and examples; preserve its notices and all applicable third-party rights. A version label does not turn this engineering preview into a clinical or broadly verified product.
 
 ## Contents and guarantees
 
@@ -10,10 +10,11 @@ The builder writes these files into a new output directory outside the checkout:
 
 - `Imagery-Field.html`: the tested self-contained runtime, byte-for-byte identical to `imagery-app/index.html`.
 - `Imagery-Field-portable.zip`: that HTML, `START-HERE.txt`, `USAGE.txt`, current and legacy synthetic examples, metadata and an internal checksum list.
+- `LICENSE`: the approved MIT copyright and permission notice, distributed alongside the standalone HTML and also inside the ZIP.
 - `release-metadata.json`: version, source commit, runtime hash and supplied evidence URL.
 - `SHA256SUMS.txt`: checksums for the external release files.
 
-The ZIP includes `release-metadata.json` and `CHECKSUMS.txt`. A checksum file does not hash itself; metadata must not claim its own hash. Fixed ordering and timestamps make packaging deterministic for identical inputs. The exact allowed files and archive structure are checked by the verifier. No development dependencies are bundled and no network access is needed to open the HTML.
+The ZIP includes `LICENSE`, `release-metadata.json` and `CHECKSUMS.txt`. A checksum file does not hash itself; metadata must not claim its own hash. Fixed ordering and timestamps make packaging deterministic for identical inputs. The exact allowed files and archive structure are checked by the verifier. No development dependencies are bundled and no network access is needed to open the HTML.
 
 Checksums detect byte changes, not the trustworthiness of a source or the truth of a test result. The builder records the operator-supplied CI URL without contacting GitHub. Independently verify that run's source, result and runtime hash before relying on it.
 
@@ -42,7 +43,7 @@ The environment-variable syntax above is POSIX-shell syntax. Use your shell's eq
 
 ## 2. Build locally
 
-Use the approved version label, the full tested 40-character commit, its measured 64-character runtime SHA-256 and its verified successful evidence URL. The values below are placeholders, not a claim that a release exists:
+Use the approved version label, the full tested 40-character commit, its measured 64-character runtime SHA-256 and its verified successful evidence URL. The version must match the runtime manifest's base version, optionally followed by a preview suffix, such as `0.7.0-preview.1`. The values below are placeholders, not a claim that a release exists:
 
 ```sh
 node scripts/build-release.cjs \
@@ -69,7 +70,7 @@ Run the build a second time into a different new directory when verifying reprod
 
 ## 4. Publication is a separate gate
 
-Before publishing, obtain the owner's decisions on the project license and the exact Release/tag, audience and assets. No license is selected by this guide or the builder. Do not imply “open source” merely because the repository is public.
+Before publishing, obtain the owner's approval for the exact Release/tag, audience and assets. The project MIT license is already selected; keep the exact approved `LICENSE` in the ZIP and alongside the standalone HTML, and retain copyright/permission notices in redistributions. The license does not relicense cited research or other third-party material. A future license change requires a separate owner decision and a packaging-text/metadata review.
 
 If publication is approved, prepare a draft GitHub Release targeting the verified source. Use a prerelease label while this is an engineering preview. Review the release notes, known limitations and exact asset list; verify the uploaded assets by downloading them and rerunning checksum/archive checks before publication when the platform permits. Do not replace an existing published asset silently; issue a new version with an explanation when bytes change.
 
