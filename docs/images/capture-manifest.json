@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.7",
+  "sourceRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917",
+  "sourceCommit": "db7c84baa1f4fda32dfaea4dd3781c16f4adc509",
+  "testedMergeCommit": "937a7ddd7808270557716b4b3979ac6d2249116a",
+  "runtimeSha256": "c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857",
+  "capturedAt": "2026-10-20",
+  "platform": "Linux, Chrome 155.0.8059.39, sandbox enabled",
+  "content": "Synthetic test scenes only; no observations, accounts or user data.",
+  "processing": "Original static JPEG bytes copied from hash-verified CI capture records; no compositing, retouching or animation. Captures were scaled by the browser capture harness as recorded.",
+  "limitations": "Desktop and viewport/touch emulation only; not screenshots from Windows or physical phones.",
+  "captures": [
+    {
+      "device": "desktop",
+      "name": "v7-startup-live-static",
+      "mime": "image/jpeg",
+      "sha256": "1b4630c8ce56c31757921fd28d67df56223644d7e77c5aae7d53305e6bea0979",
+      "bytes": 22283,
+      "viewport": {
+        "width": 1366,
+        "height": 900,
+        "dpr": 1
+      },
+      "captureScale": 0.5856515373352855,
+      "file": "live-editor.jpg",
+      "sourceCapture": "desktop-v7-startup-live-static.jpg"
+    },
+    {
+      "device": "desktop",
+      "name": "v6-typed-color-with-fine-buttons",
+      "mime": "image/jpeg",
+      "sha256": "483d6905451215f3a23a9ebda0d7daa1790e72b48240c0bd86aaa4958b78ed7c",
+      "bytes": 20428,
+      "viewport": {
+        "width": 1366,
+        "height": 900,
+        "dpr": 1
+      },
+      "captureScale": 0.5856515373352855,
+      "file": "precision-controls.jpg",
+      "sourceCapture": "desktop-v6-typed-color-with-fine-buttons.jpg"
+    },
+    {
+      "device": "desktop",
+      "name": "v7-mixed-item-summary-and-tracks",
+      "mime": "image/jpeg",
+      "sha256": "1e28fdb08c7041e275773830949a6df9a1833618460523aee07554a0404bf60d",
+      "bytes": 21375,
+      "viewport": {
+        "width": 1366,
+        "height": 900,
+        "dpr": 1
+      },
+      "captureScale": 0.5856515373352855,
+      "file": "mixed-timeline.jpg",
+      "sourceCapture": "desktop-v7-mixed-item-summary-and-tracks.jpg"
+    },
+    {
+      "device": "mobile-emulation",
+      "name": "v7-whole-object-hue-320x568",
+      "mime": "image/jpeg",
+      "sha256": "a58010fb335aebd9638ce0978745763e13317ff22b59e7d84474b1261ee78aa5",
+      "bytes": 22612,
+      "viewport": {
+        "width": 320,
+        "height": 568,
+        "dpr": 3
+      },
+      "captureScale": 0.40625,
+      "file": "narrow-precision-controls.jpg",
+      "sourceCapture": "mobile-emulation-v7-whole-object-hue-320x568.jpg"
+    }
+  ]
+}

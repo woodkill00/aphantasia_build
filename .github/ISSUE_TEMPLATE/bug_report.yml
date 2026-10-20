@@ -1,0 +1,66 @@
+name: Bug report
+description: Report a reproducible app or documentation problem using synthetic content.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please read the user guide and troubleshooting first. This issue and every attachment are public.
+        Do not include real notes, health information, credentials, personal exports, private URLs or unreviewed logs.
+        Security findings belong in the private route described in SECURITY.md, not this form.
+  - type: input
+    id: version
+    attributes:
+      label: App version and source
+      description: Version, source commit or HTML SHA-256 if known, and where you obtained the HTML. Unknown is acceptable.
+      placeholder: "Version 0.7, repository source ZIP"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Device, operating system and browser
+      description: Include exact browser version. For layout problems include viewport, zoom and reduced-motion setting.
+      placeholder: "Device / OS / browser version / viewport / zoom"
+    validations:
+      required: true
+  - type: dropdown
+    id: launch
+    attributes:
+      label: How did you open the app?
+      options:
+        - Extracted HTML opened as a local browser file
+        - HTML shown in an attachment or file-manager preview
+        - Hosted or locally served URL
+        - Other or unknown (explain below)
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Start from a fresh page or a named synthetic example. Say which preview mode you used.
+      placeholder: "1. Open imagery-app/index.html\n2. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Expected and actual behavior
+      description: Include the exact visible error if useful, after removing private text.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Optional synthetic example or reviewed screenshot
+      description: Recreate the problem with neutral labels. Inspect screenshots/logs for tabs, names, notifications, credentials and machine paths before attaching.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public report check
+      options:
+        - label: I checked this report and its attachments for private content and used synthetic reproduction data.
+          required: true
+        - label: This is not a private security vulnerability report.
+          required: true

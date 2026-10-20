@@ -1,3 +1,26 @@
+# Public repository onboarding and release preparation
+
+2026-10-20. This increment changes documentation, contributor/support forms, synthetic examples, offline release-preparation tools and their checks. It does not change the app runtime, publish a Release/tag, deploy a site, select a license or alter repository security settings. The current integration outcome will be recorded for the exact candidate before merge; earlier runtime evidence is not substituted for these new checks.
+
+## New local checks
+
+On Node 24.19.0, `node --test imagery-app/tests/*.test.cjs` passed 494/494 tests with no failures, skips or cancellations. The new coverage includes 19 documentation/onboarding checks and 18 packaging checks. `node scripts/check-docs.cjs` passed for 25 Markdown documents and 150 local links/fragments; browser-script syntax passed, and the synthetic fixture check accepted 3 valid/rejected 14 invalid inputs without running a browser. The full native browser integration gate is separate and not preclaimed here. CI retains the read-only checkout and full sandbox-enabled browser suite, then adds a one-minute CLI packaging/verifier smoke using the exact clean checkout, reviewed runtime hash and a current-run URL explicitly labeled as still running. Files stay in the temporary runner directory; no upload or publication step is added.
+
+The actual builder/verifier CLIs were exercised against clean synthetic Git fixtures. Independent Python ZIP reading and system `unzip -t` confirmed the 13-entry allowlist, CRCs, fixed 1980 timestamps, regular-file modes and exact HTML/example bytes. These synthetic fixture source commits and package hashes are test data, not release provenance. Four original documentation screenshots were independently inspected and matched their source capture records.
+
+## Confirmed merged runtime baseline
+
+Version 0.7 merged as `1b67f86ede76e176fe8a6f9b801bc8023c3f481e`; its tree `0f17e003ffe44b916fb67a441c5d2934e83d38d7` matches the final tested integration tree. [CI run 39378606917](https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917), job 118482264215, passed all 457 non-browser checks and 98 native Chrome groups for source `db7c84baa1f4fda32dfaea4dd3781c16f4adc509` through test-merge `937a7ddd7808270557716b4b3979ac6d2249116a`. Node 22.23.3, sandbox-enabled Chrome 155.0.8059.39 on Linux; native duration 455.236 seconds, normal browser/profile cleanup. All 78 actual synthetic captures were byte/hash verified (1,396,276 JPEG bytes) and independently inspected. This is distinct from the earlier source run preserved below.
+
+The unchanged runtime is 167,297 bytes with SHA-256 `c19be4351ce9fbecfeed5f7ed91578e4659ad299cd83e0e3083ea80e2e00c857`. Four original static JPEGs from that final integration run are published under `docs/images/`; their exact hashes, capture scales, synthetic content and emulation limits are recorded in the [capture manifest](../../docs/images/capture-manifest.json). No raw logs or personal exports are bundled.
+
+## Scope and remaining gates
+
+The beginner route is the extracted repository ZIP and `imagery-app/index.html`. New current-format examples coexist with unchanged historical migration examples. The maintainer-only builder requires explicit provenance and a clean Git checkout, verifies assembled/runtime equality, emits a deterministic allowlisted ZIP without overwriting output, and verifies hashes and archive structure. Its supplied CI URL is recorded, not remotely certified by the offline tool. No package is automatically uploaded or published.
+
+Documentation checks cover local targets/fragments, current status, static media hashes and public-form guidance; production validators and UI doubles cover current and legacy example import/export. Packaging tests exercise deterministic output and rejection of dirty sources, mismatched provenance, symlinks, stale assembly, malformed examples and tampered archives. These checks do not establish ordinary OS opening workflows, physical devices, other browser engines, complete accessibility, sensory safety or clinical efficacy.
+
+<!-- HISTORICAL-V07-SOURCE-EVIDENCE -->
 # Version 0.7 live startup and responsive timing verification
 
 2026-10-20. **457/457 non-browser checks and 98/98 native Chrome groups PASS** in [run 39377219664](https://github.com/woodkill00/aphantasia_build/actions/runs/39377219664), job 118477960095. Source head `33bca8b59e52596f0784529b9162ea5240d1a7fb` was tested through PR test-merge checkout `b9087838b1f58fd3a12f3c51bc0d078c82029b88`. All **78 actual synthetic rendered captures** were byte/hash verified (1396233 JPEG bytes); all 78 were independently inspected and accepted for the tested software scope.

@@ -1,10 +1,10 @@
 # Security and responsible reporting
 
-## Private reporting setup is pending
+## Report vulnerabilities privately
 
-The repository owner or administrator needs to enable and verify GitHub private vulnerability reporting. This file does not enable that setting, and its availability is not claimed. Follow [GitHub's private-reporting setup instructions](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository).
+Use [GitHub's private vulnerability report](https://github.com/woodkill00/aphantasia_build/security/advisories/new), also available from this repository's **Security → Report a vulnerability** action. The public Security page's reporting route was verified on 20 October 2026. GitHub may ask you to sign in before submitting; no private report was submitted merely to verify the route.
 
-If the repository's Security → Advisories page offers **Report a vulnerability**, use that private route for security findings. If it is unavailable, do not put exploit details, secrets, or personal information in public issues; wait for a verified private reporting route. No security email address is designated here.
+Do not post exploit details, secrets or personal information in public issues. If the private reporting route becomes unavailable, withhold those details and wait for a verified private route; do not use an ordinary issue as a substitute. No security email address or response-time guarantee is designated here.
 
 ## Safe reproduction
 

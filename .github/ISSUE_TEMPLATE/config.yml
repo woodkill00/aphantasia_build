@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: User guide and troubleshooting
+    url: https://github.com/woodkill00/aphantasia_build/blob/main/docs/README.md
+    about: Find opening, editing, saving and troubleshooting instructions.
+  - name: Private security reporting
+    url: https://github.com/woodkill00/aphantasia_build/security/advisories/new
+    about: Report vulnerabilities privately. Never post exploit details or secrets in public issues.

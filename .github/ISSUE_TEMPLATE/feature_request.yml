@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a focused improvement to editing, accessibility or usability.
+title: "[Idea]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the user problem before proposing a solution. Requests are proposals, not commitments.
+        This engineering preview does not provide treatment, diagnostic or imagery-improvement claims.
+        Keep personal observations and health information out of this public issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Explain the workflow and what currently gets in the way, using a synthetic example.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed improvement
+      description: What would change for the person using the app?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or current workaround
+      description: A documentation clarification or smaller change may solve the same problem.
+  - type: textarea
+    id: access
+    attributes:
+      label: Accessibility, privacy and scope considerations
+      description: Consider keyboard use, reduced motion, Hide controls, local files and offline use. Do not include personal medical information.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Public report check
+      options:
+        - label: This request contains no private observations, credentials or personal exports.
+          required: true

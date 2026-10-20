@@ -1,0 +1,31 @@
+IMAGERY FIELD: START HERE
+
+This is an experimental, local visual editor, not a clinical product or a
+validated imagery-training tool. It makes no diagnostic or treatment claims.
+Supported timing/color limits are engineering bounds, not safety guarantees.
+
+1. Extract the whole ZIP to a normal folder. Do not run from a ZIP preview.
+2. Open Imagery-Field.html in a modern desktop web browser.
+   No installation, account, Node.js, Git, or web server is needed to use it.
+3. A static Live preview appears on first load. No pulse or timer starts.
+   Use Hide or Escape to conceal the field at any time.
+4. Read USAGE.txt. Try examples/static-starter.scene.json using Open scene JSON.
+   Importing conceals the field. Select Resume live preview to reveal it.
+5. Download your scene/sequence before closing. There is no durable autosave.
+
+The single HTML contains all runtime code and styles. The adjacent examples
+are optional files you select manually, not code fetched by the app.
+
+The package is an engineering preview. A layout that fits a phone does not
+establish mobile file opening or touch support. Ordinary OS file-opening
+workflows, physical devices, Safari and full manual accessibility have not all
+been verified. Do not bypass browser warnings or relax security settings.
+
+See release-metadata.json for source identity, supplied test-evidence link,
+artifact checksum, known limits and license status. CHECKSUMS.txt covers the
+other files in this folder. Checksums detect mismatches, not authenticity or
+safety. They should be compared with a separately trusted release source.
+
+No project license has been selected. This package contains no license grant.
+Public source availability is not a substitute for a license. Check the
+repository's current licensing status before reusing or redistributing it.

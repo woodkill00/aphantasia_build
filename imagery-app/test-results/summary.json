@@ -897,6 +897,50 @@
     },
     "integrationGate": "Later documentation-only commits retain this exact runtime. Their full CI must also pass before merge; consult the current pull-request checks rather than treating this source run as an exact-head result."
   },
-  "integrationGate": "Later documentation-only integration retains this exact runtime and tests. Its full exact-head CI must pass before maintainer merge; consult PR5 checks, not only the earlier source run.",
-  "candidateCommit": "33bca8b59e52596f0784529b9162ea5240d1a7fb"
+  "integrationGate": {
+    "status": "PASS_MERGED_V07_BASELINE",
+    "runId": 39378606917,
+    "jobId": 118482264215,
+    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39378606917",
+    "sourceCommit": "db7c84baa1f4fda32dfaea4dd3781c16f4adc509",
+    "testMergeCheckout": "937a7ddd7808270557716b4b3979ac6d2249116a",
+    "mergedCommit": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
+    "tree": "0f17e003ffe44b916fb67a441c5d2934e83d38d7",
+    "nonBrowserPassed": 457,
+    "nativeGroupsPassed": 98,
+    "capturesVerifiedAndInspected": 78,
+    "captureBytes": 1396276,
+    "node": "22.23.3",
+    "chrome": "155.0.8059.39",
+    "durationSeconds": 455.236,
+    "cleanup": {
+      "browserClosed": true,
+      "profileRemoved": true
+    }
+  },
+  "candidateCommit": "33bca8b59e52596f0784529b9162ea5240d1a7fb",
+  "publicRepositoryPreparation": {
+    "status": "LOCAL_PASS_NATIVE_INTEGRATION_NOT_RUN",
+    "baseCommit": "1b67f86ede76e176fe8a6f9b801bc8023c3f481e",
+    "runtimeChanged": false,
+    "scope": "Documentation, synthetic examples, static verified screenshots, contributor/support forms, offline release preparation and related checks. No Release/tag/deployment/license/security-settings change.",
+    "local": {
+      "node": "24.19.0",
+      "testsPassed": 494,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "documentationTests": 19,
+      "packagingTests": 18,
+      "markdownFiles": 25,
+      "localLinksAndFragments": 150,
+      "syntax": "PASS",
+      "fixtureValidAccepted": 3,
+      "fixtureInvalidRejected": 14,
+      "independentArchiveRead": "PASS: Python stdlib and system unzip; synthetic clean-Git fixtures, not actual release provenance."
+    },
+    "nativeIntegration": {
+      "status": "NOT_RUN",
+      "note": "The exact new candidate must pass the full existing sandbox-enabled native suite before merge."
+    }
+  }
 }

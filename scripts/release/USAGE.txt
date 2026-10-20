@@ -1,0 +1,47 @@
+IMAGERY FIELD: SHORT GUIDE
+
+LIVE EDITING
+The starter background is hue 4, saturation 60%, lightness 4%.
+Background saturation can be changed from 0 to 100%; 60% is only the default.
+Valid edits repaint during a visible Live preview. Sliders also have editable
+numbers and minus/plus controls for precise steps. Item, outline and shadow
+colors are separate. A hidden display stays hidden until explicitly revealed.
+
+STATIC OR TIMED
+Static Live preview has no clock, including when an item has pulse metadata.
+For one finite item timeline, choose Steady (no pulse) or Pulse for each item;
+set its start, fade-in, hold and fade-out. Steady items can still fade.
+Play items once runs until the last item's end. A scene may mix both modes;
+pulsing items use one shared period. Timings here are authoring data, not a
+recommended viewing schedule. Hide, End viewing or Escape stops and conceals.
+
+The separate snapshot sequence uses ordered scene snapshots, step holds and
+crossfades with a fixed background. Play once runs that sequence once.
+Snapshot playback does not also run each item's pulse/fade settings.
+Reduced-motion preferences disable timed item playback and provide manual
+snapshot stepping. Timed playback is windowed; fullscreen is for static/manual
+display. Focus, visibility, resize and page interruptions can stop/conceal.
+
+IMPORT AND SAVE
+Use Open scene JSON for .scene.json and Open sequence JSON for .sequence.json.
+Importing leaves the field hidden. Choose Resume live preview/manual controls
+when ready. See examples/README.md for current examples and old migration files.
+Use Apply changes to commit an in-page edit. Use Download scene JSON or
+Download sequence JSON to request a saved JSON file. Notes are separate and
+optional. Check Downloads
+before closing or refreshing; unsaved drafts may be lost. The app has no
+accounts, backend, telemetry or durable browser storage. Browser extensions,
+backups and synced folders may still retain/copy files: this is not secure
+deletion or a guarantee about your whole device.
+
+IF SOMETHING DOES NOT WORK
+Extract first and open the HTML in a web browser, not a text/document viewer.
+If the display is hidden, check for validation errors and explicitly choose
+Resume live preview. If a download is missing, keep the page open and check the
+browser's downloads controls. Do not bypass warnings or security restrictions.
+Keep a separate saved copy before experimenting. Unsupported/imported fields
+are rejected; use the examples matching the selected import control.
+
+This software is experimental. Software checks do not establish clinical
+clearance, universal browser support, or accessibility conformance.
+No project license has been selected; this package grants no license.
