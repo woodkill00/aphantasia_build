@@ -117,3 +117,14 @@ test('Native motion event snapshot accepts both preference directions only when 
 test('Native motion event snapshot rejects missing, untrusted, wrong-preference, visible or colored snapshots',()=>{
  const valid={trusted:true,matches:true,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0};for(const snapshot of [undefined,{...valid,trusted:false},{...valid,matches:false},{...valid,visibility:'Visible'},{...valid,canvasLabel:'Scene shown.'},{...valid,coloredPixels:1}])assert.throws(()=>assertMotionSnapshot(snapshot,true));
 });
+
+
+test('Motion harness never reads live matches between emulation invalidation and native event delivery',async()=>{
+ const {Page}=require('./browser-cdp.cjs'),vm=require('node:vm');
+ for(const expected of [true,false]){
+  let phase='before',reads=0;const records=[];
+  const context={window:{__testMotionTransitions:records,__testMotionQuery:{get matches(){reads++;assert.notEqual(phase,'pending','live matches read before native event');return phase==='before'?!expected:expected;}}}};
+  const fake={device:{name:'synthetic-harness-order'},evaluate:async(fn,...args)=>vm.runInNewContext('('+fn.toString()+')',context)(...args),send:async()=>{phase='pending';setTimeout(()=>{records.push({trusted:true,matches:expected,visibility:'Hidden',canvasLabel:'Scene hidden.',coloredPixels:0});phase='delivered';},5);}};
+  await Page.prototype.motionPreference.call(fake,expected?'reduce':'no-preference');assert.equal(phase,'delivered');assert.equal(reads,2);
+ }
+});

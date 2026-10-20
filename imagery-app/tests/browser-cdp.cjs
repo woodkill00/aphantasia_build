@@ -262,7 +262,10 @@ class Page {
     const expected=value==='reduce',state=()=>this.evaluate(()=>({matches:window.__testMotionQuery.matches,events:window.__testMotionTransitions.length}));
     const beforeAction=await state();
     await this.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value}]});
-    const afterAction=await state();
+    // Do not read MediaQueryList.matches between invalidation and native event
+    // delivery: a live getter can refresh this separate observer's cached result
+    // before Chrome reports its change. Observe event records, not live matches.
+    const afterAction={events:await this.evaluate(()=>window.__testMotionTransitions.length)};
     if(beforeAction.matches!==expected){
       // CDP acknowledgement and matchMedia.matches may precede native change
       // delivery. Wait for the event, never for a desired application state.
@@ -773,4 +776,4 @@ if (require.main === module) {
   if (process.argv.includes('--check-fixtures')) console.log(JSON.stringify({status:'PASS',fixtures:checkFixtures(),browserExecuted:false}));
   else run().catch(error => { console.error(error); process.exitCode=1; });
 }
-module.exports = {CDP,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb};
+module.exports = {CDP,Page,fixtures,checkFixtures,settlesWithin,stopChrome,stopChild,initialGuardRemaining,assertFullscreenSnapshot,assertFullscreenDraftMessage,assertMotionSnapshot,hslRgb};
