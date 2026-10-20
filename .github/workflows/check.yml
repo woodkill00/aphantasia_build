@@ -60,7 +60,7 @@ jobs:
           node scripts/build-release.cjs \
             --version 0.8.0-preview.1 \
             --source-commit "$source_commit" \
-            --tested-html-sha256 cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f \
+            --tested-html-sha256 58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65 \
             --evidence-url "$EVIDENCE_URL" \
             --output "$RELEASE_OUTPUT"
           node scripts/verify-release.cjs "$RELEASE_OUTPUT"

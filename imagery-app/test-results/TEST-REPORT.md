@@ -1,3 +1,27 @@
+# Version 0.8 editor aids candidate
+
+2026-10-20. Feature 012 is a separate editor-only grid/center-guide increment. **Current native, visual, performance and clean-checkout packaging acceptance: NOT RUN/PENDING.** The 178 prepared native groups consist of 160 preserved groups plus 18 additive aid checks. Prepared code is not execution evidence. No new release or deployment has occurred.
+
+## Current candidate and failure preservation
+
+- HTML: 337422 bytes; SHA-256 `58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65`.
+- Pure aids model: 67 focused checks passed; UI aids: 67 focused checks passed. Independent review reproduced and then verified repairs for sub-ulp content-rectangle rejection and an overlay cleanup exception interrupting Hide. Persistent cleanup-fault Hide/End/Escape regressions now pass.
+- Full local Node attempt after metadata refresh: **1064/1069 PASS, five FAIL**. Release-kit source assembly omitted both new modules. The package verifier correctly rejected the mismatch. The matching SOURCE_PARTS entries were added; exact-byte/source/allowlist checks remain unchanged. Focused package suite then passed **21/21**. The subsequent complete rerun passed **1069/1069**, zero failures, on Node v24.19.0 in 17916.570772 ms. This is local Node/model/DOM-double/package-unit evidence, not native browser execution.
+- Native fixture preflight: 3 valid and 14 rejected synthetic cases PASS; no browser executed by that command.
+- Optional DOM-only aids do not modify raster/export data, snap preferences or existing accepted history. Aid-affected viewing cannot attach clean provenance until a successful fresh explicit clean display start. All actual browser assertions, capture inspection and measured paired performance remain gates, not claimed results.
+
+After that 1069-check pass, independent adversarial review reproduced a failed-clean-paint provenance bug: a failed explicit clean start after guide use exposed an older completed record. The corrected candidate releases suppression only after successful raster/start and immediately begins the new display identity. Independent reproduction now remains unavailable. All **77 aids UI tests** pass, including four raster-failure routes, four repeat-lock rejections and two throwing schedulers. Prior passing tests did not detect or excuse this defect. Final corrected-runtime aggregate passed **1079/1079** on Node v24.19.0 in 14791.818884 ms. Documentation checks passed 42 Markdown files / 285 local links; synthetic fixture preflight passed 3 valid / 14 rejected cases. Native execution, actual capture inspection and clean-checkout CI package gate remain pending.
+
+## Verified prerequisite, not acceptance of changed code
+
+Core main `edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a` passed [exact-main run 39428678423](https://github.com/woodkill00/aphantasia_build/actions/runs/39428678423): 935 Node checks, 160 native groups, 656.545 seconds, runtime `cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f`, package/cleanup PASS. Independent review hash-verified all 142 captures and accepted the assigned 26-frame arrangement/input visual scope. Core PR 14 is merged; the historical premerge statements below are retained as dated snapshots, not current integration status.
+
+Physical devices, cross-engine behavior, assistive technology, calibrated display timing and human usefulness remain unverified. Multi-selection alignment/distribution and session groups are separate subsequent increments. Research submission remains disabled.
+
+---
+
+## Historical arrangement premerge report (superseded status, preserved evidence)
+
 # Version 0.8 session arrangement candidate
 
 2026-10-20. **Bounded arrangement source, native, scoped visual and package checks PASS.** The recorded source passed **935/935 CI Node checks and 160/160 native groups**. Independent review accepted **26 actual SHA-verified captures: all 22 arrangement plus four rapid-release/focused-Undo frames**. The run emitted 142 captures; not all 142 were manually inspected. Final documentation-head CI and protected integration remain pending; PR 14 is not recorded as merged. Version 0.8 remains unreleased; the published package remains v0.7.0.

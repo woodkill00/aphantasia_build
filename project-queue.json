@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updated": "2026-10-20T12:57:00Z",
+  "updated": "2026-10-20T13:49:00Z",
   "purpose": "Single public project queue and verification register; status is technical evidence, not approval of expanded scope.",
   "items": [
     {
@@ -1520,7 +1520,7 @@
       "id": "IF-050",
       "title": "Add layer tools, original presets and session arrangement",
       "priority": "P2",
-      "status": "bounded_arrangement_source_native_visual_pass_wider_tools_deferred",
+      "status": "core_accepted_editor_aids_source_review_native_pending",
       "scope": "Semantic layers, locks, duplicate/overlap/optional arrangement helpers and static authored catalog.",
       "dependencies": [
         "IF-047",
@@ -1539,9 +1539,11 @@
         "At most twelve 64\u00d748 canvases without DPR multiplication: 36,864 pixels, separate from main/offscreen buffers; invalidation hides and resets each backing store to 1\u00d71.",
         "Prior PR 13 head 65c96/run 39415125146: six new gallery/provenance groups per device passed; all 116 captures verified/inspected, including whole 320x760 gallery group. Full native gate still failed 135/136.",
         "Historical pre-run snapshot (20 October 2026, before PR 14 run 39423486474): Fourth increment implemented: session-only full-record item locks, Unlock all, accepted history guard, retained Apply/capture locks, successful-only replacement clearing, drag/placement-only Off/1/5/10 snap and Center X/Y/both. Duplicate locked item creates an independent unlocked copy. Current local Node suite passes 935/935 and independent source/code review is accepted; native/visual/package remain NOT RUN.",
-        "Independent PR 14 review accepted all 22 v10 arrangement captures and four v8 rapid/focused-Undo captures, each actually inspected after SHA verification. Original/rapid movable/rapid locked touch paths passed first trusted Undo/Unlock without browser fling suppression. All 160 native groups and package passed; final documentation-head CI/integration pending."
+        "Independent PR 14 review accepted all 22 v10 arrangement captures and four v8 rapid/focused-Undo captures, each actually inspected after SHA verification. Original/rapid movable/rapid locked touch paths passed first trusted Undo/Unlock without browser fling suppression. All 160 native groups and package passed; final documentation-head CI/integration pending.",
+        "Feature 012 planning contract: specs/012-editor-aids/spec.md, clarifications.md, plan.md, tasks.md, analysis.md, research.md and checklists/requirements.md. This specifies only opt-in editor aids, disclosed grid thinning, concealment disarming and scene-only provenance exclusion; it is not implementation or new-feature acceptance. Baseline main edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a / tree a436707b99e5b62324f6d9ee6f4f585c6ed210be independently passed run 39428678423 (935 Node, 160 native, package/cleanup).",
+        "20 October 2026 current reconciliation: PR 14 merged edc92d58; exact-main run 39428678423 passed 935 Node / 160 native/package/cleanup with assigned 26-frame visual acceptance. Feature 012 candidate 1069 Node PASS did not clear a subsequent independent failed-paint provenance finding; repair and new aggregate/native gates pending. Prior pending-integration statements above are historical premerge snapshots."
       ],
-      "nextAction": "Complete final documentation-head CI/protected integration. Equal-spacing distribution, visible editor-only grid/guides, grouping and persistent lock/snap settings remain deferred; broader gallery visual evidence remains separately scoped."
+      "nextAction": "Complete Feature 012 failed-paint isolation repair and independent source/native/visual/package gates before protected merge. Then separately implement atomic multi-selection alignment/distribution and session groups."
     },
     {
       "id": "IF-051",
@@ -1914,13 +1916,39 @@
       "currentArrangementRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39423486474"
     },
     "currentArrangementAcceptance": {
-      "status": "SCOPED_SOURCE_NATIVE_VISUAL_PACKAGE_PASS_FINAL_HEAD_INTEGRATION_PENDING",
-      "scope": "935 CI Node checks, 160 native groups and package PASS. 142 captures emitted; 26 actual SHA-verified frames independently inspected, all 22 arrangement plus four rapid/focused-Undo.",
-      "nextAction": "Complete final documentation-head full CI and independent outgoing-tree review before protected integration. PR 14 merge and broader external acceptance are not claimed."
+      "status": "MERGED_EXACT_MAIN_SCOPED_ACCEPTANCE_PASS",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39428678423",
+      "commit": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
+      "scope": "935 Node, 160 native,package/cleanup;142 captures byte/hash verified,assigned 26-frame visual scope accepted. Not physical devices or AT.",
+      "nextAction": "Preserve all existing gates during separate Feature 012 work."
+    },
+    "editorAidsProvenance": {
+      "status": "SOURCE_REPAIRED_INDEPENDENT_REPRODUCTION_PASS_NATIVE_PENDING",
+      "scope": "A failed fresh clean paint after aids must not expose a previously completed clean record. Source review reproduced defect after1069 local checks passed; targeted all-start-route regressions required.",
+      "nextAction": "Exact-head native, visual, performance and clean-checkout package acceptance; local aggregate passes 1079/1079."
     }
   },
-  "currentStatus": "Bounded arrangement implemented with recorded source review, 935/935 CI Node, 160/160 native groups and package PASS. Independent scoped visual review accepted 26 actual SHA-verified frames (all 22 arrangement plus four rapid/focused-Undo) from 142 emitted; not all frames manually inspected. Runtime remains 322869 bytes / cab0383c23dbfbf03facc541a4ee2e714c485de529b35ef41698b7160e0b4d7f. Final documentation-head CI and protected integration pending; PR 14 is not recorded as merged. PR 11/12/13 accepted and merged on their recorded scoped evidence. Wider deferred/external gates remain open; v0.8 unreleased.",
+  "currentStatus": "Core PR11\u201314 merged, exact-main edc92d58 independently accepted in run 39428678423: 935 Node / 160 native/package/cleanup and assigned 26-frame visual scope. Feature 012 editor aids is a separate unmerged candidate under source review; native/visual/performance not run. Failed-clean-paint provenance isolation repair independently passes its original reproduction and 77 aids UI tests; corrected local aggregate passes 1079/1079, while exact-head native/visual/performance/package gates remain required. Multi-selection alignment/distribution and session groups remain subsequent increments. No new release, hosting or collection.",
   "currentIteration": {
+    "name": "Feature 012: bounded editor aids",
+    "base": "edc92d58f83c5ceb3c3233e338a8bad7a85b2d2a",
+    "baseTree": "a436707b99e5b62324f6d9ee6f4f585c6ed210be",
+    "remoteBranch": "feature/012-editor-aids",
+    "publicationStatus": "NOT_PUBLISHED",
+    "status": "source_accepted_1079_local_checks_pass_native_pending",
+    "contract": "specs/012-editor-aids/spec.md",
+    "acceptanceReference": "specs/012-editor-aids/tasks.md",
+    "htmlSha256": "58e31b678b27e067418310feeec6709f938574b441f284a81987cb31a81bcb65",
+    "htmlBytes": 337422,
+    "localNode": {
+      "passed": 1079,
+      "total": 1079,
+      "failed": 0,
+      "nodeVersion": "v24.19.0",
+      "durationMs": 14791.818884
+    }
+  },
+  "historicalArrangementPremergeIteration": {
     "name": "Fourth increment: session locks and precise arrangement",
     "base": "65c96ebcae397884deb032d9bc430ddad61d68b7",
     "baseTree": "57d4ae6b049f0ad18e407921f014d50079582db8",

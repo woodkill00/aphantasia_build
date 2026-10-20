@@ -10,6 +10,7 @@
 </head>
 <body>
 <div id="stage-root" class="stage-root">
+  <div id="editor-aids-overlay" aria-hidden="true" hidden></div>
   <canvas id="scene-canvas" width="1280" height="720" role="img" tabindex="0" aria-describedby="direct-edit-hint" aria-label="Scene hidden. No design is displayed.">A static field with an equivalent text description in the editor. Every object has non-pointer controls.</canvas>
   <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Choose Resume live preview, then edit to see changes immediately.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
@@ -32,6 +33,13 @@
         <p id="canvas-mode-hint" class="hint">Legacy viewport scene. Conversion is explicit and may change proportions; review before Apply.</p>
         <label for="canvas-ratio">Authored aspect ratio</label><select id="canvas-ratio"><option value="1:1">Square · 1:1</option><option value="4:3">Landscape · 4:3</option><option value="3:4">Portrait · 3:4</option><option value="16:9">Wide · 16:9</option><option value="9:16">Tall · 9:16</option></select>
         <label for="authored-preset">Authored scene examples</label><select id="authored-preset"><option value="">Choose an editable example…</option></select><p id="authored-preset-hint" class="hint">Original geometric examples, not treatments or ranked recommendations. Choosing one never starts timed playback.</p>
+        <fieldset id="editor-aids-controls" class="group" aria-describedby="editor-aids-help editor-aids-status"><legend>Editor aids</legend>
+          <label class="check-label" for="show-editor-aids"><input id="show-editor-aids" type="checkbox"><span>Show editor aids</span></label>
+          <label for="editor-grid-step">Grid spacing · content units</label><select id="editor-grid-step"><option value="5">5 units</option><option value="1">1 unit</option><option value="10">10 units</option></select>
+          <label class="check-label" for="editor-center-guides"><input id="editor-center-guides" type="checkbox"><span>Center guides</span></label>
+          <p id="editor-aids-help" class="hint">Editor guides are not part of the scene or downloads. Snap is a separate control. At small sizes, only a subset of grid lines is painted, at least 8 CSS pixels apart. This is a legibility choice, not a safety threshold.</p>
+          <p id="editor-aids-status" class="hint" role="status">Editor aids are off. Enable them only in a valid, visible Live preview with the Scene editor open.</p>
+        </fieldset>
         <form id="scene-form" novalidate>
           <label for="scene-name">Scene name</label><input id="scene-name" type="text" maxlength="64" autocomplete="off" value="A small constellation">
           <fieldset class="group"><legend>Objects <span id="object-count">3 / 12</span></legend>
@@ -165,6 +173,8 @@
 <script>/*__SEQUENCE__*/</script>
 <script>/*__ITEMS__*/</script>
 <script>/*__EDITOR__*/</script>
+<script>/*__EDITOR_AIDS_MODEL__*/</script>
+<script>/*__EDITOR_AIDS_UI__*/</script>
 <script>/*__PRESETS__*/</script>
 <script>/*__GALLERY_UI__*/</script>
 <script>/*__PROVENANCE__*/</script>
