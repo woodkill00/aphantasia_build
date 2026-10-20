@@ -24,22 +24,26 @@ Hollow interiors count as targets; shadows and letterbox bars do not. Small hit 
 
 **Undo move** / **Redo move** are a separate 40-entry draft history and conceal the preview. Other edits reset that history. They do not replace applied-scene Undo/Redo or Apply. See the [direct-editing guide](../imagery-app/README.md#direct-preview-editing).
 
-## P2: bounded geometry, layers and four examples
+## P2: bounded geometry, layers and twelve original examples
 
 Authored scene-v4 adds ellipse, rectangle, rounded rectangle, polygon and star alongside dot, pixel, circle, square and triangle: ten finite families, not every mathematical shape. Dimensions, rotation, body fill/outline, polygon/star parameters and original effects/timing pass the shared closed validator. Width/height are bounded by family; unsupported fields, arbitrary paths, markup and nonfinite values are rejected. The [architecture](architecture.md#authored-scene-v4-and-sequence-v3-contract) records exact ranges.
 
 Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Locking, snap, guides, align/distribute and grouping are not available.
 
-Four original MIT examples are available through **Authored scene examples**:
+The **Original preset gallery** begins as a text-only list of twelve original MIT examples. Filter by item count, item color count, vertical symmetry, geometric overlap and authored timing. Color count excludes the shared background and disabled effects; symmetry includes colors; overlap includes containment as well as crossing shapes. These are descriptive filters, not clinical outcomes or a recommended order.
 
-| Example | What it demonstrates |
+| Examples | What they demonstrate |
 | --- | --- |
-| Balanced contours | Three steady contours, including a rotated square and rounded rectangle. |
-| Sparse symmetric points | Five filled points with a symmetric arrangement. |
-| Sequential shapes | Three shapes with finite staggered fades; static preview still shows all items. |
-| Mixed steady and pulse | A steady circle and a star with optional finite opacity pulse. |
+| Balanced contours; Spatial triplet | Simple forms and separated spatial arrangements. |
+| Sparse symmetric points | A sparse five-point constellation. |
+| Symmetric pair; Displaced pair | Equal circles with and without vertical reflection. |
+| Overlapping contours | A circle and square with intersecting geometric regions. |
+| Simple house; Simple tree; Simple boat; Small still life | Bounded original compositions built only from ordinary editable shapes. |
+| Sequential shapes; Mixed steady and pulse | Existing finite timing choices; static thumbnails show all items without running timing. |
 
-Catalog metadata includes stable IDs, revision 1, descriptions and original provenance. Exported editable scenes do not claim immutable preset/stimulus identity. This first catalog is not a filterable thumbnail gallery or a semantic catalog of houses, trees, boats or still lifes. Presets never start timing or rank effectiveness.
+Each entry has a stable ID, revision 1, description, original provenance, MIT license, counts and shared-validator result. The four original scene payloads remain unchanged. Editable exports deliberately omit catalog identity, so an edited derivative cannot claim to be an unchanged experimental stimulus.
+
+**Show static thumbnails** is a separate explicit opt-in. At most twelve 64×48-pixel canvases are allocated, without DPR multiplication: 36,864 pixels total, or 147,456 RGBA bytes, separate from the existing main/offscreen scene buffers. Hide/End/Escape, filter changes and page interruptions conceal them and shrink their backing stores to 1×1. Nothing automatically re-enables them. Thumbnails use validated geometric paths, not arbitrary SVG/markup, remote assets or animation. **Use draft** stages an editable composition while hidden; Live preview, Apply, download and optional timed playback remain separate actions.
 
 Scene-v4 uses explicit authored canvas metadata. Sequence-v3 repeats the shared canvas in every snapshot and rejects any mismatch. Legacy sequence-v2 remains viewport-relative. An incompatible format family, background or ratio cannot silently alter either document on capture. Snapshot sequence playback still uses its own holds/transitions, not nested item clocks. The published v0.7 app cannot open authored v4/v3 files; keep original files if compatibility matters.
 
@@ -61,9 +65,13 @@ Normalized RGB error is an algorithm diagnostic, not a semantic-quality score, u
 
 The session journal is off initially. Enabling it does not create records; only **Add reflection to session** does. Each answer defaults to Skipped, and missingness choices remain distinct. External perception, visual persistence, voluntary imagery, nonvisual memory, comfort, discomfort, early stopping, preference and ease of use are separate custom exploratory descriptions. No score, validated questionnaire or causal/efficacy inference is generated.
 
-At most 20 records stay in page memory, with up to 2,000 characters per optional note. This UI deliberately records scene/exposure references as **unavailable**: it does not associate a measured scene revision, intended/actual duration or technical interruption with a reflection. No timestamp, original picture, scene content or device fingerprint is collected. A pure schema's support for future provenance is not proof that the UI measures it.
+At most 20 records stay in page memory, with up to 2,000 characters per optional note. A second, initially unchecked option, **Include optional scene fingerprint and visible duration in future reflections**, enables provenance for subsequent successfully rendered main-field displays. It does not reconstruct earlier viewing, track source/gallery thumbnails, or create a reflection automatically.
 
-Select records, preview the exact JSON, approve that particular payload separately, then request **Download approved journal JSON**. Selection/edit changes invalidate preview/approval; each download needs fresh approval. Added records are not automatically selected. Turning the journal off clears unfinished answers but keeps added records; delete/clear removes page records, not already downloaded files. There is no autosave, storage, import or transmission. Journal files are separate from scene, sequence and single-note files and may contain private information. See the [journal guide](../imagery-app/README.md#private-session-journal).
+Only the latest ended display interval can be attached after its SHA-256 digest is ready. Static/item displays fingerprint the canonical scene; a timed sequence fingerprints the whole canonical sequence, while a manually shown sequence step fingerprints that step as a scene. The record includes format/version, renderer version, mode, planned duration where applicable, foreground-visible duration and end reason. Paused frames remain visible and count, so visible duration can exceed planned playback duration. A new displayed edit begins a new interval, not a cumulative session total.
+
+While disabled, active, pending, failed or unavailable, provenance fields are **unavailable**; no older result is substituted. Opt-out or Clear discards retained provenance and invalidates late digest completion. The renderer label `0.8.0-dev.provenance1` is a version identifier, not a binary hash. The fingerprint describes canonical document bytes, not rendered pixels or anonymity. No timestamp/epoch, source picture, full scene content or device identifier is exported. These engineering durations do not measure gaze, attention, light dose, comfort or efficacy. See the [exact provenance contract](architecture.md#optional-display-provenance-contract).
+
+Select records, preview the exact journal-v2 JSON, approve that particular payload separately, then request **Download approved journal JSON**. Selection/edit changes invalidate preview/approval; each download needs fresh approval. Added records are not automatically selected. Turning the journal off clears unfinished answers but keeps added records; delete/clear removes page records, not already downloaded files. There is no autosave, storage, import or transmission. Journal files are separate from scene, sequence and single-note files and may contain private information. See the [journal guide](../imagery-app/README.md#private-session-journal).
 
 ## P5: research remains disabled
 
@@ -75,14 +83,14 @@ Real collection needs a responsible operator, applicable population/jurisdiction
 
 Independent component reviews identified and prompted repairs to direct-edit transaction identity/overlap caching, rotated-edge coordinate quantization, adversarial typed-array/closed-field validation, image cancellation across app actions and overlapping decode resource ownership. Their model, fuzz and DOM-double results are summarized in [analysis](../specs/008-interactive-scene-roadmap/analysis.md); they are not native or human-study evidence.
 
-Final exact-head regression, native-browser CI, integrated review and inspected rendered captures remain required for the expanded candidate. Planned native scenarios include actual synthetic PNG decode and an explicitly approved journal download, rather than only substituted decoders/DOM mocks. Do not count test code as an executed pass. Historical v0.7 results in [compatibility](compatibility.md) identify a different artifact.
+The earlier PR 12 candidate recorded 737 passing Node checks and 117 of 118 native groups, not a clean native pass. A mobile Undo failure and visually identified button-layout issues have candidate repairs, but those repairs and the new gallery/provenance increment need exact-head native execution and inspected captures. Focused integrated provenance tests use real Node SHA-256 with DOM doubles; they are not native display-time evidence. Final exact-head regression, native-browser CI, integrated review and inspected rendered captures remain required for the expanded candidate. Planned native scenarios include actual synthetic PNG decode and an explicitly approved journal download, rather than only substituted decoders/DOM mocks. Do not count test code as an executed pass. Historical v0.7 results in [compatibility](compatibility.md) identify a different artifact.
 
 Still separate or deferred:
 
 - Arbitrary SVG/freeform paths/curves, arcs/rings/lines, text, 3D/fractals, larger item budgets and an exhaustive shape inventory.
-- Lock/snap/guide/align/group tools, full thumbnail/filterable galleries and richer semantic compositions.
+- Lock/snap/guide/align/group tools and broader catalogs beyond the twelve original examples.
 - Raster formats beyond PNG/JPEG, richer tracing/manual anchors, empirical natural-image and correction-effort usefulness acceptance.
-- Integrated scene/render/exposure provenance for journal records, measured interrupted exposure and governed research activation.
+- Native verification of optional display provenance, calibrated physical exposure/gaze measurement and governed research activation. The optional software interval summary is not a measurement of attention or light dose.
 - Physical-device touch/pen, cross-engine and OS file workflows, actual zoom and comprehensive assistive-technology/accessibility acceptance.
 - Qualified sensory/content review, clinical efficacy, diagnostic validity and participant research.
 

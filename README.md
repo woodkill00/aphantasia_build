@@ -17,7 +17,7 @@ The [v0.7.0 release](https://github.com/woodkill00/aphantasia_build/releases/tag
 
 ## Current development scope
 
-**Version 0.8 is unreleased and under verification.** The development source includes direct selection/dragging, fixed-ratio authored scenes with ten bounded shape families, layers and four original editable examples, an experimental local PNG/JPEG approximation tool, and an optional session-only journal. Research submission stays disabled. These features are **not in the published v0.7.0 ZIP**.
+**Version 0.8 is unreleased and under verification.** The development source includes direct selection/dragging, fixed-ratio authored scenes with ten bounded shape families, layers and twelve original editable examples with a text-first, opt-in static-thumbnail gallery, an experimental local PNG/JPEG approximation tool, and an optional session-only journal with separately opt-in display provenance. Research submission stays disabled. These features are **not in the published v0.7.0 ZIP**.
 
 Start with the [0.8 feature guide and limits](docs/roadmap-features.md). Exact-head native-browser and inspected visual acceptance remain pending; old v0.7 results do not verify this source. The [Spec-Kit roadmap](specs/008-interactive-scene-roadmap/spec.md), [task map](specs/008-interactive-scene-roadmap/tasks.md), and [public work register](project-queue.json) separate implementation, acceptance and deferred work.
 
@@ -25,7 +25,7 @@ Start with the [0.8 feature guide and limits](docs/roadmap-features.md). Exact-h
 
 - Edit shapes, positions, sizes and colors live. The new-scene background defaults to HSL **4°, 60%, 4%**; background saturation can still reach **100%**.
 - In unreleased 0.8, select/drag items or use numeric, tap-place and nudge controls. Keep legacy viewport layout, or explicitly choose **Convert this draft to fixed ratio** / **New fixed-ratio scene** for expanded geometry.
-- In unreleased 0.8, generate a bounded editable sketch from a local still PNG/JPEG, or opt into a private journal. Generated shapes can disclose image content; journal downloads can contain private text. Neither is uploaded.
+- In unreleased 0.8, generate a bounded editable sketch from a local still PNG/JPEG, or opt into a private journal. Generated shapes can disclose image content; journal downloads can contain private text and, only after separate opt-in, a scene/sequence fingerprint and bounded visible-duration summary. Neither is uploaded.
 - Type a precise slider value, drag its slider, or use the fine-step minus/plus buttons.
 - Add independently colored outlines and shadows.
 - Keep an item **Steady · no pulse**, give it fades, or choose **Pulse**. Mix steady and pulsing items, overlap them, or arrange them one after another.

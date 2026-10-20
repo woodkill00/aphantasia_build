@@ -1,28 +1,22 @@
-# Version 0.8 expanded roadmap candidate
+# Version 0.8 gallery and optional provenance candidate
 
-Current implementation includes direct editing; explicit scene-v4/sequence-v3 authored ratios and ten bounded shape families; four original editable presets and layer order; local experimental PNG/JPEG approximation; optional session-memory private journal; and disabled research information. This is unreleased development, not the published v0.7.0 package.
+Unreleased development. The published package remains v0.7.0. Current engineering includes ten bounded authored shape families, five fixed ratios, twelve original presets, explicit bounded static gallery thumbnails, experimental local image approximation, private journal-v2 with separately opted-in SHA-256 identity and visible-duration metadata, and disabled research information only. This is not all possible geometry, a clinical tool or an activated study.
 
 ## Current acceptance boundary
 
-Independent scoped code reviews and Node regressions cover closed models, preserved legacy outputs, gesture rollback, rotated edge clamping, single-shadow filled silhouettes, literal journal export preview/approval, stale work invalidation and a single read/decode intake lease. Those checks are not native rendering, browser decoder, device, assistive-technology, natural-image usefulness or clinical evidence.
+Pure models, DOM doubles and code review are useful but not native rendering, physical exposure, device, assistive-technology or human usefulness evidence. The current prepared suite contains 136 native groups and 116 synthetic captures, including inherited diagnostic groups; none is claimed passed on this new runtime yet. All current head identity and aggregate totals are recorded in summary.json and must be refreshed after source changes.
 
-The exact current runtime is recorded in `summary.json`. The prepared native suite adds actual authored raster checks, responsive geometry controls, scene-v4/sequence-v3 downloads, synthetic PNG decoding/conversion/draft undo, private journal downloads and optional-tool reflow. It must pass on the exact head and its synthetic screenshots must be independently inspected before merge. Local Chromium startup was blocked before navigation; no sandbox weakening was attempted.
+Independent reviews passed the scoped gallery/provenance/journal and integration tests, checked original four preset payload preservation, no default thumbnail/hashing behavior, bounded buffers/digest queue, explicit opt-out/Clear, exact preview/download consent and truthful stop reasons. Real Node SHA-256 tests verify canonical scene and whole-sequence hashes, lifecycle interruption, paused visible intervals and no stale association. New native test code includes independent shape-color thumbnail pixels and actual browser SubtleCrypto duration brackets. Test code review is not native execution.
 
-The preceding P1 candidate's CI findings and fixes remain traceable in PR 11. Its evidence does not verify this larger runtime. Current documentation screenshots remain explicitly historical v0.7 and must not be presented as new-feature acceptance.
+[Earlier PR 12 run 39409429924](https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924) passed 737 Node and 117/118 native groups. All98 captures were inspected; actual narrow action-label clipping and a mobile drag-to-Undo click-generation failure blocked acceptance. Later P1 diagnostics ruled out screenshot removal and80ms tap dwell as sufficient fixes. This candidate includes the reviewed pointer-release experiment, separate600ms post-drag diagnostic, readable wrapping and stronger aperture/text-range checks. No root cause or repaired native pass is claimed before rerun.
 
-## Observed native attempt and reviewed repair candidate
+## Limits and deliberate boundaries
 
-[Run 39409429924](https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924) at head `198b0fcef2ee3919e556bb930f4afc778f543564` passed 737 Node checks and 117/118 native groups; packaging was skipped. All 98 synthetic captures were hash verified and individually inspected. One mobile drag-to-Undo trusted click was not generated, and screenshot review found clipped labels in narrow action rows. No additional rendering/privacy visual blocker was found in those captured frames, which is not universal visual or accessibility acceptance.
-
-The current candidate preserves all assertions, includes the reviewed pointer-release default experiment and isolated tap diagnostics from P1, wraps narrow action buttons, and checks actual text ranges plus inspector aperture/corner visibility. Separate taller narrow captures document the whole note and layer group; short-viewport target checks remain. New exact-head native/visual evidence is pending. Prepared counts are 124 groups and 104 captures, not observed passes.
-
-## Independent review details and limits
-
-- Legacy differential checks: 15,000 scene-validation cases (8,150 accepted outputs at four viewports) and 3,000 sequence cases matched the old model. 18,000 extreme authored translations passed after inward edge quantization.
-- Converter: 120 seeded synthetic cases across five ratios and three budgets terminated within 4,608 candidates and produced canonical scenes. Pixel-center error never increased; this does not demonstrate natural-image fidelity or lower human correction effort.
-- Encoded image preflight uses intrinsic typed-array bounds without invoking accessor/species hooks. It checks type/dimensions/resource bounds, not complete file validity; actual browser decoding and post-orientation bounds remain required.
-- Optional journal is private page memory, max 20 records, with skipped defaults and unavailable scene/exposure metadata. There is no participant submission endpoint, hosting, automatic collection or functioning Submit action.
-- Deferred: arbitrary paths/SVG/text/3D and every possible shape, richer semantic scene gallery, natural-image/held-out benchmarks and correction-effort studies, physical devices, other browser engines, full accessibility acceptance, research governance and participant collection.
+- Image conversion has synthetic geometric tests only, not a natural-photo or human correction-effort benchmark. Pixel-error reduction is not semantic fidelity or user benefit.
+- Foreground-visible duration measures renderer acknowledgments, not attention, eye tracking, calibrated luminance, clinical dose or guaranteed continuous physical visibility. A paused frame remains displayed and counts.
+- Journal remains optional session memory; no network, autosave, timestamp, user/device identifier or research submission. SHA fingerprints are not anonymity. Research operator, ethics, privacy, security, instrument rights, retention and withdrawal decisions remain blocked.
+- Physical phones/tablets, Safari/Firefox, assistive technology and participant usability remain unexecuted. Current screenshot references to v0.7 are historical, not new-feature acceptance.
+- Unbounded shape catalogs, arbitrary paths/3D families, richer inverse graphics, custom formulae and performance-cap increases are not claimed complete.
 
 ## Historical verification below
 

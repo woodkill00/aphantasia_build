@@ -8,7 +8,10 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
   const FORMAT = 'imagery-private-journal';
-  const VERSION = 1;
+  // Version 2 permits exact whole-sequence references; the v1 validator stays
+  // explicitly available for the original static-only record contract.
+  const VERSION = 2;
+  const LEGACY_VERSION = 1;
   const MAX_ENTRIES = 20;
   const MAX_NOTE_LENGTH = 2000;
   const MAX_EXPORT_BYTES = 131072;
@@ -80,7 +83,7 @@
     for (const key of keys) result[key] = choice(input[key], allowed, label + ' ' + key);
     return result;
   }
-  function sceneReference(value) {
+  function sceneReference(value, schemaVersion) {
     // Inspect the status descriptor without invoking a getter.
     if (!value || typeof value !== 'object') throw new Error('Scene reference is required.');
     const descriptor = Object.getOwnPropertyDescriptor(value, 'status');
@@ -91,8 +94,9 @@
     }
     const input = record(value, ['status', 'format', 'version', 'sha256', 'rendererVersion'], 'Scene reference');
     choice(input.status, ['available'], 'Scene reference status');
-    choice(input.format, ['imagery-static-scene'], 'Scene reference format');
-    integer(input.version, 1, 4, 'Scene reference version');
+    choice(input.format, schemaVersion === LEGACY_VERSION ? ['imagery-static-scene'] :
+      ['imagery-static-scene', 'imagery-field-sequence'], 'Scene reference format');
+    integer(input.version, 1, input.format === 'imagery-static-scene' ? 4 : 3, 'Scene reference version');
     if (typeof input.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(input.sha256)) throw new Error('Scene reference requires a lowercase SHA-256 digest.');
     if (typeof input.rendererVersion !== 'string' || !/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(?:-[a-z0-9.-]{1,24})?$/.test(input.rendererVersion)) throw new Error('Renderer version is unsupported.');
     // The caller must compute this from its actual frozen scene. A valid digest
@@ -118,16 +122,20 @@
       endedReason: choice(input.endedReason, ['user-stop', 'completed', 'hidden-tab', 'resize', 'edit', 'technical-failure', 'unknown'], 'End reason')
     };
   }
-  function canonicalRecord(value) {
+  function canonicalForVersion(value, schemaVersion) {
     const input = record(value, ['scene', 'exposure', 'experiences', 'comfort', 'symptoms', 'stoppedEarly', 'preference', 'easeOfUse', 'note'], 'Reflection');
     const comfort = states(input.comfort, ['before', 'after'], COMFORT_VALUES, 'Comfort');
     if (typeof input.note !== 'string' || input.note.length > MAX_NOTE_LENGTH ||
         /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(input.note)) {
       throw new Error('Optional note must be at most 2,000 characters without control or direction-override characters.');
     }
+    const scene = sceneReference(input.scene, schemaVersion), exposure = exposureReference(input.exposure);
+    if (schemaVersion === VERSION && scene.status === 'available' && exposure.status === 'available' &&
+        (scene.format === 'imagery-field-sequence') !== (exposure.mode === 'sequence')) {
+      throw new Error('Display mode and document reference disagree.');
+    }
     return freeze({
-      scene: sceneReference(input.scene),
-      exposure: exposureReference(input.exposure),
+      scene, exposure,
       experiences: states(input.experiences, EXPERIENCES, RESPONSE_VALUES, 'Experience'),
       comfort,
       symptoms: states(input.symptoms, SYMPTOMS, SYMPTOM_VALUES, 'Symptom'),
@@ -137,6 +145,8 @@
       note: input.note
     });
   }
+  function canonicalRecord(value) { return canonicalForVersion(value, VERSION); }
+  function canonicalRecordV1(value) { return canonicalForVersion(value, LEGACY_VERSION); }
   function emptyRecord() {
     return canonicalRecord({
       scene: {status: 'unavailable'},
@@ -224,8 +234,8 @@
     });
   }
   return Object.freeze({
-    FORMAT, VERSION, MAX_ENTRIES, MAX_NOTE_LENGTH, MAX_EXPORT_BYTES, MAX_EXPOSURE_MS,
+    FORMAT, VERSION, LEGACY_VERSION, MAX_ENTRIES, MAX_NOTE_LENGTH, MAX_EXPORT_BYTES, MAX_EXPOSURE_MS,
     EXPERIENCES, RESPONSE_VALUES, COMFORT_VALUES, SYMPTOMS, SYMPTOM_VALUES, STOP_VALUES, PREFERENCE_VALUES, EASE_VALUES,
-    SUBMISSION, canonicalRecord, emptyRecord, createJournal
+    SUBMISSION, canonicalRecord, canonicalRecordV1, emptyRecord, createJournal
   });
 }));

@@ -2,26 +2,22 @@
 
 20 October 2026 · **Version 0.8 is unreleased. Final engineering acceptance is pending.**
 
-Prior PR 12 run 39409429924 passed 737 Node and 117/118 native groups. All 98 captures were inspected and exposed narrow action-label clipping. Current pointer-release and wrapping repair candidates require fresh exact-head native evidence; prior passing groups do not establish repaired acceptance.
-
 This is an evidence snapshot for the expanded candidate, not a claim that the full roadmap or all 64 proposals are done. It separates implemented and non-browser-tested behavior from deliberately deferred work, unperformed acceptance and governance-blocked collection. The [project queue](../../project-queue.json) remains the single live task/status register; this document does not replace it. The [fixed task map](tasks.md) defines the acceptance requirements, and [research traceability](research.md#all-64-proposals-mapped-to-the-single-queue) maps every E/S/I/R proposal to those IDs.
 
 ## Candidate and evidence identity
 
 | Item | Recorded identity or outcome |
 | --- | --- |
-| Acceptance target | PR 12, frozen source head `198b0fcef2ee3919e556bb930f4afc778f543564`. |
-| Locally inspected source snapshot | `b157ba3d2441561edf7e2864376173a946af1a44`. This is not asserted to be the PR head. The local HTML independently matches the runtime identity below; that match does not prove every source/test/document file is identical. |
-| Runtime | `imagery-app/index.html`, 276,388 bytes. |
-| Runtime SHA-256 | `eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa`. |
-| Recorded dependency-free regression | PASS: 737/737 Node checks, zero failed or skipped; Node 24.19.0; command `node --test imagery-app/tests/*.test.cjs`. This is non-browser evidence, as recorded in the [summary](../../imagery-app/test-results/summary.json). |
-| Recorded documentation check before this matrix | PASS: 34 Markdown files and 220 local links/fragments, using `node scripts/check-docs.cjs`. This new document was not part of those counts. |
-| Documentation check including this matrix | PASS: 35 Markdown files and 227 local links/fragments, using the same command on this documentation addition. This is an offline link/fragment check, not native acceptance. |
-| Prepared native suite | 118 groups and 98 expected synthetic captures. These are planned counts, not successful execution or inspected-image totals. |
-| Current native attempt | CI running; no completed exact-head native outcome is recorded in this draft. The acceptance placeholders below remain NOT RUN until actual evidence is reviewed. |
-| Current-head visual acceptance | NOT RUN. No completed review of this head's 98 expected actual captures is claimed. |
-| Separate direct-editor increment | P1/PR 11 has its own pending CI/review boundary. Its earlier results or repairs cannot accept the expanded PR 12 candidate. |
-| Published distribution | The verified published package remains v0.7.0. It does not contain the new authored, image or journal features. No published v0.8 or hosted deployment is claimed. |
+| Current acceptance target | Unreleased gallery/provenance integration on `feature/010-gallery-provenance`; source/artifact identity must be frozen and refreshed after final integration. No earlier hash accepts this changed runtime. |
+| Historical expanded PR 12 target | Source head `198b0fcef2ee3919e556bb930f4afc778f543564`; locally inspected baseline `b157ba3d2441561edf7e2864376173a946af1a44`. These are historical identities, not the current dirty source. |
+| Historical baseline runtime | `imagery-app/index.html`, 276,388 bytes, SHA-256 `eea540762d2925b157c2672d1077809e8419c0b582399bf670c9ddbb23e634fa`. |
+| Historical PR 12 regression | 737/737 Node checks recorded for the earlier candidate; not acceptance of the new gallery or optional provenance. |
+| Historical PR 12 native outcome | 117 of 118 native groups passed. The mobile Undo failure prevents a clean native pass. Visually identified button-layout issues also required repair. |
+| Repair/new-feature candidate | The mobile Undo input-delivery defect remains under investigation. A button-layout repair candidate is present, but exact-head native rerun and inspected rendered evidence remain pending. Test preparation is not repair verification. |
+| Current focused evidence | Preset/gallery model and DOM checks pass; integrated provenance checks use real Node SHA-256 with DOM doubles. Final aggregate totals/hashes belong in the refreshed test report/summary, not copied from the historical candidate. |
+| Current native and visual acceptance | PENDING / NOT RUN for this changed runtime. New gallery/provenance captures and repaired workflows must be executed and inspected. Historical planned counts of 118 groups/98 captures are not current observed totals. |
+| Documentation check | PASS for this documentation draft: 35 Markdown files / 228 local links and fragments via `node scripts/check-docs.cjs`. Rerun after final integration; this offline check does not establish browser or visual acceptance. |
+| Published distribution | The verified published package remains v0.7.0. It does not contain the new authored, image, gallery or journal/provenance features. No published v0.8 or hosted deployment is claimed. |
 
 The [test report](../../imagery-app/test-results/TEST-REPORT.md) preserves component evidence, historical attempts and limitations. Independent model/DOM-double reviews and synthetic fuzz checks are useful, but not native rendering, browser decoding, physical-device, accessibility, empirical-usefulness or clinical evidence.
 
@@ -43,17 +39,17 @@ Proposal families are summarized here for readability. The linked [64-proposal c
 | IF-047 | Semantic selection, numeric position, tap-place, nudge and focused-preview arrow keys; inspector defers layout-changing selection until gesture completion. E/R equivalent-control families. | Current-head rendered narrow/short/focus captures, actual touch/pen devices, actual zoom and assistive-technology workflows. | Implemented / non-browser tested; visual and broader accessibility acceptance pending. |
 | IF-048 | Explicit scene-v4/sequence-v3 contracts, five fixed ratios, letterbox mapping, strict unchanged legacy validation and atomic incompatible capture rejection; round-trip/differential tests. E/S/R format and provenance families. | Exact-head native canvas/snapshot import/export and letterbox interaction; physical calibration is not a capability. | Implemented / non-browser tested; native acceptance pending. |
 | IF-049 | Ten closed numeric shape families, dimensions, rotation, fill/contour, extents, shared rendering/hit-test geometry, descriptions and serialization. E/I/R geometry families. | Native raster/effect/composed-output inspection; arbitrary SVG/paths, curves/arcs/rings/lines, text, 3D/fractals and every possible shape are not implemented. | Bounded family set implemented / non-browser tested; expanded families deferred and raster acceptance pending. |
-| IF-050 | One-layer reorder, duplicate and overlap cycling; four original revisioned MIT preset examples, validated through the shared model. E/I/R layers and catalog families. | Locks, snap, guides, align/distribute, groups, static thumbnail/filterable gallery and richer semantic house/tree/boat/still-life catalog. | Partial / deliberately deferred; existing subset still needs native/visual acceptance. |
+| IF-050 | One-layer reorder, duplicate and overlap cycling; twelve original revisioned MIT examples, shared validation, text-first descriptive filters and opt-in bounded static thumbnails, including house/tree/boat/still life. | Locks, snap, guides, align/distribute, groups and broader catalogs; current gallery native/visual acceptance. | Bounded gallery implemented / model and DOM tested; layer-tool task remains partial and native/visual acceptance pending. |
 | IF-051 | PNG/JPEG header/decode bounds, thumbnail/work budgets, cooperative cancellation, stale-result guards, single read/decode lease and local-only data path; malformed/adversarial/mock tests. E/I/R resources and privacy families. | Actual browser decode/orientation/resource release on the exact head; representative-device peak memory/latency. No worker-thread implementation or broader raster formats. | Bounded foundation implemented / non-browser tested; native/performance acceptance pending. |
 | IF-052 | Repository-authored deterministic seeded rectangle/ellipse/triangle fitting with 3/6/12-item budgets, bounded search and canonical output; synthetic/fuzz fixtures. I/R approximation families. | Held-out licensed natural images, unsupported silhouettes, representative latency/cancellation metrics and a manual-authoring correction-effort/usefulness comparison. Pixel error alone cannot pass that gate. | Experimental prototype only; empirical usefulness NOT RUN, full task not accepted. |
 | IF-053 | Numeric crop, palette/ratio/seed, explicit Generate, textual candidate review, hidden Use editable draft, one-step image-draft replacement undo and explicit Apply/download separation; stale candidate tests. I/R review and control families. | Actual synthetic-image decoder → draft → edit/undo/download browser journey and rendered source/result review. Manual anchors and empirical correction-effort validation are deferred. | Implemented bounded workflow / non-browser tested; native and empirical acceptance pending. |
-| IF-054 | Closed neutral reflection schema and missingness distinctions with unavailable scene/exposure values; no scores, fingerprints or raw traces. S/E/R reflection/provenance families. | Integrated exact scene/render identity, planned/actual visible duration and technical-interruption attribution. Model support for available references is not a measurement implementation. | Partial: neutral schema tested; runtime provenance deliberately unavailable. |
+| IF-054 | Journal-v2 closed neutral schema, legacy v1 record validator, unavailable defaults and separately opt-in latest-ended canonical document fingerprint, renderer version, mode, planned/visible duration and end reason. Real Node SHA-256 integrated checks use DOM doubles. | Exact-head browser digest/visibility/interruption checks; calibrated light dose, gaze/attention and binary renderer identity are not measured. | Bounded software provenance implemented / non-browser tested; native acceptance pending. |
 | IF-055 | Initially off, optional session-only journal; 20-record limit, skipped defaults, exact selected preview, separate single-use approval/download, clear/delete and no storage/network; synthetic model/UI tests. S/R local-reflection families. | Exact-head native journal Blob download, focus/keyboard and responsive rendered workflows. Physical OS download usability and full accessibility. | Implemented / non-browser tested; native/visual acceptance pending. |
 | IF-056 | Disabled research information, closed local data boundary, separate prospective consent scopes and anonymity/deletion caveats. S/R submission-boundary families. | No functional consent/submission service, endpoint, live participant payload, upload queue, statistical analysis or efficacy leaderboard. Real-record submission is not a demonstration route. | Disabled explanatory subset implemented; operational collection intentionally absent. |
 | IF-057 | Prerequisites documented: operator, population/jurisdiction, applicable ethics, rights, privacy/security, protocol/statistics, retention/withdrawal and explicit activation. S/R external-research families. | Those determinations/approvals, a governed service, incident handling, reviewed instruments/protocol and authorized deployment/collection. | GOVERNANCE BLOCKED. Software tests cannot close this gate. |
-| IF-058 | 737 recorded non-browser checks, adversarial formats, legacy differential/fuzz checks, cancellation/state tests and local-only boundaries. Cross-feature E/S/I/R families. | Exact-head native regression, actual composed pixels/timing, browser decoding/downloads and final evidence reconciliation. Earlier failures must remain recorded. | Non-browser regression PASS; aggregate cross-feature acceptance pending. |
-| IF-059 | 118 native groups and 98 expected captures prepared; test code includes authored raster/input, synthetic PNG and journal download scenarios. E/S/I/R evidence families. | Current running native attempt must finish; actual captures must be verified/inspected. Physical devices, pen, cross-engine, OS workflows, actual zoom, comprehensive AT and qualified sensory review are NOT RUN. | Current-head native/visual acceptance pending; broader gates NOT RUN. |
-| IF-060 | User guide, architecture, compatibility, changelog and feature/deferred-work guide updated; old v0.7 images/evidence explicitly historical; 34-document/220-link check recorded before this matrix. | Exact native/visual result, environment, hashes, reviewed captures and final outgoing documentation/example reconciliation. Recheck documentation after this addition. | Documentation implemented / locally checked; final evidence reconciliation pending. |
+| IF-058 | Historical PR 12 recorded 737 passing Node checks. Current gallery/provenance focused checks add metadata, cancellation, opt-out, exact digest and visible-interval coverage with synthetic DOM doubles. | Final frozen-source aggregate counts/hashes, native composed pixels/timing, browser decoding/downloads and evidence reconciliation. Preserve intermediate failures. | Focused non-browser checks pass; current aggregate and cross-feature acceptance pending final refresh. |
+| IF-059 | Historical PR 12 passed 117/118 native groups, with a mobile Undo failure; visual button-layout findings prompted candidate repairs. New gallery/provenance tests/captures are being integrated. | Exact-head clean rerun, verified actual captures and rendered inspection of repairs and additions. Physical devices, pen, cross-engine, OS workflows, actual zoom, comprehensive AT and qualified sensory review remain NOT RUN. | Historical attempt incomplete; current-head native/visual acceptance pending. |
+| IF-060 | Main/user guides, architecture, feature/deferred-work guide and acceptance matrix describe twelve examples and separate opt-in journal-v2 provenance; old v0.7 distribution/evidence remain historical and intact. | Exact final aggregate/native/visual outcome, environment, hashes, reviewed captures and outgoing-tree reconciliation. Rerun local documentation checks after integration. | Documentation updated; final evidence reconciliation pending. |
 | IF-061 | Independent scoped component reviews and repairs recorded; least-privilege/protected integration boundary retained. | Final exact-tree integrated review, required exact-head green CI, inspected visuals and resolution of scoped blockers. P1 PR 11 and expanded PR 12 remain distinct. | Final engineering acceptance and protected integration pending; no release/hosting/collection implied. |
 
 ## Exact bounded feature inventory
@@ -75,7 +71,7 @@ The ten supported authored shape identifiers are exactly:
 
 Scene-v4 uses sampler `authored-objects-4`; sequence-v3 uses `ordered-crossfade-3`. Ratios are exactly `1:1`, `4:3`, `3:4`, `16:9`, `9:16`. A sequence and all its authored snapshots must share the same canvas. The item cap remains 12. Legacy scene-v3/sequence-v2 remain viewport-relative; New/Convert is explicit, and neither older-file import nor capture silently reinterprets them. Geometry/effects, exact bounds and migration contracts are in [architecture](../../docs/architecture.md#authored-scene-v4-and-sequence-v3-contract).
 
-### Four original presets
+### Twelve original presets
 
 | Stable ID | Revision | Title | Authored timing type |
 | --- | --- | --- | --- |
@@ -83,8 +79,16 @@ Scene-v4 uses sampler `authored-objects-4`; sequence-v3 uses `ordered-crossfade-
 | `symmetric-points` | 1 | Sparse symmetric points | `steady` |
 | `sequential-shapes` | 1 | Sequential shapes | `sequential-fades` |
 | `mixed-steady-pulse` | 1 | Mixed steady and pulse | `mixed-steady-pulse` |
+| `spatial-triplet` | 1 | Spatial triplet | `steady` |
+| `symmetric-pair` | 1 | Symmetric pair | `steady` |
+| `displaced-pair` | 1 | Displaced pair | `steady` |
+| `overlapping-contours` | 1 | Overlapping contours | `steady` |
+| `simple-house` | 1 | Simple house | `steady` |
+| `simple-tree` | 1 | Simple tree | `steady` |
+| `simple-boat` | 1 | Simple boat | `steady` |
+| `still-life` | 1 | Small still life | `steady` |
 
-All four use original repository-authored geometric content and MIT provenance; no external picture or questionnaire is included. Their editable scene exports do not retain a claim of immutable stimulus identity. Choosing a preset never starts timing. Static startup is not timed autoplay; item timing and snapshot sequences remain separate finite explicitly started clocks.
+All twelve use original repository-authored geometric content and MIT provenance; no external picture or questionnaire is included. The original four scene payloads are unchanged. The text-first gallery filters item/color counts, vertical symmetry, geometric overlap and timing, not clinical outcomes. Only Show static thumbnails enables up to twelve static 64×48 canvases: 36,864 pixels or 147,456 RGBA bytes without DPR scaling. Invalidation conceals them and shrinks backing stores to 1×1; filters, callbacks and restoration cannot re-enable them. Their editable scene exports do not retain a claim of immutable stimulus identity. Choosing a preset never starts timing. Static startup is not timed autoplay; item timing and snapshot sequences remain separate finite explicitly started clocks.
 
 ### Local image allocation and work ledger
 
@@ -110,15 +114,15 @@ The ledger is a bounded-allocation design, not measured peak RSS, representative
 
 ### Exact journal export contract
 
-The selected export is JSON with the following exact closed fields. The initial UI is unchecked/off; nothing is recorded until Add reflection. All optional answers default to `skipped`.
+The selected export is JSON with the following exact closed fields. The initial UI is unchecked/off; no reflection is saved until Add reflection. All optional answers default to `skipped`.
 
 | Level | Exact fields and values |
 | --- | --- |
-| Root | `format: "imagery-private-journal"`, `version: 1`, `purpose: "private-exploratory-reflection"`, `entries`. |
+| Root | `format: "imagery-private-journal"`, `version: 2`, `purpose: "private-exploratory-reflection"`, `entries`. |
 | Each `entries` item | `id` and `reflection`. IDs use the local `entry-1` style; they are not participant identities. |
 | Each `reflection` | `scene`, `exposure`, `experiences`, `comfort`, `symptoms`, `stoppedEarly`, `preference`, `easeOfUse`, `note`. |
-| `scene` in the integrated UI | Exactly `{status: "unavailable"}`. No measured scene hash/revision or renderer identity. |
-| `exposure` in the integrated UI | Exactly `{status: "unavailable"}`. No measured planned/visible duration, end reason or technical-interruption attribution. |
+| `scene` in the integrated UI | Default/pending/failure: exactly `{status: "unavailable"}`. After separate opt-in and the latest ended display digest is ready: `status`, `format`, `version`, `sha256`, `rendererVersion`. |
+| `exposure` in the integrated UI | Default/pending/failure: exactly `{status: "unavailable"}`. Eligible latest-ended interval: `status`, `mode`, `plannedMs`, `visibleMs`, `interrupted`, `endedReason`. |
 | `experiences` | Exactly `perception`, `afterimage`, `voluntaryImagery`, `nonvisualMemory`; each one of `not-asked`, `skipped`, `none`, `uncertain`, `present`. |
 | `comfort` | Exactly `before`, `after`; each one of `not-asked`, `skipped`, `uncertain`, `comfortable`, `mild-discomfort`, `moderate-discomfort`, `severe-discomfort`. |
 | `symptoms` | Exactly `eyestrain`, `headache`, `dizzinessNausea`, `distress`, `otherDiscomfort`; each one of `not-asked`, `skipped`, `none`, `pre-existing`, `new-or-worse`, `uncertain`. |
@@ -128,7 +132,9 @@ The selected export is JSON with the following exact closed fields. The initial 
 | `note` | Plain string, at most 2,000 JavaScript string code units, with the model's control/direction-override exclusions. No required note. |
 | Capacity/export bound | At most 20 page-memory records; selected export at most 131,072 UTF-8 bytes. |
 
-The pure model can validate a future available scene/exposure reference; this UI does not generate one. No timestamp, original image, full scene, device fingerprint, score, research-consent token or app preview revision is added to the export. Optional free text may itself contain private information; a minimal schema does not make it anonymous.
+The separate provenance checkbox defaults off. It hashes only subsequent successfully rendered foreground main-field displays, not selected/staged data or source/gallery thumbnails. Static/item mode fingerprints the canonical scene; a shown step fingerprints that step as a scene; timed sequence mode fingerprints the whole canonical sequence. The renderer label `0.8.0-dev.provenance1` is a version identifier, not a binary hash. Paused frames remain visible and count, so visible duration may exceed planned duration. At most the latest ended interval is attachable; active, pending, failed and unavailable states never substitute an older result. Existing reflections are not retroactively populated.
+
+The tracker bounds one active and one latest completed metadata record, one in-flight digest and one replaceable latest queued canonical input, each input at most 1 MiB. Opt-out/Clear discard retained state and revoke stale completion; a browser digest already in flight may finish but cannot reattach. No epoch/timestamp, original image, full scene, device identifier, internal generation token, score or research-consent token is exported. Visible time is not gaze, attention, light dose or a safety measure. Fingerprints and optional notes are not anonymous. See the [detailed contract](../../docs/architecture.md#optional-display-provenance-contract).
 
 Export requires selected entries, an exact current payload preview, a separate explicit approval and a Download action. Edits/selection changes invalidate approval; one download consumes it. Scene, sequence and ordinary note files exclude the journal. Turning participation off clears unfinished answers, not added entries; Clear removes page records/answers/preview, not files already downloaded. There is no autosave, browser storage, import, background submission or endpoint.
 
@@ -140,10 +146,11 @@ Export requires selected entries, an exact current payload preview, a separate e
 | --- | --- | --- |
 | Native run identity and tested checkout | NOT RUN | Verified run/job URL, PR source head, actual test-merge/checkout head, exact artifact SHA-256 and byte count. |
 | Runtime environment and commands | NOT RUN | Actual Node/browser versions, OS, ordinary sandbox state, `file:` opening route and full invoked commands. |
-| Native groups | NOT RUN | Actual passed/failed/skipped/blocked totals, duration, exit status and cleanup outcome. Planned: 118 groups. |
+| Native groups | NOT RUN | Actual passed/failed/skipped/blocked totals, duration, exit status and cleanup outcome. Record the current suite count; 118 groups belongs to the historical PR 12 attempt. |
 | Actual PNG decode → candidate → editable draft/undo/export | NOT RUN | Real synthetic fixture decode and resulting canonical output; do not substitute the model/mock decoder checks. |
-| Actual journal download | NOT RUN | Exact selected approved Blob payload, independent file check and rejection of stale/unapproved export; use synthetic reflections only. |
-| Capture integrity | NOT RUN | Actual emitted count, filenames, byte lengths and SHA-256 verification. Expected: 98 synthetic captures, not yet an observed accepted set. |
+| Actual journal-v2 download and optional provenance | NOT RUN | Exact selected approved Blob payload, browser digest of the displayed scene/whole sequence, paused-visible duration, unavailable/pending/opt-out behavior and stale export rejection; synthetic reflections only. |
+| Actual preset gallery | NOT RUN | Text-only default, descriptive filters, static thumbnail opt-in, resource bounds, Hide/End/Escape/lifecycle invalidation, draft-only staging and inspected narrow/short layouts. |
+| Capture integrity | NOT RUN | Actual emitted count, filenames, byte lengths and SHA-256 verification. Record the current expected/actual capture counts; the historical 98-capture plan is not evidence for this runtime. |
 | Current-head rendered inspection | NOT RUN | Images actually opened/inspected, geometry/effect/compositing and focus/reflow findings, narrow/short/hidden states, unresolved defects and any repaired rerun. |
 | Final integrated acceptance decision | NOT RUN | Exact accepted source/tree, scope-limited reviewer outcome, required green checks and explicit remaining external/deferred gates. |
 

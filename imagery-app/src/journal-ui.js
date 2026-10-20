@@ -10,6 +10,10 @@
     }
     const document = container.ownerDocument || root.document;
     const onEdit = typeof options.onEdit === 'function' ? options.onEdit : function () {};
+    const onTrackingChange = typeof options.onTrackingChange === 'function' ? options.onTrackingChange : function () {};
+    const clearTracking = typeof options.clearTracking === 'function' ? options.clearTracking : function () {};
+    const getProvenance = typeof options.getProvenance === 'function' ? options.getProvenance : () => ({scene:{status:'unavailable'},exposure:{status:'unavailable'}});
+    const getTrackingState = typeof options.getTrackingState === 'function' ? options.getTrackingState : () => ({status:'unavailable'});
     const journal = J.createJournal(), selected = new Set(), listeners = new Set(), urls = new Set(), timers = new Set();
     const prefix = nextMount++ === 0 ? 'journal-' : 'journal-' + nextMount + '-';
     let preview = null, editRevision = 0, previewRevision = -1, destroyed = false;
@@ -54,7 +58,14 @@
     questions.appendChild(node('legend', 'Optional reflection'));
     questions.hidden = true; questions.disabled = true; content.appendChild(questions);
     paragraph(questions, 'These custom exploratory descriptions are not a validated questionnaire, diagnosis or imagery-improvement score. Every answer may be skipped. Do not repeat a display to answer.');
-    paragraph(questions, 'Scene identity and exposure timing are unavailable in this journal. No timestamp, original picture, scene content or device details are recorded.');
+    const tracking = labelledCheckbox(questions, 'track-display', 'Include optional scene fingerprint and visible duration in future reflections');
+    paragraph(questions, 'Off by default. This records only the most recent completed main-preview display after opting in (not gallery thumbnails or color swatches): a SHA-256 scene or whole-sequence fingerprint, format and renderer versions, display mode, planned duration, foreground-visible duration and stop reason. Paused frames remain visible and count toward duration. No timestamp, picture, scene content or device identifier is exported. A fingerprint is not anonymity.');
+    const trackingStatus = identify(node('p', '', 'hint'), 'tracking-status'); questions.appendChild(trackingStatus);
+    function refreshTracking() {
+      const state = getTrackingState();
+      trackingStatus.textContent = !tracking.checked ? 'Display provenance is off. Reflections will contain unavailable fields.' : state.status === 'ready' ? 'The most recent completed display is ready to attach. Review the exact export before downloading.' : 'Display provenance is ' + state.status + '. Adding now will mark these fields unavailable; no older display is substituted.';
+    }
+    listen(tracking, 'change', () => { edit(); onTrackingChange(enabled.checked && tracking.checked); refreshTracking(); });
     const labels = {
       'not-asked': 'Not asked', skipped: 'Skipped', none: 'None', uncertain: 'Uncertain',
       present: 'Present', comfortable: 'Comfortable', 'mild-discomfort': 'Mild discomfort',
@@ -163,7 +174,7 @@
     }
     function readReflection() {
       return {
-        scene: {status: 'unavailable'}, exposure: {status: 'unavailable'},
+        ...(tracking.checked ? getProvenance() : {scene:{status:'unavailable'},exposure:{status:'unavailable'}}),
         experiences: Object.fromEntries(J.EXPERIENCES.map(name => [name, fields[name].value])),
         comfort: {before: fields.before.value, after: fields.after.value},
         symptoms: Object.fromEntries(J.SYMPTOMS.map(name => [name, fields[name].value])),
@@ -172,9 +183,10 @@
       };
     }
     function refreshControls() {
+      refreshTracking();
       const length = journal.getState().entries.length;
       add.disabled = !enabled.checked || length >= J.MAX_ENTRIES;
-      clear.disabled = length === 0 && Object.entries(fields).every(([name, input]) => input.value === (name === 'note' ? '' : 'skipped'));
+      clear.disabled = !tracking.checked && length === 0 && Object.entries(fields).every(([name, input]) => input.value === (name === 'note' ? '' : 'skipped'));
       makePreview.disabled = selected.size === 0;
       count.textContent = length === 0 ? 'No reflections added. Maximum 20 per session.' :
         length + ' of 20 session reflections. ' + selected.size + ' selected for export.';
@@ -227,7 +239,7 @@
       } catch (error) { say(error.message); }
     }
     function clearJournal() {
-      edit(); journal.clear(); selected.clear(); resetAnswers(); renderEntries();
+      edit(); clearTracking(); journal.clear(); selected.clear(); resetAnswers(); renderEntries();
       releaseDownloads(); enabled.focus();
       say('Session journal and unfinished answers cleared. Previously downloaded files are unchanged.');
     }
@@ -260,7 +272,7 @@
         const text = journal.confirmExport(preview, true);
         url = root.URL.createObjectURL(new root.Blob([text], {type: 'application/json'}));
         urls.add(url);
-        anchor = node('a'); anchor.href = url; anchor.download = 'imagery-field-journal-v1.json'; anchor.hidden = true;
+        anchor = node('a'); anchor.href = url; anchor.download = 'imagery-field-journal-v' + J.VERSION + '.json'; anchor.hidden = true;
         document.body.appendChild(anchor); anchor.click();
         say('Local download requested. Check your browser downloads. Another download requires a new preview and approval.');
       } catch (_) {
@@ -276,7 +288,7 @@
     }
     listen(enabled, 'change', () => {
       edit(); questions.hidden = !enabled.checked; questions.disabled = !enabled.checked;
-      if (!enabled.checked) resetAnswers();
+      if (!enabled.checked) { resetAnswers(); tracking.checked = false; onTrackingChange(false); }
       refreshControls();
       say(enabled.checked ? 'Optional reflections enabled. Nothing is recorded until Add reflection.' :
         'Reflections turned off; unfinished answers discarded. Added entries remain available to delete, clear or export.');
@@ -292,6 +304,7 @@
     refreshControls();
     return Object.freeze({
       getState: journal.getState,
+      refreshProvenance() { if (!destroyed) refreshControls(); },
       invalidateExport() {
         if (destroyed) return;
         const hadPreview = preview !== null;
@@ -300,7 +313,7 @@
       },
       destroy() {
         if (destroyed) return;
-        destroyed = true; invalidateExport(); resetAnswers(); selected.clear(); journal.clear();
+        destroyed = true; onTrackingChange(false); invalidateExport(); resetAnswers(); selected.clear(); journal.clear();
         for (const [element, type, handler] of listeners) element.removeEventListener(type, handler);
         listeners.clear();
         releaseDownloads();

@@ -229,3 +229,39 @@ test('JOURNAL: browser UMD exports without DOM, clock, storage, network or dynam
   assert.ok(sandbox.ImageryJournal);assert.equal(sandbox.ImageryJournal.emptyRecord().note,'');
   for(const pattern of [/\bfetch\s*\(/,/\bXMLHttpRequest\b/,/\bWebSocket\b/,/\bDate\b/,/\bperformance\b/,/\blocalStorage\b/,/\bsessionStorage\b/,/\bindexedDB\b/,/\bdocument\b\s*\./,/\beval\s*\(/,/new\s+Function\b/,/\bsetTimeout\s*\(/,/\bsetInterval\s*\(/])assert.doesNotMatch(source,pattern);
 });
+
+test('JOURNAL V2: sequence references have their own exact version bounds', () => {
+  for (const version of [1,2,3]) {
+    const input=reflection();input.scene={...withScene(),format:'imagery-field-sequence',version};input.exposure={...withExposure(),mode:'sequence'};
+    assert.equal(J.canonicalRecord(input).scene.version,version);
+  }
+  for (const version of [0,4,5,'3',null,NaN]) {
+    const input=reflection();input.scene={...withScene(),format:'imagery-field-sequence',version};assert.throws(()=>J.canonicalRecord(input));
+  }
+});
+
+test('JOURNAL V2: whole-sequence identity cannot be mislabeled as a static or item display', () => {
+  for (const mode of ['static','items']) {
+    const input=reflection();input.scene={...withScene(),format:'imagery-field-sequence'};input.exposure={...withExposure(),mode};
+    assert.throws(()=>J.canonicalRecord(input),/disagree/);
+  }
+  const input=reflection();input.scene=withScene();input.exposure={...withExposure(),mode:'sequence'};
+  assert.throws(()=>J.canonicalRecord(input),/disagree/);
+});
+
+test('JOURNAL V2: legacy record validator retains the original static-only contract explicitly', () => {
+  assert.equal(J.VERSION,2);assert.equal(J.LEGACY_VERSION,1);
+  const input=reflection();input.scene=withScene();input.exposure=withExposure();
+  assert.deepEqual(J.canonicalRecordV1(input),J.canonicalRecord(input));
+  input.exposure.mode='sequence';assert.equal(J.canonicalRecordV1(input).exposure.mode,'sequence');
+  input.scene.format='imagery-field-sequence';assert.throws(()=>J.canonicalRecordV1(input));
+  assert.equal(J.canonicalRecord(input).scene.format,'imagery-field-sequence');
+});
+
+test('JOURNAL V2: exact export declares v2 but unassociated reflections remain fully usable', () => {
+  const journal=J.createJournal(),entry=journal.add(reflection());
+  const preview=journal.previewExport([entry.id]);
+  assert.equal(preview.document.version,2);assert.deepEqual(preview.document.entries[0].reflection.scene,{status:'unavailable'});
+  assert.deepEqual(preview.document.entries[0].reflection.exposure,{status:'unavailable'});
+  assert.throws(()=>journal.confirmExport(preview,false));assert.equal(journal.confirmExport(preview,true),preview.text);
+});

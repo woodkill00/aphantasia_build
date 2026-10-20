@@ -133,3 +133,6 @@ input.color-slider:disabled{opacity:.45;cursor:default}
    A shared minimum basis wraps added layer controls at narrow inspector widths. */
 .small-actions{gap:var(--control-gap)}
 .small-actions button{flex:1 1 7rem;min-width:min(100%,7rem);max-width:100%;white-space:normal;overflow-wrap:anywhere}
+
+/* Optional gallery uses explicit, small static thumbnails, never enlarged previews. */
+.preset-gallery{margin-block:calc(var(--control-gap) * 2);padding:var(--editor-pad);min-width:0;max-width:100%;box-sizing:border-box}.gallery-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:var(--control-gap)}.gallery-filters label,.gallery-filters select{min-width:0;max-width:100%}.gallery-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--control-gap);padding:0;list-style:none}.gallery-entry{min-width:0;border:1px solid var(--line);padding:var(--control-gap);overflow-wrap:anywhere}.gallery-entry button,.preset-gallery>button{min-height:44px;max-width:100%;white-space:normal}.gallery-thumbnail{width:64px!important;height:48px!important;max-width:64px;max-height:48px;object-fit:contain;display:block;margin-block:var(--control-gap)}

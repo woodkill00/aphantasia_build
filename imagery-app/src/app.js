@@ -15,7 +15,22 @@
   offscreen.width=1;offscreen.height=1;
   let context=null,offscreenContext=null;
   try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:true});}catch(e){/* Data controls remain available. */}
-  let journalUI=null,imageUI=null,imageReplacement=null;
+  let journalUI=null,imageUI=null,imageReplacement=null,galleryUI=null;
+  let provenanceIdentity=1;
+  const provenance=window.ImageryProvenance.createTracker({onChange:()=>{if(journalUI)journalUI.refreshProvenance();},hash:async canonical=>{
+    if(!window.crypto||!window.crypto.subtle||typeof TextEncoder!=='function')throw new Error('SHA-256 unavailable');
+    const bytes=new TextEncoder().encode(canonical);
+    try{return Array.from(new Uint8Array(await window.crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');}
+    finally{bytes.fill(0);}
+  }});
+  function provenanceNow(){try{return performance.now();}catch(e){return NaN;}}
+  function stopProvenance(reason){provenance.stop(reason,provenanceNow());provenanceIdentity++;if(journalUI)journalUI.refreshProvenance();}
+  function recordVisibleDisplay(state){
+    if(!provenance.getState().enabled||!state.visible||document.hidden)return;
+    const timed=displayKind==='timed',items=displayKind==='items';
+    const value=timed?sequence:items?itemSource:displayKind==='step'?stepScene(stepIndex):displayKind==='live'?state.draft:state.current;
+    provenance.start({identity:provenanceIdentity,canonical:JSON.stringify(value),format:value.format,version:value.version,rendererVersion:'0.8.0-dev.provenance1',mode:timed?'sequence':items?'items':'static',plannedMs:timed?compiledSequence.durationMs:items?compiledItems.durationMs:null},provenanceNow());
+  }
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
   let gesture=null,moveUndo=[],moveRedo=[],lastHit=null,moveStaging=false;
   let working=controller.getState().current;
@@ -135,7 +150,7 @@
         resetContext(context);context.globalAlpha=frame.alpha;context.drawImage(offscreen,0,0);resetContext(context);
       }
     }else paintScene(context,canvas,displayKind==='step'?stepScene(stepIndex):displayKind==='live'?state.draft:state.current,d);
-    return true;
+    recordVisibleDisplay(state);return true;
   }
   // These bounded editor samples represent only the current form colors. They
   // never change the accepted scene, call Show, or paint a scene preview.
@@ -179,7 +194,7 @@
   }
   function render(){
     let state=controller.getState();
-    if(gateClockFault&&state.visible){cancelPlayback();controller.hide();state=controller.getState();}
+    if(gateClockFault&&state.visible){cancelPlayback('technical-failure');controller.hide();state=controller.getState();}
     const full=document.fullscreenElement===root;
     root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&['live','items'].includes(displayKind)&&editorOpen&&!full?' live-editor':'');
     $('editor-panel').hidden=!editorOpen;
@@ -188,7 +203,7 @@
     updateOutputs();renderSequence();renderItemEditor();renderItemPlayback();
     try{draw(state);}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
-      cancelPlayback();controller.hide();canvas.hidden=true;context=null;state=controller.getState();
+      cancelPlayback('technical-failure');controller.hide();canvas.hidden=true;context=null;state=controller.getState();
       say('The canvas could not be drawn. The field is hidden; data controls remain available.',true);
     }
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
@@ -269,10 +284,10 @@
     }
     return next;
   }
-  function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
+  function hide(message,reason='unknown'){cancelPlacement();conceal(reason);render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
   function isLive(){return displayKind==='live'&&controller.getState().visible;}
   function beginManualEdit(){
-    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the scene or controls changed.');
     cancelDirectGesture();
     if(isLive())controller.invalidateImport();
     else if(controller.getState().visible)conceal();
@@ -282,6 +297,7 @@
   function stageWorking(message){
     if(!moveStaging)clearMoveHistory();
     const live=isLive();formDirty=true;
+    if(live&&!sameScene(controller.getState().draft,working))provenanceIdentity++;
     const result=live?controller.stageLive(working):controller.stage(working);
     if(!result.ok&&live)conceal();
     render();say(result.ok?(live?'Live draft updated. Apply keeps it for history and download; Hide stops preview.':message):result.error+' Preview stopped. Your applied scene is unchanged.',!result.ok);return result.ok;
@@ -462,20 +478,20 @@
   function showScene(){
     if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Resume live preview again after the repeat-action lock.');return;}
     cancelPlayback();cancelPlacement();controller.invalidateImport();
-    if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.');return;}
+    if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.','technical-failure');return;}
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
     working=readFields();
     const result=controller.previewDraft(working);
-    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     if(result.ok)displayKind='live';
     render();say(result.ok?'Live preview on. Object and background edits appear immediately. Apply keeps changes for history/download; Hide or Escape stops preview.':result.error+(document.fullscreenElement===root?' Exit fullscreen to fix the fields or discard the draft.':''),!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('show-scene').addEventListener('click',showScene);
   $('fullscreen-show').addEventListener('click',()=>section==='sequence'?showStep():showScene());
-  $('hide-scene').addEventListener('click',()=>hide());
+  $('hide-scene').addEventListener('click',()=>hide(undefined,'user-stop'));
   $('end-viewing').addEventListener('click',()=>{
-    cancelPlayback();cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
+    cancelPlayback('user-stop');cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
     $('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();
   });
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
@@ -504,19 +520,19 @@
   });
   document.addEventListener('fullscreenerror',()=>fullscreenFailure('Fullscreen was unavailable or rejected.'));
   document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'){hide('Scene hidden with Escape. Placement and pending file reads were canceled.');}
+    if(event.key==='Escape'){hide('Scene hidden with Escape. Placement and pending file reads were canceled.','user-stop');}
     if(event.repeat&&(event.key==='Enter'||event.key===' ')&&event.target&&event.target.closest&&event.target.closest('button'))event.preventDefault();
   });
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.');});
-  window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.'));
-  window.addEventListener('pagehide',()=>{cancelPlacement();conceal();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
-  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Resume live preview to display it again.'));
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.','hidden-tab');});
+  window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.','hidden-tab'));
+  window.addEventListener('pagehide',()=>{cancelPlacement();conceal('hidden-tab');render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
+  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Resume live preview to display it again.','hidden-tab'));
   window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Resume live preview to display it again.');});
   // Initial browser sizing can dispatch resize without changing the viewport.
   // Only a real geometry/DPR change interrupts display; this never reveals it.
   const viewportSize=()=>[window.innerWidth,window.innerHeight,window.devicePixelRatio||1].join(':');
   let lastViewportSize=viewportSize();
-  window.addEventListener('resize',()=>{const next=viewportSize();if(next===lastViewportSize)return;lastViewportSize=next;hide('Scene hidden after the window size changed. Choose Resume live preview to display it again.');});
+  window.addEventListener('resize',()=>{const next=viewportSize();if(next===lastViewportSize)return;lastViewportSize=next;hide('Scene hidden after the window size changed. Choose Resume live preview to display it again.','resize');});
   function download(value,filename) {
     const serialized=JSON.stringify(value,null,2)+'\n';
     let url;
@@ -630,31 +646,32 @@
     cancelPlayback();cancelPlacement();
     try{
       itemSource=M.canonicalScene(readFields());compiledItems=I.compileTimeline(itemSource);const result=controller.previewDraft(itemSource);
-      if(gateClockFault){hide('The display clock failed. Reload before viewing.');return;}
+      if(gateClockFault){hide('The display clock failed. Reload before viewing.','technical-failure');return;}
       if(!result.ok){render();say(result.error,true);return;}
       const started=itemTimeline.start(compiledItems);displayKind='items';itemFrame=started.frame;render();paintPlayback(started.frame);scheduleFrame();$('item-pause').focus();
       say('Playing items once for '+compiledItems.durationMs/1000+' seconds. Pause retains the displayed frame; Stop / Hide ends preview.');
-    }catch(e){hide('Item preview stopped. '+e.message);}
+    }catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   }
   $('item-play').addEventListener('click',startItems);
   $('item-pause').addEventListener('click',()=>{
     if(itemTimeline.getState().status!=='running'||!controller.getState().visible)return;
     generation++;if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
-    try{itemTimeline.pause();render();say('Item preview paused at the displayed frame. Resume continues; Stop / Hide conceals.');$('item-resume').focus();}catch(e){hide('Item preview stopped. '+e.message);}
+    try{itemTimeline.pause();render();say('Item preview paused at the displayed frame. Resume continues; Stop / Hide conceals.');$('item-resume').focus();}catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   });
   $('item-resume').addEventListener('click',()=>{
     if(itemTimeline.getState().status!=='paused'||!controller.getState().visible||motionReduced||document.fullscreenElement===root)return;
-    try{generation++;itemTimeline.resume();render();scheduleFrame();say('Item preview resumed.');$('item-pause').focus();}catch(e){hide('Item preview stopped. '+e.message);}
+    try{generation++;itemTimeline.resume();render();scheduleFrame();say('Item preview resumed.');$('item-pause').focus();}catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   });
-  $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.'));
-  function cancelPlayback(){
-    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();
+  $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.','user-stop'));
+  function cancelPlayback(reason='edit'){
+    stopProvenance(reason);if(galleryUI)galleryUI.invalidate('Static thumbnails hidden. Showing them again requires an explicit gallery action.');
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the scene or controls changed.');
     cancelDirectGesture();
     generation++;
     if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
     timeline.stop();itemTimeline.stop();paintedFrame=null;itemFrame=null;lastPhaseKey='';displayKind='scene';
   }
-  function conceal(){cancelPlayback();controller.hide();}
+  function conceal(reason='edit'){cancelPlayback(reason);controller.hide();}
   function sequenceDescription(){
     if(!sequence)return 'No sequence steps.';
     if(displayKind==='timed'&&paintedFrame){
@@ -828,7 +845,7 @@
   });
   function canPresent(){
     controller.getState();
-    if(gateClockFault){hide('The display clock failed. Reload this page before viewing; keep any unsaved files first.');return false;}
+    if(gateClockFault){hide('The display clock failed. Reload this page before viewing; keep any unsaved files first.','technical-failure');return false;}
     if(!sequencePrecondition())return false;
     if(!sequence){say('Capture a scene or load the example first.',true);return false;}
     if(formDirty){say('Apply, discard, or capture the scene edits before displaying the sequence.',true);return false;}
@@ -839,7 +856,7 @@
     if(controller.getState().visible&&displayKind!=='step'){hide('Preview mode changed. The field is hidden; choose Show step again after the repeat-action lock.');return;}
     cancelPlacement();if(!canPresent()){render();return;}
     cancelPlayback();const result=controller.show();
-    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     if(result.ok)displayKind='step';render();say(result.ok?'Step '+(stepIndex+1)+' visible: '+sequence.sequence.steps[stepIndex].name+'. Stop / Hide or Escape conceals it.':result.error,!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
@@ -856,21 +873,21 @@
     renderSequence();renderItemPlayback();
   }
   function scheduleFrame(){
-    const gate=controller.getState();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    const gate=controller.getState();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     const kind=displayKind,engine=playbackEngine();
     if(rafId!==null||engine.getState().status!=='running'||!gate.visible||!['timed','items'].includes(kind))return;
     const capturedEpoch=gate.epoch,capturedGeneration=generation,engineGeneration=engine.getState().generation;
     rafId=window.requestAnimationFrame(()=>{
       if(capturedGeneration!==generation)return;
       rafId=null;const state=controller.getState(),playback=engine.getState();
-      if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+      if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
       if(state.epoch!==capturedEpoch||!state.visible||displayKind!==kind||playback.status!=='running'||playback.generation!==engineGeneration)return;
       try{
         const next=engine.tick();
-        if(next.status==='finished'||next.frame.done){hide((kind==='items'?'Item preview':'Sequence')+' finished. Field hidden. Playback reset; nothing will replay.');return;}
+        if(next.status==='finished'||next.frame.done){hide((kind==='items'?'Item preview':'Sequence')+' finished. Field hidden. Playback reset; nothing will replay.','completed');return;}
         if(capturedGeneration!==generation||controller.getState().epoch!==capturedEpoch)return;
         paintPlayback(next.frame);scheduleFrame();
-      }catch(e){hide('Playback stopped. '+e.message);}
+      }catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
     });
   }
   $('sequence-play').addEventListener('click',()=>{
@@ -880,22 +897,22 @@
     if(document.fullscreenElement===root){say('Exit fullscreen to play once. Fullscreen supports manual step previews only.',true);return;}
     if(motionReduced){say('Reduced motion is on. Use Previous or Next, then Show step.',true);return;}
     if(!offscreenContext||typeof window.requestAnimationFrame!=='function'){say('Timed playback is unavailable in this browser. Use manual step previews.',true);return;}
-    cancelPlacement();cancelPlayback();const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}if(!result.ok){render();say(result.error,true);return;}
+    cancelPlacement();cancelPlayback();const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}if(!result.ok){render();say(result.error,true);return;}
     try{const started=timeline.start(compiledSequence);displayKind='timed';paintPlayback(started.frame);render();scheduleFrame();$('sequence-pause').focus();}
-    catch(e){hide('Playback stopped. '+e.message);}
+    catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
   $('sequence-pause').addEventListener('click',()=>{
     if(timeline.getState().status!=='running'||!controller.getState().visible)return;
     generation++;if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
     try{timeline.pause();render();say('Paused at the last displayed frame. It remains visible. Resume continues; Stop / Hide conceals.');$('sequence-resume').focus();}
-    catch(e){hide('Playback stopped. '+e.message);}
+    catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
   $('sequence-resume').addEventListener('click',()=>{
     if(timeline.getState().status!=='paused'||!controller.getState().visible||motionReduced||document.fullscreenElement===root)return;
     try{generation++;timeline.resume();render();scheduleFrame();say('Sequence resumed from the paused frame.');$('sequence-pause').focus();}
-    catch(e){hide('Playback stopped. '+e.message);}
+    catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
-  $('sequence-stop').addEventListener('click',()=>hide('Sequence stopped. Field hidden; playback reset.'));
+  $('sequence-stop').addEventListener('click',()=>hide('Sequence stopped. Field hidden; playback reset.','user-stop'));
   if(reducedMotion){
     const changed=event=>{motionReduced=!!event.matches;hide(motionReduced?'Reduced motion is on. Playback stopped; use manual Previous / Next and Show step.':'Motion preference changed. Playback stopped and will not resume automatically.');};
     if(typeof reducedMotion.addEventListener==='function')reducedMotion.addEventListener('change',changed);
@@ -917,7 +934,8 @@
   });
 
   $('undo-image-replacement').addEventListener('click',()=>{if(!imageReplacement)return;const previous=imageReplacement;beginManualEdit();conceal();selectedId=previous.id;fillFields(previous.before);stageWorking('Previous draft restored and hidden. Apply keeps it for download.');});
-  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal();render();}});
+  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal('edit');render();},onTrackingChange:enabled=>{provenance.setEnabled(enabled);provenanceIdentity++;},clearTracking:()=>provenance.clear(),getProvenance:()=>provenance.getSummary(),getTrackingState:()=>provenance.getState()});
+  galleryUI=window.ImageryGalleryUI.mount($('gallery-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{conceal();fillFields(M.canonicalScene(value));section='scene';stageWorking('Original gallery scene staged and hidden. Edit freely; Apply keeps it for download. No playback started.');}});
   $('open-image-tools').addEventListener('click',()=>{conceal();render();if(!imageUI)imageUI=window.ImageryImageUI.mount($('image-tools-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{const before=M.canonicalScene(readFields()),id=selectedId;conceal();fillFields(M.canonicalScene(value));section='scene';if(stageWorking('Image approximation staged and hidden. Undo image draft replacement restores the previous draft until another edit. Apply commits it for download.')){imageReplacement={before,id};render();}}});$('image-tools-container').hidden=false;$('open-image-tools').hidden=true;$('open-image-tools').setAttribute('aria-expanded','true');$('image-file').focus();});
   fillFields(controller.getState().current);fillSequenceFields();render();
   // The user requested an initially visible static editor. This synchronous,

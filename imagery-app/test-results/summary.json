@@ -1,22 +1,21 @@
 {
   "date": "2026-10-20",
-  "status": "V08_EXPANDED_ROADMAP_NATIVE_VISUAL_PENDING",
+  "status": "V08_GALLERY_PROVENANCE_NATIVE_VISUAL_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 276755,
-    "sha256": "bca1887a7e95694a38a96f4094f6ab96a3ff6241571e9460f2a6809a88b29953"
+    "bytes": 312808,
+    "sha256": "a490470f65fce467eb86405b0259bfdbb86d33b4ab27cd031687be24c8e839ac"
   },
   "browser": {
-    "status": "REPAIR_CANDIDATE_NATIVE_VISUAL_PENDING",
-    "preparedGroups": 124,
-    "expectedCaptures": 104,
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
-    "previousHead": "198b0fcef2ee3919e556bb930f4afc778f543564",
-    "previousPassed": 117,
-    "previousFailed": 1,
-    "previousCapturesInspected": 98,
-    "findings": "Mobile drag-to-Undo compatibility click missing; actual narrow action labels clipped. Current shared input experiment and readable wrapping plus stronger aperture/text checks require exact-head native and visual review."
+    "status": "NOT_RUN_CURRENT_RUNTIME",
+    "preparedGroups": 136,
+    "expectedCaptures": 116,
+    "note": "Reviewed full suite includes inherited mobile input experiment, actual text/aperture checks, twelve original presets and optional real SubtleCrypto provenance. Prepared counts are not executed results.",
+    "historicalExpandedRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
+    "historicalPassed": 117,
+    "historicalFailed": 1,
+    "historicalCapturesInspected": 98
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1021,8 +1020,8 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 738,
-    "passed": 738,
+    "total": 829,
+    "passed": 829,
     "failed": 0,
     "skipped": 0,
     "node": "24.19.0"

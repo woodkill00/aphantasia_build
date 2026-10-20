@@ -141,6 +141,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
    A shared minimum basis wraps added layer controls at narrow inspector widths. */
 .small-actions{gap:var(--control-gap)}
 .small-actions button{flex:1 1 7rem;min-width:min(100%,7rem);max-width:100%;white-space:normal;overflow-wrap:anywhere}
+
+/* Optional gallery uses explicit, small static thumbnails, never enlarged previews. */
+.preset-gallery{margin-block:calc(var(--control-gap) * 2);padding:var(--editor-pad);min-width:0;max-width:100%;box-sizing:border-box}.gallery-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:var(--control-gap)}.gallery-filters label,.gallery-filters select{min-width:0;max-width:100%}.gallery-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--control-gap);padding:0;list-style:none}.gallery-entry{min-width:0;border:1px solid var(--line);padding:var(--control-gap);overflow-wrap:anywhere}.gallery-entry button,.preset-gallery>button{min-height:44px;max-width:100%;white-space:normal}.gallery-thumbnail{width:64px!important;height:48px!important;max-width:64px;max-height:48px;object-fit:contain;display:block;margin-block:var(--control-gap)}
 </style>
 </head>
 <body>
@@ -246,6 +249,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate sequence files: legacy v2 or authored-canvas v3 (opens v1–v3), up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
   <section class="notes-card local-tools" aria-labelledby="image-tools-title"><h2 id="image-tools-title">Sketch a local picture</h2><p class="hint">Optional experimental approximation with editable shapes. No image is uploaded. Open these tools only when you want to choose a local image.</p><button id="open-image-tools" type="button" aria-expanded="false">Open local image tools</button><button id="undo-image-replacement" type="button" disabled>Undo image draft replacement</button><div id="image-tools-container" hidden></div></section>
+  <section id="gallery-container" aria-label="Original scene gallery"></section>
   <section id="journal-container" aria-label="Optional private reflections"></section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
@@ -1089,13 +1093,31 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   else root.ImageryPresets=factory(root.ImageryModel);
 }(typeof globalThis!=='undefined'?globalThis:this,function(M){
   'use strict';
+  // Catalog order is editorial, not a ranking. Symmetry describes vertical
+  // reflection of the full static composition, including item colors. Overlap
+  // describes intersecting or contained geometric regions, not clinical effects.
   const catalog=Object.freeze([
-    Object.freeze({id:'balanced-contours',revision:1,title:'Balanced contours',description:'A circle and rounded rectangle balanced around a small central diamond. Three steady contour items; static preview does not run timing.',timingKind:'steady'}),
-    Object.freeze({id:'symmetric-points',revision:1,title:'Sparse symmetric points',description:'Five small filled points arranged symmetrically around the center. Five steady items; static preview does not run timing.',timingKind:'steady'}),
-    Object.freeze({id:'sequential-shapes',revision:1,title:'Sequential shapes',description:'Three muted shapes with staggered, finite fades and steady holds. Static preview shows all three; Play items once runs the authored timing.',timingKind:'sequential-fades'}),
-    Object.freeze({id:'mixed-steady-pulse',revision:1,title:'Mixed steady and pulse',description:'A steady circle beside a star with optional slow opacity pulse. Static preview shows both steadily; explicit item playback ends after eight seconds.',timingKind:'mixed-steady-pulse'})
-  ]);
-  function list(){return catalog.map(value=>({...value,provenance:'Original repository-authored geometric composition; no external image or questionnaire.',license:'MIT'}));}
+    {id:'balanced-contours',revision:1,title:'Balanced contours',description:'A circle and rounded rectangle balanced around a small central diamond. Three steady contour items; static preview does not run timing.',timingKind:'steady',symmetry:'not-vertical',overlap:false},
+    {id:'symmetric-points',revision:1,title:'Sparse symmetric points',description:'A sparse constellation of five small filled points arranged symmetrically around the center. Five steady items; static preview does not run timing.',timingKind:'steady',symmetry:'vertical',overlap:false},
+    {id:'sequential-shapes',revision:1,title:'Sequential shapes',description:'Three muted shapes with staggered, finite fades and steady holds. Static preview shows all three; Play items once runs the authored timing.',timingKind:'sequential-fades',symmetry:'not-vertical',overlap:false},
+    {id:'mixed-steady-pulse',revision:1,title:'Mixed steady and pulse',description:'A steady circle beside a star with optional slow opacity pulse. Static preview shows both steadily; explicit item playback ends after eight seconds.',timingKind:'mixed-steady-pulse',symmetry:'not-vertical',overlap:false},
+    {id:'spatial-triplet',revision:1,title:'Spatial triplet',description:'A circle above a lower square and triangle forms an off-center spatial triplet. Three separate steady contours in three muted colors.',timingKind:'steady',symmetry:'not-vertical',overlap:false},
+    {id:'symmetric-pair',revision:1,title:'Symmetric pair',description:'Two equal blue circles mirror each other across the vertical center. Two separate steady contours using one item color.',timingKind:'steady',symmetry:'vertical',overlap:false},
+    {id:'displaced-pair',revision:1,title:'Displaced pair',description:'Two equal blue circles sit at different heights. The displaced pair is not vertically mirrored; both contours remain steady.',timingKind:'steady',symmetry:'not-vertical',overlap:false},
+    {id:'overlapping-contours',revision:1,title:'Overlapping contours',description:'A blue circle and green square overlap near the center. Both steady contours remain visible; item order can be edited.',timingKind:'steady',symmetry:'not-vertical',overlap:true},
+    {id:'simple-house',revision:1,title:'Simple house',description:'A muted filled house made from a rectangular wall, triangular roof, door and two windows. Five steady shapes overlap; the composition is vertically mirrored.',timingKind:'steady',symmetry:'vertical',overlap:true},
+    {id:'simple-tree',revision:1,title:'Simple tree',description:'A sand-colored trunk and two overlapping green elliptical canopies make a simple tree. Three filled steady shapes are vertically mirrored.',timingKind:'steady',symmetry:'vertical',overlap:true},
+    {id:'simple-boat',revision:1,title:'Simple boat',description:'A rounded hull, narrow mast and triangular sail make an offset boat sketch. Three filled steady shapes overlap.',timingKind:'steady',symmetry:'not-vertical',overlap:true},
+    {id:'still-life',revision:1,title:'Small still life',description:'Three round fruits sit above a shallow bowl beside a bottle assembled from two shapes. Six filled steady shapes use three muted item colors.',timingKind:'steady',symmetry:'not-vertical',overlap:true}
+  ].map(Object.freeze));
+  function list(){
+    return catalog.map(entry=>{
+      const value=create(entry.id),objects=value.scene.objects;
+      return {...entry,itemCount:objects.length,colorCount:new Set(objects.map(o=>[o.color.h,o.color.s,o.color.l].join('/'))).size,
+        provenance:'Original repository-authored geometric composition; no external image or questionnaire.',license:'MIT',
+        validation:{ok:true,format:value.format,version:value.version}};
+    });
+  }
   function item(id,shape,x,y,size,color,geometry={},timing={}){
     const value=M.defaultAuthoredObject(id,shape);
     return {...value,x,y,size,color,geometry:{...value.geometry,height:size,...geometry},timing:{...value.timing,...timing}};
@@ -1105,26 +1127,412 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(!entry)throw Error('Choose a supported preset identifier.');
     const blue={h:208,s:18,l:44},green={h:145,s:18,l:44},sand={h:40,s:22,l:46};
     let objects;
-    if(id==='balanced-contours')objects=[
-      item('object-1','circle',30,50,16,blue),
-      item('object-2','rounded-rectangle',70,50,18,green,{height:14,cornerRadius:0.25}),
-      item('object-3','square',50,50,6,sand,{rotation:45})
-    ];
-    else if(id==='symmetric-points')objects=[[50,50],[35,35],[65,35],[35,65],[65,65]].map(([x,y],i)=>item('object-'+(i+1),'dot',x,y,3,i===0?sand:blue));
-    else if(id==='sequential-shapes')objects=[
-      item('object-1','circle',28,50,16,blue,{}, {startMs:0,fadeInMs:1000,holdMs:2000,fadeOutMs:1000}),
-      item('object-2','triangle',50,50,16,sand,{}, {startMs:3000,fadeInMs:1000,holdMs:2000,fadeOutMs:1000}),
-      item('object-3','rectangle',72,50,16,green,{height:12},{startMs:6000,fadeInMs:1000,holdMs:2000,fadeOutMs:1000})
-    ];
-    else objects=[
-      item('object-1','circle',35,50,18,blue,{}, {holdMs:8000}),
-      item('object-2','star',65,50,20,sand,{sides:5,innerRatio:0.5},{holdMs:8000,pulse:{enabled:true,minOpacity:0.8}})
-    ];
+    switch(id){
+      case 'balanced-contours': objects=[
+        item('object-1','circle',30,50,16,blue),
+        item('object-2','rounded-rectangle',70,50,18,green,{height:14,cornerRadius:0.25}),
+        item('object-3','square',50,50,6,sand,{rotation:45})
+      ];break;
+      case 'symmetric-points': objects=[[50,50],[35,35],[65,35],[35,65],[65,65]].map(([x,y],i)=>item('object-'+(i+1),'dot',x,y,3,i===0?sand:blue));break;
+      case 'sequential-shapes': objects=[
+        item('object-1','circle',28,50,16,blue,{}, {startMs:0,fadeInMs:1000,holdMs:2000,fadeOutMs:1000}),
+        item('object-2','triangle',50,50,16,sand,{}, {startMs:3000,fadeInMs:1000,holdMs:2000,fadeOutMs:1000}),
+        item('object-3','rectangle',72,50,16,green,{height:12},{startMs:6000,fadeInMs:1000,holdMs:2000,fadeOutMs:1000})
+      ];break;
+      case 'mixed-steady-pulse': objects=[
+        item('object-1','circle',35,50,18,blue,{}, {holdMs:8000}),
+        item('object-2','star',65,50,20,sand,{sides:5,innerRatio:0.5},{holdMs:8000,pulse:{enabled:true,minOpacity:0.8}})
+      ];break;
+      case 'spatial-triplet': objects=[
+        item('object-1','circle',44,32,14,blue),
+        item('object-2','square',30,65,14,green),
+        item('object-3','triangle',68,60,16,sand)
+      ];break;
+      case 'symmetric-pair': objects=[item('object-1','circle',34,50,18,blue),item('object-2','circle',66,50,18,blue)];break;
+      case 'displaced-pair': objects=[item('object-1','circle',34,39,18,blue),item('object-2','circle',66,61,18,blue)];break;
+      case 'overlapping-contours': objects=[item('object-1','circle',45,48,24,blue),item('object-2','square',55,54,24,green)];break;
+      case 'simple-house': objects=[
+        item('object-1','rectangle',50,58,26,sand,{height:20,fill:true}),
+        item('object-2','triangle',50,42,28,blue,{height:18,fill:true}),
+        item('object-3','rectangle',50,62,6,green,{height:12,fill:true}),
+        item('object-4','square',45,55,5,blue,{fill:true}),
+        item('object-5','square',55,55,5,blue,{fill:true})
+      ];break;
+      case 'simple-tree': objects=[
+        item('object-1','rectangle',50,63,6,sand,{height:18,fill:true}),
+        item('object-2','ellipse',50,50,28,green,{height:18,fill:true}),
+        item('object-3','ellipse',50,41,22,green,{height:20,fill:true})
+      ];break;
+      case 'simple-boat': objects=[
+        item('object-1','rounded-rectangle',50,65,28,blue,{height:8,cornerRadius:0.4,fill:true}),
+        item('object-2','rectangle',50,48,2,sand,{height:28,fill:true}),
+        item('object-3','triangle',46,45,20,green,{height:24,fill:true})
+      ];break;
+      case 'still-life': objects=[
+        item('object-1','ellipse',47,65,24,blue,{height:10,fill:true}),
+        item('object-2','circle',41,58,8,sand,{fill:true}),
+        item('object-3','circle',47,56,8,sand,{fill:true}),
+        item('object-4','circle',53,59,8,sand,{fill:true}),
+        item('object-5','rounded-rectangle',65,51,8,green,{height:22,cornerRadius:0.3,fill:true}),
+        item('object-6','rectangle',65,38,4,green,{height:6,fill:true})
+      ];break;
+    }
     // No catalog identity is embedded in editable scene data. Altered derivatives
     // therefore cannot accidentally claim an unchanged experimental stimulus ID.
     return M.canonicalScene({format:M.FORMAT,version:M.AUTHORED_VERSION,sampler:M.AUTHORED_SAMPLER,scene:{name:entry.title,background:{...M.DEFAULT_BACKGROUND},pulsePeriodMs:4000,canvas:{mode:'fixed',ratio:'4:3'},objects}});
   }
   return Object.freeze({list,create});
+}));
+</script>
+<script>/* Original preset browser. MIT, copyright (c) 2026 woodkill00.
+   Static opt-in thumbnails only; no main-scene, playback or saving authority. */
+(function(root,factory){
+  'use strict';
+  if(typeof module==='object'&&module.exports)module.exports=factory(root);
+  else root.ImageryGalleryUI=factory(root);
+}(typeof globalThis!=='undefined'?globalThis:this,function(root){
+  'use strict';
+  const THUMB_WIDTH=64,THUMB_HEIGHT=48,MAX_PREVIEWS=12;
+  function mount(container,callbacks){
+    const doc=container.ownerDocument||root.document,P=root.ImageryPresets,M=root.ImageryModel;
+    if(!doc||!P||!M)throw Error('The preset gallery requires the preset and scene models.');
+    const onEdit=callbacks&&callbacks.onEdit,onUseDraft=callbacks&&callbacks.onUseDraft;
+    if(typeof onEdit!=='function'||typeof onUseDraft!=='function')throw Error('The preset gallery needs edit and draft callbacks.');
+    const entries=P.list();
+    if(entries.length<1||entries.length>MAX_PREVIEWS)throw Error('The gallery supports one to twelve original examples.');
+    const rows=[],listeners=[],filters=[];let disposed=false,previewsVisible=false;
+    const el=(tag,id,text)=>{const node=doc.createElement(tag);if(id)node.id=id;if(text!==undefined)node.textContent=text;return node;};
+    const listen=(node,type,handler)=>{node.addEventListener(type,handler);listeners.push([node,type,handler]);};
+    const panel=el('fieldset','gallery-panel');panel.className='group preset-gallery';
+    panel.appendChild(el('legend',null,'Original preset gallery'));
+    const intro=el('p',null,'Original editable examples, not a recommended sequence or evidence of efficacy. Browse text first. Static thumbnails appear only when requested and never run fades or pulse.');intro.className='hint';panel.appendChild(intro);
+    const filterGrid=el('div');filterGrid.className='control-grid gallery-filters';panel.appendChild(filterGrid);
+    function filter(id,label,values){
+      const wrap=el('div'),lab=el('label',null,label),select=el('select',id);lab.htmlFor=id;
+      for(const [value,text]of [['all','Any'],...values]){const option=el('option',null,text);option.value=value;select.appendChild(option);}
+      select.value='all';wrap.append(lab,select);filterGrid.appendChild(wrap);filters.push(select);return select;
+    }
+    const counts=key=>[...new Set(entries.map(entry=>entry[key]))].sort((a,b)=>a-b).map(value=>[String(value),String(value)]);
+    const itemFilter=filter('gallery-filter-items','Item count',counts('itemCount'));
+    const colorFilter=filter('gallery-filter-colors','Item color count',counts('colorCount'));
+    const symmetryFilter=filter('gallery-filter-symmetry','Vertical symmetry',[['vertical','Vertically mirrored'],['not-vertical','Not vertically mirrored']]);
+    const overlapFilter=filter('gallery-filter-overlap','Geometric overlap',[['yes','Overlapping regions'],['no','Separate regions']]);
+    const timingFilter=filter('gallery-filter-timing','Authored timing',[['steady','Steady, no pulse'],['sequential-fades','Sequential fades'],['mixed-steady-pulse','Steady + optional pulse']]);
+    const help=el('p',null,'Color count excludes the shared background and disabled effects. Symmetry includes colors. Overlap includes contained shapes, not only crossing outlines. Filters describe geometry and timing, not clinical outcomes.');help.className='hint';panel.appendChild(help);
+    const actions=el('div');actions.className='small-actions';
+    const toggle=el('button','gallery-toggle-thumbnails','Show static thumbnails');toggle.type='button';toggle.setAttribute('aria-pressed','false');toggle.setAttribute('aria-controls','gallery-list');
+    const reset=el('button','gallery-reset-filters','Reset filters');reset.type='button';actions.append(toggle,reset);panel.appendChild(actions);
+    const status=el('p','gallery-status');status.className='hint';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.setAttribute('aria-atomic','true');panel.appendChild(status);
+    const list=el('ul','gallery-list');list.className='gallery-list';panel.appendChild(list);
+    const timingLabels={'steady':'Steady, no pulse','sequential-fades':'Sequential fades','mixed-steady-pulse':'Steady + optional pulse'};
+    for(const entry of entries){
+      const row=el('li','gallery-entry-'+entry.id);row.className='gallery-entry';
+      const details=el('details','gallery-details-'+entry.id),summary=el('summary',null,entry.title+' · '+entry.itemCount+' items · '+entry.colorCount+' item colors');
+      const description=el('p','gallery-description-'+entry.id,entry.description);description.className='hint';
+      const metadata=el('p',null,(entry.symmetry==='vertical'?'Vertically mirrored':'Not vertically mirrored')+'; '+(entry.overlap?'overlapping geometric regions':'separate geometric regions')+'; '+timingLabels[entry.timingKind]+'. ID '+entry.id+', revision '+entry.revision+'. '+entry.license+' license. Scene-v'+entry.validation.version+' validator passed.');metadata.className='hint';
+      const provenance=el('p',null,entry.provenance);provenance.className='hint';details.append(summary,description,metadata,provenance);
+      const use=el('button','gallery-use-'+entry.id,'Use draft: '+entry.title);use.type='button';use.setAttribute('aria-describedby',description.id);
+      row.append(details,use);list.appendChild(row);rows.push({entry,row,use,canvas:null});
+      listen(use,'click',()=>useDraft(entry));
+    }
+    const hint=el('p',null,'Use draft replaces the editable draft only and keeps it hidden. Live preview and Apply remain separate choices. Editing does not retain an unchanged preset identity. Hide, End, Escape and page interruptions also conceal every gallery thumbnail.');hint.className='hint';panel.appendChild(hint);container.appendChild(panel);
+    function say(text,error){status.textContent=String(text).slice(0,300);status.className=error?'hint error':'hint';}
+    function hidePreviews(){
+      previewsVisible=false;toggle.textContent='Show static thumbnails';toggle.setAttribute('aria-pressed','false');
+      for(const row of rows)if(row.canvas){row.canvas.hidden=true;row.canvas.width=1;row.canvas.height=1;}
+    }
+    function invalidate(reason){hidePreviews();if(!disposed)say(reason||'Static thumbnails hidden. Use Show static thumbnails only when wanted.');}
+    function beginChange(){
+      hidePreviews();
+      try{onEdit();return !disposed;}catch(error){say(error&&error.message||'The gallery action could not begin. No draft was staged.',true);return false;}
+    }
+    function match(value,actual){return value==='all'||value===String(actual);}
+    function applyFilters(){
+      hidePreviews();let count=0;
+      for(const row of rows){const entry=row.entry;row.row.hidden=!(match(itemFilter.value,entry.itemCount)&&match(colorFilter.value,entry.colorCount)&&match(symmetryFilter.value,entry.symmetry)&&match(overlapFilter.value,entry.overlap?'yes':'no')&&match(timingFilter.value,entry.timingKind));if(!row.row.hidden)count++;}
+      toggle.disabled=disposed||count===0;
+      say(count+' of '+entries.length+' examples match. Thumbnails hidden; use Show static thumbnails if wanted.');
+    }
+    function drawThumbnail(row){
+      const value=M.canonicalScene(P.create(row.entry.id));
+      if(value.version!==M.AUTHORED_VERSION||value.scene.canvas.ratio!=='4:3'||value.scene.objects.length>M.MAX_OBJECTS||value.scene.objects.some(o=>o.outline.enabled||o.shadow.enabled))throw Error('This example is not supported by the bounded static thumbnail renderer.');
+      if(!row.canvas){
+        row.canvas=el('canvas','gallery-thumbnail-'+row.entry.id);row.canvas.className='gallery-thumbnail';row.canvas.hidden=true;
+        row.canvas.setAttribute('role','img');row.canvas.setAttribute('aria-label',row.entry.title+'. Static composition only; all items shown without timing. '+row.entry.description);
+        row.row.appendChild(row.canvas);
+      }
+      const canvas=row.canvas;canvas.width=THUMB_WIDTH;canvas.height=THUMB_HEIGHT;
+      const ctx=canvas.getContext('2d');if(!ctx)throw Error('Static thumbnails need a working Canvas 2D context. Text browsing remains available.');
+      ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+      ctx.fillStyle=M.colorCSS(value.scene.background);ctx.fillRect(0,0,THUMB_WIDTH,THUMB_HEIGHT);
+      for(const shape of M.geometry(value,THUMB_WIDTH,THUMB_HEIGHT)){
+        if(shape.kind!=='polygon'||!shape.points.length||shape.points.length>64||shape.points.some(point=>point.length!==2||!point.every(Number.isFinite)))throw Error('Unsupported static thumbnail geometry.');
+        ctx.beginPath();shape.points.forEach(([x,y],index)=>index?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();
+        ctx.fillStyle=shape.color;ctx.strokeStyle=shape.color;ctx.lineWidth=shape.lineWidth;
+        if(shape.filled)ctx.fill();else ctx.stroke();
+      }
+    }
+    function togglePreviews(){
+      if(disposed)return;
+      const wasVisible=previewsVisible;
+      if(!beginChange())return;
+      if(wasVisible){say('All static thumbnails hidden. No scene was changed.');return;}
+      if(doc.hidden){say('Thumbnails stay hidden while the page is not visible.');return;}
+      const visibleRows=rows.filter(row=>!row.row.hidden);
+      if(!visibleRows.length){say('No examples match these filters. Thumbnails remain hidden.');return;}
+      try{
+        // Every canvas stays concealed until the complete bounded draw succeeds.
+        // No timers, asynchronous decode or offscreen full-size buffers are used.
+        for(const row of visibleRows)drawThumbnail(row);
+        if(disposed||doc.hidden){hidePreviews();return;}
+        for(const row of visibleRows)row.canvas.hidden=false;
+        previewsVisible=true;toggle.textContent='Hide static thumbnails';toggle.setAttribute('aria-pressed','true');
+        say(visibleRows.length+' static thumbnails shown by request. No timing or playback is running.');
+      }catch(error){hidePreviews();say(error&&error.message||'Thumbnails could not be drawn. Text browsing remains available.',true);}
+    }
+    function useDraft(entry){
+      if(disposed||!beginChange())return;
+      try{
+        const value=M.canonicalScene(P.create(entry.id));
+        onUseDraft(value);
+        if(!disposed)say(entry.title+' staged as an editable draft, still hidden. Use Live preview explicitly to review; Apply accepts it for download.');
+      }catch(error){say(error&&error.message||'This example could not be staged. Check the current draft before retrying.',true);}
+    }
+    for(const control of filters)listen(control,'change',()=>{if(!disposed&&beginChange())applyFilters();});
+    listen(toggle,'click',togglePreviews);
+    listen(reset,'click',()=>{if(!disposed&&beginChange()){for(const control of filters)control.value='all';applyFilters();}});
+    const interrupted=()=>{if(!disposed)invalidate('Static thumbnails hidden after an interruption. Show them again only when wanted.');};
+    listen(doc,'keydown',event=>{if(event.key==='Escape')interrupted();});
+    for(const event of ['visibilitychange','freeze','fullscreenchange'])listen(doc,event,interrupted);
+    for(const event of ['pagehide','pageshow','blur','resize'])listen(root,event,interrupted);
+    applyFilters();
+    return Object.freeze({invalidate,disablePreviews:invalidate,destroy(){
+      if(disposed)return;hidePreviews();disposed=true;
+      for(const control of [...filters,toggle,reset,...rows.map(row=>row.use)])control.disabled=true;
+      for(const [node,type,handler]of listeners)if(typeof node.removeEventListener==='function')node.removeEventListener(type,handler);
+      panel.remove();
+    }});
+  }
+  return Object.freeze({mount});
+}));
+</script>
+<script>/* Optional, session-only display provenance. The caller acknowledges a successful
+   foreground-visible render and supplies monotonic milliseconds; this module has
+   no clock, display, storage or network authority. Visible time is not gaze,
+   attention, perceived brightness, a light dose, or a medically safe duration. */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.ImageryProvenance = factory();
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const MAX_CANONICAL_BYTES = 1048576;
+  const MAX_VISIBLE_MS = 3600000;
+  const END_REASONS = Object.freeze(['user-stop', 'completed', 'hidden-tab', 'resize', 'edit', 'technical-failure', 'unknown']);
+  const FORMAT_VERSIONS = Object.freeze({'imagery-static-scene': 4, 'imagery-field-sequence': 3});
+  const UNAVAILABLE = Object.freeze({scene: Object.freeze({status: 'unavailable'}), exposure: Object.freeze({status: 'unavailable'})});
+  function record(value, keys, label) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) ||
+        ![Object.prototype, null].includes(Object.getPrototypeOf(value))) throw new Error(label + ' must be an ordinary record.');
+    const own = Reflect.ownKeys(value);
+    if (own.length !== keys.length || own.some(key => typeof key !== 'string' || !keys.includes(key))) throw new Error(label + ' has missing or unsupported fields.');
+    const result = Object.create(null);
+    for (const key of keys) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) throw new Error(label + ' cannot contain accessors.');
+      result[key] = descriptor.value;
+    }
+    return result;
+  }
+  function byteLengthBounded(text) {
+    let bytes = 0;
+    for (const character of text) {
+      const code = character.codePointAt(0);
+      bytes += code <= 0x7f ? 1 : code <= 0x7ff ? 2 : code <= 0xffff ? 3 : 4;
+      if (bytes > MAX_CANONICAL_BYTES) return bytes;
+    }
+    return bytes;
+  }
+  function descriptor(value) {
+    const input = record(value, ['identity', 'canonical', 'format', 'version', 'rendererVersion', 'mode', 'plannedMs'], 'Rendered snapshot');
+    if (!Number.isSafeInteger(input.identity) || input.identity < 1) throw new Error('Snapshot identity must be a positive safe integer.');
+    if (typeof input.canonical !== 'string' || !input.canonical.length || input.canonical.length > MAX_CANONICAL_BYTES ||
+        byteLengthBounded(input.canonical) > MAX_CANONICAL_BYTES) throw new Error('Canonical snapshot exceeds its byte bound.');
+    if (typeof input.format !== 'string' || !Object.prototype.hasOwnProperty.call(FORMAT_VERSIONS, input.format) || !Number.isSafeInteger(input.version) ||
+        input.version < 1 || input.version > FORMAT_VERSIONS[input.format]) throw new Error('Snapshot format or version is unsupported.');
+    if (typeof input.rendererVersion !== 'string' || !/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(?:-[a-z0-9.-]{1,24})?$/.test(input.rendererVersion)) throw new Error('Renderer version is unsupported.');
+    if (!['static', 'items', 'sequence'].includes(input.mode) ||
+        (input.mode === 'sequence') !== (input.format === 'imagery-field-sequence')) throw new Error('Display mode does not match its document.');
+    if (input.plannedMs !== null && (!Number.isSafeInteger(input.plannedMs) || input.plannedMs < 0 || input.plannedMs > MAX_VISIBLE_MS)) throw new Error('Planned duration is out of range.');
+    // The scene/sequence validator remains authoritative. Verify the metadata
+    // association without pretending this module validates display capabilities.
+    let document;
+    try { document = JSON.parse(input.canonical); } catch (_) { throw new Error('Canonical snapshot must be JSON.'); }
+    if (!document || typeof document !== 'object' || Array.isArray(document) || document.format !== input.format || document.version !== input.version) throw new Error('Canonical document and reference disagree.');
+    return input;
+  }
+  function metadata(input) {
+    return {identity: input.identity, format: input.format, version: input.version,
+      rendererVersion: input.rendererVersion, mode: input.mode, plannedMs: input.plannedMs};
+  }
+  function sameMetadata(a, b) {
+    return ['identity', 'format', 'version', 'rendererVersion', 'mode', 'plannedMs'].every(key => a[key] === b[key]);
+  }
+  function createTracker(options = {}) {
+    if (!options || typeof options !== 'object' || Array.isArray(options) ||
+        ![Object.prototype, null].includes(Object.getPrototypeOf(options)) ||
+        Reflect.ownKeys(options).some(key => key !== 'hash' && key !== 'onChange')) throw new Error('Tracker options are unsupported.');
+    const hashDescriptor = Object.getOwnPropertyDescriptor(options, 'hash');
+    if (hashDescriptor && !Object.prototype.hasOwnProperty.call(hashDescriptor, 'value')) throw new Error('Hash provider cannot be an accessor.');
+    const hash = hashDescriptor && hashDescriptor.value;
+    if (hash !== undefined && typeof hash !== 'function') throw new Error('Hash provider must be a function.');
+    const changeDescriptor = Object.getOwnPropertyDescriptor(options, 'onChange');
+    if (changeDescriptor && !Object.prototype.hasOwnProperty.call(changeDescriptor, 'value')) throw new Error('Status callback cannot be an accessor.');
+    const onChange = changeDescriptor && changeDescriptor.value;
+    if (onChange !== undefined && typeof onChange !== 'function') throw new Error('Status callback must be a function.');
+    let enabled = false, active = null, completed = null, lastNow = null, failure = null;
+    let inFlight = null, queued = null, latestIdentity = null;
+    // A fresh token per interval revokes old promises without retaining any list
+    // of intervals. Interval records contain metadata only; queued holds at
+    // most one bounded latest source string until it can be sent to hash.
+    let token = null;
+    function state() {
+      let status = 'idle';
+      if (!enabled) status = 'disabled';
+      else if (failure || (active ? active.hashState === 'failed' : completed && completed.hashState === 'failed')) status = 'unavailable';
+      else if (active) status = 'visible';
+      else if (completed) status = completed.hashState === 'ready' ? 'ready' : 'pending-digest';
+      return Object.freeze(failure ? {enabled, status, reason: failure} : {enabled, status});
+    }
+    function reset() {
+      token = null; active = null; completed = null; lastNow = null; failure = null;
+      queued = null; latestIdentity = null;
+    }
+    function fail(reason) {
+      token = null; active = null; completed = null; queued = null; failure = reason;
+      return state();
+    }
+    function clock(now) {
+      if (typeof now !== 'number' || !Number.isFinite(now) || now < 0 || now > Number.MAX_SAFE_INTEGER ||
+          (lastNow !== null && now < lastNow)) {
+        fail('invalid-clock'); return false;
+      }
+      lastNow = now;
+      if (active && now - active.startedAt > MAX_VISIBLE_MS) {
+        fail('duration-bound'); return false;
+      }
+      return true;
+    }
+    function complete(reason, now) {
+      if (!active) return;
+      completed = {
+        ...active.reference, token: active.token, hashState: active.hashState, sha256: active.sha256,
+        visibleMs: Math.floor(now - active.startedAt), interrupted: reason !== 'completed', endedReason: reason
+      };
+      active = null;
+    }
+    function acceptDigest(expectedToken, result) {
+      // Only the latest interval can receive a result. A completed older segment
+      // never gains fresh metadata after a superseding visible render or clear.
+      if (!enabled || token !== expectedToken) return;
+      const target = active || completed;
+      if (!target || target.token !== expectedToken) return;
+      if (typeof result !== 'string' || !/^[a-f0-9]{64}$/.test(result)) {
+        target.hashState = 'failed'; target.sha256 = null; failure = 'digest-unavailable';
+      } else {
+        target.hashState = 'ready'; target.sha256 = result;
+      }
+      return true;
+    }
+    function finishDigest(job, result) {
+      if (inFlight !== job) return;
+      inFlight = null;
+      if (acceptDigest(job.token, result) && onChange) {
+        // Status-only notification after accepting a settled digest, not on
+        // frames. A UI callback failure must not change display or data state.
+        try { onChange(state()); } catch (_) { /* The host owns its status UI. */ }
+      }
+      const next = queued;
+      queued = null;
+      if (next && enabled && next.token === token) beginDigest(next.token, next.canonical);
+    }
+    function beginDigest(expectedToken, canonical) {
+      if (!hash) { acceptDigest(expectedToken, null); return; }
+      if (inFlight) {
+        // Browser digest operations are not cancellable. Never accumulate jobs:
+        // retain just the latest bounded input until the current job settles.
+        queued = {token: expectedToken, canonical};
+        return;
+      }
+      const job = {token: expectedToken};
+      inFlight = job;
+      try {
+        const pending = hash(canonical);
+        Promise.resolve(pending).then(result => finishDigest(job, result), () => finishDigest(job, null));
+      } catch (_) { finishDigest(job, null); }
+    }
+    function start(value, now) {
+      // Opt-out is a hard boundary: do not even inspect arguments or call hash.
+      if (!enabled) return state();
+      let input;
+      try { input = descriptor(value); } catch (_) { return fail('invalid-snapshot'); }
+      // Do not let the next RAF silently reset a failed/overlong continuous
+      // display into a fresh apparently complete interval. A new caller-owned
+      // display generation (or explicit clear/opt-in reset) is required.
+      if (failure && latestIdentity !== null && input.identity <= latestIdentity) return state();
+      if (!clock(now)) return state();
+      if (latestIdentity !== null && input.identity < latestIdentity) return fail('stale-snapshot');
+      if (active && input.identity === active.reference.identity) {
+        // Identity is the caller's private snapshot generation, never exported.
+        // It must change whenever canonical content or display mode changes.
+        if (!sameMetadata(input, active.reference)) return fail('identity-mismatch');
+        return state();
+      }
+      if (active) complete('edit', now);
+      // A new actual render supersedes all previous failures and queued work.
+      failure = null; token = {}; latestIdentity = input.identity; queued = null;
+      active = {reference: metadata(input), startedAt: now, token, hashState: 'pending', sha256: null};
+      // Hash exactly the supplied canonical bytes. Once dispatched, no source
+      // string or parsed document is retained here. The host can hold at most
+      // one bounded digest input; a waiting latest input is separately bounded.
+      beginDigest(token, input.canonical);
+      return state();
+    }
+    function stop(reason, now) {
+      if (!enabled) return state();
+      if (!END_REASONS.includes(reason)) return fail('invalid-end-reason');
+      if (!clock(now)) return state();
+      complete(reason, now);
+      return state();
+    }
+    function visiblePause(now) {
+      if (!enabled || !active) return state();
+      clock(now);
+      // A paused playback leaves its last frame visible. It does not stop or
+      // subtract foreground-visible time. Concealment must call stop instead.
+      return state();
+    }
+    function getSummary() {
+      if (!enabled || active || failure || !completed || completed.hashState !== 'ready' || completed.token !== token) return UNAVAILABLE;
+      return Object.freeze({
+        scene: Object.freeze({status: 'available', format: completed.format, version: completed.version,
+          sha256: completed.sha256, rendererVersion: completed.rendererVersion}),
+        exposure: Object.freeze({status: 'available', mode: completed.mode, plannedMs: completed.plannedMs,
+          visibleMs: completed.visibleMs, interrupted: completed.interrupted, endedReason: completed.endedReason})
+      });
+    }
+    return Object.freeze({
+      getState: state, getSummary, start, stop, pause: visiblePause, resume: visiblePause,
+      setEnabled(value) {
+        if (typeof value !== 'boolean') throw new Error('Provenance opt-in must be true or false.');
+        if (!value || !enabled) reset();
+        enabled = value;
+        return state();
+      },
+      clear() { reset(); return state(); }
+    });
+  }
+  return Object.freeze({MAX_CANONICAL_BYTES, MAX_VISIBLE_MS, END_REASONS, FORMAT_VERSIONS, createTracker});
 }));
 </script>
 <script>/* Local image header preflight. A successful header is not permission to upload or display. */
@@ -1638,7 +2046,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
   const FORMAT = 'imagery-private-journal';
-  const VERSION = 1;
+  // Version 2 permits exact whole-sequence references; the v1 validator stays
+  // explicitly available for the original static-only record contract.
+  const VERSION = 2;
+  const LEGACY_VERSION = 1;
   const MAX_ENTRIES = 20;
   const MAX_NOTE_LENGTH = 2000;
   const MAX_EXPORT_BYTES = 131072;
@@ -1710,7 +2121,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     for (const key of keys) result[key] = choice(input[key], allowed, label + ' ' + key);
     return result;
   }
-  function sceneReference(value) {
+  function sceneReference(value, schemaVersion) {
     // Inspect the status descriptor without invoking a getter.
     if (!value || typeof value !== 'object') throw new Error('Scene reference is required.');
     const descriptor = Object.getOwnPropertyDescriptor(value, 'status');
@@ -1721,8 +2132,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     const input = record(value, ['status', 'format', 'version', 'sha256', 'rendererVersion'], 'Scene reference');
     choice(input.status, ['available'], 'Scene reference status');
-    choice(input.format, ['imagery-static-scene'], 'Scene reference format');
-    integer(input.version, 1, 4, 'Scene reference version');
+    choice(input.format, schemaVersion === LEGACY_VERSION ? ['imagery-static-scene'] :
+      ['imagery-static-scene', 'imagery-field-sequence'], 'Scene reference format');
+    integer(input.version, 1, input.format === 'imagery-static-scene' ? 4 : 3, 'Scene reference version');
     if (typeof input.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(input.sha256)) throw new Error('Scene reference requires a lowercase SHA-256 digest.');
     if (typeof input.rendererVersion !== 'string' || !/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(?:-[a-z0-9.-]{1,24})?$/.test(input.rendererVersion)) throw new Error('Renderer version is unsupported.');
     // The caller must compute this from its actual frozen scene. A valid digest
@@ -1748,16 +2160,20 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       endedReason: choice(input.endedReason, ['user-stop', 'completed', 'hidden-tab', 'resize', 'edit', 'technical-failure', 'unknown'], 'End reason')
     };
   }
-  function canonicalRecord(value) {
+  function canonicalForVersion(value, schemaVersion) {
     const input = record(value, ['scene', 'exposure', 'experiences', 'comfort', 'symptoms', 'stoppedEarly', 'preference', 'easeOfUse', 'note'], 'Reflection');
     const comfort = states(input.comfort, ['before', 'after'], COMFORT_VALUES, 'Comfort');
     if (typeof input.note !== 'string' || input.note.length > MAX_NOTE_LENGTH ||
         /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(input.note)) {
       throw new Error('Optional note must be at most 2,000 characters without control or direction-override characters.');
     }
+    const scene = sceneReference(input.scene, schemaVersion), exposure = exposureReference(input.exposure);
+    if (schemaVersion === VERSION && scene.status === 'available' && exposure.status === 'available' &&
+        (scene.format === 'imagery-field-sequence') !== (exposure.mode === 'sequence')) {
+      throw new Error('Display mode and document reference disagree.');
+    }
     return freeze({
-      scene: sceneReference(input.scene),
-      exposure: exposureReference(input.exposure),
+      scene, exposure,
       experiences: states(input.experiences, EXPERIENCES, RESPONSE_VALUES, 'Experience'),
       comfort,
       symptoms: states(input.symptoms, SYMPTOMS, SYMPTOM_VALUES, 'Symptom'),
@@ -1767,6 +2183,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       note: input.note
     });
   }
+  function canonicalRecord(value) { return canonicalForVersion(value, VERSION); }
+  function canonicalRecordV1(value) { return canonicalForVersion(value, LEGACY_VERSION); }
   function emptyRecord() {
     return canonicalRecord({
       scene: {status: 'unavailable'},
@@ -1854,9 +2272,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     });
   }
   return Object.freeze({
-    FORMAT, VERSION, MAX_ENTRIES, MAX_NOTE_LENGTH, MAX_EXPORT_BYTES, MAX_EXPOSURE_MS,
+    FORMAT, VERSION, LEGACY_VERSION, MAX_ENTRIES, MAX_NOTE_LENGTH, MAX_EXPORT_BYTES, MAX_EXPOSURE_MS,
     EXPERIENCES, RESPONSE_VALUES, COMFORT_VALUES, SYMPTOMS, SYMPTOM_VALUES, STOP_VALUES, PREFERENCE_VALUES, EASE_VALUES,
-    SUBMISSION, canonicalRecord, emptyRecord, createJournal
+    SUBMISSION, canonicalRecord, canonicalRecordV1, emptyRecord, createJournal
   });
 }));
 </script>
@@ -1872,6 +2290,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     const document = container.ownerDocument || root.document;
     const onEdit = typeof options.onEdit === 'function' ? options.onEdit : function () {};
+    const onTrackingChange = typeof options.onTrackingChange === 'function' ? options.onTrackingChange : function () {};
+    const clearTracking = typeof options.clearTracking === 'function' ? options.clearTracking : function () {};
+    const getProvenance = typeof options.getProvenance === 'function' ? options.getProvenance : () => ({scene:{status:'unavailable'},exposure:{status:'unavailable'}});
+    const getTrackingState = typeof options.getTrackingState === 'function' ? options.getTrackingState : () => ({status:'unavailable'});
     const journal = J.createJournal(), selected = new Set(), listeners = new Set(), urls = new Set(), timers = new Set();
     const prefix = nextMount++ === 0 ? 'journal-' : 'journal-' + nextMount + '-';
     let preview = null, editRevision = 0, previewRevision = -1, destroyed = false;
@@ -1916,7 +2338,14 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     questions.appendChild(node('legend', 'Optional reflection'));
     questions.hidden = true; questions.disabled = true; content.appendChild(questions);
     paragraph(questions, 'These custom exploratory descriptions are not a validated questionnaire, diagnosis or imagery-improvement score. Every answer may be skipped. Do not repeat a display to answer.');
-    paragraph(questions, 'Scene identity and exposure timing are unavailable in this journal. No timestamp, original picture, scene content or device details are recorded.');
+    const tracking = labelledCheckbox(questions, 'track-display', 'Include optional scene fingerprint and visible duration in future reflections');
+    paragraph(questions, 'Off by default. This records only the most recent completed main-preview display after opting in (not gallery thumbnails or color swatches): a SHA-256 scene or whole-sequence fingerprint, format and renderer versions, display mode, planned duration, foreground-visible duration and stop reason. Paused frames remain visible and count toward duration. No timestamp, picture, scene content or device identifier is exported. A fingerprint is not anonymity.');
+    const trackingStatus = identify(node('p', '', 'hint'), 'tracking-status'); questions.appendChild(trackingStatus);
+    function refreshTracking() {
+      const state = getTrackingState();
+      trackingStatus.textContent = !tracking.checked ? 'Display provenance is off. Reflections will contain unavailable fields.' : state.status === 'ready' ? 'The most recent completed display is ready to attach. Review the exact export before downloading.' : 'Display provenance is ' + state.status + '. Adding now will mark these fields unavailable; no older display is substituted.';
+    }
+    listen(tracking, 'change', () => { edit(); onTrackingChange(enabled.checked && tracking.checked); refreshTracking(); });
     const labels = {
       'not-asked': 'Not asked', skipped: 'Skipped', none: 'None', uncertain: 'Uncertain',
       present: 'Present', comfortable: 'Comfortable', 'mild-discomfort': 'Mild discomfort',
@@ -2025,7 +2454,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     function readReflection() {
       return {
-        scene: {status: 'unavailable'}, exposure: {status: 'unavailable'},
+        ...(tracking.checked ? getProvenance() : {scene:{status:'unavailable'},exposure:{status:'unavailable'}}),
         experiences: Object.fromEntries(J.EXPERIENCES.map(name => [name, fields[name].value])),
         comfort: {before: fields.before.value, after: fields.after.value},
         symptoms: Object.fromEntries(J.SYMPTOMS.map(name => [name, fields[name].value])),
@@ -2034,9 +2463,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       };
     }
     function refreshControls() {
+      refreshTracking();
       const length = journal.getState().entries.length;
       add.disabled = !enabled.checked || length >= J.MAX_ENTRIES;
-      clear.disabled = length === 0 && Object.entries(fields).every(([name, input]) => input.value === (name === 'note' ? '' : 'skipped'));
+      clear.disabled = !tracking.checked && length === 0 && Object.entries(fields).every(([name, input]) => input.value === (name === 'note' ? '' : 'skipped'));
       makePreview.disabled = selected.size === 0;
       count.textContent = length === 0 ? 'No reflections added. Maximum 20 per session.' :
         length + ' of 20 session reflections. ' + selected.size + ' selected for export.';
@@ -2089,7 +2519,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       } catch (error) { say(error.message); }
     }
     function clearJournal() {
-      edit(); journal.clear(); selected.clear(); resetAnswers(); renderEntries();
+      edit(); clearTracking(); journal.clear(); selected.clear(); resetAnswers(); renderEntries();
       releaseDownloads(); enabled.focus();
       say('Session journal and unfinished answers cleared. Previously downloaded files are unchanged.');
     }
@@ -2122,7 +2552,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         const text = journal.confirmExport(preview, true);
         url = root.URL.createObjectURL(new root.Blob([text], {type: 'application/json'}));
         urls.add(url);
-        anchor = node('a'); anchor.href = url; anchor.download = 'imagery-field-journal-v1.json'; anchor.hidden = true;
+        anchor = node('a'); anchor.href = url; anchor.download = 'imagery-field-journal-v' + J.VERSION + '.json'; anchor.hidden = true;
         document.body.appendChild(anchor); anchor.click();
         say('Local download requested. Check your browser downloads. Another download requires a new preview and approval.');
       } catch (_) {
@@ -2138,7 +2568,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     listen(enabled, 'change', () => {
       edit(); questions.hidden = !enabled.checked; questions.disabled = !enabled.checked;
-      if (!enabled.checked) resetAnswers();
+      if (!enabled.checked) { resetAnswers(); tracking.checked = false; onTrackingChange(false); }
       refreshControls();
       say(enabled.checked ? 'Optional reflections enabled. Nothing is recorded until Add reflection.' :
         'Reflections turned off; unfinished answers discarded. Added entries remain available to delete, clear or export.');
@@ -2154,6 +2584,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     refreshControls();
     return Object.freeze({
       getState: journal.getState,
+      refreshProvenance() { if (!destroyed) refreshControls(); },
       invalidateExport() {
         if (destroyed) return;
         const hadPreview = preview !== null;
@@ -2162,7 +2593,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       },
       destroy() {
         if (destroyed) return;
-        destroyed = true; invalidateExport(); resetAnswers(); selected.clear(); journal.clear();
+        destroyed = true; onTrackingChange(false); invalidateExport(); resetAnswers(); selected.clear(); journal.clear();
         for (const [element, type, handler] of listeners) element.removeEventListener(type, handler);
         listeners.clear();
         releaseDownloads();
@@ -2190,7 +2621,22 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   offscreen.width=1;offscreen.height=1;
   let context=null,offscreenContext=null;
   try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:true});}catch(e){/* Data controls remain available. */}
-  let journalUI=null,imageUI=null,imageReplacement=null;
+  let journalUI=null,imageUI=null,imageReplacement=null,galleryUI=null;
+  let provenanceIdentity=1;
+  const provenance=window.ImageryProvenance.createTracker({onChange:()=>{if(journalUI)journalUI.refreshProvenance();},hash:async canonical=>{
+    if(!window.crypto||!window.crypto.subtle||typeof TextEncoder!=='function')throw new Error('SHA-256 unavailable');
+    const bytes=new TextEncoder().encode(canonical);
+    try{return Array.from(new Uint8Array(await window.crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');}
+    finally{bytes.fill(0);}
+  }});
+  function provenanceNow(){try{return performance.now();}catch(e){return NaN;}}
+  function stopProvenance(reason){provenance.stop(reason,provenanceNow());provenanceIdentity++;if(journalUI)journalUI.refreshProvenance();}
+  function recordVisibleDisplay(state){
+    if(!provenance.getState().enabled||!state.visible||document.hidden)return;
+    const timed=displayKind==='timed',items=displayKind==='items';
+    const value=timed?sequence:items?itemSource:displayKind==='step'?stepScene(stepIndex):displayKind==='live'?state.draft:state.current;
+    provenance.start({identity:provenanceIdentity,canonical:JSON.stringify(value),format:value.format,version:value.version,rendererVersion:'0.8.0-dev.provenance1',mode:timed?'sequence':items?'items':'static',plannedMs:timed?compiledSequence.durationMs:items?compiledItems.durationMs:null},provenanceNow());
+  }
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
   let gesture=null,moveUndo=[],moveRedo=[],lastHit=null,moveStaging=false;
   let working=controller.getState().current;
@@ -2310,7 +2756,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         resetContext(context);context.globalAlpha=frame.alpha;context.drawImage(offscreen,0,0);resetContext(context);
       }
     }else paintScene(context,canvas,displayKind==='step'?stepScene(stepIndex):displayKind==='live'?state.draft:state.current,d);
-    return true;
+    recordVisibleDisplay(state);return true;
   }
   // These bounded editor samples represent only the current form colors. They
   // never change the accepted scene, call Show, or paint a scene preview.
@@ -2354,7 +2800,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   function render(){
     let state=controller.getState();
-    if(gateClockFault&&state.visible){cancelPlayback();controller.hide();state=controller.getState();}
+    if(gateClockFault&&state.visible){cancelPlayback('technical-failure');controller.hide();state=controller.getState();}
     const full=document.fullscreenElement===root;
     root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&['live','items'].includes(displayKind)&&editorOpen&&!full?' live-editor':'');
     $('editor-panel').hidden=!editorOpen;
@@ -2363,7 +2809,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     updateOutputs();renderSequence();renderItemEditor();renderItemPlayback();
     try{draw(state);}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
-      cancelPlayback();controller.hide();canvas.hidden=true;context=null;state=controller.getState();
+      cancelPlayback('technical-failure');controller.hide();canvas.hidden=true;context=null;state=controller.getState();
       say('The canvas could not be drawn. The field is hidden; data controls remain available.',true);
     }
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
@@ -2444,10 +2890,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     return next;
   }
-  function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
+  function hide(message,reason='unknown'){cancelPlacement();conceal(reason);render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
   function isLive(){return displayKind==='live'&&controller.getState().visible;}
   function beginManualEdit(){
-    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the scene or controls changed.');
     cancelDirectGesture();
     if(isLive())controller.invalidateImport();
     else if(controller.getState().visible)conceal();
@@ -2457,6 +2903,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function stageWorking(message){
     if(!moveStaging)clearMoveHistory();
     const live=isLive();formDirty=true;
+    if(live&&!sameScene(controller.getState().draft,working))provenanceIdentity++;
     const result=live?controller.stageLive(working):controller.stage(working);
     if(!result.ok&&live)conceal();
     render();say(result.ok?(live?'Live draft updated. Apply keeps it for history and download; Hide stops preview.':message):result.error+' Preview stopped. Your applied scene is unchanged.',!result.ok);return result.ok;
@@ -2637,20 +3084,20 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function showScene(){
     if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Resume live preview again after the repeat-action lock.');return;}
     cancelPlayback();cancelPlacement();controller.invalidateImport();
-    if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.');return;}
+    if(gateClockFault){hide('The display clock failed. Reload this page before showing a scene; keep any unsaved files first.','technical-failure');return;}
     if(!context){render();say('Canvas is unavailable in this browser. The scene stays hidden; JSON editing and downloads remain available.',true);return;}
     working=readFields();
     const result=controller.previewDraft(working);
-    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     if(result.ok)displayKind='live';
     render();say(result.ok?'Live preview on. Object and background edits appear immediately. Apply keeps changes for history/download; Hide or Escape stops preview.':result.error+(document.fullscreenElement===root?' Exit fullscreen to fix the fields or discard the draft.':''),!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('show-scene').addEventListener('click',showScene);
   $('fullscreen-show').addEventListener('click',()=>section==='sequence'?showStep():showScene());
-  $('hide-scene').addEventListener('click',()=>hide());
+  $('hide-scene').addEventListener('click',()=>hide(undefined,'user-stop'));
   $('end-viewing').addEventListener('click',()=>{
-    cancelPlayback();cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
+    cancelPlayback('user-stop');cancelPlacement();controller.end();editorOpen=true;render();say('Viewing ended. Your scene and optional note remain in this open page.');
     $('guidance-title').setAttribute('tabindex','-1');$('guidance-title').focus();
   });
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
@@ -2679,19 +3126,19 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   document.addEventListener('fullscreenerror',()=>fullscreenFailure('Fullscreen was unavailable or rejected.'));
   document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'){hide('Scene hidden with Escape. Placement and pending file reads were canceled.');}
+    if(event.key==='Escape'){hide('Scene hidden with Escape. Placement and pending file reads were canceled.','user-stop');}
     if(event.repeat&&(event.key==='Enter'||event.key===' ')&&event.target&&event.target.closest&&event.target.closest('button'))event.preventDefault();
   });
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.');});
-  window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.'));
-  window.addEventListener('pagehide',()=>{cancelPlacement();conceal();render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
-  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Resume live preview to display it again.'));
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)hide('Scene hidden while the page was away. It will not resume automatically.','hidden-tab');});
+  window.addEventListener('blur',()=>hide('Scene hidden because the window lost focus. Show it again when you choose.','hidden-tab'));
+  window.addEventListener('pagehide',()=>{cancelPlacement();conceal('hidden-tab');render();objectURLs.forEach(url=>URL.revokeObjectURL(url));objectURLs.clear();});
+  document.addEventListener('freeze',()=>hide('Scene hidden while the page was suspended. Choose Resume live preview to display it again.','hidden-tab'));
   window.addEventListener('pageshow',event=>{if(event.persisted)hide('Scene hidden after returning to this page. Choose Resume live preview to display it again.');});
   // Initial browser sizing can dispatch resize without changing the viewport.
   // Only a real geometry/DPR change interrupts display; this never reveals it.
   const viewportSize=()=>[window.innerWidth,window.innerHeight,window.devicePixelRatio||1].join(':');
   let lastViewportSize=viewportSize();
-  window.addEventListener('resize',()=>{const next=viewportSize();if(next===lastViewportSize)return;lastViewportSize=next;hide('Scene hidden after the window size changed. Choose Resume live preview to display it again.');});
+  window.addEventListener('resize',()=>{const next=viewportSize();if(next===lastViewportSize)return;lastViewportSize=next;hide('Scene hidden after the window size changed. Choose Resume live preview to display it again.','resize');});
   function download(value,filename) {
     const serialized=JSON.stringify(value,null,2)+'\n';
     let url;
@@ -2805,31 +3252,32 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     cancelPlayback();cancelPlacement();
     try{
       itemSource=M.canonicalScene(readFields());compiledItems=I.compileTimeline(itemSource);const result=controller.previewDraft(itemSource);
-      if(gateClockFault){hide('The display clock failed. Reload before viewing.');return;}
+      if(gateClockFault){hide('The display clock failed. Reload before viewing.','technical-failure');return;}
       if(!result.ok){render();say(result.error,true);return;}
       const started=itemTimeline.start(compiledItems);displayKind='items';itemFrame=started.frame;render();paintPlayback(started.frame);scheduleFrame();$('item-pause').focus();
       say('Playing items once for '+compiledItems.durationMs/1000+' seconds. Pause retains the displayed frame; Stop / Hide ends preview.');
-    }catch(e){hide('Item preview stopped. '+e.message);}
+    }catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   }
   $('item-play').addEventListener('click',startItems);
   $('item-pause').addEventListener('click',()=>{
     if(itemTimeline.getState().status!=='running'||!controller.getState().visible)return;
     generation++;if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
-    try{itemTimeline.pause();render();say('Item preview paused at the displayed frame. Resume continues; Stop / Hide conceals.');$('item-resume').focus();}catch(e){hide('Item preview stopped. '+e.message);}
+    try{itemTimeline.pause();render();say('Item preview paused at the displayed frame. Resume continues; Stop / Hide conceals.');$('item-resume').focus();}catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   });
   $('item-resume').addEventListener('click',()=>{
     if(itemTimeline.getState().status!=='paused'||!controller.getState().visible||motionReduced||document.fullscreenElement===root)return;
-    try{generation++;itemTimeline.resume();render();scheduleFrame();say('Item preview resumed.');$('item-pause').focus();}catch(e){hide('Item preview stopped. '+e.message);}
+    try{generation++;itemTimeline.resume();render();scheduleFrame();say('Item preview resumed.');$('item-pause').focus();}catch(e){hide('Item preview stopped. '+e.message,'technical-failure');}
   });
-  $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.'));
-  function cancelPlayback(){
-    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();
+  $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.','user-stop'));
+  function cancelPlayback(reason='edit'){
+    stopProvenance(reason);if(galleryUI)galleryUI.invalidate('Static thumbnails hidden. Showing them again requires an explicit gallery action.');
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the scene or controls changed.');
     cancelDirectGesture();
     generation++;
     if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
     timeline.stop();itemTimeline.stop();paintedFrame=null;itemFrame=null;lastPhaseKey='';displayKind='scene';
   }
-  function conceal(){cancelPlayback();controller.hide();}
+  function conceal(reason='edit'){cancelPlayback(reason);controller.hide();}
   function sequenceDescription(){
     if(!sequence)return 'No sequence steps.';
     if(displayKind==='timed'&&paintedFrame){
@@ -3003,7 +3451,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   function canPresent(){
     controller.getState();
-    if(gateClockFault){hide('The display clock failed. Reload this page before viewing; keep any unsaved files first.');return false;}
+    if(gateClockFault){hide('The display clock failed. Reload this page before viewing; keep any unsaved files first.','technical-failure');return false;}
     if(!sequencePrecondition())return false;
     if(!sequence){say('Capture a scene or load the example first.',true);return false;}
     if(formDirty){say('Apply, discard, or capture the scene edits before displaying the sequence.',true);return false;}
@@ -3014,7 +3462,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(controller.getState().visible&&displayKind!=='step'){hide('Preview mode changed. The field is hidden; choose Show step again after the repeat-action lock.');return;}
     cancelPlacement();if(!canPresent()){render();return;}
     cancelPlayback();const result=controller.show();
-    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     if(result.ok)displayKind='step';render();say(result.ok?'Step '+(stepIndex+1)+' visible: '+sequence.sequence.steps[stepIndex].name+'. Stop / Hide or Escape conceals it.':result.error,!result.ok);
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
@@ -3031,21 +3479,21 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     renderSequence();renderItemPlayback();
   }
   function scheduleFrame(){
-    const gate=controller.getState();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+    const gate=controller.getState();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
     const kind=displayKind,engine=playbackEngine();
     if(rafId!==null||engine.getState().status!=='running'||!gate.visible||!['timed','items'].includes(kind))return;
     const capturedEpoch=gate.epoch,capturedGeneration=generation,engineGeneration=engine.getState().generation;
     rafId=window.requestAnimationFrame(()=>{
       if(capturedGeneration!==generation)return;
       rafId=null;const state=controller.getState(),playback=engine.getState();
-      if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
+      if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}
       if(state.epoch!==capturedEpoch||!state.visible||displayKind!==kind||playback.status!=='running'||playback.generation!==engineGeneration)return;
       try{
         const next=engine.tick();
-        if(next.status==='finished'||next.frame.done){hide((kind==='items'?'Item preview':'Sequence')+' finished. Field hidden. Playback reset; nothing will replay.');return;}
+        if(next.status==='finished'||next.frame.done){hide((kind==='items'?'Item preview':'Sequence')+' finished. Field hidden. Playback reset; nothing will replay.','completed');return;}
         if(capturedGeneration!==generation||controller.getState().epoch!==capturedEpoch)return;
         paintPlayback(next.frame);scheduleFrame();
-      }catch(e){hide('Playback stopped. '+e.message);}
+      }catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
     });
   }
   $('sequence-play').addEventListener('click',()=>{
@@ -3055,22 +3503,22 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(document.fullscreenElement===root){say('Exit fullscreen to play once. Fullscreen supports manual step previews only.',true);return;}
     if(motionReduced){say('Reduced motion is on. Use Previous or Next, then Show step.',true);return;}
     if(!offscreenContext||typeof window.requestAnimationFrame!=='function'){say('Timed playback is unavailable in this browser. Use manual step previews.',true);return;}
-    cancelPlacement();cancelPlayback();const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}if(!result.ok){render();say(result.error,true);return;}
+    cancelPlacement();cancelPlayback();const result=controller.show();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.','technical-failure');return;}if(!result.ok){render();say(result.error,true);return;}
     try{const started=timeline.start(compiledSequence);displayKind='timed';paintPlayback(started.frame);render();scheduleFrame();$('sequence-pause').focus();}
-    catch(e){hide('Playback stopped. '+e.message);}
+    catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
   $('sequence-pause').addEventListener('click',()=>{
     if(timeline.getState().status!=='running'||!controller.getState().visible)return;
     generation++;if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
     try{timeline.pause();render();say('Paused at the last displayed frame. It remains visible. Resume continues; Stop / Hide conceals.');$('sequence-resume').focus();}
-    catch(e){hide('Playback stopped. '+e.message);}
+    catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
   $('sequence-resume').addEventListener('click',()=>{
     if(timeline.getState().status!=='paused'||!controller.getState().visible||motionReduced||document.fullscreenElement===root)return;
     try{generation++;timeline.resume();render();scheduleFrame();say('Sequence resumed from the paused frame.');$('sequence-pause').focus();}
-    catch(e){hide('Playback stopped. '+e.message);}
+    catch(e){hide('Playback stopped. '+e.message,'technical-failure');}
   });
-  $('sequence-stop').addEventListener('click',()=>hide('Sequence stopped. Field hidden; playback reset.'));
+  $('sequence-stop').addEventListener('click',()=>hide('Sequence stopped. Field hidden; playback reset.','user-stop'));
   if(reducedMotion){
     const changed=event=>{motionReduced=!!event.matches;hide(motionReduced?'Reduced motion is on. Playback stopped; use manual Previous / Next and Show step.':'Motion preference changed. Playback stopped and will not resume automatically.');};
     if(typeof reducedMotion.addEventListener==='function')reducedMotion.addEventListener('change',changed);
@@ -3092,7 +3540,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
 
   $('undo-image-replacement').addEventListener('click',()=>{if(!imageReplacement)return;const previous=imageReplacement;beginManualEdit();conceal();selectedId=previous.id;fillFields(previous.before);stageWorking('Previous draft restored and hidden. Apply keeps it for download.');});
-  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal();render();}});
+  journalUI=window.ImageryJournalUI.mount($('journal-container'),{onEdit:()=>{conceal('edit');render();},onTrackingChange:enabled=>{provenance.setEnabled(enabled);provenanceIdentity++;},clearTracking:()=>provenance.clear(),getProvenance:()=>provenance.getSummary(),getTrackingState:()=>provenance.getState()});
+  galleryUI=window.ImageryGalleryUI.mount($('gallery-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{conceal();fillFields(M.canonicalScene(value));section='scene';stageWorking('Original gallery scene staged and hidden. Edit freely; Apply keeps it for download. No playback started.');}});
   $('open-image-tools').addEventListener('click',()=>{conceal();render();if(!imageUI)imageUI=window.ImageryImageUI.mount($('image-tools-container'),{onEdit:()=>{conceal();render();},onUseDraft:value=>{const before=M.canonicalScene(readFields()),id=selectedId;conceal();fillFields(M.canonicalScene(value));section='scene';if(stageWorking('Image approximation staged and hidden. Undo image draft replacement restores the previous draft until another edit. Apply commits it for download.')){imageReplacement={before,id};render();}}});$('image-tools-container').hidden=false;$('open-image-tools').hidden=true;$('open-image-tools').setAttribute('aria-expanded','true');$('image-file').focus();});
   fillFields(controller.getState().current);fillSequenceFields();render();
   // The user requested an initially visible static editor. This synchronous,
