@@ -1,17 +1,17 @@
 {
   "date": "2026-10-20",
-  "status": "V08_GALLERY_PROVENANCE_NATIVE_VISUAL_PENDING",
+  "status": "SCOPED_TOUCHSTART_PORT_NODE_PASS_NATIVE_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 312959,
-    "sha256": "5a6e6114f87b20335ba755f9ec7cbf98187a6ed332b8886f52a10bee82d7c002"
+    "bytes": 313647,
+    "sha256": "27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b"
   },
   "browser": {
-    "status": "TOUCH_DEFAULT_AND_GALLERY_APERTURE_REPAIR_PENDING",
-    "preparedGroups": 136,
-    "expectedCaptures": 116,
-    "note": "Prior native run failed immediate mobile Undo, with other variants passing on that runner. Narrow gallery thumbnail capture clipped beneath pinned actions. Current touch-default experiment and stronger gallery aperture checks require fresh native execution.",
+    "status": "NOT_RUN_CURRENT_HEAD",
+    "preparedGroups": 140,
+    "expectedCaptures": 120,
+    "note": "Scoped guarded canvas touchstart repair from independently accepted P1 is ported. Current larger runtime requires its own exact-head native, visual and packaging gates. Prior failures remain historical.",
     "historicalExpandedRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39409429924",
     "historicalPassed": 117,
     "historicalFailed": 1,
@@ -20,7 +20,13 @@
     "previousHead": "88325147bfaab515abf42be2ee435ebe99781263",
     "previousPassed": 135,
     "previousFailed": 1,
-    "previousCapturesVerified": 116
+    "previousCapturesVerified": 116,
+    "p1Reference": {
+      "head": "372b81d8cf515e3ff19f1f3fca7505970c73d560",
+      "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824",
+      "nativePassed": 116,
+      "status": "PASS_SEPARATE_SMALLER_RUNTIME"
+    }
   },
   "historicalV07": {
     "date": "2026-10-20",
@@ -1025,9 +1031,10 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 830,
-    "passed": 830,
-    "failed": 0
+    "total": 855,
+    "passed": 855,
+    "failed": 0,
+    "skipped": 0
   },
   "documentation": {
     "status": "PASS",

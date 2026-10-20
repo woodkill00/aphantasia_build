@@ -1,3 +1,15 @@
+# Current scoped touchstart repair candidate
+
+Local Node v24.19.0: **855/855 PASS**, zero failures or skipped tests. Runtime: **313647 bytes**, SHA-256 `27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b`. Current native **140 groups / 120 captures are prepared, NOT RUN**; visual and packaging acceptance remain pending.
+
+The canvas-only guarded touchstart repair and unchanged pointer transaction path are ported from independently accepted P1 [run 39418445824](https://github.com/woodkill00/aphantasia_build/actions/runs/39418445824). That smaller runtime passed 116 native groups including the original 73.2 ms and explicit rapid 35.8 ms releases, first trusted Undo and absence of browser fling activation/tap suppression. Chromium tracing established the earlier failure mechanism; no synthetic activation, retry-to-green, assertion weakening or sandbox relaxation was used. P1 evidence does not accept this larger runtime.
+
+The original pre-release pixel assertion and separate rapid post-release pixel gate remain distinct. Exact-head native/visual/package acceptance is required before merge. Physical devices, other engines, full assistive technology, natural-photo usefulness, calibrated exposure and clinical/governed research remain unverified.
+
+## Historical candidate records
+
+Statements below describe their named earlier candidates, not current acceptance.
+
 # Version 0.8 gallery and optional provenance candidate
 
 Unreleased development. The published package remains v0.7.0. Current engineering includes ten bounded authored shape families, five fixed ratios, twelve original presets, explicit bounded static gallery thumbnails, experimental local image approximation, private journal-v2 with separately opted-in SHA-256 identity and visible-duration metadata, and disabled research information only. This is not all possible geometry, a clinical tool or an activated study.

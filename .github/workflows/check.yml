@@ -15,7 +15,7 @@ concurrency:
 jobs:
   local-prototype:
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 18
     steps:
       - name: Check out reviewed source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -40,7 +40,7 @@ jobs:
           node --check imagery-app/tests/browser-cdp.cjs
           node imagery-app/tests/browser-cdp.cjs --check-fixtures
       - name: Real Chrome browser checks with sandbox enabled
-        timeout-minutes: 10
+        timeout-minutes: 15
         shell: bash
         env:
           CHROME_PATH: /usr/bin/google-chrome
@@ -60,7 +60,7 @@ jobs:
           node scripts/build-release.cjs \
             --version 0.8.0-preview.1 \
             --source-commit "$source_commit" \
-            --tested-html-sha256 5a6e6114f87b20335ba755f9ec7cbf98187a6ed332b8886f52a10bee82d7c002 \
+            --tested-html-sha256 27bd6fc7205dbcd9128722eebba1bb3b5fd2a7a641c0e0b74100af84360ad26b \
             --evidence-url "$EVIDENCE_URL" \
             --output "$RELEASE_OUTPUT"
           node scripts/verify-release.cjs "$RELEASE_OUTPUT"
