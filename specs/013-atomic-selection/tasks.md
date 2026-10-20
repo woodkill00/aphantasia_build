@@ -72,3 +72,9 @@ Precision subcases mandatory for cases 3–10 (coordinate-command cases use the 
 Record each executed procedure as PASS, FAIL, BLOCKED or NOT RUN with exact source/tree/runtime hash and bytes, commands, runtime/browser versions, counts, timings, synthetic fixtures and actual inspected captures. Preserve earlier failed attempts. Do not report the acceptance list itself as a completed test. Native emulation, physical devices, actual zoom, cross-engine, OS file handling, assistive technology and qualified sensory/research review are separate evidence classes.
 
 A changed source repair requires affected regression reruns and the final aggregate gates. Keep the security boundary and all assertions. A slow or failed gate is not permission to weaken tests, remove validation, install packages, retry indefinitely, deploy or publish. The only proposed budget change is the independently review-required, coverage-driven Feature 013 estimate in specification §12; current Feature 012 CI is unchanged. The integration owner updates IF-050, not a new feature-specific progress board.
+
+## First native-run compatibility regressions
+
+- [ ] Preserve an existing singleton on Discard, restore its exact swatch, clear transaction history and advance generation; test missing-ID/multi-selection fallback separately.
+- [ ] Re-enter an ordinary same-name field value through trusted native input and retain explicit dirty-intent/capture wording without clearing same-canonical arrangement history.
+- [ ] After resize conceals Live, verify a full focused 44-pixel row and its actual scroll aperture at 640×360; preserve the original corner-hit and Hide checks.

@@ -144,3 +144,47 @@ test('pending ordinary raw fields expose invalid state until a successful correc
 for(const field of ['scene-name','pulse-period'])test('successful discard/replacement clears restored '+field+' invalid marker; rejected actions preserve it',async()=>{
  const h=harness();await h.input(field,'');assert.equal(h.get(field).getAttribute('aria-invalid'),'true');await h.import('not-json');assert.equal(h.get(field).value,'');assert.equal(h.get(field).getAttribute('aria-invalid'),'true');h.failStage(()=>true);await h.select('preset','2');assert.equal(h.get(field).value,'');assert.equal(h.get(field).getAttribute('aria-invalid'),'true');h.failStage(null);await h.fire('discard','click');assert.notEqual(h.get(field).value,'');assert.equal(h.get(field).getAttribute('aria-invalid'),'false');await h.input(field,'');await h.select('preset','2');assert.notEqual(h.get(field).value,'');assert.equal(h.get(field).getAttribute('aria-invalid'),'false');
 });
+
+test('native regression: Discard retains an existing singleton and its color inspector before the next edit',async()=>{
+ const {referenceScene}=require('./independent-user-scenarios.cjs'),h=harness();await h.import(bytes(referenceScene));await only(h,'object-2');await h.input('object-hue',260);await h.fire('discard','click');
+ assert.deepEqual(ids(h),['object-2']);assert.equal(h.get('object-color-text').textContent,'HSL 130° / 30% / 50%');assert.equal(h.get('object-hue').value,'130');assert.equal(h.visible(),false);
+ await h.input('object-hue',260);await h.submit();const expected=copy(referenceScene);expected.scene.objects[1].color.h=260;assert.deepEqual(await h.exportScene(),expected,'the following singleton edit must still address the square');
+});
+for(const kind of ['multi','empty','draft-only-singleton'])test('Discard uses first accepted singleton for '+kind+' and invalidates old callbacks/history',async()=>{
+ const h=harness(),before=h.accepted();await h.fire('nudge-right','click');const old=h.get('selection-object-2');if(kind==='multi')await h.fire('select-all','click');else if(kind==='empty')await h.fire('clear-selection','click');else await h.fire('add-object','click');
+ await h.fire('discard','click');assert.deepEqual(h.draft(),before);assert.deepEqual(ids(h),['object-1']);assert.equal(h.get('undo-move').disabled,true);assert.equal(h.get('redo-move').disabled,true);await h.fire(old,'change');assert.deepEqual(ids(h),['object-1']);assert.equal(h.visible(),false);
+});
+test('Discard of an empty accepted scene clears a new singleton without exposing stale controls',async()=>{
+ const h=harness(),empty=h.accepted();empty.scene.objects=[];await h.import(bytes(empty));await h.fire('add-object','click');await h.fire('discard','click');assert.deepEqual(h.draft(),empty);assert.deepEqual(ids(h),[]);assert.equal(h.get('shape').disabled,true);assert.equal(h.visible(),false);
+});
+test('native regression: same-canonical name input keeps explicit staged intent and combined capture labels',async()=>{
+ const {referenceScene}=require('./independent-sequence-user-scenarios.cjs'),h=harness(),before=referenceScene(0);await h.import(bytes(before));await h.input('scene-name',before.scene.name);
+ assert.deepEqual(h.draft(),before);assert.equal(h.get('draft-label').textContent,'Changes staged');assert.equal(h.get('capture-add').textContent,'Apply scene and add step');assert.equal(await h.exportScene(),null);assert.equal(h.visible(),false);
+ await h.fire('capture-add','click');assert.equal(h.get('draft-label').textContent,'Applied');assert.equal(h.get('capture-add').textContent,'Add scene as step');assert.deepEqual(h.accepted(),before);await h.fire('sequence-export','click');const value=JSON.parse(await h.downloads.at(-1).blob.text());assert.equal(value.sequence.steps[0].name,before.scene.name);assert.deepEqual(value.sequence.steps[0].objects,before.scene.objects);assert.equal(h.visible(),false);
+});
+test('same-canonical ordinary input and invalid correction retain arrangement redo but remain explicitly staged',async()=>{
+ const h=harness(),before=h.accepted();await h.fire('nudge-right','click');await h.fire('undo-move','click');await h.input('scene-name',before.scene.name);assert.deepEqual(h.draft(),before);assert.equal(h.get('redo-move').disabled,false);assert.equal(h.get('draft-label').textContent,'Changes staged');
+ await h.input('scene-name','');await h.input('scene-name',before.scene.name);assert.equal(h.get('redo-move').disabled,false);assert.equal(h.get('capture-add').textContent,'Apply scene and add step');await h.fire('redo-move','click');assert.notDeepEqual(h.draft(),before);assert.equal(h.visible(),false);
+});
+test('rejected same-canonical ordinary staging does not invent dirty intent',async()=>{
+ const h=harness(),before=h.accepted();await h.fire('hide-scene','click');h.failStage(()=>true);await h.input('scene-name',before.scene.name);assert.deepEqual(h.draft(),before);assert.equal(h.get('draft-label').textContent,'Applied');assert.equal(h.get('capture-add').textContent,'Add scene as step');assert.equal(h.visible(),false);
+});
+test('short hidden inspector retains the full-inspector scroll CSS after resize concealment (not native layout evidence)',async()=>{
+ const h=harness();await h.resize(640,360);assert.equal(h.visible(),false);assert.doesNotMatch(h.get('stage-root').className,/live-editor/);assert.equal(h.get('hide-scene').hidden,false);assert.equal(h.rafPending.size,0);
+ const fs=require('node:fs'),path=require('node:path'),css=fs.readFileSync(path.join(__dirname,'../src/style.css'),'utf8'),short=css.split('/* In short windows')[1].split('/* At extreme zoom')[0];
+ assert.match(short,/@media\(max-height:500px\)/);assert.match(short,/\n  \.editor-panel\{display:block;overflow:auto;/);assert.match(short,/\n  \.editor-scroll\{overflow:visible;/);assert.match(short,/\n  \.editor-actions\{position:relative\}/);assert.doesNotMatch(short,/\.live-editor \.editor-(?:panel|scroll|actions)/);
+});
+test('native move-anchor options stay stable across primary, movement and reorder refreshes',async()=>{
+ const h=harness();await load(h,synthetic(h));await toggle(h,'object-2');const select=h.get('move-anchor'),options=Array.from(select.options);await anchor(h,'object-1');assert.deepEqual(Array.from(select.options),options);assert.equal(select.value,'object-1');assert.match(h.get('selection-summary').textContent,/Move anchor: square · object-1/);
+ await anchor(h,'object-2');await h.fire('nudge-right','click');await h.fire('layer-front','click');assert.equal(select.options[0],options[0]);assert.equal(select.options[1],options[1]);assert.equal(select.value,'object-2');
+});
+test('move-anchor option membership and displayed labels refresh only when their option set changes',async()=>{
+ const h=harness();await load(h,synthetic(h));await toggle(h,'object-2');const select=h.get('move-anchor'),prior=select.options[0];await toggle(h,'object-3');assert.equal(select.options.length,3);assert.notEqual(select.options[0],prior);assert.equal(select.value,'object-3');
+ await only(h,'object-1');const singleton=select.options[0];assert.equal(singleton.textContent,'square · object-1');await h.input('shape','circle');assert.notEqual(select.options[0],singleton);assert.equal(select.options[0].textContent,'circle · object-1');assert.equal(select.value,'object-1');assert.match(h.get('selection-summary').textContent,/Move anchor: circle · object-1/);
+});
+for(const multiple of [false,true])for(const provisionalOrigin of [false,true])test('same-name dirty intent survives '+(multiple?'multi':'singleton')+' return-to-origin with '+(provisionalOrigin?'provisional and final':'final-only')+' origin and retained redo',async()=>{
+ const h=harness();await load(h,synthetic(h,multiple?2:1));if(multiple)await h.fire('select-all','click');await h.fire('nudge-right','click');const moved=h.draft();await h.fire('undo-move','click');const before=h.draft();h.advance(3100);await h.fire('show-scene','click');await h.input('scene-name',before.scene.name);assert.equal(h.get('capture-add').textContent,'Apply scene and add step');
+ await point(h,'pointerdown',200,300);await point(h,'pointermove',300,300);if(provisionalOrigin){await point(h,'pointermove',200,300);assert.deepEqual(h.draft(),before);assert.equal(h.get('draft-label').textContent,'Live draft');assert.equal(h.get('capture-add').textContent,'Apply scene and add step');}
+ await point(h,'pointerup',200,300);assert.deepEqual(h.draft(),before);assert.equal(h.get('draft-label').textContent,'Live draft');assert.equal(h.get('capture-add').textContent,'Apply scene and add step');assert.equal(h.get('undo-move').disabled,true);assert.equal(h.get('redo-move').disabled,false);assert.equal(await h.exportScene(),null);assert.match(h.status(),/Apply or discard/);
+ await h.fire('redo-move','click');assert.deepEqual(h.draft(),moved);assert.equal(h.get('redo-move').disabled,true);assert.equal(h.get('undo-move').disabled,false);assert.equal(h.visible(),false);
+});

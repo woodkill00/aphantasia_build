@@ -1,32 +1,32 @@
 {
   "date": "2026-10-20",
-  "status": "V08_ATOMIC_SELECTION_SOURCE_REVIEW_LOCAL_NODE_PASS_NATIVE_NOT_RUN",
+  "status": "DATED_REPAIR_PREPARATION_SNAPSHOT",
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 381567,
-    "sha256": "b3361a68f8ba585fcd3300b435a0ca7a38d3634446763a8983c194645b203bf8",
+    "bytes": 382339,
+    "sha256": "df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4",
     "releaseStatus": "UNRELEASED_DEVELOPMENT_CANDIDATE"
   },
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "passed": 1177,
-    "total": 1177,
+    "passed": 1192,
+    "total": 1192,
     "failed": 0,
     "nodeVersion": "v24.19.0",
-    "durationMs": 16997.864914,
+    "durationMs": 17203.442198,
     "scope": "Exact final runtime local Node/model/DOM-double/package-unit suite after metadata refresh; not native browser execution."
   },
   "browser": {
-    "status": "NOT_RUN",
+    "status": "REPAIRED_RUNTIME_NOT_RUN_AT_SNAPSHOT",
     "preparedGroups": 200,
     "preservedGroups": 178,
     "newGroups": 22,
     "preparedAdditionalCaptures": 78
   },
   "visual": {
-    "status": "NOT_RUN"
+    "status": "REPAIRED_RUNTIME_NOT_RUN_AT_SNAPSHOT"
   },
   "performance": {
     "status": "NOT_RUN",
@@ -40,7 +40,7 @@
   "documentation": {
     "status": "PASS",
     "markdownFiles": 50,
-    "localLinks": 335,
+    "localLinks": 337,
     "command": "node scripts/check-docs.cjs"
   },
   "priorFailedAttempt": {
@@ -1647,5 +1647,30 @@
     "durationMs": 17590.644446,
     "scope": "Complete local Node/model/DOM-double/package-unit suite after runtime/source integrity refresh; not native browser execution.",
     "artifactSha256": "fce4844df0a639eba3096516de0e05e8e38e3b9a4e195a1e9cb9b27c240f2ce4"
+  },
+  "snapshotAt": "2026-10-20T15:53:00Z",
+  "exactHeadOutcome": "https://github.com/woodkill00/aphantasia_build/pull/16/checks",
+  "firstNativeAttempt": {
+    "run": "https://github.com/woodkill00/aphantasia_build/actions/runs/39447144887",
+    "head": "12c2b3563a8018750d09ad16b8d1a2f3008c98ae",
+    "runtimeSha256": "b3361a68f8ba585fcd3300b435a0ca7a38d3634446763a8983c194645b203bf8",
+    "nodePassed": 1177,
+    "nativePassed": 194,
+    "nativeTotal": 200,
+    "nativeFailed": 6,
+    "durationSeconds": 1032.432,
+    "cleanup": true,
+    "package": "SKIPPED",
+    "capturesVerified": 214,
+    "newCapturesInspected": 42,
+    "newCapturesUnreached": 36,
+    "findings": [
+      "Discard selected wrong item on both devices.",
+      "Same-name ordinary input lost explicit draft intent on both devices.",
+      "Hidden short-window inspector clipped rows on both devices.",
+      "Native anchor option paint was stale despite correct DOM value.",
+      "Provenance screenshot was taken after export cleared the preview."
+    ],
+    "repairStatus": "Source and strict test-sequence/aperture repairs independently accepted; repaired native and visual outcome requires exact-head checks."
   }
 }

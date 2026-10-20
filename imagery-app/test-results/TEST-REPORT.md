@@ -1,3 +1,23 @@
+# Feature 013 repaired-candidate preparation record
+
+20 October 2026, 15:53 UTC. This is a dated source-preparation snapshot, not a claim of later native acceptance or integration. The independently reviewed repaired runtime is **382339 bytes**, SHA-256 `df7dacc50172e624cca42f21dff34437b1ba2ec3f45122fcb232f0cfc1345db4`. Complete local `node --test imagery-app/tests/*.test.cjs`: **1192/1192 PASS**, zero failures, Node v24.19.0, 17203.442198 ms. Independent targeted UI checks passed 233 tests; atomic UI passed 62. Repaired native/visual/package checks had not run at this snapshot. Every exact head must pass all gates before protected merge; see [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) for the subsequent exact-head outcome.
+
+## Failed first native attempt, retained
+
+[Run 39447144887](https://github.com/woodkill00/aphantasia_build/actions/runs/39447144887), source `12c2b3563a8018750d09ad16b8d1a2f3008c98ae`, passed 1177 Node and **194/200 native groups**, with six failures in 1032.432 seconds. Chrome 155.0.8059.39, Node 22.23.3, default sandbox and browser/profile cleanup were retained; packaging was skipped. Discard selection, same-name explicit draft intent, and hidden short-window row clipping each failed on both devices. These remain failures, not a timeout or retroactive pass.
+
+All 214 emitted captures were byte/hash verified; 42 new v12 images were inspected, while 36 planned short-layout images were unreached. Review additionally found stale native anchor-option paint and provenance captures taken after export cleared the preview. The other 172 emitted frames are not claimed manually inspected. Paired shared-route timing completed within the predeclared bounds, but the maximum-item candidate-only tail was unreached; this does not accept the repaired runtime.
+
+Repairs preserve the selected singleton on Discard when valid, retain explicit ordinary-input dirty intent including a drag returning exactly to its origin, apply short-window full-inspector scrolling while hidden, and avoid rebuilding unchanged anchor options. Native tests now intersect actual clipping ancestors without relaxing full-label, 44-pixel, focus, corner/center-hit or Hide checks; journal captures occur before Apply/export clears their content. All original assertions and 200 native groups remain. The new failure regressions and original failures are retained. No runtime or test repair is counted as an executed browser pass.
+
+Guides [exact-main run 39444608463](https://github.com/woodkill00/aphantasia_build/actions/runs/39444608463) independently passed 1080 Node/178 native groups, scoped 36-frame visual review, bounded paired timing, package and cleanup on main `d95fbdc004324d1a9e062c085952e4df0bfa4626`. That result does not accept Feature 013. Physical devices, other engines, assistive technology, calibrated display latency and human-usefulness evidence remain unverified. No release, hosting, telemetry or research collection was added.
+
+---
+
+## Historical first-candidate preparation record
+
+The following records preserve the earlier snapshot and its then-pending outcomes; they are not current acceptance claims.
+
 # Version 0.8 atomic multi-selection candidate
 
 20 October 2026. Feature 013 has independent source review and a complete local Node pass. **Native, visual, same-runner timing and clean-checkout CI package acceptance: NOT RUN for this changed runtime.** Prepared coverage is 200 native groups (178 preserved plus 22 additive) and 78 additional actual captures. This report does not claim integration, a release, deployment, physical-device testing or efficacy.

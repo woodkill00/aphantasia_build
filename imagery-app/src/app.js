@@ -316,7 +316,13 @@
     for(const id of selectionRows.keys())if(!working.scene.objects.some(o=>o.id===id))selectionRows.delete(id);
     const list=$('selection-list');
     if(rows.length!==list.children.length||rows.some((row,i)=>list.children[i]!==row)){list.replaceChildren(...rows);if(rows.some(row=>row.contains(focused)))focused.focus({preventScroll:true});else if(focused?.id?.startsWith('selection-object-')){$('selection-summary').focus({preventScroll:true});}}
-    const anchor=$('move-anchor');anchor.replaceChildren();selection.ids.forEach(id=>{const o=working.scene.objects.find(item=>item.id===id),option=document.createElement('option');option.value=id;option.textContent=o.shape+' · '+id;anchor.appendChild(option);});anchor.value=selectedId||'';anchor.disabled=selection.ids.length<2;$('move-anchor-row').hidden=selection.ids.length<2;
+    // Do not replace native options from their own change event. Keeping an
+    // unchanged option set avoids stale painted labels in the native select.
+    const anchor=$('move-anchor'),anchorItems=selection.ids.map(id=>{const o=working.scene.objects.find(item=>item.id===id);return {id,label:o.shape+' · '+id};});
+    if(anchorItems.length!==anchor.options.length||anchorItems.some((o,i)=>anchor.options[i].value!==o.id||anchor.options[i].textContent!==o.label)){
+      anchor.replaceChildren();anchorItems.forEach(o=>{const option=document.createElement('option');option.value=o.id;option.textContent=o.label;anchor.appendChild(option);});
+    }
+    anchor.value=selectedId||'';anchor.disabled=selection.ids.length<2;$('move-anchor-row').hidden=selection.ids.length<2;
     const primary=working.scene.objects.find(o=>o.id===selectedId),locked=selection.ids.filter(id=>locks.has(id)).length;
     $('selection-summary').textContent=selection.ids.length+' selected. Move anchor: '+(primary?primary.shape+' · '+primary.id:'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
     $('select-all').disabled=!working.scene.objects.length;$('clear-selection').disabled=!selection.ids.length;
@@ -346,9 +352,9 @@
     }
     objectFields.forEach(id=>{rawPrecision.delete(id);$(id).setAttribute('aria-invalid','false');});geometryFields.forEach(id=>$(id).setAttribute('aria-invalid','false'));updateObjectList();updateOutputs();
   }
-  function fillFields(scene,retainSelection=false){
+  function fillFields(scene,retainSelection=false,preferredSingleton=null){
     clearMoveHistory();rawPrecision.clear();authoredRaw.clear();working=copy(M.canonicalScene(scene));fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
-    if(retainSelection)setSelection(selection);else{sceneGeneration++;interactionRevision++;selectionRows.clear();setSelection(firstSelection(working));}
+    if(retainSelection)setSelection(selection);else{sceneGeneration++;interactionRevision++;selectionRows.clear();setSelection(preferredSingleton&&working.scene.objects.some(o=>o.id===preferredSingleton)?{ids:[preferredSingleton],primaryId:preferredSingleton}:firstSelection(working));}
     $('scene-name').value=working.scene.name;$('pulse-period').value=String(working.scene.pulsePeriodMs/1000);
     const b=working.scene.background;$('background-hue').value=String(b.h);$('background-saturation').value=String(b.s);$('background-lightness').value=String(b.l);
     fillSelected();
@@ -438,7 +444,9 @@
     if(!replacement&&!locksAllow(checked.scene)){working=copy(previous);render();return false;}
     const result=live?controller.stageLive(checked.scene):controller.stage(checked.scene);
     if(!result.ok){working=copy(previous);render();say(result.error,true);return false;}
-    const changed=!sameScene(previous,checked.scene);working=copy(checked.scene);formDirty=!sameScene(controller.getState().current,working);fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
+    // Explicit ordinary input is still a draft action when its accepted bytes
+    // happen to match. History, unlike Apply/capture intent, is change-only.
+    const changed=!sameScene(previous,checked.scene);working=copy(checked.scene);formDirty=true;fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
     if(changed){clearMoveHistory();interactionRevision++;if(live)provenanceIdentity++;}
     const painted=render();say(live&&!painted?'Draft updated; preview unavailable and hidden.':live?'Live draft updated. Apply keeps it for history and download; Hide stops preview.':message,live&&!painted);return true;
   }
@@ -647,7 +655,7 @@
       if(event.pointerType!=='touch')event.preventDefault();
       const result=controller.stageLive(plan.document);if(!result.ok)throw new Error(result.error);
       if(!sameScene(working,plan.document))provenanceIdentity++;
-      working=copy(plan.document);formDirty=!sameScene(controller.getState().current,working);lastHit=null;
+      working=copy(plan.document);formDirty=plan.changed?!sameScene(controller.getState().current,working):active.wasDirty;lastHit=null;
       try{fillSelected();}finally{active.raw=rawSnapshot();}
       if(!render()&&gesture===active)throw new Error('The provisional preview could not be drawn.');
     }catch(e){hide('Move canceled. '+e.message);}
@@ -663,7 +671,7 @@
       // this boundary still restores the complete origin and both old stacks.
       const result=controller.stageLive(plan.document);if(!result.ok)throw new Error(result.error);
       if(!sameScene(working,plan.document))provenanceIdentity++;
-      working=copy(plan.document);setSelection(plan.selection);publishHistory(history);formDirty=!sameScene(controller.getState().current,working);gesture=null;interactionRevision++;published=true;releaseCapture(active);lastHit=null;imageReplacement=null;
+      working=copy(plan.document);setSelection(plan.selection);publishHistory(history);formDirty=plan.changed?!sameScene(controller.getState().current,working):active.wasDirty;gesture=null;interactionRevision++;published=true;releaseCapture(active);lastHit=null;imageReplacement=null;
       editorOpen=true;section='scene';paintPublished(plan.changed?'Arrangement moved in the draft. Apply keeps it for download.':'Starting position restored; no arrangement change.',true);
       $(selection.ids.length===1?'object-select':'selection-summary').scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
     }catch(e){if(published){conceal('technical-failure');try{render();}catch(ignored){canvas.hidden=true;}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);}else hide('Move canceled. '+e.message);}
@@ -722,7 +730,7 @@
     formDirty=false;fillFields(result.state.current,true);render();say('Changes applied. The scene is hidden; choose Resume live preview to display it.');
   });
   $('discard').addEventListener('click',()=>{
-    cancelPlacement();conceal();if(!locksAllow(controller.getState().current)){render();return;}controller.discard();formDirty=false;fillFields(controller.getState().current);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
+    cancelPlacement();conceal();if(!locksAllow(controller.getState().current)){render();return;}const preferredSingleton=selected()?.id||null;controller.discard();formDirty=false;fillFields(controller.getState().current,false,preferredSingleton);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
   });
   function showScene(){
     if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Resume live preview again after the repeat-action lock.');return;}

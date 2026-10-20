@@ -164,11 +164,27 @@ async function runMultiSelectionScenarios({page,runCase}) {
     await page.focus(focusSelector);
     const metrics=await page.evaluate(({selector,focusSelector,inspector})=>{
       const e=document.querySelector(selector),f=document.querySelector(focusSelector);e.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
-      const r=e.getBoundingClientRect(),s=document.getElementById('editor-scroll'),b=s.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);
+      if(inspector&&!e.closest('#editor-panel'))throw Error('Inspector target is outside the inspector: '+selector);
+      const r=e.getBoundingClientRect(),range=document.createRange();range.selectNodeContents(e);
       const box=q=>({left:q.left,right:q.right,top:q.top,bottom:q.bottom,width:q.width,height:q.height});
+      const aperture={left:0,right:innerWidth,top:0,bottom:innerHeight},clips=[];
+      // The real scroll owner changes in short layouts. Intersect every
+      // clipping ancestor's client aperture, never an oversized overflow-visible
+      // content box. The same ancestor and hit checks also protect pinned Hide.
+      for(let parent=e.parentElement;parent;parent=parent.parentElement){
+        const style=getComputedStyle(parent),paintContainment=/(^|\s)(paint|strict|content)(\s|$)/.test(style.contain);
+        const clipsX=paintContainment||/^(auto|scroll|hidden|clip|overlay)$/.test(style.overflowX);
+        const clipsY=paintContainment||/^(auto|scroll|hidden|clip|overlay)$/.test(style.overflowY);
+        if(!clipsX&&!clipsY)continue;
+        const b=parent.getBoundingClientRect(),client={left:b.left+parent.clientLeft,right:b.left+parent.clientLeft+parent.clientWidth,
+          top:b.top+parent.clientTop,bottom:b.top+parent.clientTop+parent.clientHeight};
+        if(clipsX){aperture.left=Math.max(aperture.left,client.left);aperture.right=Math.min(aperture.right,client.right);}
+        if(clipsY){aperture.top=Math.max(aperture.top,client.top);aperture.bottom=Math.min(aperture.bottom,client.bottom);}
+        clips.push({id:parent.id,tag:parent.tagName,overflowX:style.overflowX,overflowY:style.overflowY,contain:style.contain,
+          clipsX,clipsY,client,scrollTop:parent.scrollTop,scrollLeft:parent.scrollLeft});
+      }
       return {selector,label:e.textContent,focused:document.activeElement===f,box:box(r),outline:getComputedStyle(e).outlineStyle,
-        aperture:inspector?{left:Math.max(0,b.left+s.clientLeft),right:Math.min(innerWidth,b.left+s.clientLeft+s.clientWidth),
-          top:Math.max(0,b.top+s.clientTop),bottom:Math.min(innerHeight,b.top+s.clientTop+s.clientHeight)}:{left:0,right:innerWidth,top:0,bottom:innerHeight},
+        aperture,clips,
         text:Array.from(range.getClientRects(),box),
         hit:[[r.left+3,r.top+3],[r.right-3,r.top+3],[r.left+3,r.bottom-3],[r.right-3,r.bottom-3],[r.left+r.width/2,r.top+r.height/2]]
           .every(([x,y])=>{const h=document.elementFromPoint(x,y);return h===e||e.contains(h);})};
@@ -445,10 +461,39 @@ async function runMultiSelectionScenarios({page,runCase}) {
     await page.click('#journal-add');await page.click('#journal-include-entry-1');await page.click('#journal-include-entry-2');await page.click('#journal-preview');
     record=JSON.parse(await page.property('#journal-preview-text','textContent')).entries[0].reflection;
     assert.deepEqual(record.scene,{status:'unavailable'});assert.deepEqual(record.exposure,{status:'unavailable'});
+    assert.equal(await page.property('#journal-preview-panel','hidden'),false);
+    assert.equal(await page.property('#journal-approve','checked'),false);assert.equal(await page.property('#journal-download','disabled'),true);
+    const exactPreview=await page.property('#journal-preview-text','textContent');
+    await page.focus('#journal-preview-text');
+    const previewMetrics=await page.evaluate(()=>{
+      const e=document.getElementById('journal-preview-text'),panel=document.getElementById('journal-preview-panel'),text=e.textContent;
+      const start=text.indexOf('"scene"'),exposure=text.indexOf('"exposure"',start),end=text.indexOf('}',exposure)+1;
+      if(start<0||exposure<0||end<=exposure||e.firstChild?.nodeType!==Node.TEXT_NODE)throw Error('Expected exact scene/exposure JSON text is unavailable for capture');
+      e.scrollIntoView({block:'center',behavior:'instant'});e.scrollTop=0;e.scrollLeft=0;
+      const range=document.createRange();range.setStart(e.firstChild,start);range.setEnd(e.firstChild,end);
+      const before=range.getBoundingClientRect(),outer=e.getBoundingClientRect();
+      e.scrollTop=Math.max(0,before.top-outer.top-e.clientTop-12);
+      const r=e.getBoundingClientRect(),aperture={left:Math.max(0,r.left+e.clientLeft),right:Math.min(innerWidth,r.left+e.clientLeft+e.clientWidth),
+        top:Math.max(0,r.top+e.clientTop),bottom:Math.min(innerHeight,r.top+e.clientTop+e.clientHeight)};
+      const rects=Array.from(range.getClientRects(),b=>({left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height}));
+      return {focused:document.activeElement===e,panelHidden:panel.hidden,hiddenAncestor:!!e.closest('[hidden]'),display:getComputedStyle(e).display,
+        fragment:range.toString(),aperture,rects,hit:rects.filter(b=>b.width>0&&b.height>0).every(b=>
+          [[b.left+1,b.top+1],[b.right-1,b.top+1],[b.left+1,b.bottom-1],[b.right-1,b.bottom-1],[(b.left+b.right)/2,(b.top+b.bottom)/2]]
+            .every(([x,y])=>{const h=document.elementFromPoint(x,y);return h===e||e.contains(h);}))};
+    });
+    assert.equal(previewMetrics.focused,true);assert.equal(previewMetrics.panelHidden,false);assert.equal(previewMetrics.hiddenAncestor,false);
+    assert.notEqual(previewMetrics.display,'none');assert.equal(previewMetrics.hit,true);assert.ok(previewMetrics.rects.length>0);
+    assert.match(previewMetrics.fragment,/"scene":\s*\{\s*"status":\s*"unavailable"\s*\}/);
+    assert.match(previewMetrics.fragment,/"exposure":\s*\{\s*"status":\s*"unavailable"\s*\}/);
+    for(const r of previewMetrics.rects)if(r.width>0&&r.height>0)assert.ok(r.left>=previewMetrics.aperture.left&&r.right<=previewMetrics.aperture.right&&
+      r.top>=previewMetrics.aperture.top&&r.bottom<=previewMetrics.aperture.bottom,JSON.stringify(previewMetrics));
+    console.log('IMAGERY_MULTI_SELECTION_PROVENANCE_CAPTURE '+JSON.stringify({device:page.device.name,...previewMetrics}));
+    await page.visualCapture('v12-arrangement-retains-aid-provenance-suppression');
+    assert.equal(await page.property('#journal-preview-text','textContent'),exactPreview);
+    assert.equal(await page.property('#journal-approve','checked'),false);assert.equal(await page.property('#journal-download','disabled'),true);
     const expected=copy(value);[expected.scene.objects[0],expected.scene.objects[1]]=[expected.scene.objects[1],expected.scene.objects[0]];
     const saved=await applyAndRead();assert.deepEqual(saved,expected);assert.notEqual(sha(saved),sha(value));
     assert.deepEqual(saved.scene.objects.slice().sort((a,b)=>a.id.localeCompare(b.id)),value.scene.objects);
-    await captureControl('journal-preview-text','v12-arrangement-retains-aid-provenance-suppression');
   });
 
   await runCase('v12 twelve long labels retain whole focus, hit corners, pinned Hide and bounded command timing',async()=>{
