@@ -1372,11 +1372,18 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const ids=E.hits(checked.scene,rect.width,rect.height,p.x,p.y,event.pointerType==='touch'?12:6);
     lastHit={ids,x:p.x,y:p.y,width:rect.width,height:rect.height};if(!ids.length){render();return;}
     working=copy(checked.scene);selectedId=ids[0];fillSelected();
-    gesture={id:selectedId,pointerId:event.pointerId,before:copy(working),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function'};
+    gesture={id:selectedId,pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary===true,before:copy(working),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function'};
     try{if(typeof canvas.setPointerCapture==='function')canvas.setPointerCapture(event.pointerId);}catch(e){hide('Move canceled because pointer capture is unavailable. Use position controls.');return;}
     // Touch panning is disabled by touch-action:none, not cancellation of pointer events.
     if(event.pointerType!=='touch')event.preventDefault();canvas.focus();
   });
+  canvas.addEventListener('touchstart',event=>{
+    const active=gesture;
+    // Consume only the direct-edit touch start, upstream of browser scroll/fling recognition.
+    // Pointer events continue to own selection, translation, capture and transaction history.
+    if(event.target!==canvas||!event.cancelable||!event.touches||event.touches.length!==1||!active||active.pointerType!=='touch'||!active.isPrimary||active.selectionOnly||placing||!isLive()||section!=='scene'||document.fullscreenElement===root||selectedId!==active.id||!M.validateScene(readFields()).ok)return;
+    event.preventDefault();
+  },{passive:false});
   function updateDirectGesture(event,cancelDefault=true){
     const active=gesture;if(!active||active.selectionOnly||event.pointerId!==active.pointerId||!isLive())return;
     if(selectedId!==active.id){hide('Move canceled because the selected item changed.');return;}

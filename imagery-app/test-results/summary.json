@@ -4,17 +4,17 @@
   "artifact": {
     "file": "imagery-app/index.html",
     "version": "0.8.0",
-    "bytes": 178947,
-    "sha256": "9e701c43c95ad418f98fac90e9168f9175970aadf2fe7a25978c57b04b28416e"
+    "bytes": 179635,
+    "sha256": "451729a15993d51fcc5c432b4c18849884ff0f4904d98c1f095b606c0e2156c1"
   },
   "browser": {
-    "status": "PRE_RELEASE_HOLD_INPUT_TRACE_DIAGNOSTIC_PENDING",
-    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39414688866",
-    "previousHead": "2b77f41239469cf2af0605524552d904cbfacf7b",
-    "passed": 108,
-    "failed": 4,
-    "findings": "Touch defaults uncanceled did not repair four mobile click failures. Actual state confirms Undo never fired. Focused control captures now fully visible. New pre-release hold and bounded input tracing preserve all original gates; root cause unproven.",
-    "preparedGroups": 114,
+    "status": "SCOPED_TOUCHSTART_REPAIR_NATIVE_PENDING",
+    "previousRun": "https://github.com/woodkill00/aphantasia_build/actions/runs/39416525048",
+    "previousHead": "8fef7dd862dc7e33e0f3f171ab88c1cbd60bb2f2",
+    "passed": 113,
+    "failed": 1,
+    "findings": "Native trace directly observed browser fling activation consuming the original Undo tap at74.6ms release. Other releases exceeded80ms and passed. Scoped canvas touchstart cancellation and explicit rapid-release (<80ms) first-tap/trace gate require fresh native execution. No physical-device claim.",
+    "preparedGroups": 116,
     "timeoutBudget": {
       "nativeStepMinutes": 15,
       "jobMinutes": 18,
@@ -1025,8 +1025,8 @@
   "nonBrowser": {
     "status": "PASS",
     "command": "node --test imagery-app/tests/*.test.cjs",
-    "total": 574,
-    "passed": 574,
+    "total": 591,
+    "passed": 591,
     "failed": 0
   }
 }

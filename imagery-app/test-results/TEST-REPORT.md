@@ -20,6 +20,8 @@ The current candidate keeps final release coordinates but does not cancel pointe
 
 [Run 39414688866](https://github.com/woodkill00/aphantasia_build/actions/runs/39414688866) again passed 108/112. All four mobile Undo taps failed with primary uncanceled pointer/touch events; actual draft coordinates/history prove Undo never activated. Focused 320px Undo captures now show full label/button/focus outline. Source-backed Chromium velocity/tap-suppression is a hypothesis only. The next bounded diagnostic retains every original group and adds a 120 ms stationary pre-release hold plus browser input tracing. It does not substitute synthetic activation or claim the original failures acceptable.
 
+[Run 39416525048](https://github.com/woodkill00/aphantasia_build/actions/runs/39416525048) passed 113/114 native groups. Its browser input trace directly observed a fling after the original 74.6 ms move-to-release interval and suppression of the first Undo tap. Held release at 203.5 ms and other releases over 80 ms passed. This establishes the tested native-browser path, not physical-device behavior or an automation-only defect. The reviewed repair candidate cancels only a canvas touch-start belonging to a valid captured primary single-touch direct gesture. Pointer events still own all movement/history. Original assertions remain required; an additional fresh rapid-release group must actually exercise a move-to-release interval below 80 ms, deliver the first trusted Undo, and show no active fling/tap suppression. A timing-regime miss fails rather than retries or claims repair.
+
 ## Historical verification below
 
 # Public repository onboarding, MIT licensing and release preparation
