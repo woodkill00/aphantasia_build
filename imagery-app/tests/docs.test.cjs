@@ -102,7 +102,11 @@ test('DOCS: beginner guidance describes the current source download, version and
   assert.match(guide, /Version 0\.8 \*\*unreleased development candidate\*\*/);
   const intro = guide.split('## In this guide')[0];
   assert.match(intro, /earlier single-item arrangement baseline passed scoped native-browser and arrangement visual checks/i);
-  assert.match(intro, /new multi-selection increment has not yet passed its native\/visual gates/i);
+  assert.match(intro, /20 October 2026 preparation snapshot/i);
+  assert.match(intro, /Feature 014 session groups have source\/model\/DOM evidence/i);
+  assert.match(intro, /native, actual visual, measured performance and clean-checkout CI package gates are NOT RUN/i);
+  assert.match(guide, /Groups are only for this editing session\. Apply and downloads do not save them/i);
+  assert.match(guide, /With no groups, preserve an existing singleton selection if its ID remains valid/i);
   assert.match(intro, /Each final head must pass required CI before protected integration/i);
   assert.match(intro, /https:\/\/github\.com\/woodkill00\/aphantasia_build\/pull\/14\/checks/);
   for (const text of [readme, guide]) {
@@ -156,8 +160,8 @@ test('CI: real-checkout packaging follows the complete browser gate without publ
   const packaging = workflow.indexOf('- name: Prepare and verify portable files without publishing');
   assert.ok(browser >= 0 && packaging > browser);
   const smoke = workflow.slice(packaging);
-  assert.match(workflow, /timeout-minutes: 26/);
-  assert.match(workflow.slice(browser, packaging), /timeout-minutes: 23/);
+  assert.match(workflow, /timeout-minutes: 33/);
+  assert.match(workflow.slice(browser, packaging), /timeout-minutes: 30/);
   assert.match(workflow.slice(browser, packaging), /run: node imagery-app\/tests\/browser-cdp\.cjs/);
   assert.match(smoke, /timeout-minutes: 1/);
   assert.match(smoke, /RELEASE_OUTPUT: \$\{\{ runner\.temp \}\}\/imagery-release-smoke/);

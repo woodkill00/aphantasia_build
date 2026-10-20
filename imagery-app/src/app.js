@@ -2,7 +2,7 @@
    One visibility gate. Live manual draft edits preserve an explicitly visible field; interruptions conceal. */
 (function () {
   'use strict';
-  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor,A=window.ImagerySelection,G=window.ImageryGeometry,P=window.ImageryPresets;
+  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor,A=window.ImageryGroups,G=window.ImageryGeometry,P=window.ImageryPresets;
   const $=id=>document.getElementById(id);
   let lastGateClock=0,gateClockFault=false;
   function gateClock(){
@@ -43,8 +43,8 @@
     syncEditorAids(state);
   }
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
-  let lockedTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null;
-  let selection={ids:[],primaryId:null},sceneGeneration=0,interactionRevision=0,lastRawTarget=null;
+  let lockedTouchIntent=null,placementTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null;
+  let groups=[],selection={ids:[],primaryId:null},sceneGeneration=0,interactionRevision=0,lastRawTarget=null;
   const selectionRows=new Map();
   const locks=E.createLocks();let snapStep=0;
   let working=controller.getState().current;
@@ -252,18 +252,18 @@
     });
     colorPrefixes.forEach(updateColorSample);
   }
-  function render(){
+  function render(paintCanvas=true){
     let state=controller.getState();
-    if(gateClockFault&&state.visible){cancelPlayback('technical-failure');controller.hide();state=controller.getState();}
+    if(gateClockFault&&state.visible){cancelPlayback('technical-failure');controller.hide();state=controller.getState();paintCanvas=true;}
     const full=document.fullscreenElement===root;
     root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&['live','items'].includes(displayKind)&&editorOpen&&!full?' live-editor':'');
     $('editor-panel').hidden=!editorOpen;
     // Resolve control rows before sizing the canvas; mode switches must not
     // resize a freshly painted frame or let an inspector obscure item playback.
     updateOutputs();renderSequence();renderItemEditor();renderItemPlayback();
-    if(!syncEditorAids(state))state=controller.getState();
+    if(paintCanvas&&!syncEditorAids(state))state=controller.getState();
     let painted=false;
-    try{painted=draw(state);}catch(e){
+    try{painted=paintCanvas?draw(state):state.visible;}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
       cancelPlayback('technical-failure');controller.hide();canvas.hidden=true;context=null;state=controller.getState();
       say('The canvas could not be drawn. The field is hidden; data controls remain available.',true);
@@ -297,36 +297,47 @@
     syncArrangementControls();
     return painted&&state.visible;
   }
-  function cancelPlacement(){placing=false;}
+  function cancelPlacement(){placing=false;placementTouchIntent=null;}
   function selected(){return selection.ids.length===1?working.scene.objects.find(o=>o.id===selection.ids[0]):undefined;}
-  function setSelection(value){selection=A.canonicalSelection(working,value);selectedId=selection.primaryId;}
+  function setSelection(value){selection=A.canonicalSelection(working,value,groups);selectedId=selection.primaryId;}
   function firstSelection(value){const id=value.scene.objects[0]?.id||null;return {ids:id?[id]:[],primaryId:id};}
+  function groupFor(id){return groups.find(group=>group.memberIds.includes(id));}
+  function groupLabel(id){const group=groupFor(id);return group?' · Group '+group.id.slice(6)+' ('+group.memberIds.length+' items)':'';}
+  function sessionState(){return {groups,selection};}
+  function selectedUnitCounts(){
+    // Presentation only: internal selection and metadata were validated before
+    // publication. Empty groups need no second full scene-validation pass.
+    if(!groups.length)return {unitCount:selection.ids.length,groupCount:0};
+    const units=A.selectionUnits(working,selection,groups);
+    return {unitCount:units.length,groupCount:units.filter(unit=>unit.groupId).length};
+  }
   function updateObjectList(){
     const selector=$('object-select'),focused=document.activeElement;
     selector.replaceChildren();
     if(selection.ids.length!==1){const neutral=document.createElement('option');neutral.value='';neutral.textContent=selection.ids.length>1?'Multiple items selected':'No items selected';selector.appendChild(neutral);}
-    working.scene.objects.forEach((o,i)=>{const option=document.createElement('option');option.value=o.id;option.textContent=(i+1)+'. '+o.shape+' ('+o.id+')'+(locks.has(o.id)?' · locked':'');selector.appendChild(option);});
+    working.scene.objects.forEach((o,i)=>{const option=document.createElement('option');option.value=o.id;option.textContent=(i+1)+'. '+o.shape+' ('+o.id+')'+(locks.has(o.id)?' · locked':'')+groupLabel(o.id);selector.appendChild(option);});
     selector.value=selection.ids.length===1?selection.ids[0]:'';selector.disabled=!working.scene.objects.length;
     const rows=[];
     working.scene.objects.forEach((o,i)=>{
       let row=selectionRows.get(o.id);
       if(!row){const label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span');label.className='selection-row';input.type='checkbox';input.id='selection-'+o.id;label.setAttribute('for',input.id);input.addEventListener('change',()=>{if(selectionRows.get(o.id)===row&&row.generation===sceneGeneration)changeSelection({type:'toggle',id:o.id});});label.appendChild(input);label.appendChild(text);row={label,input,text,generation:sceneGeneration};selectionRows.set(o.id,row);}
-      row.input.checked=selection.ids.includes(o.id);row.text.textContent=(i+1)+'. '+o.shape+' · '+o.id+(locks.has(o.id)?' · locked':'');rows.push(row.label);
+      row.input.checked=selection.ids.includes(o.id);row.text.textContent=(i+1)+'. '+o.shape+' · '+o.id+(locks.has(o.id)?' · locked':'')+groupLabel(o.id);rows.push(row.label);
     });
     for(const id of selectionRows.keys())if(!working.scene.objects.some(o=>o.id===id))selectionRows.delete(id);
     const list=$('selection-list');
     if(rows.length!==list.children.length||rows.some((row,i)=>list.children[i]!==row)){list.replaceChildren(...rows);if(rows.some(row=>row.contains(focused)))focused.focus({preventScroll:true});else if(focused?.id?.startsWith('selection-object-')){$('selection-summary').focus({preventScroll:true});}}
-    // Do not replace native options from their own change event. Keeping an
-    // unchanged option set avoids stale painted labels in the native select.
-    const anchor=$('move-anchor'),anchorItems=selection.ids.map(id=>{const o=working.scene.objects.find(item=>item.id===id);return {id,label:o.shape+' · '+id};});
+    // Preserve native option nodes during primary-only changes. Group labels
+    // participate in the comparison, so membership changes refresh real labels.
+    const anchor=$('move-anchor'),anchorItems=selection.ids.map(id=>{const o=working.scene.objects.find(item=>item.id===id);return {id,label:o.shape+' · '+id+groupLabel(id)};});
     if(anchorItems.length!==anchor.options.length||anchorItems.some((o,i)=>anchor.options[i].value!==o.id||anchor.options[i].textContent!==o.label)){
       anchor.replaceChildren();anchorItems.forEach(o=>{const option=document.createElement('option');option.value=o.id;option.textContent=o.label;anchor.appendChild(option);});
     }
     anchor.value=selectedId||'';anchor.disabled=selection.ids.length<2;$('move-anchor-row').hidden=selection.ids.length<2;
     const primary=working.scene.objects.find(o=>o.id===selectedId),locked=selection.ids.filter(id=>locks.has(id)).length;
-    $('selection-summary').textContent=selection.ids.length+' selected. Move anchor: '+(primary?primary.shape+' · '+primary.id:'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
+    const {unitCount,groupCount}=selectedUnitCounts(),individualCount=unitCount-groupCount;
+    $('selection-summary').textContent=selection.ids.length+' items selected, '+unitCount+' arrangement units: '+groupCount+' groups and '+individualCount+' items. Move anchor: '+(primary?primary.shape+' · '+primary.id+groupLabel(primary.id):'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
     $('select-all').disabled=!working.scene.objects.length;$('clear-selection').disabled=!selection.ids.length;
-    $('object-hint').textContent=selection.ids.length===1?'Edit this item’s properties. Removing all items leaves a background-only scene.':'Select one item to edit its properties. Selection movement is available separately.';
+    $('object-hint').textContent=selection.ids.length===1?'Edit this item’s properties. Removing all items leaves a background-only scene.':groups.some(group=>group.memberIds.some(id=>selection.ids.includes(id)))?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to edit its properties. Selection movement is available separately.';
   }
   function fillSelected(){
     const o=selected(),authored=working.version===M.AUTHORED_VERSION;
@@ -353,11 +364,12 @@
     objectFields.forEach(id=>{rawPrecision.delete(id);$(id).setAttribute('aria-invalid','false');});geometryFields.forEach(id=>$(id).setAttribute('aria-invalid','false'));updateObjectList();updateOutputs();
   }
   function fillFields(scene,retainSelection=false,preferredSingleton=null){
-    clearMoveHistory();rawPrecision.clear();authoredRaw.clear();working=copy(M.canonicalScene(scene));fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
+    const next=M.canonicalScene(scene),nextGroups=retainSelection?A.canonicalGroups(next,groups):[],notice=!retainSelection&&groups.length?' Session groups cleared; they are not saved in scenes.':'';
+    clearMoveHistory();rawPrecision.clear();authoredRaw.clear();working=copy(next);groups=nextGroups;fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
     if(retainSelection)setSelection(selection);else{sceneGeneration++;interactionRevision++;selectionRows.clear();setSelection(preferredSingleton&&working.scene.objects.some(o=>o.id===preferredSingleton)?{ids:[preferredSingleton],primaryId:preferredSingleton}:firstSelection(working));}
     $('scene-name').value=working.scene.name;$('pulse-period').value=String(working.scene.pulsePeriodMs/1000);
     const b=working.scene.background;$('background-hue').value=String(b.h);$('background-saturation').value=String(b.s);$('background-lightness').value=String(b.l);
-    fillSelected();
+    fillSelected();return notice;
   }
   function readFields(){
     const next=copy(working),s=next.scene;
@@ -387,7 +399,7 @@
     say('Unlock affected items before changing or removing their stored properties.',true);return false;
   }
   function blockedSelected(){
-    if(!selected()){say('Select one item to edit its properties.',true);return true;}
+    if(!selected()){say(groups.some(group=>group.memberIds.some(id=>selection.ids.includes(id)))?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to edit its properties.',true);return true;}
     if(!locks.has(selectedId))return false;
     fillSelected();render();say('This item is locked. Unlock it to edit its stored properties.',true);return true;
   }
@@ -398,11 +410,16 @@
     const result=live?controller.stageLive(next):controller.stage(next);
     if(!result.ok){render();say(result.error,true);return false;}
     if(live&&!sameScene(working,next))provenanceIdentity++;
-    const notice=clearReplacementLocks();fillFields(next);formDirty=true;
+    const notice=clearReplacementLocks()+fillFields(next);formDirty=true;
     const painted=render();say(live&&!painted?'Draft updated; preview unavailable and hidden.':message+notice,live&&!painted);return true;
   }
   function syncArrangementControls(){
-    const singleton=selected(),locked=!!singleton&&locks.has(selectedId),count=locks.ids().length,n=selection.ids.length,selectedLocked=selection.ids.some(id=>locks.has(id)),invalid=!M.validateScene(readFields()).ok;
+    const singleton=selected(),locked=!!singleton&&locks.has(selectedId),count=locks.ids().length,n=selection.ids.length,selectedLocked=selection.ids.some(id=>locks.has(id)),invalid=!M.validateScene(readFields()).ok,{unitCount,groupCount:selectedGroups}=selectedUnitCounts();
+    const exactGroup=selectedGroups===1&&unitCount===1;
+    $('group-selected').disabled=!metadataEligible()||invalid||(!exactGroup&&(n<2||selectedGroups>0||groups.length>=6));
+    // Keep the activating native control focusable after its successful no-op
+    // endpoint. Ungroup with no selected groups is deliberately a validated no-op.
+    $('ungroup-selected').disabled=!metadataEligible()||invalid;
     $('lock-selected').disabled=!singleton;$('lock-selected').textContent=locked?'Unlock selected item':'Lock selected item';$('lock-selected').setAttribute('aria-pressed',String(locked));
     $('unlock-all').disabled=!count;$('lock-status').textContent=(count?count+' session item lock'+(count===1?'':'s')+'. Accepted scene Undo/Redo unavailable until all items are unlocked.':'No session item locks.')+(selectedLocked?' Every selected item must be unlocked for movement, alignment, deletion or layer changes. Duplicate makes unlocked copies.':'');
     if(count){$('undo').disabled=true;$('redo').disabled=true;}
@@ -411,9 +428,10 @@
     $('duplicate-object').disabled=!n||working.scene.objects.length+n>M.MAX_OBJECTS;
     $('duplicate-object').textContent=n>1?'Duplicate selection':'Duplicate object';$('delete-object').textContent=n>1?'Remove selection':'Remove object';
     ['x','y','both'].forEach(axis=>{$('align-'+axis).disabled=!n||selectedLocked;$('align-'+axis).textContent=(n>1?'Center selection bounds ':'Center item position ')+(axis==='x'?'horizontally':axis==='y'?'vertically':'both axes');});
-    ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).disabled=n<2||selectedLocked);
-    ['x','y'].forEach(axis=>$('distribute-'+axis).disabled=n<3||selectedLocked);
-    for(const [id,direction] of [['undo-move','undo'],['redo-move','redo']]){let blocked=invalid;try{if(!blocked)A.planHistory(working,selection,{undo:moveUndo,redo:moveRedo},direction,sceneGeneration,{locks});}catch(e){blocked=true;}$(id).disabled=blocked||!(direction==='undo'?moveUndo:moveRedo).length;}
+    ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).disabled=unitCount<2||selectedLocked);
+    ['x','y'].forEach(axis=>$('distribute-'+axis).disabled=unitCount<3||selectedLocked);
+    $('arrangement-unit-help').textContent=unitCount+' arrangement unit'+(unitCount===1?'':'s')+' selected. Alignment needs at least two arrangement units; equal gaps need at least three. A complete group counts as one unit.';
+    for(const [id,direction] of [['undo-move','undo'],['redo-move','redo']]){let blocked=invalid;try{if(!blocked)A.planHistory(working,sessionState(),{undo:moveUndo,redo:moveRedo},direction,sceneGeneration,{locks});}catch(e){blocked=true;}$(id).disabled=blocked||!(direction==='undo'?moveUndo:moveRedo).length;}
     updateOutputs();
   }
   $('show-editor-aids').addEventListener('change',()=>{
@@ -430,7 +448,7 @@
   $('lock-selected').addEventListener('click',()=>{
     beginManualEdit();
     if(selected()&&locks.has(selectedId)){locks.unlock(selectedId);refillPreservingRaw();render();say('Item unlocked.');return;}
-    try{const value=M.canonicalScene(readFields());if(!selected()){say('Select one item to lock it.',true);return;}locks.lock(value,selectedId);working=value;fillSelected();render();say('Item locked for this session. Global background and shared timing remain editable.');}catch(e){render();say(e.message,true);}
+    try{const value=M.canonicalScene(readFields());if(!selected()){say(groups.length?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to lock it.',true);return;}locks.lock(value,selectedId);working=value;fillSelected();render();say('Item locked for this session. Global background and shared timing remain editable.');}catch(e){render();say(e.message,true);}
   });
   $('unlock-all').addEventListener('click',()=>{beginManualEdit();locks.clear();refillPreservingRaw();render();say('All session item locks cleared.');});
   $('snap-step').addEventListener('change',()=>{beginManualEdit();const value=Number($('snap-step').value);if(![0,1,5,10].includes(value)){$('snap-step').value=String(snapStep);render();say('Choose Off, 1, 5 or 10 for snapping.',true);return;}snapStep=value;render();say(snapStep?'Drag and placement snap to '+snapStep+'-unit centers. Typed positions and nudges remain exact.':'Drag and placement snapping off.');});
@@ -438,14 +456,17 @@
   ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).addEventListener('click',()=>runArrangement({type:'align',mode})));
   ['x','y'].forEach(axis=>$('distribute-'+axis).addEventListener('click',()=>runArrangement({type:'distribute',axis})));
   $('move-selection').addEventListener('click',()=>runArrangement({type:'move',dx:number('delta-x'),dy:number('delta-y')}));
+  $('group-selected').addEventListener('click',()=>runArrangement({type:'group'}));
+  $('ungroup-selected').addEventListener('click',()=>runArrangement({type:'ungroup'}));
   function stageWorking(message,replacement=false,candidate=working){
     const previous=controller.getState().draft,checked=M.validateScene(candidate),live=isLive();
     if(!checked.ok){working=copy(previous);formDirty=true;if(lastRawTarget)$(lastRawTarget).setAttribute('aria-invalid','true');conceal();render();say(checked.error+' Preview stopped. Your applied scene is unchanged.',true);return false;}
+    try{A.canonicalGroups(checked.scene,groups);}catch(e){render();say(e.message,true);return false;}
     if(!replacement&&!locksAllow(checked.scene)){working=copy(previous);render();return false;}
     const result=live?controller.stageLive(checked.scene):controller.stage(checked.scene);
     if(!result.ok){working=copy(previous);render();say(result.error,true);return false;}
-    // Explicit ordinary input is still a draft action when its accepted bytes
-    // happen to match. History, unlike Apply/capture intent, is change-only.
+    // Ordinary user input retains explicit draft intent even when its bytes
+    // match accepted data. Group metadata remains outside this edit channel.
     const changed=!sameScene(previous,checked.scene);working=copy(checked.scene);formDirty=true;fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
     if(changed){clearMoveHistory();interactionRevision++;if(live)provenanceIdentity++;}
     const painted=render();say(live&&!painted?'Draft updated; preview unavailable and hidden.':live?'Live draft updated. Apply keeps it for history and download; Hide stops preview.':message,live&&!painted);return true;
@@ -489,7 +510,7 @@
   function changeSelection(action,options={}){
     beginManualEdit();const value=readCanonicalFields();
     if(!value){updateObjectList();return false;}
-    try{const next=A.reduceSelection(value,selection,action);if(!sameScene(working,value)&&!stageWorking('Changes staged.',false,value))return false;setSelection(next);lastHit=options.keepHits?lastHit:null;fillSelected();render();say(selection.ids.length+' item'+(selection.ids.length===1?'':'s')+' selected. Move anchor: '+(selectedId||'none')+'.');return true;}
+    try{const next=A.reduceSelection(value,selection,groups,action);if(!sameScene(working,value)&&!stageWorking('Changes staged.',false,value))return false;setSelection(next);lastHit=options.keepHits?lastHit:null;fillSelected();render();say(selection.ids.length+' item'+(selection.ids.length===1?'':'s')+' selected. Move anchor: '+(selectedId||'none')+'.');return true;}
     catch(e){updateObjectList();render();say(e.message,true);return false;}
   }
   $('object-select').addEventListener('change',()=>{const id=$('object-select').value;if(!id){updateObjectList();return;}changeSelection({type:'only',id});});
@@ -514,28 +535,52 @@
     }
     return options;
   }
-  function paintPublished(message,wasLive){
-    try{fillSelected();const painted=render();if(wasLive&&!painted){say('Draft updated; preview unavailable and hidden.',true);return false;}say(message);return true;}
-    catch(e){conceal('technical-failure');try{render();}catch(ignored){canvas.hidden=true;}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);return false;}
+  function metadataEligible(){return section==='scene'&&!document.fullscreenElement&&displayKind!=='step'&&timeline.getState().status==='stopped'&&itemTimeline.getState().status==='stopped';}
+  function beginMetadataEdit(){
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because session groups changed.');
+    const hadGesture=!!gesture;cancelDirectGesture();interactionRevision++;controller.invalidateImport();cancelPlacement();
+    // Restoring a gesture stages its origin hidden. Unlike ordinary group
+    // metadata, that safety boundary must clear the raster, remove aids and end
+    // the provisional viewing interval before any no-paint publication.
+    if(hadGesture){
+      try{conceal();render();}
+      catch(e){controller.hide();removeUnavailablePreview();say('Move restored; preview unavailable and hidden. Session groups unchanged. Pending text is preserved.',true);return {ok:false,previewUnavailable:true};}
+    }
+    return {ok:true,previewUnavailable:hadGesture&&!context};
   }
-  function publishArrangement(plan,nextHistory,wasLive){
-    // Controller acceptance is the sole commit point. Nothing below can partly
-    // publish a document without its selection and complete history transition.
-    const staged=wasLive?controller.stageLive(plan.document):controller.stage(plan.document);
-    if(!staged.ok)throw new Error(staged.error||'The complete arrangement could not be staged.');
-    const changed=!sameScene(working,plan.document);
-    working=copy(plan.document);setSelection(plan.selection);publishHistory(nextHistory);interactionRevision++;
-    lastHit=null;imageReplacement=null;formDirty=!sameScene(controller.getState().current,working);
-    if(wasLive&&changed)provenanceIdentity++;
+  function removeUnavailablePreview(){canvas.hidden=true;context=null;$('editor-aids-overlay').hidden=true;$('visibility-label').textContent='Hidden';$('show-scene').setAttribute('aria-pressed','false');}
+  function paintPublished(message,wasLive,metadataOnly=false,previewUnavailable=false){
+    try{fillSelected();const painted=render(!metadataOnly);if(previewUnavailable||wasLive&&!painted){say((metadataOnly?'Session groups':'Draft')+' updated; preview unavailable and hidden.',true);return false;}say(message);return true;}
+    catch(e){conceal('technical-failure');try{render();}catch(ignored){removeUnavailablePreview();}say((metadataOnly?'Session groups':'Draft')+' updated; preview unavailable and hidden. Data controls remain available.',true);return false;}
+  }
+  function prepareArrangementPublication(plan,nextHistory){
+    const document=M.canonicalScene(plan.document),metadata=A.canonicalGroups(document,plan.groups),selected=A.canonicalSelection(document,plan.selection,metadata),history=A.canonicalHistory(nextHistory);
+    if(!locks.allows(document))throw new Error('Unlock affected items before changing or removing their stored properties.');
+    return {document,groups:metadata,selection:selected,history};
+  }
+  function publishArrangement(plan,nextHistory,wasLive,expected){
+    // Complete defensive preparation precedes both publication branches. Group
+    // metadata never enters the canonical controller or its provenance identity.
+    const prepared=prepareArrangementPublication(plan,nextHistory),nextDocument=prepared.document,nextGroups=prepared.groups,nextSelection=prepared.selection,preparedHistory=prepared.history;
+    if(expected&&(expected.generation!==sceneGeneration||expected.revision!==interactionRevision||!sameScene(expected.document,working)||!sameScene(expected.groups,groups)))throw new Error('The scene or session groups changed before publication.');
+    const changed=!sameScene(working,nextDocument);
+    if(changed!==plan.changedScene||(!sameScene(groups,nextGroups))!==plan.changedGroups)throw new Error('The arrangement change flags do not match its complete result.');
+    if(changed){const staged=wasLive?controller.stageLive(nextDocument):controller.stage(nextDocument);if(!staged.ok)throw new Error(staged.error||'The complete arrangement could not be staged.');}
+    working=nextDocument;groups=nextGroups;selection=nextSelection;selectedId=selection.primaryId;publishHistory(preparedHistory);interactionRevision++;lastHit=null;
+    if(changed){imageReplacement=null;formDirty=!sameScene(controller.getState().current,working);if(wasLive)provenanceIdentity++;}
   }
   function runArrangement(command,viewport){
-    beginManualEdit();const before=readCanonicalFields();if(!before)return false;
+    const metadataOnly=['group','ungroup'].includes(command.type);
+    if(metadataOnly&&!metadataEligible()){say('Group and Ungroup are available only in the static Scene editor, outside fullscreen or playback.',true);return false;}
+    const refresh=metadataOnly?beginMetadataEdit():null;if(metadataOnly&&!refresh.ok)return false;if(!metadataOnly)beginManualEdit();
+    const before=readCanonicalFields();if(!before)return false;
     try{
-      const beforeSelection=selection,options=arrangementOptions(command);if(viewport)options.viewport=viewport;const plan=A.plan(before,beforeSelection,command,options);
-      if(!plan.changed){render();say(command.type==='reorder'?'The selection is already at that edge of the layer order.':'No arrangement change needed.');return true;}
-      const entry=A.makeTransaction(before,beforeSelection,plan,sceneGeneration),history=A.recordHistory(historyState(),entry),live=isLive();
-      publishArrangement(plan,history,live);paintPublished('Arrangement updated in the draft. Apply keeps it for download.',live);return true;
-    }catch(e){render();say(e.message,true);return false;}
+      if(metadataOnly&&!sameScene(before,working))throw new Error('Finish the pending field edit before changing groups. Neither the scene nor groups changed.');
+      const beforeState=sessionState(),expected={document:copy(working),groups:copy(groups),generation:sceneGeneration,revision:interactionRevision},options=arrangementOptions(command);if(viewport)options.viewport=viewport;const plan=A.plan(before,beforeState,command,options);
+      if(!plan.changed){render(!metadataOnly);const unavailable=metadataOnly&&(refresh.previewUnavailable||gateClockFault);say(unavailable?'No session group change. Preview unavailable and hidden.':command.type==='reorder'?'The selection is already at that edge of the layer order.':metadataOnly?'No session group change needed.':'No arrangement change needed.',!!unavailable);return true;}
+      const entry=A.makeTransaction(before,beforeState,plan,sceneGeneration),history=A.recordHistory(historyState(),entry),live=isLive();
+      publishArrangement(plan,history,live,expected);paintPublished(metadataOnly?'Session groups updated. Apply and downloads do not save groups.':'Arrangement updated in the draft. Apply keeps it for download.',live,metadataOnly,!!refresh?.previewUnavailable);return true;
+    }catch(e){render(!metadataOnly);say(e.message,true);return false;}
   }
   $('layer-back').addEventListener('click',()=>runArrangement({type:'reorder',direction:'backward'}));
   $('layer-front').addEventListener('click',()=>runArrangement({type:'reorder',direction:'forward'}));
@@ -549,6 +594,7 @@
     if(placing)canvas.focus();
   });
   canvas.addEventListener('pointerup',event=>{
+    placementTouchIntent=null;
     if(!placing||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const outer=canvas.getBoundingClientRect();
     if(!E.point(outer,event.clientX,event.clientY))return;
@@ -585,9 +631,9 @@
     return {changes,precision};
   }
   function cancelDirectGesture(){
-    lockedTouchIntent=null;
+    lockedTouchIntent=null;placementTouchIntent=null;
     const active=gesture;if(!active)return;const pending=freshRawChanges(active);gesture=null;releaseCapture(active);
-    working=copy(active.before);setSelection(active.selection);formDirty=active.wasDirty;controller.stage(working);interactionRevision++;
+    working=copy(active.before);groups=copy(active.groups);setSelection(active.selection);formDirty=active.wasDirty;controller.stage(working);interactionRevision++;
     // Only provisional values are rolled back. Fresh user-authored text survives
     // cancellation, including a precision companion or an invalid global field.
     let refreshFailed=false;
@@ -606,20 +652,26 @@
     say(message||'Selected '+selection.ids.length+' item'+(selection.ids.length===1?'':'s')+'. Drag or use the selection movement controls.');
   }
   canvas.addEventListener('pointerdown',event=>{
-    lockedTouchIntent=null;
+    lockedTouchIntent=null;placementTouchIntent=null;
     if(gesture){if(event.pointerId!==gesture.pointerId)hide('Move canceled because another pointer touched the field.');return;}
-    if(placing||!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
+    if(placing){
+      if(event.target===canvas&&event.pointerType==='touch'&&event.isPrimary===true&&(event.button===undefined||event.button===0)){
+        try{const rect=canvas.getBoundingClientRect();if(E.point(rect,event.clientX,event.clientY))placementTouchIntent={x:event.clientX,y:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},selection:copy(selection),revision:interactionRevision,generation:sceneGeneration};}catch(e){/* An unavailable placement cannot own a touch default. */}
+      }
+      return;
+    }
+    if(!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const rect=canvas.getBoundingClientRect(),p=E.point(rect,event.clientX,event.clientY);if(!p)return;
     const checked=readCanonicalFields();if(!checked)return;
     const ids=E.hits(checked,rect.width,rect.height,p.x,p.y,event.pointerType==='touch'?12:6);
     lastHit={ids,x:p.x,y:p.y,width:rect.width,height:rect.height};if(!ids.length){render();return;}
     const id=ids[0],action=event.shiftKey?{type:'toggle',id}:selection.ids.includes(id)?{type:'primary',id}:{type:'only',id};
-    setSelection(A.reduceSelection(checked,selection,action));interactionRevision++;controller.invalidateImport();
+    setSelection(A.reduceSelection(checked,selection,groups,action));interactionRevision++;controller.invalidateImport();
     if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the selection changed.');
     fillSelected();
     if(event.shiftKey){render();say('Selection toggled. Shift selection does not start a drag.');return;}
     if(selection.ids.some(item=>locks.has(item))){selectAtEnd();if(event.pointerType==='touch'&&event.isPrimary===true)lockedTouchIntent={id:selectedId,revision:interactionRevision};say('Selection contains a locked item. Unlock every selected item to move the whole selection.');return;}
-    gesture={id:selectedId,selection:copy(selection),pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary===true,before:copy(checked),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function',revision:interactionRevision,generation:sceneGeneration,raw:rawSnapshot()};
+    gesture={id:selectedId,groups:copy(groups),selection:copy(selection),pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary===true,before:copy(checked),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function',revision:interactionRevision,generation:sceneGeneration,raw:rawSnapshot()};
     try{if(typeof canvas.setPointerCapture==='function')canvas.setPointerCapture(event.pointerId);}catch(e){hide('Move canceled because pointer capture is unavailable. Use selection movement controls.');return;}
     if(event.pointerType!=='touch')event.preventDefault();canvas.focus();
   });
@@ -627,7 +679,22 @@
     const intent=lockedTouchIntent;lockedTouchIntent=null;
     if(intent&&event.target===canvas&&event.cancelable&&event.touches?.length===1&&isLive()&&!placing&&section==='scene'&&document.fullscreenElement!==root&&selectedId===intent.id&&interactionRevision===intent.revision&&selection.ids.some(id=>locks.has(id))&&M.validateScene(readFields()).ok)event.preventDefault();
   },{passive:false});
-  ['touchend','touchcancel'].forEach(type=>canvas.addEventListener(type,()=>{lockedTouchIntent=null;},{passive:true}));
+  canvas.addEventListener('touchstart',event=>{
+    // Placement reopens the inspector at pointerup. Consume only its owned
+    // touchstart so the browser cannot click a control newly exposed underneath.
+    // Hidden explicit placement is valid; this preflight has no reveal authority.
+    const intent=placementTouchIntent;placementTouchIntent=null;
+    if(!intent||event.target!==canvas||!event.cancelable||event.touches?.length!==1||!placing||document.hidden||section!=='scene'||document.fullscreenElement===root||interactionRevision!==intent.revision||sceneGeneration!==intent.generation||!sameScene(selection,intent.selection))return;
+    const touch=event.touches[0];if(touch.clientX!==intent.x||touch.clientY!==intent.y)return;
+    try{
+      const outer=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>outer[key]!==intent.rect[key]))return;
+      const candidate=M.canonicalScene(readFields()),content=M.contentRect(candidate,outer.width,outer.height),rect={left:outer.left+content.x,top:outer.top+content.y,width:content.width,height:content.height},p=E.point(rect,touch.clientX,touch.clientY);
+      if(!p||p.x<0||p.y<0||p.x>rect.width||p.y>rect.height)return;
+      A.plan(candidate,sessionState(),{type:'place',x:p.x*100/rect.width,y:p.y*100/rect.height,snapStep},{locks,history:historyState(),viewport:{width:outer.width,height:outer.height}});
+      event.preventDefault();
+    }catch(e){/* Rejected preflight leaves browser defaults and editor state intact. */}
+  },{passive:false});
+  ['touchend','touchcancel'].forEach(type=>canvas.addEventListener(type,()=>{lockedTouchIntent=null;placementTouchIntent=null;},{passive:true}));
   canvas.addEventListener('touchstart',event=>{
     const active=gesture;
     if(event.target!==canvas||!event.cancelable||!event.touches||event.touches.length!==1||!active||active.pointerType!=='touch'||!active.isPrimary||active.selectionOnly||placing||!isLive()||section!=='scene'||document.fullscreenElement===root||interactionRevision!==active.revision||sceneGeneration!==active.generation||!M.validateScene(readFields()).ok)return;
@@ -635,17 +702,17 @@
   },{passive:false});
   function gesturePlan(event){
     const active=gesture;if(!active||active.selectionOnly||event.pointerId!==active.pointerId||!isLive())return null;
-    if(interactionRevision!==active.revision||sceneGeneration!==active.generation||!sameScene(selection,active.selection))throw new Error('The selected scene or controls changed.');
+    if(interactionRevision!==active.revision||sceneGeneration!==active.generation||!sameScene(selection,active.selection)||!sameScene(groups,active.groups))throw new Error('The selected scene or controls changed.');
     const pending=freshRawChanges(active);if(pending.changes.length||pending.precision.length)throw new Error('The scene fields changed.');
     if(!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return null;
     const current=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>current[key]!==active.rect[key]))throw new Error('The preview layout changed.');
     const dx=event.clientX-active.startX,dy=event.clientY-active.startY;
     if(!active.moved&&Math.hypot(dx,dy)<E.DRAG_THRESHOLD)return null;
     active.moved=true;
-    const plan=A.plan(active.before,active.selection,{type:'translate',dx,dy,snapStep},{locks,viewport:{width:active.rect.width,height:active.rect.height},history:historyState()});
+    const plan=A.plan(active.before,{groups:active.groups,selection:active.selection},{type:'translate',dx,dy,snapStep},{locks,viewport:{width:active.rect.width,height:active.rect.height},history:historyState()});
     // Singleton helper compatibility may normalize tolerated raw residues. A
     // gesture that ends on its original lattice point nevertheless owns no edit.
-    if(active.selection.ids.every(id=>{const before=active.before.scene.objects.find(o=>o.id===id),after=plan.document.scene.objects.find(o=>o.id===id);return Math.round(before.x*100)===Math.round(after.x*100)&&Math.round(before.y*100)===Math.round(after.y*100);}))return {...plan,document:copy(active.before),selection:copy(active.selection),changed:false};
+    if(active.selection.ids.every(id=>{const before=active.before.scene.objects.find(o=>o.id===id),after=plan.document.scene.objects.find(o=>o.id===id);return Math.round(before.x*100)===Math.round(after.x*100)&&Math.round(before.y*100)===Math.round(after.y*100);}))return {...plan,document:copy(active.before),groups:copy(active.groups),selection:copy(active.selection),changed:false,changedScene:false,changedGroups:false};
     return plan;
   }
   function updateDirectGesture(event){
@@ -666,17 +733,17 @@
     try{
       const plan=gesturePlan(event);
       if(!plan){gesture=null;releaseCapture(active);selectAtEnd();return;}
-      const entry=A.makeTransaction(active.before,active.selection,plan,sceneGeneration),history=A.recordHistory(historyState(),entry);
+      const entry=A.makeTransaction(active.before,{groups:active.groups,selection:active.selection},plan,sceneGeneration),history=A.recordHistory(historyState(),entry),prepared=prepareArrangementPublication(plan,history);
       // A final stage is distinct from the last provisional preview. Failure at
       // this boundary still restores the complete origin and both old stacks.
-      const result=controller.stageLive(plan.document);if(!result.ok)throw new Error(result.error);
-      if(!sameScene(working,plan.document))provenanceIdentity++;
-      working=copy(plan.document);setSelection(plan.selection);publishHistory(history);formDirty=plan.changed?!sameScene(controller.getState().current,working):active.wasDirty;gesture=null;interactionRevision++;published=true;releaseCapture(active);lastHit=null;imageReplacement=null;
+      const result=controller.stageLive(prepared.document);if(!result.ok)throw new Error(result.error);
+      if(!sameScene(working,prepared.document))provenanceIdentity++;
+      working=prepared.document;groups=prepared.groups;selection=prepared.selection;selectedId=selection.primaryId;publishHistory(prepared.history);formDirty=plan.changed?!sameScene(controller.getState().current,working):active.wasDirty;gesture=null;interactionRevision++;published=true;releaseCapture(active);lastHit=null;imageReplacement=null;
       editorOpen=true;section='scene';paintPublished(plan.changed?'Arrangement moved in the draft. Apply keeps it for download.':'Starting position restored; no arrangement change.',true);
       $(selection.ids.length===1?'object-select':'selection-summary').scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
-    }catch(e){if(published){conceal('technical-failure');try{render();}catch(ignored){canvas.hidden=true;}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);}else hide('Move canceled. '+e.message);}
+    }catch(e){if(published){conceal('technical-failure');try{render();}catch(ignored){removeUnavailablePreview();}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);}else hide('Move canceled. '+e.message);}
   });
-  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{lockedTouchIntent=null;if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
+  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{lockedTouchIntent=null;placementTouchIntent=null;if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
   $('cycle-overlap').addEventListener('click',()=>{
     lockedTouchIntent=null;
     if(gesture){hide('Move canceled. Select overlapping items after releasing the pointer.');return;}
@@ -694,9 +761,9 @@
   [['undo-move','undo'],['redo-move','redo']].forEach(([id,direction])=>$(id).addEventListener('click',()=>{
     beginManualEdit();const before=readCanonicalFields();if(!before)return;
     try{
-      const plan=A.planHistory(before,selection,historyState(),direction,sceneGeneration,{locks});if(!plan.changed){render();return;}
+      const plan=A.planHistory(before,sessionState(),historyState(),direction,sceneGeneration,{locks});if(!plan.changed){render();return;}
       conceal();publishArrangement(plan,plan.history,false);paintPublished('Draft arrangement '+(direction==='undo'?'undone':'redone')+'. The preview is hidden; applied scene is unchanged.',false);
-    }catch(e){if(e.code==='HISTORY_ENDPOINT_MISMATCH'){clearMoveHistory();render();say('Arrangement history cleared because the scene no longer matches its recorded endpoint.',true);}else{render();say(e.message,true);}}
+    }catch(e){if(e.code==='HISTORY_ENDPOINT_MISMATCH'){clearMoveHistory();render();say('Arrangement history cleared because the scene or session groups no longer match the recorded endpoint.',true);}else{render();say(e.message,true);}}
   }));
   $('skip-controls').addEventListener('click',event=>{
     event.preventDefault();conceal();cancelPlacement();editorOpen=true;section='scene';render();$('controls').focus();say('Scene controls focused. The field is hidden.');
@@ -730,7 +797,7 @@
     formDirty=false;fillFields(result.state.current,true);render();say('Changes applied. The scene is hidden; choose Resume live preview to display it.');
   });
   $('discard').addEventListener('click',()=>{
-    cancelPlacement();conceal();if(!locksAllow(controller.getState().current)){render();return;}const preferredSingleton=selected()?.id||null;controller.discard();formDirty=false;fillFields(controller.getState().current,false,preferredSingleton);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
+    cancelPlacement();conceal();if(!locksAllow(controller.getState().current)){render();return;}const preferredSingleton=groups.length?null:selected()?.id||null;controller.discard();formDirty=false;const notice=fillFields(controller.getState().current,false,preferredSingleton);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.'+notice);
   });
   function showScene(){
     if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Resume live preview again after the repeat-action lock.');return;}
@@ -754,8 +821,8 @@
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
     if(locks.ids().length){say('Unlock all items before accepted scene Undo/Redo.',true);return;}
     cancelPlacement();conceal();const result=controller[action]();
-    if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
-    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Resume live preview to display it again.':result.error,!result.ok);
+    let notice='';if(result.ok){formDirty=false;notice=fillFields(result.state.current);$('preset').value='';}
+    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Resume live preview to display it again.'+notice:result.error,!result.ok);
   }));
   // Fullscreen is optional. Entry/exit/failure never reveal; the common ancestor
   // includes the always-reachable Exit control. Do not schedule a later Show.
@@ -816,7 +883,7 @@
     try{
       const text=await file.text(),state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;
       const result=controller.finishImport(token,text);
-      let notice='';if(result.ok){notice=clearReplacementLocks();formDirty=false;fillFields(result.state.current);$('preset').value='';}
+      let notice='';if(result.ok){notice=clearReplacementLocks();formDirty=false;notice+=fillFields(result.state.current);$('preset').value='';}
       render();say(result.ok?'Scene opened and hidden. Choose Resume live preview to display it again.'+notice:result.error+' Your applied scene is unchanged.',!result.ok);
     }catch(e){const state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;controller.invalidateImport();render();say('The file could not be read. Your applied scene is unchanged.',true);}
   });
@@ -863,7 +930,7 @@
     $('item-end').textContent=!selected()?'Select one item to inspect its timing.':compiled&&selectedIndex>=0?'Selected item ends at '+(compiled.tracks[selectedIndex].endMs/1000)+' seconds.':'Fix the item timing to calculate its end.';
     if(compiled)compiled.tracks.forEach(track=>{
       const o=compiled.document.scene.objects[track.index],button=document.createElement('button');button.type='button';button.className='timeline-track';button.setAttribute('aria-pressed',String(selection.ids.includes(o.id)));
-      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · Pulse':' · Steady');button.appendChild(label);
+      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · Pulse':' · Steady')+groupLabel(o.id);button.appendChild(label);
       const detail=document.createElement('span');detail.className='track-detail';detail.textContent='In '+o.timing.fadeInMs/1000+' s · hold '+o.timing.holdMs/1000+' s · out '+o.timing.fadeOutMs/1000+' s';button.appendChild(detail);
       const bar=document.createElement('span');bar.className='track-bar';bar.setAttribute('aria-hidden','true');bar.style.left=(track.startMs/compiled.durationMs*100)+'%';bar.style.width=((track.endMs-track.startMs)/compiled.durationMs*100)+'%';bar.style.color=M.colorCSS(o.color);
       [['fade-in',o.timing.fadeInMs],['hold',o.timing.holdMs],['fade-out',o.timing.fadeOutMs]].forEach(([phase,duration])=>{if(duration){const segment=document.createElement('span');segment.className='track-segment '+phase;segment.style.width=(duration/(track.endMs-track.startMs)*100)+'%';bar.appendChild(segment);}});button.appendChild(bar);
@@ -1089,7 +1156,7 @@
     conceal();cancelPlacement();if(!sequencePrecondition()||!sequence){render();return;}
     if(formDirty){render();say('Apply or discard the scene edits before loading a step copy.',true);return;}
     const result=controller.apply(stepScene(stepIndex));if(!result.ok){render();say(result.error,true);return;}
-    const notice=clearReplacementLocks();formDirty=false;fillFields(result.state.current);section='scene';render();$('editor-scroll').scrollTop=0;$('controls').focus();say('Step copied into the scene editor. Its saved snapshot is unchanged.'+notice);
+    let notice=clearReplacementLocks();formDirty=false;notice+=fillFields(result.state.current);section='scene';render();$('editor-scroll').scrollTop=0;$('controls').focus();say('Step copied into the scene editor. Its saved snapshot is unchanged.'+notice);
   });
   $('sequence-example').addEventListener('click',()=>{
     conceal();cancelPlacement();if(!sequencePrecondition()){render();return;}

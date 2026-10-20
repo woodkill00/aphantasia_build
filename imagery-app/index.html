@@ -162,6 +162,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 
 /* Selection remains semantic inspector content, never a canvas overlay or nested scroller. */
 .selection-controls{margin:16px 0;padding:0;border:0;min-width:0}.selection-controls legend{font-size:.8rem}.selection-list{display:grid;gap:var(--control-gap);margin-block:var(--control-gap);min-width:0}.selection-row{display:flex;align-items:center;gap:8px;min-height:44px;margin:0;padding:6px 4px;border:1px solid var(--line);border-radius:6px;overflow-wrap:anywhere}.selection-row input{flex:none;width:20px;height:20px;accent-color:var(--accent)}.selection-row span{min-width:0;line-height:1.45}.selection-row:focus-within{outline:2px solid var(--accent);outline-offset:1px}.selection-alignment{margin-top:var(--control-gap)}#selection-summary{min-height:3.1em;overflow-wrap:anywhere}.selection-deltas label{min-height:2.9em}.selection-deltas{margin-bottom:var(--control-gap)}
+
+/* Session grouping remains in the existing inspector aperture. */
+.group-actions{margin-top:var(--control-gap)}#group-session-warning{overflow-wrap:anywhere}.group-actions button{min-height:44px}
 </style>
 </head>
 <body>
@@ -205,9 +208,11 @@ input.color-slider:disabled{opacity:.45;cursor:default}
               <div class="small-actions"><button id="select-all" type="button">Select all</button><button id="clear-selection" type="button">Clear selection</button></div>
               <div id="selection-list" class="selection-list"></div>
               <div id="move-anchor-row" hidden><label for="move-anchor">Move anchor</label><select id="move-anchor" aria-describedby="selection-help"></select></div>
-              <p id="selection-help" class="hint">Check items to arrange them together. The move anchor controls drag/placement snapping, not individual style. Every selected item must fit; a selected lock blocks the whole move. No selection marks are added to the field.</p>
+              <p id="selection-help" class="hint">Selecting a grouped item selects its whole group. Check items to arrange them together. The move anchor controls drag/placement snapping, not individual style. Every selected item must fit; a selected lock blocks the whole move. No selection marks are added to the field.</p>
             </fieldset>
-            <label for="object-select">Select only this item</label><select id="object-select" aria-describedby="object-hint"></select>
+            <div class="small-actions group-actions" role="group" aria-label="Session grouping" aria-describedby="group-session-warning"><button id="group-selected" type="button">Group selected items</button><button id="ungroup-selected" type="button">Ungroup selected groups</button></div>
+            <p id="group-session-warning" class="hint">Groups are only for this editing session. Apply and downloads do not save them. Loading, Discard, accepted-scene history or reload clears them.</p>
+            <label for="object-select">Select item or group</label><select id="object-select" aria-describedby="object-hint"></select>
             <p id="object-hint" class="hint">Select one item to edit its properties. Removing all objects leaves a background-only scene.</p>
             <div class="small-actions" role="group" aria-label="Session item locks"><button id="lock-selected" type="button" aria-pressed="false">Lock selected item</button><button id="unlock-all" type="button" disabled>Unlock all items</button></div>
             <p id="lock-status" class="hint" role="status">No session item locks.</p>
@@ -220,9 +225,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
               <div><label for="delta-y">Vertical delta · content units</label><input id="delta-y" type="number" min="-100" max="100" step="0.01" inputmode="decimal" value="0"></div>
             </div><button id="move-selection" type="button">Move selection</button>
             <div class="small-actions selection-alignment" role="group" aria-label="Align selected shapes and outlines">
-              <button id="selection-align-left" type="button">Align left</button><button id="selection-align-right" type="button">Align right</button><button id="selection-align-top" type="button">Align top</button><button id="selection-align-bottom" type="button">Align bottom</button><button id="selection-align-horizontal" type="button">Align horizontal centers</button><button id="selection-align-vertical" type="button">Align vertical centers</button>
-              <button id="distribute-x" type="button">Equal horizontal gaps</button><button id="distribute-y" type="button">Equal vertical gaps</button>
-            </div><p class="hint">Aligns shapes and outlines, not shadows. Equal gaps use the selected outer span, not equal centers or fixed endpoint items. Legacy scene bounds follow the current preview proportions. Centering one item uses its stored position; centering a selection uses its combined bounds.</p>
+              <button id="selection-align-left" type="button" aria-describedby="arrangement-unit-help">Align left</button><button id="selection-align-right" type="button" aria-describedby="arrangement-unit-help">Align right</button><button id="selection-align-top" type="button" aria-describedby="arrangement-unit-help">Align top</button><button id="selection-align-bottom" type="button" aria-describedby="arrangement-unit-help">Align bottom</button><button id="selection-align-horizontal" type="button" aria-describedby="arrangement-unit-help">Align horizontal centers</button><button id="selection-align-vertical" type="button" aria-describedby="arrangement-unit-help">Align vertical centers</button>
+              <button id="distribute-x" type="button" aria-describedby="arrangement-unit-help">Equal horizontal gaps</button><button id="distribute-y" type="button" aria-describedby="arrangement-unit-help">Equal vertical gaps</button>
+            </div><p id="arrangement-unit-help" class="hint">Alignment needs at least two arrangement units; equal gaps need at least three. A complete group counts as one unit.</p><p class="hint">Aligns whole arrangement units: each group moves rigidly using its combined shape and outline bounds, including internal empty space, not shadows. Equal gaps use the selected outer span, not equal centers or fixed endpoint items. Legacy scene bounds follow the current preview proportions. Centering one item uses its stored position; centering a selection uses its combined bounds.</p>
             <div class="control-grid">
               <div><label for="shape">Shape</label><select id="shape"><option value="dot">Dot</option><option value="pixel">Pixel</option><option value="circle">Circle outline</option><option value="square">Square outline</option><option value="triangle">Triangle outline</option></select></div>
               <div><label for="size">Size</label><input id="size" type="number" min="1" max="28" step="1" inputmode="numeric" value="2"></div>
@@ -240,7 +245,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
             <div class="nudge-actions" role="group" aria-label="Move selected items by one position unit"><button id="nudge-left" type="button" aria-label="Move selected items left by one position unit">← Left</button><button id="nudge-up" type="button" aria-label="Move selected items up by one position unit">↑ Up</button><button id="nudge-down" type="button" aria-label="Move selected items down by one position unit">↓ Down</button><button id="nudge-right" type="button" aria-label="Move selected items right by one position unit">Right →</button></div>
             <div class="small-actions"><button id="cycle-overlap" type="button" disabled>Select next overlapping item</button><button id="undo-move" type="button" disabled>Undo arrangement</button><button id="redo-move" type="button" disabled>Redo arrangement</button></div>
-            <p class="hint" id="direct-edit-hint">Click an unselected item to select only it. Drag a selected member to move the selection; Shift-click toggles membership without dragging. Arrow keys on the focused preview move by 1; Shift moves by 0.1. Undo arrangement retains 40 complete draft transactions, separate from applied history. Other successful scene edits reset it. Nothing is saved until you download.</p>
+            <p class="hint" id="direct-edit-hint">Click an unselected item to select its whole group, or just that item when ungrouped. Drag a selected member to move the selection; Shift-click toggles the complete item or group without dragging. Arrow keys on the focused preview move by 1; Shift moves by 0.1. Undo arrangement retains 40 complete draft transactions, separate from applied history. Other successful scene edits reset it. Nothing is saved until you download.</p>
             <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="layer-back" type="button">Move back one layer</button><button id="layer-front" type="button">Move forward one layer</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Placement moves the selected items together using the move anchor. Click or tap a new anchor position. An active live preview stays visible. Exact delta inputs offer a keyboard alternative.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
@@ -1508,6 +1513,274 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     return {document:candidate,selection:selected,changed:true,kind:direction,targetIds:entry.targetIds.slice(),history:Object.freeze({undo:Object.freeze(undo),redo:Object.freeze(redo)})};
   }
   return Object.freeze({EPS,HISTORY_LIMIT,KINDS,ALIGNMENTS,canonicalSelection,reduceSelection,arrangementBounds,plan,emptyHistory,makeTransaction,recordHistory,planHistory});
+}));
+
+/* Flat session-only groups and atomic arrangement/history planning.
+   No DOM, renderer, controller, clocks, persistence or scene-schema authority. */
+(function(root,factory){'use strict';if(typeof module==='object'&&module.exports)module.exports=factory(require('./model.js'),require('./selection-model.js'));else root.ImageryGroups=factory(root.ImageryModel,root.ImagerySelection);}(typeof globalThis!=='undefined'?globalThis:this,function(M,S){
+  'use strict';
+  const EPS=S.EPS,HISTORY_LIMIT=S.HISTORY_LIMIT,MAX_GROUPS=6;
+  // Current + both retained endpoints + planned IDs have bounded reservations.
+  const ITEM_SEARCH_LIMIT=985,GROUP_SEARCH_LIMIT=493;
+  const KINDS=Object.freeze(S.KINDS.concat('group','ungroup')),ALIGNMENTS=S.ALIGNMENTS;
+  const UNGROUPED_DOCUMENT_KINDS=Object.freeze(['move','nudge','translate','place','center','align','distribute','delete','reorder']);
+  const transactions=new WeakSet(),own=(value,key)=>Object.prototype.hasOwnProperty.call(value,key),bytes=JSON.stringify,q=value=>Math.round(value*100);
+  const suffix=id=>Number(id.slice(id.indexOf('-')+1)),natural=(a,b)=>suffix(a)-suffix(b);
+  function fail(message,code='INVALID_ARRANGEMENT'){const error=new Error(message);error.code=code;throw error;}
+  function record(value,allowed,required,label){
+    if(!value||typeof value!=='object'||Array.isArray(value)||![Object.prototype,null].includes(Object.getPrototypeOf(value)))fail(label+' must be an ordinary object.');
+    const keys=Reflect.ownKeys(value);
+    if(keys.some(key=>typeof key!=='string'||!allowed.includes(key))||required.some(key=>!keys.includes(key)))fail(label+' has missing or unsupported fields.');
+    for(const key of keys)if(!own(Object.getOwnPropertyDescriptor(value,key),'value'))fail(label+' cannot contain accessors.');
+  }
+  function array(value,limit,label){
+    if(!Array.isArray(value)||Object.getPrototypeOf(value)!==Array.prototype||value.length>limit)fail(label+' must be a bounded ordinary array.');
+    const keys=Reflect.ownKeys(value);
+    if(keys.length!==value.length+1||keys.some(key=>key!=='length'&&(typeof key!=='string'||!/^(0|[1-9][0-9]*)$/.test(key)||Number(key)>=value.length)))fail(label+' has missing or unsupported fields.');
+    for(let index=0;index<value.length;index++)if(!own(Object.getOwnPropertyDescriptor(value,String(index))||{},'value'))fail(label+' cannot contain holes or accessors.');
+    return value;
+  }
+  function ids(value,kind='object',limit=M.MAX_OBJECTS){
+    array(value,limit,'Session IDs');const pattern=kind==='object'?/^object-[1-9][0-9]{0,5}$/:/^group-[1-9][0-9]{0,5}$/;
+    if(value.some(id=>typeof id!=='string'||!pattern.test(id))||new Set(value).size!==value.length)fail('Session IDs must contain unique bounded '+kind+' identifiers.');
+    return value.slice();
+  }
+  function checkedGroups(document,value){
+    array(value,MAX_GROUPS,'Session groups');const existing=new Set(document.scene.objects.map(item=>item.id)),seen=new Set(),groupIds=new Set();
+    return value.map(group=>{
+      record(group,['id','memberIds'],['id','memberIds'],'Session group');
+      const id=ids([group.id],'group',1)[0],members=ids(group.memberIds);
+      if(groupIds.has(id)||members.length<2)fail('Groups need unique IDs and 2–12 members.');
+      groupIds.add(id);
+      for(const member of members){if(!existing.has(member)||seen.has(member))fail('Groups must contain disjoint current items, never groups or missing items.');seen.add(member);}
+      return {id,memberIds:members.sort(natural)};
+    }).sort((a,b)=>natural(a.id,b.id));
+  }
+  function canonicalGroups(value,groups){return checkedGroups(M.canonicalScene(value),groups);}
+  function checkedSelection(document,selection,groups){
+    const selected=S.canonicalSelection(document,selection),set=new Set(selected.ids);
+    for(const group of groups)if(group.memberIds.some(id=>set.has(id))&&!group.memberIds.every(id=>set.has(id)))fail('Select every member of a group together.');
+    return selected;
+  }
+  function canonicalSelection(value,selection,groups){const document=M.canonicalScene(value);return checkedSelection(document,selection,checkedGroups(document,groups));}
+  function session(document,value){record(value,['groups','selection'],['groups','selection'],'Arrangement session');const groups=checkedGroups(document,value.groups);return {groups,selection:checkedSelection(document,value.selection,groups)};}
+  function selectionFor(document,list,primaryId){const set=new Set(list),ordered=document.scene.objects.filter(item=>set.has(item.id)).map(item=>item.id);return {ids:ordered,primaryId:ordered.length?(ordered.includes(primaryId)?primaryId:ordered[ordered.length-1]):null};}
+  function unitMembers(groups,id){const group=groups.find(entry=>entry.memberIds.includes(id));return group?group.memberIds:[id];}
+  function reduceSelection(value,selection,groups,action){
+    const document=M.canonicalScene(value),metadata=checkedGroups(document,groups),current=checkedSelection(document,selection,metadata);
+    record(action,['type','id'],['type'],'Selection action');
+    if(!['only','toggle','all','clear','primary','pointer'].includes(action.type))fail('Choose a supported selection action.');
+    const needsId=['only','toggle','primary','pointer'].includes(action.type);
+    if(needsId!==own(action,'id'))fail('This selection action has missing or unsupported arguments.');
+    if(needsId&&!document.scene.objects.some(item=>item.id===action.id))fail('A valid item ID is required.');
+    if(action.type==='clear')return {ids:[],primaryId:null};
+    if(action.type==='all')return selectionFor(document,document.scene.objects.map(item=>item.id),current.primaryId);
+    if(action.type==='primary'||action.type==='pointer'&&current.ids.includes(action.id)){
+      if(!current.ids.includes(action.id))fail('The move anchor must already be selected.');
+      return {ids:current.ids.slice(),primaryId:action.id};
+    }
+    const members=unitMembers(metadata,action.id);
+    if(action.type==='only'||action.type==='pointer')return selectionFor(document,members,action.id);
+    const removing=current.ids.includes(action.id),unit=new Set(members);
+    return selectionFor(document,removing?current.ids.filter(id=>!unit.has(id)):current.ids.concat(members),removing?current.primaryId:action.id);
+  }
+  function unitsFor(document,selection,groups){
+    const selected=new Set(selection.ids),done=new Set(),units=[];
+    document.scene.objects.forEach((item,index)=>{
+      if(!selected.has(item.id)||done.has(item.id))return;
+      const group=groups.find(entry=>entry.memberIds.includes(item.id)),members=group?group.memberIds.slice():[item.id];
+      members.forEach(id=>done.add(id));units.push({id:group?group.id:item.id,groupId:group?group.id:null,memberIds:members,index});
+    });return units;
+  }
+  function selectionUnits(value,selection,groups){const document=M.canonicalScene(value),metadata=checkedGroups(document,groups);return unitsFor(document,checkedSelection(document,selection,metadata),metadata);}
+  function checkedUnits(document,value){
+    array(value,M.MAX_OBJECTS,'Arrangement units');const current=new Map(document.scene.objects.map((item,index)=>[item.id,index])),seen=new Set(),unitIds=new Set();let previous=-1;
+    return value.map(unit=>{
+      record(unit,['id','groupId','memberIds','index'],['id','groupId','memberIds','index'],'Arrangement unit');const members=ids(unit.memberIds);
+      if(!members.length||unitIds.has(unit.id))fail('Arrangement units must be nonempty and unique.');unitIds.add(unit.id);
+      if(unit.groupId===null){if(members.length!==1||unit.id!==members[0])fail('An ungrouped unit must contain exactly its item.');}
+      else if(ids([unit.groupId],'group',1)[0]!==unit.id||members.length<2)fail('A grouped unit must contain its complete group.');
+      for(const id of members){if(!current.has(id)||seen.has(id))fail('Arrangement units must contain disjoint current items.');seen.add(id);}
+      const index=Math.min(...members.map(id=>current.get(id)));
+      if(unit.index!==index||index<=previous)fail('Arrangement units must follow earliest member layer order.');previous=index;
+      return {id:unit.id,groupId:unit.groupId,memberIds:members,index};
+    });
+  }
+  function union(bounds,axis){return [Math.min(...bounds.map(bound=>bound[axis][0])),Math.max(...bounds.map(bound=>bound[axis][1]))];}
+  const midpoint=interval=>(interval[0]+interval[1])/2,spread=values=>Math.max(...values)-Math.min(...values);
+  function measuredUnits(document,units,viewport){const bounds=new Map(S.arrangementBounds(document,viewport).map(bound=>[bound.id,bound]));return units.map(unit=>{const members=unit.memberIds.map(id=>bounds.get(id));return {...unit,memberIds:unit.memberIds.slice(),x:union(members,'x'),y:union(members,'y')};});}
+  function arrangementUnitBounds(value,units,viewport){const document=M.canonicalScene(value);return measuredUnits(document,checkedUnits(document,units),viewport);}
+  function lockPolicy(document,locks){
+    if(locks===undefined)return {ids:new Set(),allows:()=>true};
+    if(!locks||typeof locks!=='object')fail('Session locks must provide their defensive snapshot policy.');
+    for(const key of ['ids','allows']){const descriptor=Object.getOwnPropertyDescriptor(locks,key);if(!descriptor||!own(descriptor,'value')||typeof descriptor.value!=='function')fail('Session locks must provide ids and allows methods.');}
+    const locked=new Set(ids(locks.ids()));if(!locks.allows(document))fail('Unlock protected items before changing their stored data.','LOCKED');
+    return {ids:locked,allows:target=>locks.allows(target)};
+  }
+  function forbidLocked(policy,targets){if(targets.some(id=>policy.ids.has(id)))fail('Unlock every selected item before arranging the selection; no selected item is skipped.','LOCKED');}
+  function checkCommand(command){
+    record(command,['type','dx','dy','x','y','snapStep','axis','mode','direction'],['type'],'Arrangement command');
+    if(!KINDS.includes(command.type))fail('Choose a supported arrangement command.');
+    const required={move:['dx','dy'],nudge:['dx','dy'],translate:['dx','dy'],place:['x','y'],center:['axis'],align:['mode'],distribute:['axis'],duplicate:[],delete:[],reorder:['direction'],group:[],ungroup:[]}[command.type];
+    record(command,['type',...required,...(['translate','place'].includes(command.type)?['snapStep']:[])],['type',...required],'Arrangement command');
+    if(['move','nudge'].includes(command.type))for(const key of ['dx','dy'])if(!Number.isFinite(command[key])||Math.abs(command[key])>100||Math.abs(command[key]*100-q(command[key]))>1e-8)fail('Movement deltas must be finite -100 to 100 values with at most two decimals.');
+    if(['translate','place'].includes(command.type)){for(const key of required)if(!Number.isFinite(command[key]))fail('Pointer coordinates must be finite.');if(own(command,'snapStep')&&![0,1,5,10].includes(command.snapStep))fail('Snap must be Off, 1, 5 or 10.');}
+    if(command.type==='center'&&!['x','y','both'].includes(command.axis))fail('Choose horizontal, vertical or both-axis centering.');
+    if(command.type==='align'&&!ALIGNMENTS.includes(command.mode))fail('Choose a supported edge or center alignment.');
+    if(command.type==='distribute'&&!['x','y'].includes(command.axis))fail('Choose horizontal or vertical equal gaps.');
+    if(command.type==='reorder'&&!['forward','backward'].includes(command.direction))fail('Choose one layer forward or backward.');
+  }
+  function exactDelta(items,axis,delta){
+    if(!Number.isFinite(delta))fail('Derived movement exceeds numeric bounds.');if(delta===0)return 0;
+    let min=-Infinity,max=Infinity;
+    for(const item of items){const extent=M.objectExtent(item);let low=Math.ceil((1+extent)*100),high=Math.floor((99-extent)*100);if(low/100-extent<1)low++;if(high/100+extent>99)high--;min=Math.max(min,low-q(item[axis]));max=Math.min(max,high-q(item[axis]));}
+    if(delta<min||delta>max)fail('All members of every arrangement unit must fit the complete requested movement.');return delta;
+  }
+  function writeUnit(document,unit,axis,desired){const set=new Set(unit.memberIds),items=document.scene.objects.filter(item=>set.has(item.id)),delta=exactDelta(items,axis,q(desired));if(delta!==0)for(const item of items)item[axis]=(q(item[axis])+delta)/100;}
+  function arrangeUnits(before,units,command,viewport){
+    const document=M.canonicalScene(before),bounds=measuredUnits(before,units,viewport);
+    if(command.type==='align'){
+      const axis=['left','right','horizontal'].includes(command.mode)?'x':'y',center=['horizontal','vertical'].includes(command.mode),leading=['left','top'].includes(command.mode),pick=interval=>center?midpoint(interval):interval[leading?0:1],edges=bounds.map(bound=>pick(bound[axis]));
+      if(spread(edges)>0.01+EPS){
+        const target=pick(union(bounds,axis));bounds.forEach((bound,index)=>writeUnit(document,bound,axis,target-edges[index]));
+        const final=measuredUnits(M.canonicalScene(document),units,viewport).map(bound=>pick(bound[axis]));
+        if(spread(final)>0.01+EPS||final.some(edge=>Math.abs(edge-target)>0.005+EPS))fail('Arrangement-unit alignment does not fit at the current coordinate precision.');
+      }
+    }else{
+      const axis=command.axis,ordered=bounds.slice().sort((a,b)=>a[axis][0]-b[axis][0]||a.index-b.index),gaps=list=>list.slice(1).map((bound,index)=>bound[axis][0]-list[index][axis][1]),oldGaps=gaps(ordered);
+      if(!(oldGaps.every(gap=>gap>=-EPS)&&spread(oldGaps)<=0.02+EPS)){
+        const [low,high]=union(bounds,axis),widths=ordered.map(bound=>bound[axis][1]-bound[axis][0]);let gap=(high-low-widths.reduce((sum,width)=>sum+width,0))/(units.length-1);
+        if(gap<-EPS)fail('Equal group bounds gaps do not fit inside the selected outer span; internal empty space counts.');if(Math.abs(gap)<=EPS)gap=0;
+        let edge=low;ordered.forEach((bound,index)=>{writeUnit(document,bound,axis,edge-bound[axis][0]);edge+=widths[index]+gap;});
+        const final=measuredUnits(M.canonicalScene(document),units,viewport),lookup=new Map(final.map(bound=>[bound.id,bound])),finalGaps=gaps(ordered.map(bound=>lookup.get(bound.id))),span=union(final,axis);
+        if(finalGaps.some(gap=>gap<-EPS)||spread(finalGaps)>0.02+EPS||Math.abs(span[0]-low)>0.005+EPS||Math.abs(span[1]-high)>0.005+EPS)fail('Equal arrangement-unit gaps do not fit at the current coordinate precision.');
+      }
+    }return document;
+  }
+  function reservationSets(document,groups,history){
+    const retained=canonicalHistory(history===undefined?emptyHistory():history),items=new Set(document.scene.objects.map(item=>item.id)),metadata=new Set(groups.map(group=>group.id));
+    for(const entry of retained.undo.concat(retained.redo))for(const side of ['before','after']){for(const item of entry[side].scene.objects)items.add(item.id);for(const group of entry[side+'Groups'])metadata.add(group.id);}
+    return {items,groups:metadata};
+  }
+  function allocate(reserved,count,kind){
+    const result=[],limit=kind==='object'?ITEM_SEARCH_LIMIT:GROUP_SEARCH_LIMIT;let candidate=1;
+    for(let index=0;index<count;index++){
+      while(candidate<=limit&&reserved.has(kind+'-'+candidate))candidate++;
+      if(candidate>limit)fail('Retained arrangement identities exceed the bounded allocation budget.','ID_ALLOCATION_FAILED');
+      const id=kind+'-'+candidate;reserved.add(id);result.push(id);candidate++;
+    }return result;
+  }
+  function finish(before,state,document,groups,selection,kind,policy){
+    const candidate=M.canonicalScene(document),metadata=checkedGroups(candidate,groups),selected=checkedSelection(candidate,selection,metadata);
+    if(!policy.allows(candidate))fail('Unlock protected items before changing their stored data.','LOCKED');
+    const changedScene=bytes(before)!==bytes(candidate),changedGroups=bytes(state.groups)!==bytes(metadata);
+    return {document:candidate,groups:metadata,selection:selected,changed:changedScene||changedGroups,changedScene,changedGroups,kind,targetIds:state.selection.ids.slice(),targetGroupIds:unitsFor(before,state.selection,state.groups).filter(unit=>unit.groupId!==null).map(unit=>unit.groupId)};
+  }
+  function plan(value,current,command,options={}){
+    // Only a strictly validated empty metadata envelope can delegate. Selection's
+    // existing planner owns all canonical input/output, geometry and source/target
+    // lock checks here; repeating them in the group envelope adds no authority.
+    record(current,['groups','selection'],['groups','selection'],'Arrangement session');
+    array(current.groups,MAX_GROUPS,'Session groups');
+    if(current.groups.length===0){
+      checkCommand(command);record(options,['locks','viewport','history'],[],'Arrangement options');
+      if(UNGROUPED_DOCUMENT_KINDS.includes(command.type)){
+        // Do not forward group history into the older history schema. Metadata
+        // commands and Duplicate retain the full path and both-stack reservations.
+        const result=S.plan(value,current.selection,command,{locks:options.locks,viewport:options.viewport});
+        return {document:result.document,groups:[],selection:result.selection,changed:result.changed,changedScene:result.changed,changedGroups:false,kind:result.kind,targetIds:result.targetIds,targetGroupIds:[]};
+      }
+    }
+    const before=M.canonicalScene(value),state=session(before,current);checkCommand(command);record(options,['locks','viewport','history'],[],'Arrangement options');
+    const selected=state.selection,units=unitsFor(before,selected,state.groups),selectedGroups=units.filter(unit=>unit.groupId!==null),policy=lockPolicy(before,options.locks);
+    if(command.type!=='ungroup'&&!selected.ids.length)fail('Select at least one item to arrange.');
+    if(command.type==='align'&&units.length<2)fail('Select at least two arrangement units to align.');
+    if(command.type==='distribute'&&units.length<3)fail('Select at least three arrangement units for equal gaps.');
+    if(!['group','ungroup','duplicate'].includes(command.type))forbidLocked(policy,selected.ids);
+    let document=before,groups=state.groups,nextSelection=selected;
+    if(command.type==='group'){
+      if(selectedGroups.length){if(units.length!==1)fail('Ungroup selected groups before combining them.');}
+      else{
+        if(selected.ids.length<2)fail('Select at least two ungrouped items to group.');
+        if(groups.length>=MAX_GROUPS)fail('The session is limited to six disjoint groups.');
+        const reserved=reservationSets(before,groups,options.history),id=allocate(reserved.groups,1,'group')[0];groups=groups.concat({id,memberIds:selected.ids.slice()});
+      }
+    }else if(command.type==='ungroup'){
+      const targets=new Set(selectedGroups.map(unit=>unit.groupId));groups=groups.filter(group=>!targets.has(group.id));
+    }else if(command.type==='duplicate'){
+      if(before.scene.objects.length+selected.ids.length>M.MAX_OBJECTS)fail('Duplicating the entire selection would exceed the 12-item limit.');
+      if(groups.length+selectedGroups.length>MAX_GROUPS)fail('Duplicating the selected groups would exceed the six-group limit.');
+      const reserved=reservationSets(before,groups,options.history),newIds=allocate(reserved.items,selected.ids.length,'object'),newGroupIds=allocate(reserved.groups,selectedGroups.length,'group'),mapping=new Map(selected.ids.map((id,index)=>[id,newIds[index]])),set=new Set(selected.ids);
+      document=M.canonicalScene(before);document.scene.objects.push(...before.scene.objects.filter(item=>set.has(item.id)).map(item=>({...item,id:mapping.get(item.id)})));
+      groups=groups.concat(selectedGroups.map((unit,index)=>({id:newGroupIds[index],memberIds:unit.memberIds.map(id=>mapping.get(id))})));
+      nextSelection={ids:newIds,primaryId:mapping.get(selected.primaryId)};
+    }else if((command.type==='align'||command.type==='distribute')&&selectedGroups.length){document=arrangeUnits(before,units,command,options.viewport);}
+    else{
+      const result=S.plan(before,selected,command,{locks:options.locks,viewport:options.viewport});document=result.document;nextSelection=result.selection;
+      if(command.type==='delete'){
+        const targets=new Set(selectedGroups.map(unit=>unit.groupId));groups=groups.filter(group=>!targets.has(group.id));
+        if(nextSelection.primaryId!==null)nextSelection=selectionFor(document,unitMembers(groups,nextSelection.primaryId),nextSelection.primaryId);
+      }
+    }
+    return finish(before,state,document,groups,nextSelection,command.type,policy);
+  }
+  function deepFreeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(deepFreeze);Object.freeze(value);}return value;}
+  function generation(value){if(!Number.isSafeInteger(value)||value<0)fail('Scene generation must be a nonnegative safe integer.');return value;}
+  const endpoint=(document,groups)=>bytes([document,groups]);
+  function checkedTransaction(value){
+    if(value&&typeof value==='object'&&transactions.has(value))return value;
+    const fields=['before','after','beforeGroups','afterGroups','beforeSelection','afterSelection','generation','kind','targetIds','targetGroupIds'];record(value,fields,fields,'Arrangement transaction');
+    const before=M.canonicalScene(value.before),after=M.canonicalScene(value.after),beforeGroups=checkedGroups(before,value.beforeGroups),afterGroups=checkedGroups(after,value.afterGroups),beforeSelection=checkedSelection(before,value.beforeSelection,beforeGroups),afterSelection=checkedSelection(after,value.afterSelection,afterGroups),targetIds=ids(value.targetIds),targetGroupIds=ids(value.targetGroupIds,'group',MAX_GROUPS);
+    const changedScene=bytes(before)!==bytes(after),changedGroups=bytes(beforeGroups)!==bytes(afterGroups),expectedGroups=unitsFor(before,beforeSelection,beforeGroups).filter(unit=>unit.groupId!==null).map(unit=>unit.groupId);
+    if(!KINDS.includes(value.kind)||!targetIds.length||!(changedScene||changedGroups)||bytes(targetIds)!==bytes(beforeSelection.ids)||bytes(targetGroupIds)!==bytes(expectedGroups))fail('Arrangement transaction must describe changed whole-state endpoints and its exact selected original targets.');
+    if(['group','ungroup'].includes(value.kind)?changedScene||!changedGroups:!changedScene)fail('Metadata-only and document-changing transactions must retain their command semantics.');
+    if(!['group','ungroup','duplicate','delete'].includes(value.kind)&&changedGroups)fail('This arrangement cannot change group membership.');
+    if(['group','ungroup'].includes(value.kind)){
+      if(bytes(beforeSelection)!==bytes(afterSelection))fail('Metadata-only grouping must preserve the exact selection and primary.');
+      if(value.kind==='group'){
+        const added=afterGroups.filter(group=>!beforeGroups.some(prior=>prior.id===group.id));
+        if(expectedGroups.length||targetIds.length<2||added.length!==1||bytes(added[0].memberIds)!==bytes(targetIds.slice().sort(natural))||bytes(afterGroups.filter(group=>group.id!==added[0].id))!==bytes(beforeGroups))fail('Group history must add exactly one new group containing the selected ungrouped items.');
+      }else if(!expectedGroups.length||bytes(afterGroups)!==bytes(beforeGroups.filter(group=>!expectedGroups.includes(group.id))))fail('Ungroup history must remove exactly the selected groups.');
+    }
+    const entry=deepFreeze({before,after,beforeGroups,afterGroups,beforeSelection,afterSelection,generation:generation(value.generation),kind:value.kind,targetIds,targetGroupIds});transactions.add(entry);return entry;
+  }
+  function emptyHistory(){return Object.freeze({undo:Object.freeze([]),redo:Object.freeze([])});}
+  function canonicalHistory(value){
+    record(value,['undo','redo'],['undo','redo'],'Arrangement history');array(value.undo,HISTORY_LIMIT,'Undo history');array(value.redo,HISTORY_LIMIT,'Redo history');
+    if(value.undo.length+value.redo.length>HISTORY_LIMIT)fail('Arrangement history is limited to 40 total transactions.');
+    return Object.freeze({undo:Object.freeze(value.undo.map(checkedTransaction)),redo:Object.freeze(value.redo.map(checkedTransaction))});
+  }
+  function makeTransaction(value,current,result,sceneGeneration){
+    generation(sceneGeneration);const before=M.canonicalScene(value),state=session(before,current),fields=['document','groups','selection','changed','changedScene','changedGroups','kind','targetIds','targetGroupIds'];record(result,fields,fields,'Arrangement plan');
+    const after=M.canonicalScene(result.document),afterGroups=checkedGroups(after,result.groups);checkedSelection(after,result.selection,afterGroups);
+    const changedScene=bytes(before)!==bytes(after),changedGroups=bytes(state.groups)!==bytes(afterGroups);
+    if(typeof result.changed!=='boolean'||result.changed!==Boolean(changedScene||changedGroups)||result.changedScene!==changedScene||result.changedGroups!==changedGroups||!KINDS.includes(result.kind))fail('Arrangement plan change status is inconsistent.');
+    const expectedGroups=unitsFor(before,state.selection,state.groups).filter(unit=>unit.groupId!==null).map(unit=>unit.groupId);
+    if(bytes(ids(result.targetIds))!==bytes(state.selection.ids)||bytes(ids(result.targetGroupIds,'group',MAX_GROUPS))!==bytes(expectedGroups))fail('Arrangement plan targets must match the original selection.');
+    if(!result.changed)return null;
+    return checkedTransaction({before,after,beforeGroups:state.groups,afterGroups,beforeSelection:state.selection,afterSelection:result.selection,generation:sceneGeneration,kind:result.kind,targetIds:result.targetIds,targetGroupIds:result.targetGroupIds});
+  }
+  function recordHistory(value,entry){
+    const history=canonicalHistory(value);if(entry===null)return history;const next=checkedTransaction(entry),expected=endpoint(next.before,next.beforeGroups);
+    if(history.undo.length){const prior=history.undo[history.undo.length-1];if(endpoint(prior.after,prior.afterGroups)!==expected)fail('The new arrangement does not match the retained document and groups.','HISTORY_ENDPOINT_MISMATCH');}
+    if(history.redo.length){const prior=history.redo[history.redo.length-1];if(endpoint(prior.before,prior.beforeGroups)!==expected)fail('The new arrangement does not match the retained document and groups.','HISTORY_ENDPOINT_MISMATCH');}
+    if(history.undo.concat(history.redo).some(item=>item.generation!==next.generation))fail('The scene generation has changed.','HISTORY_ENDPOINT_MISMATCH');
+    return Object.freeze({undo:Object.freeze(history.undo.concat(next).slice(-HISTORY_LIMIT)),redo:Object.freeze([])});
+  }
+  function planHistory(value,current,history,direction,sceneGeneration,options={}){
+    const document=M.canonicalScene(value),state=session(document,current),stacks=canonicalHistory(history);generation(sceneGeneration);record(options,['locks'],[],'Arrangement history options');
+    if(!['undo','redo'].includes(direction))fail('Choose Undo arrangement or Redo arrangement.');
+    const policy=lockPolicy(document,options.locks),source=stacks[direction],entry=source[source.length-1];
+    if(!entry)return {document,groups:state.groups,selection:state.selection,changed:false,changedScene:false,changedGroups:false,kind:direction,targetIds:[],targetGroupIds:[],history:stacks};
+    const from=direction==='undo'?'after':'before',to=direction==='undo'?'before':'after';
+    if(entry.generation!==sceneGeneration||endpoint(document,state.groups)!==endpoint(entry[from],entry[from+'Groups']))fail('The draft document or groups no longer match this arrangement history; discard the incompatible draft history.','HISTORY_ENDPOINT_MISMATCH');
+    if(entry.kind==='reorder')forbidLocked(policy,entry.targetIds);
+    const candidate=M.canonicalScene(entry[to]),groups=checkedGroups(candidate,entry[to+'Groups']),selection=checkedSelection(candidate,entry[to+'Selection'],groups);
+    if(!policy.allows(candidate))fail('Unlock protected items before restoring this arrangement.','LOCKED');
+    const undo=direction==='undo'?stacks.undo.slice(0,-1):stacks.undo.concat(entry),redo=direction==='redo'?stacks.redo.slice(0,-1):stacks.redo.concat(entry);
+    return {document:candidate,groups,selection,changed:true,changedScene:bytes(document)!==bytes(candidate),changedGroups:bytes(state.groups)!==bytes(groups),kind:direction,targetIds:entry.targetIds.slice(),targetGroupIds:entry.targetGroupIds.slice(),history:Object.freeze({undo:Object.freeze(undo),redo:Object.freeze(redo)})};
+  }
+  return Object.freeze({EPS,HISTORY_LIMIT,MAX_GROUPS,KINDS,ALIGNMENTS,canonicalGroups,canonicalSelection,reduceSelection,selectionUnits,arrangementUnitBounds,plan,planArrangement:plan,emptyHistory,canonicalHistory,makeTransaction,recordHistory,planHistory});
 }));
 </script>
 <script>/* Pure, bounded editor-guide layout. No DOM, pixels, clock or visibility authority. */
@@ -3127,7 +3400,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
    One visibility gate. Live manual draft edits preserve an explicitly visible field; interruptions conceal. */
 (function () {
   'use strict';
-  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor,A=window.ImagerySelection,G=window.ImageryGeometry,P=window.ImageryPresets;
+  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems,E=window.ImageryEditor,A=window.ImageryGroups,G=window.ImageryGeometry,P=window.ImageryPresets;
   const $=id=>document.getElementById(id);
   let lastGateClock=0,gateClockFault=false;
   function gateClock(){
@@ -3168,8 +3441,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     syncEditorAids(state);
   }
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
-  let lockedTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null;
-  let selection={ids:[],primaryId:null},sceneGeneration=0,interactionRevision=0,lastRawTarget=null;
+  let lockedTouchIntent=null,placementTouchIntent=null,gesture=null,moveUndo=[],moveRedo=[],lastHit=null;
+  let groups=[],selection={ids:[],primaryId:null},sceneGeneration=0,interactionRevision=0,lastRawTarget=null;
   const selectionRows=new Map();
   const locks=E.createLocks();let snapStep=0;
   let working=controller.getState().current;
@@ -3377,18 +3650,18 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     });
     colorPrefixes.forEach(updateColorSample);
   }
-  function render(){
+  function render(paintCanvas=true){
     let state=controller.getState();
-    if(gateClockFault&&state.visible){cancelPlayback('technical-failure');controller.hide();state=controller.getState();}
+    if(gateClockFault&&state.visible){cancelPlayback('technical-failure');controller.hide();state=controller.getState();paintCanvas=true;}
     const full=document.fullscreenElement===root;
     root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&['live','items'].includes(displayKind)&&editorOpen&&!full?' live-editor':'');
     $('editor-panel').hidden=!editorOpen;
     // Resolve control rows before sizing the canvas; mode switches must not
     // resize a freshly painted frame or let an inspector obscure item playback.
     updateOutputs();renderSequence();renderItemEditor();renderItemPlayback();
-    if(!syncEditorAids(state))state=controller.getState();
+    if(paintCanvas&&!syncEditorAids(state))state=controller.getState();
     let painted=false;
-    try{painted=draw(state);}catch(e){
+    try{painted=paintCanvas?draw(state):state.visible;}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
       cancelPlayback('technical-failure');controller.hide();canvas.hidden=true;context=null;state=controller.getState();
       say('The canvas could not be drawn. The field is hidden; data controls remain available.',true);
@@ -3422,36 +3695,47 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     syncArrangementControls();
     return painted&&state.visible;
   }
-  function cancelPlacement(){placing=false;}
+  function cancelPlacement(){placing=false;placementTouchIntent=null;}
   function selected(){return selection.ids.length===1?working.scene.objects.find(o=>o.id===selection.ids[0]):undefined;}
-  function setSelection(value){selection=A.canonicalSelection(working,value);selectedId=selection.primaryId;}
+  function setSelection(value){selection=A.canonicalSelection(working,value,groups);selectedId=selection.primaryId;}
   function firstSelection(value){const id=value.scene.objects[0]?.id||null;return {ids:id?[id]:[],primaryId:id};}
+  function groupFor(id){return groups.find(group=>group.memberIds.includes(id));}
+  function groupLabel(id){const group=groupFor(id);return group?' · Group '+group.id.slice(6)+' ('+group.memberIds.length+' items)':'';}
+  function sessionState(){return {groups,selection};}
+  function selectedUnitCounts(){
+    // Presentation only: internal selection and metadata were validated before
+    // publication. Empty groups need no second full scene-validation pass.
+    if(!groups.length)return {unitCount:selection.ids.length,groupCount:0};
+    const units=A.selectionUnits(working,selection,groups);
+    return {unitCount:units.length,groupCount:units.filter(unit=>unit.groupId).length};
+  }
   function updateObjectList(){
     const selector=$('object-select'),focused=document.activeElement;
     selector.replaceChildren();
     if(selection.ids.length!==1){const neutral=document.createElement('option');neutral.value='';neutral.textContent=selection.ids.length>1?'Multiple items selected':'No items selected';selector.appendChild(neutral);}
-    working.scene.objects.forEach((o,i)=>{const option=document.createElement('option');option.value=o.id;option.textContent=(i+1)+'. '+o.shape+' ('+o.id+')'+(locks.has(o.id)?' · locked':'');selector.appendChild(option);});
+    working.scene.objects.forEach((o,i)=>{const option=document.createElement('option');option.value=o.id;option.textContent=(i+1)+'. '+o.shape+' ('+o.id+')'+(locks.has(o.id)?' · locked':'')+groupLabel(o.id);selector.appendChild(option);});
     selector.value=selection.ids.length===1?selection.ids[0]:'';selector.disabled=!working.scene.objects.length;
     const rows=[];
     working.scene.objects.forEach((o,i)=>{
       let row=selectionRows.get(o.id);
       if(!row){const label=document.createElement('label'),input=document.createElement('input'),text=document.createElement('span');label.className='selection-row';input.type='checkbox';input.id='selection-'+o.id;label.setAttribute('for',input.id);input.addEventListener('change',()=>{if(selectionRows.get(o.id)===row&&row.generation===sceneGeneration)changeSelection({type:'toggle',id:o.id});});label.appendChild(input);label.appendChild(text);row={label,input,text,generation:sceneGeneration};selectionRows.set(o.id,row);}
-      row.input.checked=selection.ids.includes(o.id);row.text.textContent=(i+1)+'. '+o.shape+' · '+o.id+(locks.has(o.id)?' · locked':'');rows.push(row.label);
+      row.input.checked=selection.ids.includes(o.id);row.text.textContent=(i+1)+'. '+o.shape+' · '+o.id+(locks.has(o.id)?' · locked':'')+groupLabel(o.id);rows.push(row.label);
     });
     for(const id of selectionRows.keys())if(!working.scene.objects.some(o=>o.id===id))selectionRows.delete(id);
     const list=$('selection-list');
     if(rows.length!==list.children.length||rows.some((row,i)=>list.children[i]!==row)){list.replaceChildren(...rows);if(rows.some(row=>row.contains(focused)))focused.focus({preventScroll:true});else if(focused?.id?.startsWith('selection-object-')){$('selection-summary').focus({preventScroll:true});}}
-    // Do not replace native options from their own change event. Keeping an
-    // unchanged option set avoids stale painted labels in the native select.
-    const anchor=$('move-anchor'),anchorItems=selection.ids.map(id=>{const o=working.scene.objects.find(item=>item.id===id);return {id,label:o.shape+' · '+id};});
+    // Preserve native option nodes during primary-only changes. Group labels
+    // participate in the comparison, so membership changes refresh real labels.
+    const anchor=$('move-anchor'),anchorItems=selection.ids.map(id=>{const o=working.scene.objects.find(item=>item.id===id);return {id,label:o.shape+' · '+id+groupLabel(id)};});
     if(anchorItems.length!==anchor.options.length||anchorItems.some((o,i)=>anchor.options[i].value!==o.id||anchor.options[i].textContent!==o.label)){
       anchor.replaceChildren();anchorItems.forEach(o=>{const option=document.createElement('option');option.value=o.id;option.textContent=o.label;anchor.appendChild(option);});
     }
     anchor.value=selectedId||'';anchor.disabled=selection.ids.length<2;$('move-anchor-row').hidden=selection.ids.length<2;
     const primary=working.scene.objects.find(o=>o.id===selectedId),locked=selection.ids.filter(id=>locks.has(id)).length;
-    $('selection-summary').textContent=selection.ids.length+' selected. Move anchor: '+(primary?primary.shape+' · '+primary.id:'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
+    const {unitCount,groupCount}=selectedUnitCounts(),individualCount=unitCount-groupCount;
+    $('selection-summary').textContent=selection.ids.length+' items selected, '+unitCount+' arrangement units: '+groupCount+' groups and '+individualCount+' items. Move anchor: '+(primary?primary.shape+' · '+primary.id+groupLabel(primary.id):'none')+'.'+(locked?' '+locked+' selected locked; movement is all-or-nothing.':'');
     $('select-all').disabled=!working.scene.objects.length;$('clear-selection').disabled=!selection.ids.length;
-    $('object-hint').textContent=selection.ids.length===1?'Edit this item’s properties. Removing all items leaves a background-only scene.':'Select one item to edit its properties. Selection movement is available separately.';
+    $('object-hint').textContent=selection.ids.length===1?'Edit this item’s properties. Removing all items leaves a background-only scene.':groups.some(group=>group.memberIds.some(id=>selection.ids.includes(id)))?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to edit its properties. Selection movement is available separately.';
   }
   function fillSelected(){
     const o=selected(),authored=working.version===M.AUTHORED_VERSION;
@@ -3478,11 +3762,12 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     objectFields.forEach(id=>{rawPrecision.delete(id);$(id).setAttribute('aria-invalid','false');});geometryFields.forEach(id=>$(id).setAttribute('aria-invalid','false'));updateObjectList();updateOutputs();
   }
   function fillFields(scene,retainSelection=false,preferredSingleton=null){
-    clearMoveHistory();rawPrecision.clear();authoredRaw.clear();working=copy(M.canonicalScene(scene));fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
+    const next=M.canonicalScene(scene),nextGroups=retainSelection?A.canonicalGroups(next,groups):[],notice=!retainSelection&&groups.length?' Session groups cleared; they are not saved in scenes.':'';
+    clearMoveHistory();rawPrecision.clear();authoredRaw.clear();working=copy(next);groups=nextGroups;fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
     if(retainSelection)setSelection(selection);else{sceneGeneration++;interactionRevision++;selectionRows.clear();setSelection(preferredSingleton&&working.scene.objects.some(o=>o.id===preferredSingleton)?{ids:[preferredSingleton],primaryId:preferredSingleton}:firstSelection(working));}
     $('scene-name').value=working.scene.name;$('pulse-period').value=String(working.scene.pulsePeriodMs/1000);
     const b=working.scene.background;$('background-hue').value=String(b.h);$('background-saturation').value=String(b.s);$('background-lightness').value=String(b.l);
-    fillSelected();
+    fillSelected();return notice;
   }
   function readFields(){
     const next=copy(working),s=next.scene;
@@ -3512,7 +3797,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     say('Unlock affected items before changing or removing their stored properties.',true);return false;
   }
   function blockedSelected(){
-    if(!selected()){say('Select one item to edit its properties.',true);return true;}
+    if(!selected()){say(groups.some(group=>group.memberIds.some(id=>selection.ids.includes(id)))?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to edit its properties.',true);return true;}
     if(!locks.has(selectedId))return false;
     fillSelected();render();say('This item is locked. Unlock it to edit its stored properties.',true);return true;
   }
@@ -3523,11 +3808,16 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const result=live?controller.stageLive(next):controller.stage(next);
     if(!result.ok){render();say(result.error,true);return false;}
     if(live&&!sameScene(working,next))provenanceIdentity++;
-    const notice=clearReplacementLocks();fillFields(next);formDirty=true;
+    const notice=clearReplacementLocks()+fillFields(next);formDirty=true;
     const painted=render();say(live&&!painted?'Draft updated; preview unavailable and hidden.':message+notice,live&&!painted);return true;
   }
   function syncArrangementControls(){
-    const singleton=selected(),locked=!!singleton&&locks.has(selectedId),count=locks.ids().length,n=selection.ids.length,selectedLocked=selection.ids.some(id=>locks.has(id)),invalid=!M.validateScene(readFields()).ok;
+    const singleton=selected(),locked=!!singleton&&locks.has(selectedId),count=locks.ids().length,n=selection.ids.length,selectedLocked=selection.ids.some(id=>locks.has(id)),invalid=!M.validateScene(readFields()).ok,{unitCount,groupCount:selectedGroups}=selectedUnitCounts();
+    const exactGroup=selectedGroups===1&&unitCount===1;
+    $('group-selected').disabled=!metadataEligible()||invalid||(!exactGroup&&(n<2||selectedGroups>0||groups.length>=6));
+    // Keep the activating native control focusable after its successful no-op
+    // endpoint. Ungroup with no selected groups is deliberately a validated no-op.
+    $('ungroup-selected').disabled=!metadataEligible()||invalid;
     $('lock-selected').disabled=!singleton;$('lock-selected').textContent=locked?'Unlock selected item':'Lock selected item';$('lock-selected').setAttribute('aria-pressed',String(locked));
     $('unlock-all').disabled=!count;$('lock-status').textContent=(count?count+' session item lock'+(count===1?'':'s')+'. Accepted scene Undo/Redo unavailable until all items are unlocked.':'No session item locks.')+(selectedLocked?' Every selected item must be unlocked for movement, alignment, deletion or layer changes. Duplicate makes unlocked copies.':'');
     if(count){$('undo').disabled=true;$('redo').disabled=true;}
@@ -3536,9 +3826,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('duplicate-object').disabled=!n||working.scene.objects.length+n>M.MAX_OBJECTS;
     $('duplicate-object').textContent=n>1?'Duplicate selection':'Duplicate object';$('delete-object').textContent=n>1?'Remove selection':'Remove object';
     ['x','y','both'].forEach(axis=>{$('align-'+axis).disabled=!n||selectedLocked;$('align-'+axis).textContent=(n>1?'Center selection bounds ':'Center item position ')+(axis==='x'?'horizontally':axis==='y'?'vertically':'both axes');});
-    ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).disabled=n<2||selectedLocked);
-    ['x','y'].forEach(axis=>$('distribute-'+axis).disabled=n<3||selectedLocked);
-    for(const [id,direction] of [['undo-move','undo'],['redo-move','redo']]){let blocked=invalid;try{if(!blocked)A.planHistory(working,selection,{undo:moveUndo,redo:moveRedo},direction,sceneGeneration,{locks});}catch(e){blocked=true;}$(id).disabled=blocked||!(direction==='undo'?moveUndo:moveRedo).length;}
+    ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).disabled=unitCount<2||selectedLocked);
+    ['x','y'].forEach(axis=>$('distribute-'+axis).disabled=unitCount<3||selectedLocked);
+    $('arrangement-unit-help').textContent=unitCount+' arrangement unit'+(unitCount===1?'':'s')+' selected. Alignment needs at least two arrangement units; equal gaps need at least three. A complete group counts as one unit.';
+    for(const [id,direction] of [['undo-move','undo'],['redo-move','redo']]){let blocked=invalid;try{if(!blocked)A.planHistory(working,sessionState(),{undo:moveUndo,redo:moveRedo},direction,sceneGeneration,{locks});}catch(e){blocked=true;}$(id).disabled=blocked||!(direction==='undo'?moveUndo:moveRedo).length;}
     updateOutputs();
   }
   $('show-editor-aids').addEventListener('change',()=>{
@@ -3555,7 +3846,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   $('lock-selected').addEventListener('click',()=>{
     beginManualEdit();
     if(selected()&&locks.has(selectedId)){locks.unlock(selectedId);refillPreservingRaw();render();say('Item unlocked.');return;}
-    try{const value=M.canonicalScene(readFields());if(!selected()){say('Select one item to lock it.',true);return;}locks.lock(value,selectedId);working=value;fillSelected();render();say('Item locked for this session. Global background and shared timing remain editable.');}catch(e){render();say(e.message,true);}
+    try{const value=M.canonicalScene(readFields());if(!selected()){say(groups.length?'Ungroup first to edit or lock/unlock one member. Then select that item explicitly.':'Select one item to lock it.',true);return;}locks.lock(value,selectedId);working=value;fillSelected();render();say('Item locked for this session. Global background and shared timing remain editable.');}catch(e){render();say(e.message,true);}
   });
   $('unlock-all').addEventListener('click',()=>{beginManualEdit();locks.clear();refillPreservingRaw();render();say('All session item locks cleared.');});
   $('snap-step').addEventListener('change',()=>{beginManualEdit();const value=Number($('snap-step').value);if(![0,1,5,10].includes(value)){$('snap-step').value=String(snapStep);render();say('Choose Off, 1, 5 or 10 for snapping.',true);return;}snapStep=value;render();say(snapStep?'Drag and placement snap to '+snapStep+'-unit centers. Typed positions and nudges remain exact.':'Drag and placement snapping off.');});
@@ -3563,14 +3854,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   ['left','right','top','bottom','horizontal','vertical'].forEach(mode=>$('selection-align-'+mode).addEventListener('click',()=>runArrangement({type:'align',mode})));
   ['x','y'].forEach(axis=>$('distribute-'+axis).addEventListener('click',()=>runArrangement({type:'distribute',axis})));
   $('move-selection').addEventListener('click',()=>runArrangement({type:'move',dx:number('delta-x'),dy:number('delta-y')}));
+  $('group-selected').addEventListener('click',()=>runArrangement({type:'group'}));
+  $('ungroup-selected').addEventListener('click',()=>runArrangement({type:'ungroup'}));
   function stageWorking(message,replacement=false,candidate=working){
     const previous=controller.getState().draft,checked=M.validateScene(candidate),live=isLive();
     if(!checked.ok){working=copy(previous);formDirty=true;if(lastRawTarget)$(lastRawTarget).setAttribute('aria-invalid','true');conceal();render();say(checked.error+' Preview stopped. Your applied scene is unchanged.',true);return false;}
+    try{A.canonicalGroups(checked.scene,groups);}catch(e){render();say(e.message,true);return false;}
     if(!replacement&&!locksAllow(checked.scene)){working=copy(previous);render();return false;}
     const result=live?controller.stageLive(checked.scene):controller.stage(checked.scene);
     if(!result.ok){working=copy(previous);render();say(result.error,true);return false;}
-    // Explicit ordinary input is still a draft action when its accepted bytes
-    // happen to match. History, unlike Apply/capture intent, is change-only.
+    // Ordinary user input retains explicit draft intent even when its bytes
+    // match accepted data. Group metadata remains outside this edit channel.
     const changed=!sameScene(previous,checked.scene);working=copy(checked.scene);formDirty=true;fieldIDs.concat(geometryFields).forEach(id=>$(id).setAttribute('aria-invalid','false'));
     if(changed){clearMoveHistory();interactionRevision++;if(live)provenanceIdentity++;}
     const painted=render();say(live&&!painted?'Draft updated; preview unavailable and hidden.':live?'Live draft updated. Apply keeps it for history and download; Hide stops preview.':message,live&&!painted);return true;
@@ -3614,7 +3908,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function changeSelection(action,options={}){
     beginManualEdit();const value=readCanonicalFields();
     if(!value){updateObjectList();return false;}
-    try{const next=A.reduceSelection(value,selection,action);if(!sameScene(working,value)&&!stageWorking('Changes staged.',false,value))return false;setSelection(next);lastHit=options.keepHits?lastHit:null;fillSelected();render();say(selection.ids.length+' item'+(selection.ids.length===1?'':'s')+' selected. Move anchor: '+(selectedId||'none')+'.');return true;}
+    try{const next=A.reduceSelection(value,selection,groups,action);if(!sameScene(working,value)&&!stageWorking('Changes staged.',false,value))return false;setSelection(next);lastHit=options.keepHits?lastHit:null;fillSelected();render();say(selection.ids.length+' item'+(selection.ids.length===1?'':'s')+' selected. Move anchor: '+(selectedId||'none')+'.');return true;}
     catch(e){updateObjectList();render();say(e.message,true);return false;}
   }
   $('object-select').addEventListener('change',()=>{const id=$('object-select').value;if(!id){updateObjectList();return;}changeSelection({type:'only',id});});
@@ -3639,28 +3933,52 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     return options;
   }
-  function paintPublished(message,wasLive){
-    try{fillSelected();const painted=render();if(wasLive&&!painted){say('Draft updated; preview unavailable and hidden.',true);return false;}say(message);return true;}
-    catch(e){conceal('technical-failure');try{render();}catch(ignored){canvas.hidden=true;}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);return false;}
+  function metadataEligible(){return section==='scene'&&!document.fullscreenElement&&displayKind!=='step'&&timeline.getState().status==='stopped'&&itemTimeline.getState().status==='stopped';}
+  function beginMetadataEdit(){
+    if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because session groups changed.');
+    const hadGesture=!!gesture;cancelDirectGesture();interactionRevision++;controller.invalidateImport();cancelPlacement();
+    // Restoring a gesture stages its origin hidden. Unlike ordinary group
+    // metadata, that safety boundary must clear the raster, remove aids and end
+    // the provisional viewing interval before any no-paint publication.
+    if(hadGesture){
+      try{conceal();render();}
+      catch(e){controller.hide();removeUnavailablePreview();say('Move restored; preview unavailable and hidden. Session groups unchanged. Pending text is preserved.',true);return {ok:false,previewUnavailable:true};}
+    }
+    return {ok:true,previewUnavailable:hadGesture&&!context};
   }
-  function publishArrangement(plan,nextHistory,wasLive){
-    // Controller acceptance is the sole commit point. Nothing below can partly
-    // publish a document without its selection and complete history transition.
-    const staged=wasLive?controller.stageLive(plan.document):controller.stage(plan.document);
-    if(!staged.ok)throw new Error(staged.error||'The complete arrangement could not be staged.');
-    const changed=!sameScene(working,plan.document);
-    working=copy(plan.document);setSelection(plan.selection);publishHistory(nextHistory);interactionRevision++;
-    lastHit=null;imageReplacement=null;formDirty=!sameScene(controller.getState().current,working);
-    if(wasLive&&changed)provenanceIdentity++;
+  function removeUnavailablePreview(){canvas.hidden=true;context=null;$('editor-aids-overlay').hidden=true;$('visibility-label').textContent='Hidden';$('show-scene').setAttribute('aria-pressed','false');}
+  function paintPublished(message,wasLive,metadataOnly=false,previewUnavailable=false){
+    try{fillSelected();const painted=render(!metadataOnly);if(previewUnavailable||wasLive&&!painted){say((metadataOnly?'Session groups':'Draft')+' updated; preview unavailable and hidden.',true);return false;}say(message);return true;}
+    catch(e){conceal('technical-failure');try{render();}catch(ignored){removeUnavailablePreview();}say((metadataOnly?'Session groups':'Draft')+' updated; preview unavailable and hidden. Data controls remain available.',true);return false;}
+  }
+  function prepareArrangementPublication(plan,nextHistory){
+    const document=M.canonicalScene(plan.document),metadata=A.canonicalGroups(document,plan.groups),selected=A.canonicalSelection(document,plan.selection,metadata),history=A.canonicalHistory(nextHistory);
+    if(!locks.allows(document))throw new Error('Unlock affected items before changing or removing their stored properties.');
+    return {document,groups:metadata,selection:selected,history};
+  }
+  function publishArrangement(plan,nextHistory,wasLive,expected){
+    // Complete defensive preparation precedes both publication branches. Group
+    // metadata never enters the canonical controller or its provenance identity.
+    const prepared=prepareArrangementPublication(plan,nextHistory),nextDocument=prepared.document,nextGroups=prepared.groups,nextSelection=prepared.selection,preparedHistory=prepared.history;
+    if(expected&&(expected.generation!==sceneGeneration||expected.revision!==interactionRevision||!sameScene(expected.document,working)||!sameScene(expected.groups,groups)))throw new Error('The scene or session groups changed before publication.');
+    const changed=!sameScene(working,nextDocument);
+    if(changed!==plan.changedScene||(!sameScene(groups,nextGroups))!==plan.changedGroups)throw new Error('The arrangement change flags do not match its complete result.');
+    if(changed){const staged=wasLive?controller.stageLive(nextDocument):controller.stage(nextDocument);if(!staged.ok)throw new Error(staged.error||'The complete arrangement could not be staged.');}
+    working=nextDocument;groups=nextGroups;selection=nextSelection;selectedId=selection.primaryId;publishHistory(preparedHistory);interactionRevision++;lastHit=null;
+    if(changed){imageReplacement=null;formDirty=!sameScene(controller.getState().current,working);if(wasLive)provenanceIdentity++;}
   }
   function runArrangement(command,viewport){
-    beginManualEdit();const before=readCanonicalFields();if(!before)return false;
+    const metadataOnly=['group','ungroup'].includes(command.type);
+    if(metadataOnly&&!metadataEligible()){say('Group and Ungroup are available only in the static Scene editor, outside fullscreen or playback.',true);return false;}
+    const refresh=metadataOnly?beginMetadataEdit():null;if(metadataOnly&&!refresh.ok)return false;if(!metadataOnly)beginManualEdit();
+    const before=readCanonicalFields();if(!before)return false;
     try{
-      const beforeSelection=selection,options=arrangementOptions(command);if(viewport)options.viewport=viewport;const plan=A.plan(before,beforeSelection,command,options);
-      if(!plan.changed){render();say(command.type==='reorder'?'The selection is already at that edge of the layer order.':'No arrangement change needed.');return true;}
-      const entry=A.makeTransaction(before,beforeSelection,plan,sceneGeneration),history=A.recordHistory(historyState(),entry),live=isLive();
-      publishArrangement(plan,history,live);paintPublished('Arrangement updated in the draft. Apply keeps it for download.',live);return true;
-    }catch(e){render();say(e.message,true);return false;}
+      if(metadataOnly&&!sameScene(before,working))throw new Error('Finish the pending field edit before changing groups. Neither the scene nor groups changed.');
+      const beforeState=sessionState(),expected={document:copy(working),groups:copy(groups),generation:sceneGeneration,revision:interactionRevision},options=arrangementOptions(command);if(viewport)options.viewport=viewport;const plan=A.plan(before,beforeState,command,options);
+      if(!plan.changed){render(!metadataOnly);const unavailable=metadataOnly&&(refresh.previewUnavailable||gateClockFault);say(unavailable?'No session group change. Preview unavailable and hidden.':command.type==='reorder'?'The selection is already at that edge of the layer order.':metadataOnly?'No session group change needed.':'No arrangement change needed.',!!unavailable);return true;}
+      const entry=A.makeTransaction(before,beforeState,plan,sceneGeneration),history=A.recordHistory(historyState(),entry),live=isLive();
+      publishArrangement(plan,history,live,expected);paintPublished(metadataOnly?'Session groups updated. Apply and downloads do not save groups.':'Arrangement updated in the draft. Apply keeps it for download.',live,metadataOnly,!!refresh?.previewUnavailable);return true;
+    }catch(e){render(!metadataOnly);say(e.message,true);return false;}
   }
   $('layer-back').addEventListener('click',()=>runArrangement({type:'reorder',direction:'backward'}));
   $('layer-front').addEventListener('click',()=>runArrangement({type:'reorder',direction:'forward'}));
@@ -3674,6 +3992,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(placing)canvas.focus();
   });
   canvas.addEventListener('pointerup',event=>{
+    placementTouchIntent=null;
     if(!placing||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const outer=canvas.getBoundingClientRect();
     if(!E.point(outer,event.clientX,event.clientY))return;
@@ -3710,9 +4029,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     return {changes,precision};
   }
   function cancelDirectGesture(){
-    lockedTouchIntent=null;
+    lockedTouchIntent=null;placementTouchIntent=null;
     const active=gesture;if(!active)return;const pending=freshRawChanges(active);gesture=null;releaseCapture(active);
-    working=copy(active.before);setSelection(active.selection);formDirty=active.wasDirty;controller.stage(working);interactionRevision++;
+    working=copy(active.before);groups=copy(active.groups);setSelection(active.selection);formDirty=active.wasDirty;controller.stage(working);interactionRevision++;
     // Only provisional values are rolled back. Fresh user-authored text survives
     // cancellation, including a precision companion or an invalid global field.
     let refreshFailed=false;
@@ -3731,20 +4050,26 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     say(message||'Selected '+selection.ids.length+' item'+(selection.ids.length===1?'':'s')+'. Drag or use the selection movement controls.');
   }
   canvas.addEventListener('pointerdown',event=>{
-    lockedTouchIntent=null;
+    lockedTouchIntent=null;placementTouchIntent=null;
     if(gesture){if(event.pointerId!==gesture.pointerId)hide('Move canceled because another pointer touched the field.');return;}
-    if(placing||!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
+    if(placing){
+      if(event.target===canvas&&event.pointerType==='touch'&&event.isPrimary===true&&(event.button===undefined||event.button===0)){
+        try{const rect=canvas.getBoundingClientRect();if(E.point(rect,event.clientX,event.clientY))placementTouchIntent={x:event.clientX,y:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},selection:copy(selection),revision:interactionRevision,generation:sceneGeneration};}catch(e){/* An unavailable placement cannot own a touch default. */}
+      }
+      return;
+    }
+    if(!isLive()||section!=='scene'||document.fullscreenElement===root||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const rect=canvas.getBoundingClientRect(),p=E.point(rect,event.clientX,event.clientY);if(!p)return;
     const checked=readCanonicalFields();if(!checked)return;
     const ids=E.hits(checked,rect.width,rect.height,p.x,p.y,event.pointerType==='touch'?12:6);
     lastHit={ids,x:p.x,y:p.y,width:rect.width,height:rect.height};if(!ids.length){render();return;}
     const id=ids[0],action=event.shiftKey?{type:'toggle',id}:selection.ids.includes(id)?{type:'primary',id}:{type:'only',id};
-    setSelection(A.reduceSelection(checked,selection,action));interactionRevision++;controller.invalidateImport();
+    setSelection(A.reduceSelection(checked,selection,groups,action));interactionRevision++;controller.invalidateImport();
     if(journalUI)journalUI.invalidateExport();if(imageUI)imageUI.invalidate();if(galleryUI)galleryUI.invalidate('Static thumbnails hidden because the selection changed.');
     fillSelected();
     if(event.shiftKey){render();say('Selection toggled. Shift selection does not start a drag.');return;}
     if(selection.ids.some(item=>locks.has(item))){selectAtEnd();if(event.pointerType==='touch'&&event.isPrimary===true)lockedTouchIntent={id:selectedId,revision:interactionRevision};say('Selection contains a locked item. Unlock every selected item to move the whole selection.');return;}
-    gesture={id:selectedId,selection:copy(selection),pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary===true,before:copy(checked),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function',revision:interactionRevision,generation:sceneGeneration,raw:rawSnapshot()};
+    gesture={id:selectedId,groups:copy(groups),selection:copy(selection),pointerId:event.pointerId,pointerType:event.pointerType,isPrimary:event.isPrimary===true,before:copy(checked),wasDirty:formDirty,startX:event.clientX,startY:event.clientY,rect:{left:rect.left,top:rect.top,width:rect.width,height:rect.height},moved:false,selectionOnly:typeof canvas.setPointerCapture!=='function',revision:interactionRevision,generation:sceneGeneration,raw:rawSnapshot()};
     try{if(typeof canvas.setPointerCapture==='function')canvas.setPointerCapture(event.pointerId);}catch(e){hide('Move canceled because pointer capture is unavailable. Use selection movement controls.');return;}
     if(event.pointerType!=='touch')event.preventDefault();canvas.focus();
   });
@@ -3752,7 +4077,22 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const intent=lockedTouchIntent;lockedTouchIntent=null;
     if(intent&&event.target===canvas&&event.cancelable&&event.touches?.length===1&&isLive()&&!placing&&section==='scene'&&document.fullscreenElement!==root&&selectedId===intent.id&&interactionRevision===intent.revision&&selection.ids.some(id=>locks.has(id))&&M.validateScene(readFields()).ok)event.preventDefault();
   },{passive:false});
-  ['touchend','touchcancel'].forEach(type=>canvas.addEventListener(type,()=>{lockedTouchIntent=null;},{passive:true}));
+  canvas.addEventListener('touchstart',event=>{
+    // Placement reopens the inspector at pointerup. Consume only its owned
+    // touchstart so the browser cannot click a control newly exposed underneath.
+    // Hidden explicit placement is valid; this preflight has no reveal authority.
+    const intent=placementTouchIntent;placementTouchIntent=null;
+    if(!intent||event.target!==canvas||!event.cancelable||event.touches?.length!==1||!placing||document.hidden||section!=='scene'||document.fullscreenElement===root||interactionRevision!==intent.revision||sceneGeneration!==intent.generation||!sameScene(selection,intent.selection))return;
+    const touch=event.touches[0];if(touch.clientX!==intent.x||touch.clientY!==intent.y)return;
+    try{
+      const outer=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>outer[key]!==intent.rect[key]))return;
+      const candidate=M.canonicalScene(readFields()),content=M.contentRect(candidate,outer.width,outer.height),rect={left:outer.left+content.x,top:outer.top+content.y,width:content.width,height:content.height},p=E.point(rect,touch.clientX,touch.clientY);
+      if(!p||p.x<0||p.y<0||p.x>rect.width||p.y>rect.height)return;
+      A.plan(candidate,sessionState(),{type:'place',x:p.x*100/rect.width,y:p.y*100/rect.height,snapStep},{locks,history:historyState(),viewport:{width:outer.width,height:outer.height}});
+      event.preventDefault();
+    }catch(e){/* Rejected preflight leaves browser defaults and editor state intact. */}
+  },{passive:false});
+  ['touchend','touchcancel'].forEach(type=>canvas.addEventListener(type,()=>{lockedTouchIntent=null;placementTouchIntent=null;},{passive:true}));
   canvas.addEventListener('touchstart',event=>{
     const active=gesture;
     if(event.target!==canvas||!event.cancelable||!event.touches||event.touches.length!==1||!active||active.pointerType!=='touch'||!active.isPrimary||active.selectionOnly||placing||!isLive()||section!=='scene'||document.fullscreenElement===root||interactionRevision!==active.revision||sceneGeneration!==active.generation||!M.validateScene(readFields()).ok)return;
@@ -3760,17 +4100,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   },{passive:false});
   function gesturePlan(event){
     const active=gesture;if(!active||active.selectionOnly||event.pointerId!==active.pointerId||!isLive())return null;
-    if(interactionRevision!==active.revision||sceneGeneration!==active.generation||!sameScene(selection,active.selection))throw new Error('The selected scene or controls changed.');
+    if(interactionRevision!==active.revision||sceneGeneration!==active.generation||!sameScene(selection,active.selection)||!sameScene(groups,active.groups))throw new Error('The selected scene or controls changed.');
     const pending=freshRawChanges(active);if(pending.changes.length||pending.precision.length)throw new Error('The scene fields changed.');
     if(!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return null;
     const current=canvas.getBoundingClientRect();if(['left','top','width','height'].some(key=>current[key]!==active.rect[key]))throw new Error('The preview layout changed.');
     const dx=event.clientX-active.startX,dy=event.clientY-active.startY;
     if(!active.moved&&Math.hypot(dx,dy)<E.DRAG_THRESHOLD)return null;
     active.moved=true;
-    const plan=A.plan(active.before,active.selection,{type:'translate',dx,dy,snapStep},{locks,viewport:{width:active.rect.width,height:active.rect.height},history:historyState()});
+    const plan=A.plan(active.before,{groups:active.groups,selection:active.selection},{type:'translate',dx,dy,snapStep},{locks,viewport:{width:active.rect.width,height:active.rect.height},history:historyState()});
     // Singleton helper compatibility may normalize tolerated raw residues. A
     // gesture that ends on its original lattice point nevertheless owns no edit.
-    if(active.selection.ids.every(id=>{const before=active.before.scene.objects.find(o=>o.id===id),after=plan.document.scene.objects.find(o=>o.id===id);return Math.round(before.x*100)===Math.round(after.x*100)&&Math.round(before.y*100)===Math.round(after.y*100);}))return {...plan,document:copy(active.before),selection:copy(active.selection),changed:false};
+    if(active.selection.ids.every(id=>{const before=active.before.scene.objects.find(o=>o.id===id),after=plan.document.scene.objects.find(o=>o.id===id);return Math.round(before.x*100)===Math.round(after.x*100)&&Math.round(before.y*100)===Math.round(after.y*100);}))return {...plan,document:copy(active.before),groups:copy(active.groups),selection:copy(active.selection),changed:false,changedScene:false,changedGroups:false};
     return plan;
   }
   function updateDirectGesture(event){
@@ -3791,17 +4131,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     try{
       const plan=gesturePlan(event);
       if(!plan){gesture=null;releaseCapture(active);selectAtEnd();return;}
-      const entry=A.makeTransaction(active.before,active.selection,plan,sceneGeneration),history=A.recordHistory(historyState(),entry);
+      const entry=A.makeTransaction(active.before,{groups:active.groups,selection:active.selection},plan,sceneGeneration),history=A.recordHistory(historyState(),entry),prepared=prepareArrangementPublication(plan,history);
       // A final stage is distinct from the last provisional preview. Failure at
       // this boundary still restores the complete origin and both old stacks.
-      const result=controller.stageLive(plan.document);if(!result.ok)throw new Error(result.error);
-      if(!sameScene(working,plan.document))provenanceIdentity++;
-      working=copy(plan.document);setSelection(plan.selection);publishHistory(history);formDirty=plan.changed?!sameScene(controller.getState().current,working):active.wasDirty;gesture=null;interactionRevision++;published=true;releaseCapture(active);lastHit=null;imageReplacement=null;
+      const result=controller.stageLive(prepared.document);if(!result.ok)throw new Error(result.error);
+      if(!sameScene(working,prepared.document))provenanceIdentity++;
+      working=prepared.document;groups=prepared.groups;selection=prepared.selection;selectedId=selection.primaryId;publishHistory(prepared.history);formDirty=plan.changed?!sameScene(controller.getState().current,working):active.wasDirty;gesture=null;interactionRevision++;published=true;releaseCapture(active);lastHit=null;imageReplacement=null;
       editorOpen=true;section='scene';paintPublished(plan.changed?'Arrangement moved in the draft. Apply keeps it for download.':'Starting position restored; no arrangement change.',true);
       $(selection.ids.length===1?'object-select':'selection-summary').scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
-    }catch(e){if(published){conceal('technical-failure');try{render();}catch(ignored){canvas.hidden=true;}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);}else hide('Move canceled. '+e.message);}
+    }catch(e){if(published){conceal('technical-failure');try{render();}catch(ignored){removeUnavailablePreview();}say('Draft updated; preview unavailable and hidden. Data controls remain available.',true);}else hide('Move canceled. '+e.message);}
   });
-  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{lockedTouchIntent=null;if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
+  ['pointercancel','lostpointercapture'].forEach(type=>canvas.addEventListener(type,event=>{lockedTouchIntent=null;placementTouchIntent=null;if(gesture&&event.pointerId===gesture.pointerId)hide('Move canceled. Starting position restored; preview hidden.');}));
   $('cycle-overlap').addEventListener('click',()=>{
     lockedTouchIntent=null;
     if(gesture){hide('Move canceled. Select overlapping items after releasing the pointer.');return;}
@@ -3819,9 +4159,9 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   [['undo-move','undo'],['redo-move','redo']].forEach(([id,direction])=>$(id).addEventListener('click',()=>{
     beginManualEdit();const before=readCanonicalFields();if(!before)return;
     try{
-      const plan=A.planHistory(before,selection,historyState(),direction,sceneGeneration,{locks});if(!plan.changed){render();return;}
+      const plan=A.planHistory(before,sessionState(),historyState(),direction,sceneGeneration,{locks});if(!plan.changed){render();return;}
       conceal();publishArrangement(plan,plan.history,false);paintPublished('Draft arrangement '+(direction==='undo'?'undone':'redone')+'. The preview is hidden; applied scene is unchanged.',false);
-    }catch(e){if(e.code==='HISTORY_ENDPOINT_MISMATCH'){clearMoveHistory();render();say('Arrangement history cleared because the scene no longer matches its recorded endpoint.',true);}else{render();say(e.message,true);}}
+    }catch(e){if(e.code==='HISTORY_ENDPOINT_MISMATCH'){clearMoveHistory();render();say('Arrangement history cleared because the scene or session groups no longer match the recorded endpoint.',true);}else{render();say(e.message,true);}}
   }));
   $('skip-controls').addEventListener('click',event=>{
     event.preventDefault();conceal();cancelPlacement();editorOpen=true;section='scene';render();$('controls').focus();say('Scene controls focused. The field is hidden.');
@@ -3855,7 +4195,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     formDirty=false;fillFields(result.state.current,true);render();say('Changes applied. The scene is hidden; choose Resume live preview to display it.');
   });
   $('discard').addEventListener('click',()=>{
-    cancelPlacement();conceal();if(!locksAllow(controller.getState().current)){render();return;}const preferredSingleton=selected()?.id||null;controller.discard();formDirty=false;fillFields(controller.getState().current,false,preferredSingleton);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.');
+    cancelPlacement();conceal();if(!locksAllow(controller.getState().current)){render();return;}const preferredSingleton=groups.length?null:selected()?.id||null;controller.discard();formDirty=false;const notice=fillFields(controller.getState().current,false,preferredSingleton);$('preset').value='';render();say('Staged changes discarded. Your applied scene is hidden.'+notice);
   });
   function showScene(){
     if(controller.getState().visible&&displayKind!=='live'&&displayKind!=='scene'){hide('Preview mode changed. The field is hidden; choose Resume live preview again after the repeat-action lock.');return;}
@@ -3879,8 +4219,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   ['undo','redo'].forEach(action=>$(action).addEventListener('click',()=>{
     if(locks.ids().length){say('Unlock all items before accepted scene Undo/Redo.',true);return;}
     cancelPlacement();conceal();const result=controller[action]();
-    if(result.ok){formDirty=false;fillFields(result.state.current);$('preset').value='';}
-    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Resume live preview to display it again.':result.error,!result.ok);
+    let notice='';if(result.ok){formDirty=false;notice=fillFields(result.state.current);$('preset').value='';}
+    render();say(result.ok?(action==='undo'?'Previous':'Next')+' scene restored and hidden. Choose Resume live preview to display it again.'+notice:result.error,!result.ok);
   }));
   // Fullscreen is optional. Entry/exit/failure never reveal; the common ancestor
   // includes the always-reachable Exit control. Do not schedule a later Show.
@@ -3941,7 +4281,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     try{
       const text=await file.text(),state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;
       const result=controller.finishImport(token,text);
-      let notice='';if(result.ok){notice=clearReplacementLocks();formDirty=false;fillFields(result.state.current);$('preset').value='';}
+      let notice='';if(result.ok){notice=clearReplacementLocks();formDirty=false;notice+=fillFields(result.state.current);$('preset').value='';}
       render();say(result.ok?'Scene opened and hidden. Choose Resume live preview to display it again.'+notice:result.error+' Your applied scene is unchanged.',!result.ok);
     }catch(e){const state=controller.getState();if(token!==state.epoch||!state.pendingImport)return;controller.invalidateImport();render();say('The file could not be read. Your applied scene is unchanged.',true);}
   });
@@ -3988,7 +4328,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('item-end').textContent=!selected()?'Select one item to inspect its timing.':compiled&&selectedIndex>=0?'Selected item ends at '+(compiled.tracks[selectedIndex].endMs/1000)+' seconds.':'Fix the item timing to calculate its end.';
     if(compiled)compiled.tracks.forEach(track=>{
       const o=compiled.document.scene.objects[track.index],button=document.createElement('button');button.type='button';button.className='timeline-track';button.setAttribute('aria-pressed',String(selection.ids.includes(o.id)));
-      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · Pulse':' · Steady');button.appendChild(label);
+      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · Pulse':' · Steady')+groupLabel(o.id);button.appendChild(label);
       const detail=document.createElement('span');detail.className='track-detail';detail.textContent='In '+o.timing.fadeInMs/1000+' s · hold '+o.timing.holdMs/1000+' s · out '+o.timing.fadeOutMs/1000+' s';button.appendChild(detail);
       const bar=document.createElement('span');bar.className='track-bar';bar.setAttribute('aria-hidden','true');bar.style.left=(track.startMs/compiled.durationMs*100)+'%';bar.style.width=((track.endMs-track.startMs)/compiled.durationMs*100)+'%';bar.style.color=M.colorCSS(o.color);
       [['fade-in',o.timing.fadeInMs],['hold',o.timing.holdMs],['fade-out',o.timing.fadeOutMs]].forEach(([phase,duration])=>{if(duration){const segment=document.createElement('span');segment.className='track-segment '+phase;segment.style.width=(duration/(track.endMs-track.startMs)*100)+'%';bar.appendChild(segment);}});button.appendChild(bar);
@@ -4214,7 +4554,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     conceal();cancelPlacement();if(!sequencePrecondition()||!sequence){render();return;}
     if(formDirty){render();say('Apply or discard the scene edits before loading a step copy.',true);return;}
     const result=controller.apply(stepScene(stepIndex));if(!result.ok){render();say(result.error,true);return;}
-    const notice=clearReplacementLocks();formDirty=false;fillFields(result.state.current);section='scene';render();$('editor-scroll').scrollTop=0;$('controls').focus();say('Step copied into the scene editor. Its saved snapshot is unchanged.'+notice);
+    let notice=clearReplacementLocks();formDirty=false;notice+=fillFields(result.state.current);section='scene';render();$('editor-scroll').scrollTop=0;$('controls').focus();say('Step copied into the scene editor. Its saved snapshot is unchanged.'+notice);
   });
   $('sequence-example').addEventListener('click',()=>{
     conceal();cancelPlacement();if(!sequencePrecondition()){render();return;}

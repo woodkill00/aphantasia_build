@@ -2,7 +2,15 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: version 0.7 live startup and responsive timing controls
+## Current preparation: Feature 014 flat session groups
+
+20 October 2026. The [dated report](../imagery-app/test-results/TEST-REPORT.md) records the fourth native run at 223/224 FAIL, with mobile 112/112 PASS and one desktop release-correlation test failure. The mouse reused a pointer ID, and the helper selected the prior Place-button release rather than the valid canvas release. The one-predicate correction and regression are independently accepted; runtime 987a is unchanged. The final local aggregate passes 1424/1424; outgoing review and a complete fresh corrected-head native/visual/performance/package run remain required. Coverage stays 224 cases with 96 new group/352 total planned captures. The fourth run emitted 351 captures; missing desktop singleton first Undo/frame is not inferred from other passes.
+
+Feature 013 exact main 291ea178 / tree 2e3c3abd is independently accepted on run 39467700368: 1215 Node, 200 native, package, timing and 78 assigned visual frames. This prerequisite does not accept the changed group runtime. [PR 17 checks](https://github.com/woodkill00/aphantasia_build/pull/17/checks) supply subsequent exact-head outcomes. The lossless transport retains its fixed 7,350,000-byte fail-closed cap and uncertain projections; complete delivery of a failed run is not native acceptance. No approval is inferred from source review, count estimates, old workflows or an unchanged version label.
+
+The independently reviewed bounded workflow allowance is 30 minutes for native execution and 33 minutes for the same job; permissions, sandbox, cleanup, package authority, release, hosting and collection scope remain unchanged. [Feature 014 tasks](../specs/014-session-groups/tasks.md) remain fixed acceptance criteria, not a second work register.
+
+## Historical version 0.7 live startup and responsive timing controls
 
 The requested increment starts the valid static draft preview once, keeps Hide persistent, extends current background saturation to 100% while retaining the 60% default and strict legacy bounds, and exposes explicit Steady/Pulse modes with mixed-item summaries. Consolidate responsive sizing around shared tokens and calc/min/max/clamp, preserving an unobscured preview and fully visible precision rows. See the [design](editor-redesign.md) and [item contract](item-timeline.md).
 
@@ -62,4 +70,4 @@ CI uses preinstalled tools, normal Chrome sandboxing, read-only repository permi
 
 ## Deferred decisions
 
-Repository-authored code, documentation and examples now use the [MIT License](../LICENSE); third-party material retains its own rights and terms. Release publication and hosted delivery remain separate decisions. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.
+Repository-authored code, documentation and examples now use the [MIT License](../LICENSE); third-party material retains its own rights and terms. Release publication and hosted delivery remain separate decisions. Broader groups beyond the separately specified flat-session candidate, freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.

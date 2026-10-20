@@ -1,3 +1,47 @@
+# Feature 014 release-correlation correction, 20 October 2026
+
+18:54 UTC. Fourth run 39474571566 is terminal 223/224 FAIL, package SKIPPED, in 1263.269 seconds. Mobile 112/112 and all 200 inherited cases pass; the single desktop failure is independently confirmed test event correlation, not new runtime overlap behavior. All 351 payloads verify; 95 emitted group frames are covered by 93 exact previously inspected matches and two newly inspected mobile originals. One desktop singleton Undo/frame is absent. The exact one-predicate correction plus regression passes 51/51 targeted checks; runtime 987a is unchanged. Final local aggregate passes 1424/1424 in 19640.428383 ms; complete fresh corrected-head gates remain pending. See the [dated report](test-results/TEST-REPORT.md); passing subsets are not stitched into acceptance.
+
+---
+
+## Historical touch-placement source preparation
+
+# Feature 014 touch-placement source repair, 20 October 2026
+
+18:19 UTC. Narrow source 987a2b20 / 421345 bytes and strengthened singleton/group native helper are independently accepted. 107 relevant placement/direct/observer and 50 browser-helper checks pass. Final complete local aggregate is 1423/1423 PASS (18600.893153 ms, Node v24.19.0), docs 58/402 and 90 manifest entries verify. Exact repaired native/visual/performance/CI package gates remain NOT RUN. Three earlier native runs remain failed; the latest 223/224 trace confirmed successful canvas placement followed by inspector reopen and same-touch compatibility-click Delete. All 349 payloads and 93 emitted group frames were reviewed, with one frame absent; scoped timing passes do not accept the failed run or new source. The [dated report](test-results/TEST-REPORT.md) retains exact evidence and limits.
+
+---
+
+## Historical observer/diagnostic preparation
+
+# Feature 014 test-observer preparation, 20 October 2026
+
+17:41:40 UTC. The second [PR 17 native run](https://github.com/woodkill00/aphantasia_build/actions/runs/39463607041) decoded completely: **213/224 PASS, eleven FAIL**, 341 captures, 1154.245 seconds. Desktop was 107/112 and mobile emulation 106/112. The whole run remains failed; its passing cases are not combined with another failed run. Ten failures occur at stale/undefined test observation after empty-group optimization. The separate mobile rapid case passed the first trusted Undo but later placement unexpectedly emptied the document; its cause remains unresolved.
+
+A passive empty-current-input history observer and ten new regressions are independently accepted, with 44/44 targeted helper tests PASS. Final bounded passive placement diagnostics are also source-accepted, with 47/47 targeted tests including 13 new observer/diagnostic regressions. Complete local aggregate is 1366/1366 PASS (19659.416407 ms, Node v24.19.0); docs 58/401 and all 89 manifest entries verify. Current repaired-head native/visual/performance/CI package gates remain NOT RUN. Geometry reads can perturb timing; a diagnostic pass alone would not resolve the original deletion. Runtime, runner, transport, thresholds, assertions, scenario count, 30/33-minute budgets and security are unchanged. All 341 payloads verify and all 85 emitted group frames were inspected without an additional blocker; nine planned frames are absent. Both inherited paired timing comparisons pass, but group-cost gates were interrupted. Terminal job/native FAIL and package SKIPPED are independently verified. Scope remains explicit in the [dated report](test-results/TEST-REPORT.md), not inferred from decoded bytes. PR 16's separate evidence-only rerun reports 200/200, 256 captures and package success, and the integration owner confirms scoped review and protected merge at 291ea178 with the accepted tree. Exact-main verification is active at this snapshot.
+
+---
+
+## Historical 17:02 runtime/transport preparation
+
+# Feature 014 repaired preparation, 20 October 2026
+
+The first [PR 17 native attempt](https://github.com/woodkill00/aphantasia_build/actions/runs/39454651362) is terminal FAIL with package SKIPPED. Only partial native evidence is retained: 146 observed passes, three desktop failures, 198 byte/hash-verified captures and 45 actually inspected desktop group images. Final full/mobile counts and duration are unknown after log transport failed. No full-run visual acceptance is inferred.
+
+The repaired candidate has 1289/1289 local runtime/model/DOM, 146/146 focused UI and independently repeated 104/104 group-plus-selection model passes. Its narrow defensive empty-group optimization preserves validation and reduces local canonical-call counts without claiming native performance. The two native fixture-premise corrections retain every assertion and threshold. Combined runtime, native premise-repair and lossless transport source are now independently accepted. The complete local aggregate passes 1353/1353 after metadata refresh; docs 58 files/400 links and all 88 manifest entries verify. Fresh native/visual/performance/clean-checkout package and actual evidence delivery remain unverified. See the [dated report](test-results/TEST-REPORT.md).
+
+---
+
+## Historical preparation and source reviews
+
+# Feature 014 source-preparation review
+
+20 October 2026. The exact flat-group source/runtime was independently reviewed after its safety repairs and narrow Feature 013 reconciliation. Focused group/inherited DOM checks pass 143/143; runtime/model/DOM aggregate passes 1277/1277. The complete local suite and exact artifact are recorded in the [dated report](test-results/TEST-REPORT.md). This is source/test-double evidence, not native, actual visual, performance, clean-checkout package or final-head CI acceptance. No runtime, browser-security, permissions, release or hosting change is made by this metadata reconciliation.
+
+The report preserves the first group failures, later independent stale-raster/status findings and all upstream native failures. Subsequent exact-head/verified-main evidence must be recorded separately. The reviews below are historical and do not accept the current runtime.
+
+---
+
 # Public repository and licensed portable-kit review
 
 The public documentation/onboarding increment keeps all eight v0.7 runtime/source files byte-identical to merged main `1b67f86`. Independent review accepted the concise beginner path, task-based guides, support/contribution forms, seven example round trips, four original synthetic screenshots and their exact provenance. All 498 current local checks pass; documentation links/fragments and deterministic offline packaging are independently verified.

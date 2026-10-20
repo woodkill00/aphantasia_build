@@ -4,6 +4,14 @@
 
 The [Spec-Kit specification](../specs/008-interactive-scene-roadmap/spec.md), [clarifications](../specs/008-interactive-scene-roadmap/clarifications.md), [plan](../specs/008-interactive-scene-roadmap/plan.md) and [task map](../specs/008-interactive-scene-roadmap/tasks.md) define intended requirements. The [public work register](../project-queue.json) is the single live status record. A source implementation, automated check, native run, rendered-frame review, human usability study and research-governance decision are different forms of evidence.
 
+## Feature 014 preparation snapshot
+
+The 20 October 2026 flat-session-group candidate has an accepted touch-placement source repair and an independently reviewed native release-correlation correction. Runtime is unchanged. The fourth run passed mobile grouped/singleton placement and first Undo but remained 223/224 FAIL due to one desktop test event-selection defect. Current corrected-head native/visual/performance/clean-checkout package gates are NOT RUN. All four failures and the unreached desktop singleton Undo remain explicit. Read the [exact report](../imagery-app/test-results/TEST-REPORT.md) and [group guide](../imagery-app/README.md#flat-session-groups-feature-014-candidate). Feature 013 exact-main acceptance is separately verified and does not transfer to group acceptance.
+
+Select two or more ungrouped items and Group them; every later member selection expands to the complete group. Groups are rigid arrangement units, not layers or parent transforms. Align requires two units, equal gaps three; their shape/outline union includes internal empty space. Ungroup and explicitly select one member before individual editing/locking. Group/Ungroup is a metadata-only transaction in the existing bounded history, with immediate Hide and unchanged canonical schemas.
+
+Groups are only for this editing session. Apply and downloads do not save them. Loading, Discard, accepted-scene history or reload clears them. A successful Discard with any existing group clears all groups and selects the first accepted item; without groups, a valid prior singleton is preserved.
+
 ## Start without changing legacy files
 
 Open the development source's `imagery-app/index.html` locally. The starter appears as a static Live preview, never timed autoplay. Hide/End/Escape conceal; later edits or delayed callbacks must not reveal it again. Explicitly resume when wanted. There is no autosave.
@@ -28,7 +36,7 @@ Hollow interiors count as targets; shadows and letterbox bars do not. Small hit 
 
 Authored scene-v4 adds ellipse, rectangle, rounded rectangle, polygon and star alongside dot, pixel, circle, square and triangle: ten finite families, not every mathematical shape. Dimensions, rotation, body fill/outline, polygon/star parameters and original effects/timing pass the shared closed validator. Width/height are bounded by family; unsupported fields, arbitrary paths, markup and nonfinite values are rejected. The [architecture](architecture.md#authored-scene-v4-and-sequence-v3-contract) records exact ranges.
 
-Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Session locks, snap and centering are the implemented fourth increment, with scoped native/visual acceptance described below. Editor-only guides have passed scoped exact-main checks; multi-selection/distribution and flat session groups are separately gated increments.
+Layer buttons move an item backward/forward by one draw-order position. Duplicate creates an editable overlap with a fresh ID. Session locks, snap and centering are the implemented fourth increment, with scoped native/visual acceptance described below. Later candidates add separately specified editor aids, multi-selection/equal gaps and flat session groups; the earlier fourth-increment evidence does not accept those changes.
 
 The **Original preset gallery** begins as a text-only list of twelve original MIT examples. Filter by item count, item color count, vertical symmetry, geometric overlap and authored timing. Color count excludes the shared background and disabled effects; symmetry includes colors; overlap includes containment as well as crossing shapes. These are descriptive filters, not clinical outcomes or a recommended order.
 
@@ -102,14 +110,10 @@ A historical gallery/provenance candidate, PR 13 head `65c96ebcae397884deb032d9b
 Still separate or deferred:
 
 - Arbitrary SVG/freeform paths/curves, arcs/rings/lines, text, 3D/fractals, larger item budgets and an exhaustive shape inventory.
-- Equal-spacing distribution, visible editor-only grids/guides, grouping, persistent lock/snap settings and broader catalogs beyond the twelve original examples remain deferred. Accepted session locks/snap/centering do not complete those wider requirements.
+- Visible editor aids, multi-selection/equal gaps and flat session groups have separately scoped implementations and evidence; the current group runtime still requires native/visual/performance/package/CI acceptance. Persistent lock/snap/group settings, nesting, editable group names, merging, isolation and broader catalogs remain deferred.
 - Raster formats beyond PNG/JPEG, richer tracing/manual anchors, empirical natural-image and correction-effort usefulness acceptance.
 - Provenance native regression passed on the recorded arrangement source; broader feature visual review remains separate. Calibrated physical exposure/gaze measurement and governed research activation are not established. The optional software interval summary is not a measurement of attention or light dose.
 - Physical-device touch/pen, cross-engine and OS file workflows, actual zoom and comprehensive assistive-technology/accessibility acceptance.
 - Qualified sensory/content review, clinical efficacy, diagnostic validity and participant research.
 
 No read-only repository permission, normal browser sandbox or CI protection is relaxed by this documentation. No hosting, deployment, release publication or participant collection is authorized merely by implementing the roadmap.
-
-## Atomic multi-selection acceptance gate
-
-Feature 013 adds semantic multi-selection and atomic arrangement commands. The first native run failed 6 of 200 groups; the repaired run 39453086729 is green in workflow metadata but its complete detailed log is unavailable, so native evidence, actual captures, paired timing and package details remain unreviewed. A separately reviewed lossless evidence-transport repair preserves the runtime and all 200 native groups; fresh exact-head native, actual capture, bounded timing and package review is required before protected integration; see [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) and the [test record](../imagery-app/test-results/TEST-REPORT.md). The published v0.7.0 download is unchanged.
