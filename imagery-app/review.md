@@ -1,3 +1,11 @@
+# Feature 014 source-preparation review
+
+20 October 2026. The exact flat-group source/runtime was independently reviewed after its safety repairs and narrow Feature 013 reconciliation. Focused group/inherited DOM checks pass 143/143; runtime/model/DOM aggregate passes 1277/1277. The complete local suite and exact artifact are recorded in the [dated report](test-results/TEST-REPORT.md). This is source/test-double evidence, not native, actual visual, performance, clean-checkout package or final-head CI acceptance. No runtime, browser-security, permissions, release or hosting change is made by this metadata reconciliation.
+
+The report preserves the first group failures, later independent stale-raster/status findings and all upstream native failures. Subsequent exact-head/verified-main evidence must be recorded separately. The reviews below are historical and do not accept the current runtime.
+
+---
+
 # Public repository and licensed portable-kit review
 
 The public documentation/onboarding increment keeps all eight v0.7 runtime/source files byte-identical to merged main `1b67f86`. Independent review accepted the concise beginner path, task-based guides, support/contribution forms, seven example round trips, four original synthetic screenshots and their exact provenance. All 498 current local checks pass; documentation links/fragments and deterministic offline packaging are independently verified.

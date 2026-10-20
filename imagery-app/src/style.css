@@ -154,3 +154,6 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 
 /* Selection remains semantic inspector content, never a canvas overlay or nested scroller. */
 .selection-controls{margin:16px 0;padding:0;border:0;min-width:0}.selection-controls legend{font-size:.8rem}.selection-list{display:grid;gap:var(--control-gap);margin-block:var(--control-gap);min-width:0}.selection-row{display:flex;align-items:center;gap:8px;min-height:44px;margin:0;padding:6px 4px;border:1px solid var(--line);border-radius:6px;overflow-wrap:anywhere}.selection-row input{flex:none;width:20px;height:20px;accent-color:var(--accent)}.selection-row span{min-width:0;line-height:1.45}.selection-row:focus-within{outline:2px solid var(--accent);outline-offset:1px}.selection-alignment{margin-top:var(--control-gap)}#selection-summary{min-height:3.1em;overflow-wrap:anywhere}.selection-deltas label{min-height:2.9em}.selection-deltas{margin-bottom:var(--control-gap)}
+
+/* Session grouping remains in the existing inspector aperture. */
+.group-actions{margin-top:var(--control-gap)}#group-session-warning{overflow-wrap:anywhere}.group-actions button{min-height:44px}

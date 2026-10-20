@@ -2,7 +2,15 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: version 0.7 live startup and responsive timing controls
+## Current preparation: Feature 014 flat session groups
+
+20 October 2026. The reviewed source candidate and narrow Feature 013 repair reconciliation are recorded in the [dated test report](../imagery-app/test-results/TEST-REPORT.md). Complete local Node, focused model/DOM, docs and manifest checks are separate from native Chrome, actual capture inspection, same-runner performance and clean-checkout CI package acceptance. The prepared native suite contains 224 groups (200 preserved plus 24 additive) and 94 new planned captures; these are NOT RUN for this runtime at the preparation snapshot.
+
+Verified Feature 013 main remains required before protected group integration. [PR 16 checks](https://github.com/woodkill00/aphantasia_build/pull/16/checks) supply subsequent exact-head prerequisite outcomes. Reconcile that exact main, then execute and independently review every group gate on the final artifact. A future PR checks URL must be recorded only after its creation/identity is verified; none is invented here. Do not infer acceptance from source review, count estimates, old workflows or an unchanged version label.
+
+The independently reviewed bounded workflow allowance is 30 minutes for native execution and 33 minutes for the same job; permissions, sandbox, cleanup, package authority, release, hosting and collection scope remain unchanged. [Feature 014 tasks](../specs/014-session-groups/tasks.md) remain fixed acceptance criteria, not a second work register.
+
+## Historical version 0.7 live startup and responsive timing controls
 
 The requested increment starts the valid static draft preview once, keeps Hide persistent, extends current background saturation to 100% while retaining the 60% default and strict legacy bounds, and exposes explicit Steady/Pulse modes with mixed-item summaries. Consolidate responsive sizing around shared tokens and calc/min/max/clamp, preserving an unobscured preview and fully visible precision rows. See the [design](editor-redesign.md) and [item contract](item-timeline.md).
 
@@ -62,4 +70,4 @@ CI uses preinstalled tools, normal Chrome sandboxing, read-only repository permi
 
 ## Deferred decisions
 
-Repository-authored code, documentation and examples now use the [MIT License](../LICENSE); third-party material retains its own rights and terms. Release publication and hosted delivery remain separate decisions. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.
+Repository-authored code, documentation and examples now use the [MIT License](../LICENSE); third-party material retains its own rights and terms. Release publication and hosted delivery remain separate decisions. Broader groups beyond the separately specified flat-session candidate, freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.
