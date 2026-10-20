@@ -1,3 +1,17 @@
+# Version 0.6 candidate verification procedure
+
+Use the complete dependency-free suite against the exact assembled artifact: `node --test imagery-app/tests/*.test.cjs`, syntax/fixture checks, then `node imagery-app/tests/browser-cdp.cjs` with an already installed permitted Chrome. The current plan is 96 native groups and 52 synthetic rendered captures; execution and visual acceptance are pending. Consult the current TEST-REPORT and summary for exact counts, hashes and outcomes rather than historical sections below.
+
+Keep sandboxing, offline direct-file checks, genuine event observations, strict raster/validation assertions and process cleanup. CI currently allows eight minutes for the native step within a ten-minute job. Do not silently omit tests or weaken assertions to meet that budget; report actual runtime and any deadline failure separately. Decode bounded synthetic capture records, verify bytes/hashes, and inspect actual pixels. Raw logs and captures stay outside the public source tree.
+
+Additional item coverage includes typed numeric controls and fine steps; migrated scene/sequence files; independently colored body/outline/shadow; grouped alpha; finite overlapping fades/shared pulse; exact auto-end, Pause/Resume/Stop; shared-buffer reuse; cancellation, accessibility names and complete focused-field visibility at compact sizes. Emulation is not physical-device, full accessibility or clinical/sensory validation.
+
+## Historical procedure records
+
+The sections below describe earlier artifacts and former workflow budgets. They do not override the current procedure above.
+
+---
+
 # Version0.4 repair awaits native rerun
 
 The repaired114,116-byte HTML has SHA-256 `3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda`;323 non-browser checks pass. [First native v0.4 run39350355646](https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646) failed8 of74 groups on the previous be1be8a2 artifact. All28 captured synthetic frames were hash verified and inspected. Current repaired native execution is NOT RUN. The complete failure history and unexecuted tails are in the report.

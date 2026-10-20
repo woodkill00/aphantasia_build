@@ -20,7 +20,7 @@ test('PORTABLE: executable scripts are inline classic JavaScript and parse',()=>
  for(const [i,s] of scripts.entries()){ assert.doesNotMatch(s[1],/\bsrc\s*=|type\s*=\s*["']module/i); new vm.Script(s[2],{filename:`index-inline-${i}.js`}); }
 });
 test('PORTABLE: production model and UI sources are embedded verbatim in delivered file',()=>{
- for(const name of ['model.js','sequence-model.js','app.js']) {const source=fs.readFileSync(path.join(ROOT,'src',name),'utf8').trim(); assert.ok(html.includes(source),`${name} absent/mismatched in HTML`);}
+ for(const name of ['model.js','sequence-model.js','item-model.js','app.js']) {const source=fs.readFileSync(path.join(ROOT,'src',name),'utf8').trim(); assert.ok(html.includes(source),`${name} absent/mismatched in HTML`);}
 });
 test('PRIVACY: no network, dynamic code, service worker, storage dependency, or raw markup sink in runtime',()=>{
  for(const re of [/\bfetch\s*\(/,/\bXMLHttpRequest\b/,/\bWebSocket\b/,/\bsendBeacon\s*\(/,/serviceWorker\s*\./,/\beval\s*\(/,/new\s+Function\b/,/\bimport\s*\(/,/\bimportScripts\b/,/\.innerHTML\s*=/,/\.outerHTML\s*=/,/insertAdjacentHTML\s*\(/,/document\.write\s*\(/,/\blocalStorage\b/,/\bsessionStorage\b/,/\bindexedDB\b/]) assert.doesNotMatch(code,re);

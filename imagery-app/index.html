@@ -108,6 +108,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   .live-editor #scene-canvas{height:25%}
   .live-editor .editor-panel{height:calc(75% - 8px)}
 }
+/* Precision fields preserve a real number input beside each slider. */
+.precision-control{margin:12px 0}.precision-control .slider-label{display:flex;align-items:center;justify-content:space-between;gap:8px}.precision-control .slider-label label{margin:0;min-width:0}.number-with-unit{display:flex;align-items:center;gap:4px;flex-shrink:0;font-size:.75rem;color:var(--muted)}input.precision-number{width:78px;min-height:44px;padding:7px;text-align:right;font-variant-numeric:tabular-nums}.slider-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px}.slider-row .color-slider{width:100%;min-width:0;margin:0}.step-button{min-width:44px;min-height:44px;padding:0;font-size:1.15rem}.item-details{border-top:1px solid var(--line);margin-top:16px;padding-top:10px}.item-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;font-size:.85rem}.effect-group{border:0;padding:8px 0;margin:0}.effect-group legend{font-size:.8rem}.item-timeline-section{margin:18px 0;padding-top:14px;border-top:1px solid var(--line)}.item-timeline{display:grid;gap:7px;margin:12px 0}.timeline-track{width:100%;position:relative;isolation:isolate;min-height:52px;overflow:hidden;text-align:left;padding:6px 9px;font-size:.7rem}.timeline-track[aria-pressed="true"]{border-color:var(--accent)}.timeline-track .track-bar{position:absolute;bottom:4px;height:5px;background:currentColor;opacity:.5;z-index:-1}.timeline-track .track-label{display:block}.item-view-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-view-actions button{min-width:76px;min-height:44px}.item-view-actions .hint{font-variant-numeric:tabular-nums;margin:0}#item-play{width:100%;margin-top:6px}#item-after-previous{width:100%;font-size:.74rem}.check-label input[type="checkbox"]{min-width:24px;min-height:24px}.precision-control .color-slider:disabled{opacity:.4}
+@media(max-width:420px){input.precision-number{width:72px}.slider-row{gap:5px}.precision-control .slider-label label{font-size:.75rem}}
+.timeline-track{padding-bottom:14px}.timeline-track .track-detail{display:block;color:var(--muted);font-size:.65rem;margin-top:3px}.timeline-track .track-bar{display:flex;background:none;opacity:.7}.track-segment{height:100%;background:currentColor}.track-segment.fade-in{background:linear-gradient(to right,transparent,currentColor)}.track-segment.fade-out{background:linear-gradient(to right,currentColor,transparent)}
 </style>
 </head>
 <body>
@@ -116,7 +120,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   <div id="hidden-label" class="hidden-label" aria-hidden="true"><span>The field is hidden</span><small id="hidden-hint">Start Live preview, then edit to see changes immediately.</small></div>
   <a id="skip-controls" class="skip-link" href="#controls">Skip to scene controls</a>
   <header id="masthead" class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">LIVE EDITOR / 0.5</span></div><span id="visibility-label" class="pill">Hidden</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◦</span><div class="wordmark">IMAGERY FIELD<span class="edition">ITEM STUDIO / 0.6</span></div><span id="visibility-label" class="pill">Hidden</span></div>
     <nav class="workspace-actions" aria-label="Workspace"><button id="viewing-guidance" type="button">Viewing guidance</button><button id="editor-toggle" type="button" aria-expanded="true" aria-controls="editor-panel">Close editor</button><button id="fullscreen" type="button">Enter fullscreen</button></nav>
   </header>
   <main id="stage-body" class="stage-body">
@@ -143,24 +147,26 @@ input.color-slider:disabled{opacity:.45;cursor:default}
               <div><label for="position-y">Vertical position</label><input id="position-y" type="number" min="0" max="100" step="0.01" inputmode="decimal" value="50"></div>
             </div>
             <p class="hint">Positions: 0–100% across the field. Size: 1–28% of its shorter side; dots and pixels: 1–8%. Keep the full object inside its edge.</p>
-            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="delete-object" type="button">Remove object</button></div>
+            <div class="small-actions"><button id="place-object" type="button" aria-pressed="false">Place on field</button><button id="duplicate-object" type="button">Duplicate object</button><button id="delete-object" type="button">Remove object</button></div>
             <p id="placement-hint" class="hint">Place on field lets you click or tap a new position. An active live preview stays visible. Position inputs work with a keyboard.</p>
             <div class="color-preview"><span id="object-color-swatch" class="color-swatch" role="img" aria-label="Object color sample"></span><div><span class="color-preview-label">Object color sample</span><span id="object-color-text" class="color-preview-value"></span></div></div>
             <p id="object-color-hint" class="hint">Start Live preview to see the actual objects update as you move these sliders. The small sample also works while hidden.</p>
-            <label for="object-hue" class="slider-label">Object hue <output id="object-hue-value" for="object-hue">208°</output></label><input id="object-hue" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="359" step="1" value="208">
-            <label for="object-saturation" class="slider-label">Object saturation <output id="object-saturation-value" for="object-saturation">11%</output></label><input id="object-saturation" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="0" max="70" step="1" value="11">
-            <label for="object-lightness" class="slider-label">Object color lightness <output id="object-lightness-value" for="object-lightness">48%</output></label><input id="object-lightness" class="color-slider" aria-describedby="object-color-hint object-color-text" type="range" min="10" max="70" step="1" value="48">
+            <div class="precision-control"><div class="slider-label"><label for="object-hue">Object hue</label><span class="number-with-unit"><input id="object-hue-value" class="precision-number" type="number" min="0" max="359" step="1" value="208" inputmode="decimal" aria-label="Object hue in degrees, numeric value" aria-controls="object-hue"><span aria-hidden="true">°</span></span></div><div class="slider-row"><button id="object-hue-decrease" type="button" class="step-button" aria-label="Decrease object hue by 1">−</button><input id="object-hue" class="color-slider" type="range" min="0" max="359" step="1" value="208" aria-describedby="object-color-hint object-color-text"><button id="object-hue-increase" type="button" class="step-button" aria-label="Increase object hue by 1">+</button></div></div>
+            <div class="precision-control"><div class="slider-label"><label for="object-saturation">Object saturation</label><span class="number-with-unit"><input id="object-saturation-value" class="precision-number" type="number" min="0" max="70" step="1" value="11" inputmode="decimal" aria-label="Object saturation in percent, numeric value" aria-controls="object-saturation"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="object-saturation-decrease" type="button" class="step-button" aria-label="Decrease object saturation by 1">−</button><input id="object-saturation" class="color-slider" type="range" min="0" max="70" step="1" value="11" aria-describedby="object-color-hint object-color-text"><button id="object-saturation-increase" type="button" class="step-button" aria-label="Increase object saturation by 1">+</button></div></div>
+            <div class="precision-control"><div class="slider-label"><label for="object-lightness">Object color lightness</label><span class="number-with-unit"><input id="object-lightness-value" class="precision-number" type="number" min="10" max="70" step="1" value="48" inputmode="decimal" aria-label="Object color lightness in percent, numeric value" aria-controls="object-lightness"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="object-lightness-decrease" type="button" class="step-button" aria-label="Decrease object color lightness by 1">−</button><input id="object-lightness" class="color-slider" type="range" min="10" max="70" step="1" value="48" aria-describedby="object-color-hint object-color-text"><button id="object-lightness-increase" type="button" class="step-button" aria-label="Increase object color lightness by 1">+</button></div></div>
+<details id="item-style-details" class="item-details"><summary>Outline &amp; shadow</summary><p class="hint">Independent colors; sizes and offsets use the field’s shorter side. Effects are part of the item and share its timing.</p><fieldset class="effect-group"><legend>Outline</legend><label class="check-label"><input id="outline-enabled" type="checkbox">Enable outline</label><div class="precision-control"><div class="slider-label"><label for="outline-width">Outline width</label><span class="number-with-unit"><input id="outline-width-value" class="precision-number" type="number" min="0.1" max="4" step="0.1" value="1" inputmode="decimal" aria-label="Outline width in percent of the field’s shorter side, numeric value" aria-controls="outline-width"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="outline-width-decrease" type="button" class="step-button" aria-label="Decrease outline width by 0.1">−</button><input id="outline-width" class="color-slider" type="range" min="0.1" max="4" step="0.1" value="1"><button id="outline-width-increase" type="button" class="step-button" aria-label="Increase outline width by 0.1">+</button></div></div><div class="color-preview"><span id="outline-color-swatch" class="color-swatch" role="img" aria-label="Outline color sample"></span><div><span class="color-preview-label">Outline color</span><span id="outline-color-text" class="color-preview-value"></span></div></div><div class="precision-control"><div class="slider-label"><label for="outline-hue">Outline hue</label><span class="number-with-unit"><input id="outline-hue-value" class="precision-number" type="number" min="0" max="359" step="1" value="0" inputmode="decimal" aria-label="Outline hue in degrees, numeric value" aria-controls="outline-hue"><span aria-hidden="true">°</span></span></div><div class="slider-row"><button id="outline-hue-decrease" type="button" class="step-button" aria-label="Decrease outline hue by 1">−</button><input id="outline-hue" class="color-slider" type="range" min="0" max="359" step="1" value="0"><button id="outline-hue-increase" type="button" class="step-button" aria-label="Increase outline hue by 1">+</button></div></div><div class="precision-control"><div class="slider-label"><label for="outline-saturation">Outline saturation</label><span class="number-with-unit"><input id="outline-saturation-value" class="precision-number" type="number" min="0" max="70" step="1" value="0" inputmode="decimal" aria-label="Outline saturation in percent, numeric value" aria-controls="outline-saturation"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="outline-saturation-decrease" type="button" class="step-button" aria-label="Decrease outline saturation by 1">−</button><input id="outline-saturation" class="color-slider" type="range" min="0" max="70" step="1" value="0"><button id="outline-saturation-increase" type="button" class="step-button" aria-label="Increase outline saturation by 1">+</button></div></div><div class="precision-control"><div class="slider-label"><label for="outline-lightness">Outline lightness</label><span class="number-with-unit"><input id="outline-lightness-value" class="precision-number" type="number" min="0" max="70" step="1" value="30" inputmode="decimal" aria-label="Outline lightness in percent, numeric value" aria-controls="outline-lightness"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="outline-lightness-decrease" type="button" class="step-button" aria-label="Decrease outline lightness by 1">−</button><input id="outline-lightness" class="color-slider" type="range" min="0" max="70" step="1" value="30"><button id="outline-lightness-increase" type="button" class="step-button" aria-label="Increase outline lightness by 1">+</button></div></div></fieldset><fieldset class="effect-group"><legend>Shadow</legend><label class="check-label"><input id="shadow-enabled" type="checkbox">Enable shadow</label><div class="precision-control"><div class="slider-label"><label for="shadow-offset-x">Shadow horizontal offset</label><span class="number-with-unit"><input id="shadow-offset-x-value" class="precision-number" type="number" min="-12" max="12" step="0.1" value="1" inputmode="decimal" aria-label="Shadow horizontal offset in percent of the field’s shorter side, numeric value" aria-controls="shadow-offset-x"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="shadow-offset-x-decrease" type="button" class="step-button" aria-label="Decrease shadow horizontal offset by 0.1">−</button><input id="shadow-offset-x" class="color-slider" type="range" min="-12" max="12" step="0.1" value="1"><button id="shadow-offset-x-increase" type="button" class="step-button" aria-label="Increase shadow horizontal offset by 0.1">+</button></div></div><div class="precision-control"><div class="slider-label"><label for="shadow-offset-y">Shadow vertical offset</label><span class="number-with-unit"><input id="shadow-offset-y-value" class="precision-number" type="number" min="-12" max="12" step="0.1" value="1" inputmode="decimal" aria-label="Shadow vertical offset in percent of the field’s shorter side, numeric value" aria-controls="shadow-offset-y"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="shadow-offset-y-decrease" type="button" class="step-button" aria-label="Decrease shadow vertical offset by 0.1">−</button><input id="shadow-offset-y" class="color-slider" type="range" min="-12" max="12" step="0.1" value="1"><button id="shadow-offset-y-increase" type="button" class="step-button" aria-label="Increase shadow vertical offset by 0.1">+</button></div></div><div class="precision-control"><div class="slider-label"><label for="shadow-blur">Shadow blur</label><span class="number-with-unit"><input id="shadow-blur-value" class="precision-number" type="number" min="0" max="6" step="0.1" value="2" inputmode="decimal" aria-label="Shadow blur in percent of the field’s shorter side, numeric value" aria-controls="shadow-blur"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="shadow-blur-decrease" type="button" class="step-button" aria-label="Decrease shadow blur by 0.1">−</button><input id="shadow-blur" class="color-slider" type="range" min="0" max="6" step="0.1" value="2"><button id="shadow-blur-increase" type="button" class="step-button" aria-label="Increase shadow blur by 0.1">+</button></div></div><div class="color-preview"><span id="shadow-color-swatch" class="color-swatch" role="img" aria-label="Shadow color sample"></span><div><span class="color-preview-label">Shadow color</span><span id="shadow-color-text" class="color-preview-value"></span></div></div><div class="precision-control"><div class="slider-label"><label for="shadow-hue">Shadow hue</label><span class="number-with-unit"><input id="shadow-hue-value" class="precision-number" type="number" min="0" max="359" step="1" value="0" inputmode="decimal" aria-label="Shadow hue in degrees, numeric value" aria-controls="shadow-hue"><span aria-hidden="true">°</span></span></div><div class="slider-row"><button id="shadow-hue-decrease" type="button" class="step-button" aria-label="Decrease shadow hue by 1">−</button><input id="shadow-hue" class="color-slider" type="range" min="0" max="359" step="1" value="0"><button id="shadow-hue-increase" type="button" class="step-button" aria-label="Increase shadow hue by 1">+</button></div></div><div class="precision-control"><div class="slider-label"><label for="shadow-saturation">Shadow saturation</label><span class="number-with-unit"><input id="shadow-saturation-value" class="precision-number" type="number" min="0" max="70" step="1" value="0" inputmode="decimal" aria-label="Shadow saturation in percent, numeric value" aria-controls="shadow-saturation"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="shadow-saturation-decrease" type="button" class="step-button" aria-label="Decrease shadow saturation by 1">−</button><input id="shadow-saturation" class="color-slider" type="range" min="0" max="70" step="1" value="0"><button id="shadow-saturation-increase" type="button" class="step-button" aria-label="Increase shadow saturation by 1">+</button></div></div><div class="precision-control"><div class="slider-label"><label for="shadow-lightness">Shadow lightness</label><span class="number-with-unit"><input id="shadow-lightness-value" class="precision-number" type="number" min="0" max="70" step="1" value="0" inputmode="decimal" aria-label="Shadow lightness in percent, numeric value" aria-controls="shadow-lightness"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="shadow-lightness-decrease" type="button" class="step-button" aria-label="Decrease shadow lightness by 1">−</button><input id="shadow-lightness" class="color-slider" type="range" min="0" max="70" step="1" value="0"><button id="shadow-lightness-increase" type="button" class="step-button" aria-label="Increase shadow lightness by 1">+</button></div></div></fieldset></details><details id="item-timing-details" class="item-details"><summary>Item timing</summary><p class="hint">Live preview shows the full static composition. Play items once uses these settings; editing stops playback. Holds exclude fades. Items may overlap.</p><div class="control-grid"><div><label for="item-start">Start · seconds</label><input id="item-start" type="number" min="0" max="600" step="0.1" inputmode="decimal" value="0"></div><div><label for="item-fade-in">Fade in · seconds</label><input id="item-fade-in" type="number" min="0" max="600" step="0.1" inputmode="decimal" value="0"></div><div><label for="item-hold">Hold · seconds</label><input id="item-hold" type="number" min="0" max="600" step="0.1" inputmode="decimal" value="3"></div><div><label for="item-fade-out">Fade out · seconds</label><input id="item-fade-out" type="number" min="0" max="600" step="0.1" inputmode="decimal" value="0"></div></div><p id="item-end" class="hint">Ends at 3 seconds.</p><button id="item-after-previous" type="button">Start after previous item</button><fieldset class="effect-group"><legend>Slow opacity pulse</legend><label class="check-label"><input id="pulse-enabled" type="checkbox">Enable pulse for this item</label><p class="hint">Optional gradual opacity modulation, not a strobe. Engineering limits do not guarantee safety. The background stays steady and the item still ends on time.</p><div class="control-grid"><div><label for="pulse-min-opacity">Pulse minimum opacity · %</label><input id="pulse-min-opacity" type="number" min="50" max="100" step="1" value="80" inputmode="numeric"></div></div></fieldset></details>
           </fieldset>
           <fieldset class="group"><legend>Background field</legend>
             <p class="hint">Choose a color to represent your subjective visual field. It is your description, not a measurement of internal vision.</p>
             <div class="color-preview"><span id="background-color-swatch" class="color-swatch" role="img" aria-label="Background color sample"></span><div><span class="color-preview-label">Background color sample</span><span id="background-color-text" class="color-preview-value"></span></div></div>
             <p id="background-color-hint" class="hint">With Live preview on, the actual background updates immediately. The small sample also works while hidden.</p>
-            <label for="background-hue" class="slider-label">Background hue <output id="background-hue-value" for="background-hue">0°</output></label><input id="background-hue" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="359" step="1" value="0">
-            <label for="background-saturation" class="slider-label">Background saturation <output id="background-saturation-value" for="background-saturation">0%</output></label><input id="background-saturation" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="60" step="1" value="0">
-            <label for="background-lightness" class="slider-label">Background color lightness <output id="background-lightness-value" for="background-lightness">0%</output></label><input id="background-lightness" class="color-slider" aria-describedby="background-color-hint background-color-text" type="range" min="0" max="40" step="1" value="0">
+            <div class="precision-control"><div class="slider-label"><label for="background-hue">Background hue</label><span class="number-with-unit"><input id="background-hue-value" class="precision-number" type="number" min="0" max="359" step="1" value="4" inputmode="decimal" aria-label="Background hue in degrees, numeric value" aria-controls="background-hue"><span aria-hidden="true">°</span></span></div><div class="slider-row"><button id="background-hue-decrease" type="button" class="step-button" aria-label="Decrease background hue by 1">−</button><input id="background-hue" class="color-slider" type="range" min="0" max="359" step="1" value="4" aria-describedby="background-color-hint background-color-text"><button id="background-hue-increase" type="button" class="step-button" aria-label="Increase background hue by 1">+</button></div></div>
+            <div class="precision-control"><div class="slider-label"><label for="background-saturation">Background saturation</label><span class="number-with-unit"><input id="background-saturation-value" class="precision-number" type="number" min="0" max="60" step="1" value="60" inputmode="decimal" aria-label="Background saturation in percent, numeric value" aria-controls="background-saturation"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="background-saturation-decrease" type="button" class="step-button" aria-label="Decrease background saturation by 1">−</button><input id="background-saturation" class="color-slider" type="range" min="0" max="60" step="1" value="60" aria-describedby="background-color-hint background-color-text"><button id="background-saturation-increase" type="button" class="step-button" aria-label="Increase background saturation by 1">+</button></div></div>
+            <div class="precision-control"><div class="slider-label"><label for="background-lightness">Background color lightness</label><span class="number-with-unit"><input id="background-lightness-value" class="precision-number" type="number" min="0" max="40" step="1" value="4" inputmode="decimal" aria-label="Background color lightness in percent, numeric value" aria-controls="background-lightness"><span aria-hidden="true">%</span></span></div><div class="slider-row"><button id="background-lightness-decrease" type="button" class="step-button" aria-label="Decrease background color lightness by 1">−</button><input id="background-lightness" class="color-slider" type="range" min="0" max="40" step="1" value="4" aria-describedby="background-color-hint background-color-text"><button id="background-lightness-increase" type="button" class="step-button" aria-label="Increase background color lightness by 1">+</button></div></div>
             <p class="hint">At 0% lightness, the background is black. At 0% saturation, hue has no visible effect. Color lightness does not set your screen’s brightness.</p>
           </fieldset>
-  
+
+          <section id="item-timeline-section" class="item-timeline-section" aria-labelledby="item-timeline-title"><h2 id="item-timeline-title">Item timeline</h2><label for="pulse-period">Shared pulse cycle · seconds</label><input id="pulse-period" type="number" min="2" max="60" step="0.1" value="4" inputmode="decimal"><p class="hint">All enabled pulses share this cycle and timeline phase. Pulse limits are engineering choices, not a safety guarantee.</p><p id="item-total" class="hint">3 seconds total.</p><div id="item-timeline" class="item-timeline" aria-label="Item timing tracks"></div><button id="item-play" type="button" class="primary">Play items once</button><p id="item-motion-note" class="hint" hidden>Reduced motion is on. Use Live preview for a static composition.</p><p class="hint">Automatically stops and hides at the latest item end. No loop or automatic restart. Sequence snapshots retain item styles/timings, but sequence playback uses only snapshot hold/transition settings.</p></section>
         </form>
         <div class="history-row"><button id="undo" type="button" disabled>Undo</button><button id="redo" type="button" disabled>Redo</button><span class="hint">40-step scene history</span></div>
         <p class="hint">Live preview shows valid draft edits immediately. Apply commits them for history and download; it is not needed for preview. Hide stops preview until you explicitly start it again.</p>
@@ -169,7 +175,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       <section class="portable-card" aria-labelledby="portable-title">
         <p class="eyebrow">Keep a copy</p><h2 id="portable-title">Your file, on your device.</h2><p class="hint">No autosave, account, browser storage or network. Download work before closing or reloading this page.</p>
         <div class="file-actions"><button id="export-scene" type="button">Download scene JSON</button><label class="file-label" for="scene-import">Open scene JSON<input id="scene-import" type="file" accept=".json,application/json"></label></div>
-        <p class="hint">Opens version 1 or 2, up to 1 MiB. Downloads use version 2. Version 1 colors are approximated in HSL. Notes are never included.</p>
+        <p class="hint">Opens versions 1, 2 or 3, up to 1 MiB. Downloads use version 3. Version 1 colors are approximated in HSL. Notes are never included.</p>
       </section>
       </div>
       <section id="sequence-panel" aria-labelledby="sequence-title" hidden>
@@ -193,7 +199,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
         </div>
         <p id="sequence-error" class="inline-error" role="status" aria-live="polite" hidden></p>
         <button id="sequence-discard" type="button" hidden>Discard invalid sequence fields</button>
-        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate version 1 sequence files, up to 1 MiB. No notes, playback state, storage or network.</p></section>
+        <section class="portable-card" aria-labelledby="sequence-portable-title"><h2 id="sequence-portable-title">Keep your sequence.</h2><div class="file-actions"><button id="sequence-export" type="button">Download sequence JSON</button><label class="file-label" for="sequence-import">Open sequence JSON<input id="sequence-import" type="file" accept=".json,application/json"></label></div><p class="hint">Separate version 2 sequence files (opens version 1 or 2), up to 1 MiB. No notes, playback state, storage or network.</p></section>
       </section>
   <section class="notes-card" aria-labelledby="notes-title">
     <details id="notes-details"><summary><span><span class="eyebrow">Optional / Personal notes</span><span id="notes-title" class="summary-title">Put an observation into words</span></span><span aria-hidden="true">+</span></summary>
@@ -224,6 +230,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   </main>
   <section id="viewing-bar" class="viewing-bar" aria-label="Viewing controls">
     <div id="sequence-view-actions" class="sequence-view-actions" hidden><div class="manual-actions"><button id="sequence-previous" type="button" aria-label="Select previous step">Previous</button><button id="sequence-show" type="button" class="primary">Show step</button><button id="sequence-next" type="button" aria-label="Select next step">Next</button></div><div class="playback-actions"><button id="sequence-play" type="button">Play once</button><button id="sequence-pause" type="button" hidden>Pause</button><button id="sequence-resume" type="button" hidden>Resume</button><button id="sequence-stop" type="button" class="hide-button">Stop / Hide</button></div><span id="sequence-progress" class="hint">Stopped</span><p id="reduced-motion-note" class="hint" hidden>Reduced motion is on. Select Previous or Next, then Show step.</p></div>
+    <div id="item-view-actions" class="item-view-actions" hidden><button id="item-pause" type="button">Pause</button><button id="item-resume" type="button" hidden>Resume</button><button id="item-stop" type="button" class="hide-button">Stop / Hide</button><span id="item-progress" class="hint">Stopped</span></div>
     <div id="scene-view-actions" class="view-actions"><button id="show-scene" type="button" class="primary" aria-pressed="false">Live preview</button><button id="hide-scene" type="button" class="hide-button">Hide</button><button id="end-viewing" type="button">End viewing</button></div>
     <p id="status" role="status" aria-live="polite" aria-atomic="true" tabindex="0">The field is hidden. Read the viewing guidance before showing a scene.</p>
   </section>
@@ -235,7 +242,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   <button id="exit-fullscreen" class="fullscreen-exit" type="button" aria-label="Hide scene and exit fullscreen" title="Hide scene and exit fullscreen" hidden>Exit</button>
 </div>
 <noscript><div class="noscript">JavaScript is required for this local editor. The scene is hidden.</div></noscript>
-<script>/* Imagery Field 0.2.0. Static scene model and interaction controller.
+<script>/* Imagery Field 0.6.0. Styled scene model and interaction controller.
    Counts, geometry, colors and buffer limits are engineering choices only.
    They are not calibrated luminance, sensory safety or exposure thresholds. */
 (function (root, factory) {
@@ -245,10 +252,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 }(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
   const FORMAT = 'imagery-static-scene';
-  const VERSION = 2;
-  const SAMPLER = 'static-objects-2';
+  const VERSION = 3;
+  const SAMPLER = 'styled-objects-3';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_OBJECTS = 12;
+  const MAX_ITEM_TIME_MS = 600000;
+  const MAX_ITEM_TOTAL_MS = 3600000;
+  const ITEM_TIME_INCREMENT_MS = 100;
+  const MIN_PULSE_PERIOD_MS = 2000;
+  const MAX_PULSE_PERIOD_MS = 60000;
+  const DEFAULT_PULSE_PERIOD_MS = 4000;
+  const DEFAULT_BACKGROUND = Object.freeze({h:4,s:60,l:4});
   const REVEAL_GAP_MS = 3000;
   const HISTORY_LIMIT = 40;
   const MAX_CANVAS_DIMENSION = 4096;
@@ -275,10 +289,34 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if (typeof value!=='string'||value.length<1||value.length>64||!value.trim()||/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/.test(value)) throw new Error('Name must be 1–64 characters without control characters.');
     return value;
   }
-  function color(value,background) {
+  function color(value,background,effect) {
     object(value,['h','s','l'],background?'Background':'Object color');
-    integer(value.h,0,359,'Hue');integer(value.s,0,background?60:70,'Saturation');integer(value.l,background?0:10,background?40:70,'Lightness');
+    integer(value.h,0,359,'Hue');integer(value.s,0,background?60:70,'Saturation');integer(value.l,background||effect?0:10,background?40:70,'Lightness');
     return {h:value.h,s:value.s,l:value.l};
+  }
+  function decimal(value,min,max,scale,label) {
+    if(typeof value!=='number'||!Number.isFinite(value)||value<min||value>max||Math.abs(value*scale-Math.round(value*scale))>1e-8)throw new Error(label+' is outside its supported range or precision.');
+    return value===0?0:value;
+  }
+  function boolean(value,label) {if(typeof value!=='boolean')throw new Error(label+' must be true or false.');return value;}
+  function itemTime(value,label) {integer(value,0,MAX_ITEM_TIME_MS,label);if(value%ITEM_TIME_INCREMENT_MS!==0)throw new Error(label+' must use 100 ms increments.');return value===0?0:value;}
+  function pulsePeriod(value) {integer(value,MIN_PULSE_PERIOD_MS,MAX_PULSE_PERIOD_MS,'Shared pulse period');if(value%ITEM_TIME_INCREMENT_MS!==0)throw new Error('Shared pulse period must use 100 ms increments.');return value;}
+  function defaultEffects() {return {outline:{enabled:false,width:1,color:{h:0,s:0,l:30}},shadow:{enabled:false,offsetX:1,offsetY:1,blur:2,color:{h:0,s:0,l:0}},timing:{startMs:0,fadeInMs:0,holdMs:3000,fadeOutMs:0,pulse:{enabled:false,minOpacity:0.8}}};}
+  function effects(o) {
+    object(o.outline,['enabled','width','color'],'Outline');object(o.shadow,['enabled','offsetX','offsetY','blur','color'],'Shadow');
+    object(o.timing,['startMs','fadeInMs','holdMs','fadeOutMs','pulse'],'Item timing');object(o.timing.pulse,['enabled','minOpacity'],'Item pulse');
+    const outline={enabled:boolean(o.outline.enabled,'Outline enabled'),width:decimal(o.outline.width,0.1,4,10,'Outline width'),color:color(o.outline.color,false,true)};
+    const shadow={enabled:boolean(o.shadow.enabled,'Shadow enabled'),offsetX:decimal(o.shadow.offsetX,-12,12,10,'Shadow horizontal offset'),offsetY:decimal(o.shadow.offsetY,-12,12,10,'Shadow vertical offset'),blur:decimal(o.shadow.blur,0,6,10,'Shadow blur'),color:color(o.shadow.color,false,true)};
+    const t=o.timing,timing={startMs:itemTime(t.startMs,'Item start'),fadeInMs:itemTime(t.fadeInMs,'Item fade in'),holdMs:itemTime(t.holdMs,'Item hold'),fadeOutMs:itemTime(t.fadeOutMs,'Item fade out'),pulse:{enabled:boolean(t.pulse.enabled,'Item pulse enabled'),minOpacity:decimal(t.pulse.minOpacity,0.5,1,100,'Minimum pulse opacity')}};
+    const lifetime=timing.fadeInMs+timing.holdMs+timing.fadeOutMs;
+    if(lifetime<=0)throw new Error('Each item needs a positive total fade/hold duration.');
+    if(timing.startMs+lifetime>MAX_ITEM_TOTAL_MS)throw new Error('Item end exceeds the one-hour timeline resource limit.');
+    return {outline,shadow,timing};
+  }
+  function objectExtent(o) {return o.size/2+(['dot','pixel'].includes(o.shape)?0:0.5);}
+  function defaultObject(id='object-1',shape='dot') {
+    const o={id,shape,x:50,y:50,size:['dot','pixel'].includes(shape)?2:20,color:{h:208,s:11,l:48},...defaultEffects()};
+    return canonicalScene({format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:'New item',background:clone(DEFAULT_BACKGROUND),pulsePeriodMs:DEFAULT_PULSE_PERIOD_MS,objects:[o]}}).scene.objects[0];
   }
   function colorCSS(value) {return 'hsl('+value.h+' '+value.s+'% '+value.l+'%)';}
   function legacy(value) {
@@ -296,15 +334,17 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       });
       if(points.length*Math.PI*s.dotRadius*s.dotRadius>100)throw new Error('Version 1 dot coverage exceeds its engineering bound.');
     } else if(s.x-s.size/2-0.5<8||s.x+s.size/2+0.5>92||s.y-s.size/2-0.5<8||s.y+s.size/2+0.5>92)throw new Error('Version 1 contour exceeds its inset bounds.');
-    return {format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:s.name,background:{h:0,s:0,l:0},objects:points.map((p,i)=>({id:'object-'+(i+1),shape:s.shape==='dots'?'dot':s.shape,x:Math.round(p.x*100)/100,y:Math.round(p.y*100)/100,size:s.shape==='dots'?2*s.dotRadius:s.size,color:clone(LEGACY_COLORS[s.palette])}))}};
+    return {format:FORMAT,version:2,sampler:'static-objects-2',scene:{name:s.name,background:{h:0,s:0,l:0},objects:points.map((p,i)=>({id:'object-'+(i+1),shape:s.shape==='dots'?'dot':s.shape,x:Math.round(p.x*100)/100,y:Math.round(p.y*100)/100,size:s.shape==='dots'?2*s.dotRadius:s.size,color:clone(LEGACY_COLORS[s.palette])}))}};
   }
   function canonicalScene(value) {
     object(value,['format','version','sampler','scene'],'Scene file');
     if(value.format!==FORMAT)throw new Error('Unsupported scene format.');
     if(value.version===1)return canonicalScene(legacy(value));
-    if(value.version!==VERSION||value.sampler!==SAMPLER)throw new Error('Unsupported scene version or sampler. Only versions 1 and 2 are supported.');
+    const old=value.version===2&&value.sampler==='static-objects-2';
+    if(!old&&(value.version!==VERSION||value.sampler!==SAMPLER))throw new Error('Unsupported scene version or sampler. Only versions 1, 2 and 3 are supported.');
     const s=value.scene;
-    object(s,['name','background','objects'],'Scene');name(s.name);
+    object(s,old?['name','background','objects']:['name','background','pulsePeriodMs','objects'],'Scene');name(s.name);
+    const pulsePeriodMs=old?DEFAULT_PULSE_PERIOD_MS:pulsePeriod(s.pulsePeriodMs);
     const background=color(s.background,true),list=s.objects;
     if(!Array.isArray(list)||Object.getPrototypeOf(list)!==Array.prototype||list.length>MAX_OBJECTS)throw new Error('Scene objects must be an array with 0–12 objects.');
     const keys=Reflect.ownKeys(list);
@@ -314,18 +354,18 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       const descriptor=Object.getOwnPropertyDescriptor(list,String(i));
       if(!descriptor||!Object.prototype.hasOwnProperty.call(descriptor,'value'))throw new Error('Object array cannot contain holes or accessors.');
       const o=descriptor.value;
-      object(o,['id','shape','x','y','size','color'],'Object');
+      object(o,old?['id','shape','x','y','size','color']:['id','shape','x','y','size','color','outline','shadow','timing'],'Object');
       if(typeof o.id!=='string'||!/^object-[1-9][0-9]{0,5}$/.test(o.id)||ids.has(o.id))throw new Error('Each object needs a unique object-1 style identifier.');
       ids.add(o.id);
       if(!SHAPES.includes(o.shape))throw new Error('Choose dot, pixel, circle, square, or triangle.');
       position(o.x,'Horizontal position');position(o.y,'Vertical position');
       const filled=o.shape==='dot'||o.shape==='pixel';
       integer(o.size,1,filled?8:28,'Object size');
-      const extent=o.size/2+(filled?0:0.5);
+      const extent=objectExtent(o);
       if(o.x-extent<1||o.x+extent>99||o.y-extent<1||o.y+extent>99)throw new Error('Keep the complete object within the 1-unit field inset. Move it inward or reduce its size.');
-      objects.push({id:o.id,shape:o.shape,x:o.x,y:o.y,size:o.size,color:color(o.color,false)});
+      objects.push({id:o.id,shape:o.shape,x:o.x,y:o.y,size:o.size,color:color(o.color,false),...(old?defaultEffects():effects(o))});
     }
-    return {format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:s.name,background,objects}};
+    return {format:FORMAT,version:VERSION,sampler:SAMPLER,scene:{name:s.name,background,pulsePeriodMs,objects}};
   }
   function validateScene(value) {try{return {ok:true,scene:canonicalScene(value)};}catch(e){return {ok:false,error:e.message};}}
   function rejectDuplicateKeys(text) {
@@ -361,14 +401,14 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     return [
       ['A small constellation','dots',3,'slate'],['A single point','dots',1,'sage'],
       ['Circle contour','circle',1,'sage'],['Square contour','square',1,'sand'],['Triangle contour','triangle',1,'slate']
-    ].map(p=>canonicalScene({format:FORMAT,version:1,sampler:'sparse-fixed-1',scene:{name:p[0],shape:p[1],x:50,y:50,size:22,dotCount:p[2],dotRadius:1,palette:p[3]}}));
+    ].map(p=>{const result=canonicalScene({format:FORMAT,version:1,sampler:'sparse-fixed-1',scene:{name:p[0],shape:p[1],x:50,y:50,size:22,dotCount:p[2],dotRadius:1,palette:p[3]}});result.scene.background=clone(DEFAULT_BACKGROUND);return result;});
   }
   function geometry(value,width=100,height=100) {
     const s=canonicalScene(value).scene;
     if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)throw new Error('Field dimensions must be finite positive numbers.');
     const unit=Math.min(width,height)/100;
     return s.objects.map(o=>{
-      const x=o.x*width/100,y=o.y*height/100,r=o.size*unit/2,base={id:o.id,color:colorCSS(o.color)};
+      const x=o.x*width/100,y=o.y*height/100,r=o.size*unit/2,base={id:o.id,color:colorCSS(o.color),outline:{enabled:o.outline.enabled,width:o.outline.width*unit,color:colorCSS(o.outline.color)},shadow:{enabled:o.shadow.enabled,offsetX:o.shadow.offsetX*unit,offsetY:o.shadow.offsetY*unit,blur:o.shadow.blur*unit,color:colorCSS(o.shadow.color)}};
       if(o.shape==='dot')return {...base,kind:'dot',x,y,radius:r};
       if(o.shape==='circle')return {...base,kind:'circle',x,y,radius:r,lineWidth:unit};
       const points=o.shape==='triangle'?[[x,y-r],[x+r,y+r],[x-r,y+r]]:[[x-r,y-r],[x+r,y-r],[x+r,y+r],[x-r,y+r]];
@@ -377,7 +417,11 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   function describe(value) {
     const s=canonicalScene(value).scene,b=s.background;
-    const objects=s.objects.length?s.objects.map((o,i)=>(i+1)+': '+o.shape+', size '+o.size+', at '+o.x+', '+o.y+', color H'+o.color.h+' S'+o.color.s+' L'+o.color.l).join('; '):'no objects';
+    const objects=s.objects.length?s.objects.map((o,i)=>{
+      const style=(o.outline.enabled?', outline width '+o.outline.width+' H'+o.outline.color.h+' S'+o.outline.color.s+' L'+o.outline.color.l:'')+(o.shadow.enabled?', shadow offset '+o.shadow.offsetX+'/'+o.shadow.offsetY+' blur '+o.shadow.blur+' H'+o.shadow.color.h+' S'+o.shadow.color.s+' L'+o.shadow.color.l:'');
+      const t=o.timing,timing=', authored timing start '+t.startMs+' ms, fade in '+t.fadeInMs+' ms, hold '+t.holdMs+' ms, fade out '+t.fadeOutMs+' ms'+(t.pulse.enabled?', shared pulse minimum opacity '+Math.round(t.pulse.minOpacity*100)+'%':'');
+      return (i+1)+': '+o.shape+', size '+o.size+', at '+o.x+', '+o.y+', color H'+o.color.h+' S'+o.color.s+' L'+o.color.l+style+timing;
+    }).join('; '):'no objects';
     return s.name+': '+s.objects.length+' object'+(s.objects.length===1?'':'s')+'. Background H'+b.h+' S'+b.s+' L'+b.l+'. '+objects+'. Positions are percentages; sizes use the field’s shorter side.';
   }
   function createController(nowFn, initialScene) {
@@ -434,7 +478,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       finishImport(token,text) {if(pending===null || token!==pending || token!==epoch)return result(false,'That file read was canceled by a newer action.');pending=null;let checked;try{checked=parseScene(text);}catch(e){return result(false,e.message);}return commit(checked);}
     });
   }
-  return Object.freeze({FORMAT,VERSION,SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
+  return Object.freeze({FORMAT,VERSION,SAMPLER,MAX_IMPORT_BYTES,MAX_OBJECTS,MAX_ITEM_TIME_MS,MAX_ITEM_TOTAL_MS,ITEM_TIME_INCREMENT_MS,MIN_PULSE_PERIOD_MS,MAX_PULSE_PERIOD_MS,DEFAULT_PULSE_PERIOD_MS,DEFAULT_BACKGROUND,MAX_CANVAS_DIMENSION,MAX_CANVAS_PIXELS,REVEAL_GAP_MS,HISTORY_LIMIT,PALETTES,SHAPES,defaultEffects,defaultObject,objectExtent,colorCSS,validateScene,parseScene,canonicalScene,presets,geometry,describe,createController});
 }));
 </script>
 <script>/* One-pass sequence data and timeline engine. No display or scheduling authority.
@@ -446,8 +490,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
 }(typeof globalThis !== 'undefined' ? globalThis : this, function (M) {
   'use strict';
   const FORMAT = 'imagery-field-sequence';
-  const VERSION = 1;
-  const SAMPLER = 'ordered-crossfade-1';
+  const VERSION = 2;
+  const SAMPLER = 'ordered-crossfade-2';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_STEPS = 32;
   const MIN_HOLD_MS = 1000;
@@ -546,7 +590,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   function canonicalSequence(value) {
     const file = record(value, ['format', 'version', 'sampler', 'sequence'], 'Sequence file');
     if (file.format !== FORMAT) throw new Error('Unsupported sequence format.');
-    if (file.version !== VERSION || file.sampler !== SAMPLER) {
+    const legacy = file.version === 1 && file.sampler === 'ordered-crossfade-1';
+    if (!legacy && (file.version !== VERSION || file.sampler !== SAMPLER)) {
       throw new Error('Unsupported sequence version or sampler.');
     }
     const sequence = record(file.sequence, ['name', 'background', 'steps'], 'Sequence');
@@ -556,7 +601,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     let total = 0, background;
     const steps = sourceSteps.map((entry, index) => {
       const label = 'Step ' + (index + 1);
-      const step = record(entry, ['id', 'name', 'holdMs', 'transitionMs', 'objects'], label);
+      const step = record(entry, legacy ? ['id', 'name', 'holdMs', 'transitionMs', 'objects'] : ['id', 'name', 'holdMs', 'transitionMs', 'pulsePeriodMs', 'objects'], label);
       const id = name(step.id, label + ' identifier');
       if (ids.has(id)) throw new Error('Step identifiers must be unique within the sequence.');
       ids.add(id);
@@ -572,10 +617,10 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       // Keep every static geometry/color/object rule authoritative and unchanged.
       // Each snapshot is independently bounded; a crossfade may use 12 + 12.
       list(step.objects, 1, M.MAX_OBJECTS, label + ' objects');
-      const scene = M.canonicalScene({format: M.FORMAT, version: M.VERSION, sampler: M.SAMPLER,
-        scene: {name: stepName, background: sequence.background, objects: step.objects}}).scene;
+      const scene = M.canonicalScene({format: M.FORMAT, version: legacy ? 2 : M.VERSION, sampler: legacy ? 'static-objects-2' : M.SAMPLER,
+        scene: {name: stepName, background: sequence.background, ...(!legacy ? {pulsePeriodMs:step.pulsePeriodMs} : {}), objects: step.objects}}).scene;
       if (index === 0) background = scene.background;
-      return {id, name: scene.name, holdMs, transitionMs, objects: scene.objects};
+      return {id, name: scene.name, holdMs, transitionMs, pulsePeriodMs:scene.pulsePeriodMs, objects: scene.objects};
     });
     const result = {format: FORMAT, version: VERSION, sampler: SAMPLER,
       sequence: {name: sequenceName, background, steps}};
@@ -771,11 +816,147 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     parseSequence, serializeSequence, compileTimeline, frameAt, createTimeline});
 }));
 </script>
+<script>/* Finite per-item timeline. Pure data and injected-clock state only.
+   Timing/color limits are supported engineering bounds, not safety guarantees. */
+(function(root,factory){
+  'use strict';
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./model.js'));
+  else root.ImageryItems=factory(root.ImageryModel);
+}(typeof globalThis!=='undefined'?globalThis:this,function(M){
+  'use strict';
+  const compiledTimelines=new WeakSet();
+  function freeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.keys(value).forEach(k=>freeze(value[k]));Object.freeze(value);}return value;}
+  function compileTimeline(value){
+    const document=M.canonicalScene(value),objects=document.scene.objects;
+    if(!objects.length)throw new Error('Add at least one item before timed preview.');
+    const tracks=objects.map((o,index)=>{const t=o.timing,startMs=t.startMs,fadeInEndMs=startMs+t.fadeInMs,holdEndMs=fadeInEndMs+t.holdMs,endMs=holdEndMs+t.fadeOutMs;return {id:o.id,index,startMs,fadeInEndMs,holdEndMs,endMs};});
+    const durationMs=Math.max(...tracks.map(t=>t.endMs));
+    const timeline=freeze({document,tracks,durationMs,pulsePeriodMs:document.scene.pulsePeriodMs});
+    compiledTimelines.add(timeline);return timeline;
+  }
+  function frameAt(timeline,elapsedMs){
+    if(!compiledTimelines.has(timeline))throw new Error('Use a validated compiled item timeline.');
+    if(typeof elapsedMs!=='number'||!Number.isFinite(elapsedMs)||elapsedMs<0)throw new Error('Elapsed time must be a finite nonnegative number.');
+    const elapsed=Math.min(elapsedMs,timeline.durationMs),done=elapsed>=timeline.durationMs;
+    const items=timeline.tracks.map(track=>{
+      const timing=timeline.document.scene.objects[track.index].timing;
+      let phase='waiting',envelope=0;
+      if(done||elapsed>=track.endMs)phase='finished';
+      else if(elapsed<track.startMs)phase='waiting';
+      else if(elapsed<track.fadeInEndMs){phase='fade-in';envelope=(elapsed-track.startMs)/timing.fadeInMs;}
+      else if(elapsed<track.holdEndMs){phase='hold';envelope=1;}
+      else {phase='fade-out';envelope=1-(elapsed-track.holdEndMs)/timing.fadeOutMs;}
+      // One shared absolute phase prevents independently beating item clocks.
+      // This bound does not certify the composite pattern or hardware output.
+      const pulse=timing.pulse.enabled?timing.pulse.minOpacity+(1-timing.pulse.minOpacity)*(1+Math.cos(2*Math.PI*elapsed/timeline.pulsePeriodMs))/2:1;
+      return Object.freeze({id:track.id,index:track.index,phase,alpha:Math.max(0,Math.min(1,envelope*pulse)),active:phase!=='waiting'&&phase!=='finished'});
+    });
+    return Object.freeze({phase:done?'finished':'items',items:Object.freeze(items),elapsedMs:elapsed,remainingMs:timeline.durationMs-elapsed,durationMs:timeline.durationMs,done});
+  }
+  function createTimeline(nowFn) {
+    if (typeof nowFn !== 'function') throw new Error('An injected monotonic clock function is required.');
+    let timeline = null, status = 'stopped', generation = 0;
+    let elapsedMs = 0, paintedElapsedMs = 0, anchorElapsedMs = 0, anchorNow = 0;
+    let frame = null, paintedFrame = null, lastNow = -Infinity;
+    // Only genuine frames emitted by this player in this generation may be
+    // acknowledged as painted. Weak keys do not retain a whole run of frames.
+    const issued = new WeakMap();
+
+    function now() {
+      const value = nowFn();
+      if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error('Invalid item timeline clock.');
+      lastNow = Math.max(lastNow, value);
+      return lastNow;
+    }
+
+    function issue(elapsed) {
+      const result = Object.freeze({...frameAt(timeline, elapsed), generation});
+      issued.set(result, generation);
+      return result;
+    }
+
+    function getState() {
+      return Object.freeze({status, generation, elapsedMs, paintedElapsedMs,
+        durationMs: timeline ? timeline.durationMs : 0, frame});
+    }
+
+    function stop() {
+      generation++;
+      status = 'stopped';
+      elapsedMs = paintedElapsedMs = anchorElapsedMs = 0;
+      frame = paintedFrame = null;
+      return getState();
+    }
+
+    return Object.freeze({
+      getState,
+      start(value) {
+        const compiled = compiledTimelines.has(value) ? value : compileTimeline(value);
+        const currentNow = now();
+        generation++;
+        timeline = compiled;
+        status = 'running';
+        elapsedMs = paintedElapsedMs = anchorElapsedMs = 0;
+        anchorNow = currentNow;
+        paintedFrame = null;
+        frame = issue(0);
+        return getState();
+      },
+      tick() {
+        if (status !== 'running') return getState();
+        // Subtraction can overflow only for an adversarial finite clock jump;
+        // clamping still terminates the bounded timeline rather than replaying.
+        const next = Math.min(timeline.durationMs, anchorElapsedMs + (now() - anchorNow));
+        elapsedMs = Math.max(elapsedMs, next);
+        if (elapsedMs >= timeline.durationMs) {
+          generation++;
+          status = 'finished';
+          frame = issue(timeline.durationMs);
+          elapsedMs = paintedElapsedMs = anchorElapsedMs = 0;
+          paintedFrame = null;
+        } else frame = issue(elapsedMs);
+        return getState();
+      },
+      markPainted(candidate) {
+        if (status !== 'running' || !candidate || issued.get(candidate) !== generation ||
+            candidate.done || candidate.elapsedMs < paintedElapsedMs || candidate.elapsedMs > elapsedMs) return false;
+        paintedFrame = candidate;
+        paintedElapsedMs = candidate.elapsedMs;
+        return true;
+      },
+      pause() {
+        if (status !== 'running') return getState();
+        // No clock read: the only authoritative paused image is the last image
+        // the caller confirmed it actually painted, not the click-time blend.
+        generation++;
+        elapsedMs = paintedElapsedMs;
+        anchorElapsedMs = elapsedMs;
+        status = 'paused';
+        frame = paintedFrame ? Object.freeze({...paintedFrame, generation}) : issue(0);
+        return getState();
+      },
+      resume() {
+        if (status !== 'paused') return getState();
+        const currentNow = now();
+        generation++;
+        anchorNow = currentNow;
+        anchorElapsedMs = elapsedMs;
+        status = 'running';
+        frame = issue(elapsedMs);
+        return getState();
+      },
+      stop
+    });
+  }
+
+  return Object.freeze({compileTimeline,frameAt,createTimeline});
+}));
+</script>
 <script>/* Local scene editor and explicit finite, single-pass sequence presentation.
    One visibility gate. Live manual draft edits preserve an explicitly visible field; interruptions conceal. */
 (function () {
   'use strict';
-  const M=window.ImageryModel,S=window.ImagerySequence;
+  const M=window.ImageryModel,S=window.ImagerySequence,I=window.ImageryItems;
   const $=id=>document.getElementById(id);
   let lastGateClock=0,gateClockFault=false;
   function gateClock(){
@@ -787,21 +968,25 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   const offscreen=document.createElement('canvas');
   offscreen.width=1;offscreen.height=1;
   let context=null,offscreenContext=null;
-  try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:false});}catch(e){/* Data controls remain available. */}
+  try {context=canvas.getContext('2d',{alpha:false});offscreenContext=offscreen.getContext('2d',{alpha:true});}catch(e){/* Data controls remain available. */}
   let formDirty=false,notePreview=null,selectedId=null,placing=false,editorOpen=true;
   let working=controller.getState().current;
   let section='scene',sequence=null,stepIndex=0,sequenceError='',displayKind='scene';
   let generation=0,rafId=null,paintedFrame=null,lastPhaseKey='';
-  const timeline=S.createTimeline(()=>performance.now());
+  const timeline=S.createTimeline(()=>performance.now()),itemTimeline=I.createTimeline(()=>performance.now());
+  let itemSource=null,compiledItems=null,itemFrame=null;
   const reducedMotion=typeof window.matchMedia==='function'?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
   let motionReduced=!!(reducedMotion&&reducedMotion.matches);
   const objectURLs=new Set();
-  const objectFields=['shape','position-x','position-y','size','object-hue','object-saturation','object-lightness'];
-  const fieldIDs=['scene-name',...objectFields,'background-hue','background-saturation','background-lightness'];
-  const sliderIDs=['object-hue','object-saturation','object-lightness','background-hue','background-saturation','background-lightness'];
+  const colorPrefixes=['object','background','outline','shadow'];
+  const sliderIDs=colorPrefixes.flatMap(prefix=>['hue','saturation','lightness'].map(channel=>prefix+'-'+channel)).concat(['outline-width','shadow-offset-x','shadow-offset-y','shadow-blur']);
+  const objectFields=['shape','position-x','position-y','size','object-hue','object-saturation','object-lightness','outline-enabled','outline-width','outline-hue','outline-saturation','outline-lightness','shadow-enabled','shadow-offset-x','shadow-offset-y','shadow-blur','shadow-hue','shadow-saturation','shadow-lightness','item-start','item-fade-in','item-hold','item-fade-out','pulse-enabled','pulse-min-opacity'];
+  const fieldIDs=['scene-name',...objectFields,'background-hue','background-saturation','background-lightness','pulse-period'];
+  const rawPrecision=new Map();
   const categories=Object.freeze(['unsure','none','external-perception','residual-aftereffect','voluntary-imagery','conceptual-knowledge','mixed']);
   const copy=value=>JSON.parse(JSON.stringify(value));
-  const number=id=>$(id).value.trim()===''?NaN:Number($(id).value);
+  const number=id=>{const raw=rawPrecision.has(id)?rawPrecision.get(id):$(id).value;return raw.trim()===''?NaN:Number(raw);};
+  const milliseconds=id=>{const value=number(id);return Number.isFinite(value)&&Math.abs(value*10-Math.round(value*10))<1e-8?Math.round(value*1000):NaN;};
   function say(message,error){
     const text=String(message).slice(0,300);
     ['status','fullscreen-status'].forEach(id=>{$(id).textContent=text;$(id).className=error?'error':'';});
@@ -814,7 +999,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const ratio=Math.min(dpr,M.MAX_CANVAS_DIMENSION/width,M.MAX_CANVAS_DIMENSION/height,Math.sqrt(M.MAX_CANVAS_PIXELS/(2*width*height)));
     return {width,height,bufferWidth:Math.max(1,Math.floor(width*ratio)),bufferHeight:Math.max(1,Math.floor(height*ratio))};
   }
-  function resetContext(ctx){ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';}
+  function resetContext(ctx){ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.fillStyle='#000';ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;}
   function prepareBuffers(){
     const d=dimensions();
     if(canvas.width!==d.bufferWidth||canvas.height!==d.bufferHeight||offscreen.width!==d.bufferWidth||offscreen.height!==d.bufferHeight){
@@ -824,27 +1009,66 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     return d;
   }
-  function paintScene(ctx,target,documentValue,d){
+  function shapePath(ctx,item){
+    ctx.beginPath();
+    if(item.kind==='dot'||item.kind==='circle')ctx.arc(item.x,item.y,item.radius,0,Math.PI*2);
+    else{item.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();}
+  }
+  function filledOutlinePath(ctx,item,width){
+    ctx.beginPath();
+    if(item.kind==='dot'){ctx.arc(item.x,item.y,item.radius+width,0,Math.PI*2);return;}
+    // The other filled shape is a pixel. One rounded outer silhouette gives
+    // its body and outline a single solid shadow, without double compositing.
+    const [[left,top],[right],[,bottom]]=item.points;
+    ctx.moveTo(left,top-width);ctx.lineTo(right,top-width);ctx.arc(right,top,width,-Math.PI/2,0);
+    ctx.lineTo(right+width,bottom);ctx.arc(right,bottom,width,0,Math.PI/2);
+    ctx.lineTo(left,bottom+width);ctx.arc(left,bottom,width,Math.PI/2,Math.PI);
+    ctx.lineTo(left-width,top);ctx.arc(left,top,width,Math.PI,Math.PI*1.5);ctx.closePath();
+  }
+  function paintObject(ctx,item,o,d,ratio){
+    const unit=Math.min(d.width,d.height)/100;
+    ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
+    if(o.shadow.enabled){ctx.shadowColor=M.colorCSS(o.shadow.color);ctx.shadowBlur=o.shadow.blur*unit*ratio;ctx.shadowOffsetX=o.shadow.offsetX*unit*ratio;ctx.shadowOffsetY=o.shadow.offsetY*unit*ratio;}
+    const filled=item.kind==='dot'||item.filled;
+    if(o.outline.enabled){
+      if(filled){filledOutlinePath(ctx,item,o.outline.width*unit);ctx.fillStyle=M.colorCSS(o.outline.color);ctx.fill();}
+      else{shapePath(ctx,item);ctx.strokeStyle=M.colorCSS(o.outline.color);ctx.lineWidth=item.lineWidth+2*o.outline.width*unit;ctx.stroke();}
+      ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
+    }
+    ctx.fillStyle=item.color;ctx.strokeStyle=item.color;ctx.lineWidth=item.lineWidth||1;shapePath(ctx,item);if(filled)ctx.fill();else ctx.stroke();
+  }
+  function paintScene(ctx,target,documentValue,d,frame){
     const accepted=M.canonicalScene(documentValue);resetContext(ctx);
     ctx.fillStyle=M.colorCSS(accepted.scene.background);ctx.fillRect(0,0,target.width,target.height);
-    ctx.setTransform(target.width/d.width,0,0,target.height/d.height,0,0);ctx.lineJoin='round';
-    M.geometry(accepted,d.width,d.height).forEach(item=>{
-      ctx.fillStyle=item.color;ctx.strokeStyle=item.color;ctx.beginPath();
-      if(item.kind==='dot'){ctx.arc(item.x,item.y,item.radius,0,Math.PI*2);ctx.fill();}
-      else if(item.kind==='circle'){ctx.lineWidth=item.lineWidth;ctx.arc(item.x,item.y,item.radius,0,Math.PI*2);ctx.stroke();}
-      else{ctx.lineWidth=item.lineWidth;item.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();if(item.filled)ctx.fill();else ctx.stroke();}
+    const ratio=target.width/d.width;
+    ctx.setTransform(ratio,0,0,target.height/d.height,0,0);ctx.lineJoin='round';
+    const alphas=frame?new Map(frame.items.map(item=>[item.id,item.alpha])):null;
+    M.geometry(accepted,d.width,d.height).forEach((item,index)=>{
+      const o=accepted.scene.objects[index],alpha=alphas?(alphas.get(o.id)||0):1;
+      if(alpha<=0)return;
+      if(alpha<1){
+        if(!offscreenContext||target===offscreen)throw new Error('The item compositing canvas is unavailable.');
+        // Build one transparent item layer, including its effects, then apply
+        // opacity once. Reuse the existing second canvas, never a third buffer.
+        resetContext(offscreenContext);offscreenContext.clearRect(0,0,offscreen.width,offscreen.height);
+        offscreenContext.setTransform(offscreen.width/d.width,0,0,offscreen.height/d.height,0,0);offscreenContext.lineJoin='round';
+        paintObject(offscreenContext,item,o,d,offscreen.width/d.width);resetContext(offscreenContext);
+        resetContext(ctx);ctx.globalAlpha=alpha;ctx.drawImage(offscreen,0,0);resetContext(ctx);
+        ctx.setTransform(ratio,0,0,target.height/d.height,0,0);ctx.lineJoin='round';
+      }else paintObject(ctx,item,o,d,ratio);
     });
     resetContext(ctx);
   }
   function stepScene(index){
     const step=sequence.sequence.steps[index];
-    return M.canonicalScene({format:M.FORMAT,version:M.VERSION,sampler:M.SAMPLER,scene:{name:step.name,background:sequence.sequence.background,objects:step.objects}});
+    return M.canonicalScene({format:M.FORMAT,version:M.VERSION,sampler:M.SAMPLER,scene:{name:step.name,background:sequence.sequence.background,pulsePeriodMs:step.pulsePeriodMs,objects:step.objects}});
   }
   function draw(state){
     const d=prepareBuffers();if(!context)return false;
     resetContext(context);context.fillStyle='#000';context.fillRect(0,0,canvas.width,canvas.height);
     if(!state.visible)return true;
-    if(displayKind==='timed'&&paintedFrame){
+    if(displayKind==='items'&&itemFrame){paintScene(context,canvas,itemSource,d,itemFrame);}
+    else if(displayKind==='timed'&&paintedFrame){
       const frame=paintedFrame;paintScene(context,canvas,stepScene(frame.stepIndex),d);
       if(frame.phase==='transition'){
         if(!offscreenContext)throw new Error('The transition canvas is unavailable.');
@@ -860,8 +1084,8 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     const swatch=$(prefix+'-color-swatch'),description=$(prefix+'-color-text');
     const present=prefix==='background'||!!selected();
     const color={h:number(prefix+'-hue'),s:number(prefix+'-saturation'),l:number(prefix+'-lightness')};
-    const background=prefix==='background';
-    const valid=Number.isInteger(color.h)&&color.h>=0&&color.h<=359&&Number.isInteger(color.s)&&color.s>=0&&color.s<=(background?60:70)&&Number.isInteger(color.l)&&color.l>=(background?0:10)&&color.l<=(background?40:70);
+    const background=prefix==='background',effect=prefix==='outline'||prefix==='shadow';
+    const valid=Number.isInteger(color.h)&&color.h>=0&&color.h<=359&&Number.isInteger(color.s)&&color.s>=0&&color.s<=(background?60:70)&&Number.isInteger(color.l)&&color.l>=((background||effect)?0:10)&&color.l<=(background?40:70);
     swatch.hidden=!present;
     if(!present||!valid){
       swatch.style.backgroundColor='transparent';
@@ -872,24 +1096,37 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     const css=M.colorCSS(color),text='HSL '+color.h+'° / '+color.s+'% / '+color.l+'%';
     swatch.style.backgroundColor=css;
-    swatch.setAttribute('aria-label',(background?'Background':'Object')+' color sample: '+text+'.');
+    swatch.setAttribute('aria-label',prefix[0].toUpperCase()+prefix.slice(1)+' color sample: '+text+'.');
     description.textContent=text;
     const gradient=colors=>'linear-gradient(to right, '+colors.join(', ')+')';
     $(prefix+'-hue').style.backgroundImage=gradient([0,60,120,180,240,300,359].map(h=>M.colorCSS({...color,h})+' '+(h/359*100)+'%'));
     $(prefix+'-saturation').style.backgroundImage=gradient([0,background?60:70].map(s=>M.colorCSS({...color,s})));
-    const min=background?0:10,max=background?40:70;
+    const min=background||effect?0:10,max=background?40:70;
     $(prefix+'-lightness').style.backgroundImage=gradient((background?[min,max]:[min,50,max]).map(l=>M.colorCSS({...color,l})+' '+((l-min)/(max-min)*100)+'%'));
   }
+  function precisionLimit(id,key){const node=$(id),value=node[key]||node.getAttribute(key);return Number(value);}
   function updateOutputs(){
-    sliderIDs.forEach(id=>{$(id+'-value').textContent=$(id).value+(id.endsWith('hue')?'°':'%');});
-    updateColorSample('object');updateColorSample('background');
+    sliderIDs.forEach(id=>{
+      const node=$(id),numeric=$(id+'-value');
+      if(!rawPrecision.has(id))numeric.value=node.value;
+      numeric.disabled=node.disabled;numeric.min=String(precisionLimit(id,'min'));numeric.max=String(precisionLimit(id,'max'));
+      const value=number(id),min=precisionLimit(id,'min'),step=precisionLimit(id,'step'),steps=(value-min)/step;
+      const valid=Number.isFinite(value)&&value>=min&&value<=precisionLimit(id,'max')&&Math.abs(steps-Math.round(steps))<1e-8;
+      numeric.setAttribute('aria-invalid',String(!valid));
+      $(id+'-decrease').disabled=node.disabled||!valid||value<=precisionLimit(id,'min');
+      $(id+'-increase').disabled=node.disabled||!valid||value>=precisionLimit(id,'max');
+    });
+    colorPrefixes.forEach(updateColorSample);
   }
   function render(){
     let state=controller.getState();
     if(gateClockFault&&state.visible){cancelPlayback();controller.hide();state=controller.getState();}
     const full=document.fullscreenElement===root;
-    root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&displayKind==='live'&&editorOpen&&!full?' live-editor':'');
+    root.className='stage-root'+(full?' fullscreen-mode':'')+(state.visible?' scene-visible':'')+(state.visible&&['live','items'].includes(displayKind)&&editorOpen&&!full?' live-editor':'');
     $('editor-panel').hidden=!editorOpen;
+    // Resolve control rows before sizing the canvas; mode switches must not
+    // resize a freshly painted frame or let an inspector obscure item playback.
+    updateOutputs();renderSequence();renderItemEditor();renderItemPlayback();
     try{draw(state);}catch(e){
       // If even clearing fails, remove the raster surface; the root is black.
       cancelPlayback();controller.hide();canvas.hidden=true;context=null;state=controller.getState();
@@ -897,7 +1134,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     $('visibility-label').textContent=state.visible?'Visible':'Hidden';
     $('show-scene').setAttribute('aria-pressed',String(state.visible));
-    canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object.'+(isLive()?' Live draft displayed.':' The scene is hidden.')+' Escape cancels.':state.visible?(displayKind==='live'?'Live draft. '+M.describe(state.draft):displayKind==='scene'?M.describe(state.current):sequenceDescription()):'Scene hidden. No design is displayed.');
+    canvas.setAttribute('aria-label',placing?'Placement active. Click or tap a position for the selected object.'+(isLive()?' Live draft displayed.':' The scene is hidden.')+' Escape cancels.':state.visible?(displayKind==='live'?'Live draft. '+M.describe(state.draft):displayKind==='items'?itemDescription():displayKind==='scene'?M.describe(state.current):sequenceDescription()):'Scene hidden. No design is displayed.');
     $('undo').disabled=state.undoCount===0;$('redo').disabled=state.redoCount===0;
     $('draft-label').textContent=formDirty?(isLive()?'Live draft':'Changes staged'):'Applied';
     $('show-scene').textContent=isLive()?'Live preview on':'Live preview';
@@ -916,7 +1153,6 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     $('hidden-label').hidden=state.visible||full;
     $('fullscreen-start').hidden=!full||state.visible;
     $('fullscreen').hidden=full;$('exit-fullscreen').hidden=!full;
-    updateOutputs();renderSequence();
   }
   function cancelPlacement(){placing=false;}
   function selected(){return working.scene.objects.find(o=>o.id===selectedId);}
@@ -928,32 +1164,45 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   function fillSelected(){
     const o=selected();
-    [...objectFields,'place-object','delete-object'].forEach(id=>{$(id).disabled=!o;});
+    [...objectFields,'place-object','delete-object','duplicate-object','item-after-previous'].forEach(id=>{$(id).disabled=!o;});
     if(o){
       $('shape').value=o.shape;$('position-x').value=String(o.x);$('position-y').value=String(o.y);$('size').value=String(o.size);
       $('object-hue').value=String(o.color.h);$('object-saturation').value=String(o.color.s);$('object-lightness').value=String(o.color.l);
       $('size').max=o.shape==='dot'||o.shape==='pixel'?'8':'28';
+      ['outline','shadow'].forEach(prefix=>{
+        const effect=o[prefix];$(prefix+'-enabled').checked=effect.enabled;
+        ['hue','saturation','lightness'].forEach((channel,i)=>$(prefix+'-'+channel).value=String(effect.color[['h','s','l'][i]]));
+      });
+      $('outline-width').value=String(o.outline.width);$('shadow-offset-x').value=String(o.shadow.offsetX);$('shadow-offset-y').value=String(o.shadow.offsetY);$('shadow-blur').value=String(o.shadow.blur);
+      [['item-start','startMs'],['item-fade-in','fadeInMs'],['item-hold','holdMs'],['item-fade-out','fadeOutMs']].forEach(([id,key])=>$(id).value=String(o.timing[key]/1000));
+      $('pulse-enabled').checked=o.timing.pulse.enabled;$('pulse-min-opacity').value=String(Math.round(o.timing.pulse.minOpacity*100));
     }
-    updateObjectList();updateOutputs();
+    objectFields.forEach(id=>rawPrecision.delete(id));updateObjectList();updateOutputs();
   }
   function fillFields(scene){
-    working=copy(M.canonicalScene(scene));
+    rawPrecision.clear();working=copy(M.canonicalScene(scene));
     if(!working.scene.objects.some(o=>o.id===selectedId))selectedId=working.scene.objects[0]?.id||null;
-    $('scene-name').value=working.scene.name;
+    $('scene-name').value=working.scene.name;$('pulse-period').value=String(working.scene.pulsePeriodMs/1000);
     const b=working.scene.background;$('background-hue').value=String(b.h);$('background-saturation').value=String(b.s);$('background-lightness').value=String(b.l);
     fillSelected();
   }
   function readFields(){
     const next=copy(working),s=next.scene;
-    s.name=$('scene-name').value;s.background={h:number('background-hue'),s:number('background-saturation'),l:number('background-lightness')};
+    s.name=$('scene-name').value;s.pulsePeriodMs=milliseconds('pulse-period');s.background={h:number('background-hue'),s:number('background-saturation'),l:number('background-lightness')};
     const o=s.objects.find(item=>item.id===selectedId);
-    if(o){o.shape=$('shape').value;o.x=number('position-x');o.y=number('position-y');o.size=number('size');o.color={h:number('object-hue'),s:number('object-saturation'),l:number('object-lightness')};}
+    if(o){o.shape=$('shape').value;o.x=number('position-x');o.y=number('position-y');o.size=number('size');o.color={h:number('object-hue'),s:number('object-saturation'),l:number('object-lightness')};
+      o.outline={enabled:$('outline-enabled').checked,width:number('outline-width'),color:{h:number('outline-hue'),s:number('outline-saturation'),l:number('outline-lightness')}};
+      o.shadow={enabled:$('shadow-enabled').checked,offsetX:number('shadow-offset-x'),offsetY:number('shadow-offset-y'),blur:number('shadow-blur'),color:{h:number('shadow-hue'),s:number('shadow-saturation'),l:number('shadow-lightness')}};
+      o.timing={startMs:milliseconds('item-start'),fadeInMs:milliseconds('item-fade-in'),holdMs:milliseconds('item-hold'),fadeOutMs:milliseconds('item-fade-out'),pulse:{enabled:$('pulse-enabled').checked,minOpacity:number('pulse-min-opacity')/100}};
+    }
     return next;
   }
   function hide(message){cancelPlacement();conceal();render();say(message||'Scene hidden. Showing it again requires a fresh action after the repeat-action lock.');}
   function isLive(){return displayKind==='live'&&controller.getState().visible;}
   function beginManualEdit(){
-    if(isLive())controller.invalidateImport();else conceal();
+    if(isLive())controller.invalidateImport();
+    else if(controller.getState().visible)conceal();
+    else{cancelPlayback();controller.invalidateImport();}
     cancelPlacement();
   }
   function stageWorking(message){
@@ -969,7 +1218,20 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     }
     working=readFields();updateObjectList();stageWorking('Changes staged. Start Live preview to see this draft immediately.');
   }
-  fieldIDs.forEach(id=>$(id).addEventListener('input',edited));
+  fieldIDs.forEach(id=>$(id).addEventListener(id.endsWith('-enabled')?'change':'input',event=>{if(sliderIDs.includes(id))rawPrecision.delete(id);edited(event);}));
+  sliderIDs.forEach(id=>{
+    const range=$(id),numeric=$(id+'-value');
+    numeric.addEventListener('input',()=>{
+      rawPrecision.set(id,numeric.value);const value=number(id);
+      if(Number.isFinite(value)&&value>=precisionLimit(id,'min')&&value<=precisionLimit(id,'max'))range.value=String(value);
+      edited({target:range});
+    });
+    ['decrease','increase'].forEach(direction=>$(id+'-'+direction).addEventListener('click',()=>{
+      const value=number(id);if(!Number.isFinite(value)||range.disabled){say('Enter a valid number before using the step buttons.',true);return;}
+      const step=precisionLimit(id,'step'),next=Math.max(precisionLimit(id,'min'),Math.min(precisionLimit(id,'max'),value+(direction==='increase'?step:-step)));
+      rawPrecision.delete(id);range.value=String(Math.round(next*100)/100);numeric.value=range.value;edited({target:range});
+    }));
+  });
   $('object-select').addEventListener('change',()=>{
     const nextId=$('object-select').value;beginManualEdit();working=readFields();
     if(working.scene.objects.some(o=>o.id===nextId))selectedId=nextId;
@@ -983,7 +1245,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(working.scene.objects.length>=M.MAX_OBJECTS){render();say('This prototype supports up to 12 objects.',true);return;}
     const shape=$('add-shape').value;if(!M.SHAPES.includes(shape)){render();say('Choose one of the listed object shapes.',true);return;}
     let n=1;while(working.scene.objects.some(o=>o.id==='object-'+n))n++;
-    const o={id:'object-'+n,shape,x:50,y:50,size:shape==='dot'||shape==='pixel'?2:18,color:{h:126,s:8,l:49}};
+    const o=M.defaultObject('object-'+n,shape);
     working.scene.objects.push(o);selectedId=o.id;fillSelected();stageWorking('New '+shape+' staged at the center. Set its position or choose Place on field.');
   });
   $('delete-object').addEventListener('click',()=>{
@@ -1004,7 +1266,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(!placing||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
     const o=selected(),rect=canvas.getBoundingClientRect();
     if(!o||rect.width<=0||rect.height<=0||!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return;
-    const extent=o.size/2+(o.shape==='dot'||o.shape==='pixel'?0:0.5),min=1+extent,max=99-extent;
+    const extent=M.objectExtent(o),min=1+extent,max=99-extent;
     const clamp=v=>Math.round(Math.max(min,Math.min(max,v))*100)/100;
     o.x=clamp((event.clientX-(rect.left||0))*100/rect.width);o.y=clamp((event.clientY-(rect.top||0))*100/rect.height);
     cancelPlacement();fillSelected();editorOpen=true;stageWorking('Position staged at '+o.x+', '+o.y+'. Start Live preview when you choose.');$('position-x').focus();
@@ -1102,7 +1364,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   $('export-scene').addEventListener('click',()=>{
     if(formDirty){controller.invalidateImport();say('Apply or discard staged changes before downloading the scene.',true);return;}
     hide('Scene hidden for download.');
-    try{download(M.canonicalScene(controller.getState().current),'imagery-field-scene-v2.json');}catch(e){say(e.message,true);}
+    try{download(M.canonicalScene(controller.getState().current),'imagery-field-scene-v3.json');}catch(e){say(e.message,true);}
   });
   $('scene-import').addEventListener('change',async()=>{
     const file=$('scene-import').files&&$('scene-import').files[0];$('scene-import').value='';if(!file)return;
@@ -1139,10 +1401,81 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   });
   // Sequence documents stay separate from static scene history and optional notes.
   let acceptedSequenceName='My sequence',compiledSequence=null;
+  function itemDescription(){
+    if(!itemFrame||!itemSource)return 'Item preview.';
+    const visible=itemFrame.items.filter(item=>item.alpha>0).map(item=>item.id+' '+item.phase+' '+Math.round(item.alpha*100)+' percent');
+    return 'Timed items at '+(itemFrame.elapsedMs/1000).toFixed(1)+' seconds. '+(visible.length?visible.join('; '):'Only the steady background is visible.');
+  }
+  function renderItemEditor(){
+    const list=$('item-timeline');list.replaceChildren();
+    let compiled=null,error='';
+    try{compiled=I.compileTimeline(readFields());}catch(e){error=e.message;}
+    const selectedIndex=working.scene.objects.findIndex(o=>o.id===selectedId);
+    $('duplicate-object').disabled=!selected()||working.scene.objects.length>=M.MAX_OBJECTS;
+    $('item-after-previous').disabled=selectedIndex<=0;
+    $('item-total').textContent=compiled?'Preview duration: '+(compiled.durationMs/1000)+' seconds · ends at the last item.':error;
+    $('item-end').textContent=compiled&&selectedIndex>=0?'Selected item ends at '+(compiled.tracks[selectedIndex].endMs/1000)+' seconds.':'Fix the item timing to calculate its end.';
+    if(compiled)compiled.tracks.forEach(track=>{
+      const o=compiled.document.scene.objects[track.index],button=document.createElement('button');button.type='button';button.className='timeline-track';button.setAttribute('aria-pressed',String(o.id===selectedId));
+      const label=document.createElement('span');label.className='track-label';label.textContent=(track.index+1)+'. '+o.shape+' · '+track.startMs/1000+'–'+track.endMs/1000+' s'+(o.timing.pulse.enabled?' · pulse':'');button.appendChild(label);
+      const detail=document.createElement('span');detail.className='track-detail';detail.textContent='In '+o.timing.fadeInMs/1000+' s · hold '+o.timing.holdMs/1000+' s · out '+o.timing.fadeOutMs/1000+' s';button.appendChild(detail);
+      const bar=document.createElement('span');bar.className='track-bar';bar.setAttribute('aria-hidden','true');bar.style.left=(track.startMs/compiled.durationMs*100)+'%';bar.style.width=((track.endMs-track.startMs)/compiled.durationMs*100)+'%';bar.style.color=M.colorCSS(o.color);
+      [['fade-in',o.timing.fadeInMs],['hold',o.timing.holdMs],['fade-out',o.timing.fadeOutMs]].forEach(([phase,duration])=>{if(duration){const segment=document.createElement('span');segment.className='track-segment '+phase;segment.style.width=(duration/(track.endMs-track.startMs)*100)+'%';bar.appendChild(segment);}});button.appendChild(bar);
+      button.addEventListener('click',()=>{beginManualEdit();working=readFields();selectedId=o.id;fillSelected();render();if(list.children[track.index])list.children[track.index].focus();say('Item '+(track.index+1)+' selected. Timing tracks show overlaps; no automatic chaining.');});list.appendChild(button);
+    });
+    $('item-play').disabled=!compiled||motionReduced||document.fullscreenElement===root||!context||!offscreenContext;
+    $('item-motion-note').hidden=!motionReduced;
+  }
+  function renderItemPlayback(){
+    const previouslyFocused=document.activeElement,state=itemTimeline.getState(),running=state.status==='running',paused=state.status==='paused',active=displayKind==='items'&&(running||paused);
+    $('item-view-actions').hidden=!active||section!=='scene';
+    if(active&&section==='scene')$('scene-view-actions').hidden=true;
+    $('item-pause').hidden=!running;$('item-resume').hidden=!paused;
+    $('item-progress').textContent=active?(paused?'Paused':'Playing')+' · '+((itemFrame?itemFrame.elapsedMs:0)/1000).toFixed(1)+' / '+(compiledItems.durationMs/1000)+' s':'Stopped';
+    $('item-play').disabled=$('item-play').disabled||active;
+    if(!active&&['item-pause','item-resume','item-stop'].some(id=>previouslyFocused===$(id)))$('hide-scene').focus();
+  }
+  $('duplicate-object').addEventListener('click',()=>{
+    beginManualEdit();working=readFields();
+    try{working=copy(M.canonicalScene(working));if(!selected())throw new Error('Select an object first.');if(working.scene.objects.length>=M.MAX_OBJECTS)throw new Error('The scene already has 12 objects.');
+      let id=1;while(working.scene.objects.some(o=>o.id==='object-'+id))id++;const duplicate=copy(selected());duplicate.id='object-'+id;working.scene.objects.push(duplicate);selectedId=duplicate.id;fillSelected();stageWorking('Item duplicated with the same style, position and timing. It overlaps until you change it.');
+    }catch(e){conceal();render();say(e.message,true);}
+  });
+  $('item-after-previous').addEventListener('click',()=>{
+    beginManualEdit();working=readFields();
+    const index=working.scene.objects.findIndex(o=>o.id===selectedId);if(index<=0){render();return;}
+    const t=working.scene.objects[index-1].timing,end=t.startMs+t.fadeInMs+t.holdMs+t.fadeOutMs;
+    $('item-start').value=String(end/1000);working=readFields();stageWorking('Start copied from the previous item’s end. Later edits do not automatically move this item.');
+  });
+  function startItems(){
+    if(itemTimeline.getState().status!=='stopped')return;
+    if(controller.getState().visible){hide('Live preview hidden. Choose Play items once again after the repeat-action lock.');return;}
+    if(document.fullscreenElement===root||motionReduced){say(motionReduced?'Reduced motion is on. Use Live preview for a static composition.':'Exit fullscreen to use timed item preview.',true);return;}
+    if(!context||!offscreenContext||typeof window.requestAnimationFrame!=='function'){say('Timed item preview is unavailable. Static Live preview may still work.',true);return;}
+    cancelPlayback();cancelPlacement();
+    try{
+      itemSource=M.canonicalScene(readFields());compiledItems=I.compileTimeline(itemSource);const result=controller.previewDraft(itemSource);
+      if(gateClockFault){hide('The display clock failed. Reload before viewing.');return;}
+      if(!result.ok){render();say(result.error,true);return;}
+      const started=itemTimeline.start(compiledItems);displayKind='items';itemFrame=started.frame;render();paintPlayback(started.frame);scheduleFrame();$('item-pause').focus();
+      say('Playing items once for '+compiledItems.durationMs/1000+' seconds. Pause retains the displayed frame; Stop / Hide ends preview.');
+    }catch(e){hide('Item preview stopped. '+e.message);}
+  }
+  $('item-play').addEventListener('click',startItems);
+  $('item-pause').addEventListener('click',()=>{
+    if(itemTimeline.getState().status!=='running'||!controller.getState().visible)return;
+    generation++;if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
+    try{itemTimeline.pause();render();say('Item preview paused at the displayed frame. Resume continues; Stop / Hide conceals.');$('item-resume').focus();}catch(e){hide('Item preview stopped. '+e.message);}
+  });
+  $('item-resume').addEventListener('click',()=>{
+    if(itemTimeline.getState().status!=='paused'||!controller.getState().visible||motionReduced||document.fullscreenElement===root)return;
+    try{generation++;itemTimeline.resume();render();scheduleFrame();say('Item preview resumed.');$('item-pause').focus();}catch(e){hide('Item preview stopped. '+e.message);}
+  });
+  $('item-stop').addEventListener('click',()=>hide('Item preview stopped. Field hidden; nothing will replay.'));
   function cancelPlayback(){
     generation++;
     if(rafId!==null){window.cancelAnimationFrame(rafId);rafId=null;}
-    timeline.stop();paintedFrame=null;lastPhaseKey='';displayKind='scene';
+    timeline.stop();itemTimeline.stop();paintedFrame=null;itemFrame=null;lastPhaseKey='';displayKind='scene';
   }
   function conceal(){cancelPlayback();controller.hide();}
   function sequenceDescription(){
@@ -1265,13 +1598,13 @@ input.color-slider:disabled{opacity:.45;cursor:default}
       if(!scene.scene.objects.length)throw new Error('A sequence step needs at least one object.');
       if(sequence&&JSON.stringify(scene.scene.background)!==JSON.stringify(sequence.sequence.background))throw new Error('This scene background differs from the sequence. Match its shared background before capturing.');
       if(replace&&!sequence)throw new Error('Add a step before replacing it.');
-      const next=sequence?copy(sequence):{format:'imagery-field-sequence',version:1,sampler:'ordered-crossfade-1',sequence:{name:acceptedSequenceName,background:scene.scene.background,steps:[]}};
+      const next=sequence?copy(sequence):{format:S.FORMAT,version:S.VERSION,sampler:S.SAMPLER,sequence:{name:acceptedSequenceName,background:scene.scene.background,steps:[]}};
       const steps=next.sequence.steps,formerFinalId=steps.length?steps[steps.length-1].id:null;
       let newIndex;
-      if(replace){newIndex=stepIndex;steps[newIndex]={...steps[newIndex],name:scene.scene.name,objects:copy(scene.scene.objects)};}
+      if(replace){newIndex=stepIndex;steps[newIndex]={...steps[newIndex],name:scene.scene.name,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:copy(scene.scene.objects)};}
       else{
         let id=1;while(steps.some(step=>step.id==='step-'+id))id++;
-        steps.push({id:'step-'+id,name:scene.scene.name,holdMs:S.DEFAULT_HOLD_MS,transitionMs:0,objects:copy(scene.scene.objects)});newIndex=steps.length-1;
+        steps.push({id:'step-'+id,name:scene.scene.name,holdMs:S.DEFAULT_HOLD_MS,transitionMs:0,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:copy(scene.scene.objects)});newIndex=steps.length-1;
       }
       const adjustments=normalizeSteps(steps,formerFinalId),accepted=S.canonicalSequence(next),compiled=S.compileTimeline(accepted);
       // Both preflights finish before either accepted document/history mutates.
@@ -1310,7 +1643,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   $('sequence-example').addEventListener('click',()=>{
     conceal();cancelPlacement();if(!sequencePrecondition()){render();return;}
     const scenes=M.presets().slice(2,5);
-    const next=S.canonicalSequence({format:'imagery-field-sequence',version:1,sampler:'ordered-crossfade-1',sequence:{name:'Circle, square, triangle',background:scenes[0].scene.background,steps:scenes.map((scene,i)=>({id:'step-'+(i+1),name:scene.scene.name,holdMs:3000,transitionMs:i===2?0:1000,objects:scene.scene.objects}))}});
+    const next=S.canonicalSequence({format:S.FORMAT,version:S.VERSION,sampler:S.SAMPLER,sequence:{name:'Circle, square, triangle',background:scenes[0].scene.background,steps:scenes.map((scene,i)=>({id:'step-'+(i+1),name:scene.scene.name,holdMs:3000,transitionMs:i===2?0:1000,pulsePeriodMs:scene.scene.pulsePeriodMs,objects:scene.scene.objects}))}});
     stepIndex=0;setAcceptedSequence(next);render();say('11-second example loaded and hidden. Circle 3s, fade 1s, square 3s, fade 1s, triangle 3s. Choose Show step or Play once.');
   });
   function canPresent(){
@@ -1331,27 +1664,30 @@ input.color-slider:disabled{opacity:.45;cursor:default}
     if(result.ok&&document.fullscreenElement===root)$('exit-fullscreen').focus();
   }
   $('sequence-show').addEventListener('click',showStep);
+  function playbackEngine(){return displayKind==='items'?itemTimeline:timeline;}
   function paintPlayback(frame){
     const state=controller.getState();if(gateClockFault)throw new Error('The display clock failed. Reload before viewing.');
-    paintedFrame=frame;if(!draw(state))throw new Error('Canvas could not paint the sequence.');
-    if(!timeline.markPainted(frame))throw new Error('The sequence frame was canceled.');
-    const key=frame.phase+':'+frame.stepIndex;
-    if(key!==lastPhaseKey){lastPhaseKey=key;canvas.setAttribute('aria-label',sequenceDescription());say(frame.phase==='transition'?'Transition from '+sequence.sequence.steps[frame.stepIndex].name+' to '+sequence.sequence.steps[frame.nextStepIndex].name+'. Pause keeps the displayed frame visible.':'Playing step '+(frame.stepIndex+1)+': '+sequence.sequence.steps[frame.stepIndex].name+'. Stop / Hide is available.');}
-    renderSequence();
+    const items=displayKind==='items',engine=playbackEngine();if(items)itemFrame=frame;else paintedFrame=frame;
+    if(!draw(state))throw new Error('Canvas could not paint the preview.');
+    if(!engine.markPainted(frame))throw new Error('The preview frame was canceled.');
+    const key=items?frame.items.map(item=>item.id+':'+item.phase).join('|'):frame.phase+':'+frame.stepIndex;
+    if(key!==lastPhaseKey){lastPhaseKey=key;canvas.setAttribute('aria-label',items?itemDescription():sequenceDescription());
+      if(!items)say(frame.phase==='transition'?'Transition from '+sequence.sequence.steps[frame.stepIndex].name+' to '+sequence.sequence.steps[frame.nextStepIndex].name+'. Pause keeps the displayed frame visible.':'Playing step '+(frame.stepIndex+1)+': '+sequence.sequence.steps[frame.stepIndex].name+'. Stop / Hide is available.');}
+    renderSequence();renderItemPlayback();
   }
   function scheduleFrame(){
     const gate=controller.getState();if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
-    if(rafId!==null||timeline.getState().status!=='running'||!gate.visible||displayKind!=='timed')return;
-    const capturedEpoch=gate.epoch,capturedGeneration=generation,engineGeneration=timeline.getState().generation;
+    const kind=displayKind,engine=playbackEngine();
+    if(rafId!==null||engine.getState().status!=='running'||!gate.visible||!['timed','items'].includes(kind))return;
+    const capturedEpoch=gate.epoch,capturedGeneration=generation,engineGeneration=engine.getState().generation;
     rafId=window.requestAnimationFrame(()=>{
-      // A stale callback must not even clear a newer generation's pending handle.
       if(capturedGeneration!==generation)return;
-      rafId=null;const state=controller.getState(),playback=timeline.getState();
+      rafId=null;const state=controller.getState(),playback=engine.getState();
       if(gateClockFault){hide('The display clock failed. The field is hidden; reload before viewing.');return;}
-      if(state.epoch!==capturedEpoch||!state.visible||displayKind!=='timed'||playback.status!=='running'||playback.generation!==engineGeneration)return;
+      if(state.epoch!==capturedEpoch||!state.visible||displayKind!==kind||playback.status!=='running'||playback.generation!==engineGeneration)return;
       try{
-        const next=timeline.tick();
-        if(next.status==='finished'||next.frame.done){hide('Sequence finished. Field hidden. Playback reset; nothing will replay.');return;}
+        const next=engine.tick();
+        if(next.status==='finished'||next.frame.done){hide((kind==='items'?'Item preview':'Sequence')+' finished. Field hidden. Playback reset; nothing will replay.');return;}
         if(capturedGeneration!==generation||controller.getState().epoch!==capturedEpoch)return;
         paintPlayback(next.frame);scheduleFrame();
       }catch(e){hide('Playback stopped. '+e.message);}
@@ -1387,7 +1723,7 @@ input.color-slider:disabled{opacity:.45;cursor:default}
   }
   $('sequence-export').addEventListener('click',()=>{
     conceal();cancelPlacement();render();if(!sequencePrecondition()||!sequence)return;
-    try{download(S.canonicalSequence(sequence),'imagery-field-sequence-v1.json');}catch(e){say(e.message,true);}
+    try{download(S.canonicalSequence(sequence),'imagery-field-sequence-v2.json');}catch(e){say(e.message,true);}
   });
   $('sequence-import').addEventListener('change',async()=>{
     const file=$('sequence-import').files&&$('sequence-import').files[0];$('sequence-import').value='';if(!file)return;

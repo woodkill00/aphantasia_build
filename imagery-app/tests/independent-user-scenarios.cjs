@@ -11,6 +11,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const {setTimeout: sleep} = require('node:timers/promises');
+const {scene:makeScene}=require('./fixtures.cjs');
 const referenceScene = {
   format:'imagery-static-scene',version:2,sampler:'static-objects-2',
   scene:{name:'Reference: circle square triangle',background:{h:210,s:10,l:8},objects:[
@@ -19,6 +20,7 @@ const referenceScene = {
     {id:'object-3',shape:'triangle',x:70,y:50,size:10,color:{h:40,s:35,l:50}},
   ]},
 };
+const canonicalReference=makeScene(referenceScene.scene);Object.assign(referenceScene,canonicalReference);
 const clone = value => JSON.parse(JSON.stringify(value));
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 function rgb({h,s,l}) {
@@ -129,10 +131,10 @@ async function runIndependentScenarios({page,runCase,out,captureLog=false}) {
     for(const [channel,value]of [['hue',210],['saturation',10],['lightness',8]])await rangeTo('#background-'+channel,value);
     await swatch('background',referenceScene.scene.background);await page.hidden();
     await act('Apply reference',()=>page.click('#apply-changes'));await page.hidden();
-    const downloaded=await page.download('#export-scene','imagery-field-scene-v2.json');
+    const downloaded=await page.download('#export-scene','imagery-field-scene-v3.json');
     assert.deepEqual(downloaded.json,referenceScene,'Constructed native-control scene must exactly match the common fixture');
     await page.file('independent-reference-crosscheck.json',referenceScene);await page.hidden();
-    const imported=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(imported.json,referenceScene);
+    const imported=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(imported.json,referenceScene);
     console.log('INDEPENDENT_CONSTRUCTION '+JSON.stringify({device:page.device.name,fixtureSha256:digest(Buffer.from(JSON.stringify(referenceScene))),nativeControlSteps:events.length,observations:events}));
   });
   await runCase('independent user edits square, discards, applies and views fullscreen',async()=>{
@@ -145,7 +147,7 @@ async function runIndependentScenarios({page,runCase,out,captureLog=false}) {
     await act('Discard square color',()=>page.click('#discard'));await swatch('object',{h:130,s:30,l:50});
     await rangeTo('#object-hue',260);await act('Apply square color',()=>page.click('#apply-changes'));await page.hidden();
     const after=clone(referenceScene);after.scene.objects[1].color.h=260;
-    const exported=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(exported.json,after,'Only the square hue may change');
+    const exported=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(exported.json,after,'Only the square hue may change');
     await act('Close editor',()=>page.click('#editor-toggle'));await sleep(3100);await page.hidden();
     await act('Explicitly show edited reference',()=>page.click('#show-scene'));await page.visible();await scenePixels(after);
     await page.click('#editor-toggle');await page.visible();await page.click('#hide-scene');await page.hidden();await rangeTo('#background-hue',30);await swatch('background',{h:30,s:10,l:8});

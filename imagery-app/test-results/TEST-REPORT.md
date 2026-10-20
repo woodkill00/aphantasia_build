@@ -1,3 +1,20 @@
+# Version 0.6 item-style/timeline candidate
+
+2026-10-20. The candidate implements precise numeric/range controls, the new HSL 4/60/4 background for new scenes, independently colored outlines/shadows, versioned backward-compatible files, and explicitly started finite overlapping item fades with optional shared-clock opacity pulses.
+
+**423/423 non-browser checks pass.** The **96 native Chrome groups and 52 capture checkpoints are prepared, not yet executed** for this artifact. Source review and test doubles are not rendered-browser acceptance.
+
+- HTML: 162947 bytes; SHA-256 `920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97`.
+- Current code-check command: `node --test imagery-app/tests/*.test.cjs`.
+- Separate static Live preview and timed item playback; Stop/Hide and lifecycle cancellation are retained.
+- The native suite must verify exact raster composition, old-file migration, precision inputs, item overlap and final stop, stale-callback cancellation, and narrow/short layouts.
+- Physical devices, other engines, full accessibility and clinical/sensory validation remain unestablished. Engineering pulse bounds are not medical or WCAG certification.
+
+## Previous version reconciliation
+
+Version 0.5's later [clean-exit CI run 39358880818](https://github.com/woodkill00/aphantasia_build/actions/runs/39358880818) passed 349 non-browser checks and 82 Chrome groups on source `9e26a832bf0d7e98c46e2f1bd3f24cfe5b91b1ee`; it merged as `95e0483905b8aa5845127a3f9ac637720e8ad380`. The earlier timeout report below is historical, not the final v0.5 release state. Its failures remain recorded.
+
+<!-- PRIOR-EVIDENCE -->
 # Version 0.5 live-edit software evidence
 
 2026-10-20. The exact artifact below passed **349/349 non-browser checks and 82/82 native Chrome scenario groups**. Independent source review and inspection of **36 actual rendered captures** accepted the scoped live-edit behavior and responsive controls.

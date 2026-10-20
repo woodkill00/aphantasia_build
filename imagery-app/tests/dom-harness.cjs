@@ -8,7 +8,7 @@ function createHarness(options={}){
  const nodes=new Map(),paint=[],downloads=[],timers=[],urls=new Map(),revoked=[],events=new Map(),canvasContexts=new Map(),createdCanvases=[],rafPending=new Map(),cancelledFrames=[];let time=0,urlSequence=0,rafSequence=0,maxRafPending=0;
  const mediaListeners=new Set(),media={matches:!!options.reducedMotion,media:'(prefers-reduced-motion: reduce)',addEventListener(type,fn){if(type==='change')mediaListeners.add(fn)},removeEventListener(type,fn){if(type==='change')mediaListeners.delete(fn)},addListener(fn){mediaListeners.add(fn)},removeListener(fn){mediaListeners.delete(fn)}};
  class Element{
-  constructor(tag,id,attrs=''){this.tagName=tag.toUpperCase();this.id=id;this.attrs={};this.listeners=new Map();this.value=attrs.match(/\bvalue="([^"]*)"/)?.[1]||'';this.hidden=/\bhidden\b/.test(attrs);this.disabled=/\bdisabled\b/.test(attrs);this.checked=false;this.textContent='';this.className='';this.files=[];this.width=360;this.height=360;this.children=[];this.style={};this.dataset={};this.classList={add:(...keys)=>{this.className=[...new Set([...this.className.split(' ').filter(Boolean),...keys])].join(' ')},remove:(...keys)=>{this.className=this.className.split(' ').filter(k=>!keys.includes(k)).join(' ')},contains:key=>this.className.split(' ').includes(key),toggle:(key,force)=>{const on=force===undefined?!this.classList.contains(key):!!force;on?this.classList.add(key):this.classList.remove(key);return on}};}
+  constructor(tag,id,attrs=''){this.tagName=tag.toUpperCase();this.id=id;this.attrs=Object.fromEntries([...attrs.matchAll(/([\w-]+)="([^"]*)"/g)].map(m=>[m[1],m[2]]));this.listeners=new Map();this.value=attrs.match(/\bvalue="([^"]*)"/)?.[1]||'';this.hidden=/\bhidden\b/.test(attrs);this.disabled=/\bdisabled\b/.test(attrs);this.checked=/\bchecked\b/.test(attrs);for(const key of ['min','max','step','type'])if(this.attrs[key]!==undefined)this[key]=this.attrs[key];this.textContent='';this.className='';this.files=[];this.width=360;this.height=360;this.children=[];this.style={};this.dataset={};this.classList={add:(...keys)=>{this.className=[...new Set([...this.className.split(' ').filter(Boolean),...keys])].join(' ')},remove:(...keys)=>{this.className=this.className.split(' ').filter(k=>!keys.includes(k)).join(' ')},contains:key=>this.className.split(' ').includes(key),toggle:(key,force)=>{const on=force===undefined?!this.classList.contains(key):!!force;on?this.classList.add(key):this.classList.remove(key);return on}};}
   addEventListener(type,fn){if(!this.listeners.has(type))this.listeners.set(type,[]);this.listeners.get(type).push(fn);}
   setAttribute(key,value){this.attrs[key]=String(value);if(key==='class')this.className=String(value);}
   removeAttribute(key){delete this.attrs[key];}
@@ -26,7 +26,16 @@ function createHarness(options={}){
   remove(){}
   click(){if(this.tagName==='A'){if(options.downloadThrows)throw Error('download blocked');downloads.push({filename:this.download,href:this.href,blob:urls.get(this.href)});}else return fire(this,'click');}
  }
- function makeContext(log,canvasId){const context={log,globalAlpha:1,globalCompositeOperation:'source-over'};for(const name of ['clearRect','strokeRect','save','restore','translate','scale','setTransform','fillRect','beginPath','arc','fill','stroke','moveTo','lineTo','closePath','drawImage'])context[name]=(...args)=>log.push({method:name,args,fillStyle:context.fillStyle,strokeStyle:context.strokeStyle,globalAlpha:context.globalAlpha,globalCompositeOperation:context.globalCompositeOperation,canvasId});return context;}
+ function makeContext(log,canvasId){
+  const context={log,globalAlpha:1,globalCompositeOperation:'source-over',lineWidth:1,shadowColor:'rgba(0, 0, 0, 0)',shadowBlur:0,shadowOffsetX:0,shadowOffsetY:0},stack=[];
+  const keys=['fillStyle','strokeStyle','globalAlpha','globalCompositeOperation','lineWidth','shadowColor','shadowBlur','shadowOffsetX','shadowOffsetY'];
+  const snapshot=()=>Object.fromEntries(keys.map(key=>[key,context[key]]));
+  for(const name of ['clearRect','strokeRect','translate','scale','setTransform','fillRect','beginPath','arc','fill','stroke','moveTo','lineTo','closePath'])context[name]=(...args)=>log.push({method:name,args,...snapshot(),canvasId});
+  context.drawImage=(...args)=>{const source=canvasContexts.get(args[0]),sourceLog=source?.log||[],lastClear=sourceLog.findLastIndex(row=>row.method==='clearRect');log.push({method:'drawImage',args,...snapshot(),sourcePaint:sourceLog.slice(lastClear+1).map(row=>({...row})),canvasId})};
+  context.save=(...args)=>{log.push({method:'save',args,...snapshot(),canvasId});stack.push(snapshot())};
+  context.restore=(...args)=>{log.push({method:'restore',args,...snapshot(),canvasId});if(stack.length)Object.assign(context,stack.pop())};
+  return context;
+ }
  const ctx=makeContext(paint,'scene-canvas');
  for(const match of html.matchAll(/<([a-z][\w-]*)\b([^>]*\bid="([^"]+)"[^>]*)>/gi)){nodes.set(match[3],new Element(match[1],match[3],match[2]));}
  for(const match of html.matchAll(/<select\b[^>]*id="([^"]+)"[^>]*>([\s\S]*?)<\/select>/gi)){nodes.get(match[1]).value=match[2].match(/<option[^>]*value="([^"]*)"/)?.[1]||'';}

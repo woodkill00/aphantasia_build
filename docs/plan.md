@@ -2,7 +2,11 @@
 
 Updated 2026-10-20. The single public work register is [`project-queue.json`](../project-queue.json). Planned work and a passing software test are not clinical approval, a human study, or authorization for unrelated scope.
 
-## Current increment: version 0.5 live editing
+## Current increment: version 0.6 precise styles and item timing
+
+Implement the [item-timeline contract](item-timeline.md): new starter background H4/S60/L4, editable numbers and fine-step controls, independently colored outline/shadow, duplicate/start-after helpers, selectable timeline tracks, overlapping item fades and finite shared-clock opacity pulse. Preserve old files through strict versioned migrations and keep item playback separate from snapshot sequences. Exact source/model/native-pixel/interaction/visual acceptance is pending for this increment. Earlier passes are not inherited.
+
+## Historical version 0.5 live editing
 
 Implement immediate actual-draft preview after one explicit start, valid manual edits without repeated Apply/Show, visible canvas alongside inspector, unchanged accepted history/snapshot semantics, invalid-input concealment, and no restart after Hide or lifecycle interruption. Independent model/UI/browser/visual checks passed for the exact recorded artifact. The native workflow timeout is a separate failed outcome; a budget-only repair and clean-exit CI gate precede merge. The recorded v0.4 results below remain historical.
 
@@ -50,4 +54,4 @@ CI uses preinstalled tools, normal Chrome sandboxing, read-only repository permi
 
 ## Deferred decisions
 
-A license remains a maintainer decision. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, live flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.
+A license remains a maintainer decision. Arbitrary groups/freeform geometry, broader effect-curve authoring, offscreen output analysis, unrestricted flash/pulse modes, durable storage, hosted delivery, accounts, telemetry, participant management, and efficacy measures require separate specification and review. Authoring/analysis proposals are not implemented live-display features, and a warning does not clear them for use.

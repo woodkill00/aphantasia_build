@@ -72,6 +72,7 @@ const {scene: fixtureScene, legacy} = require('./fixtures.cjs');
 const {runIndependentScenarios}=require('./independent-user-scenarios.cjs');
 const {runSequenceScenarios}=require('./browser-sequence.cjs');
 const {runLiveScenarios}=require('./browser-live.cjs');
+const {runItemScenarios}=require('./browser-items.cjs');
 const {runIndependentSequenceScenarios}=require('./independent-sequence-user-scenarios.cjs');
 const scene = changes => { const value = fixtureScene(); const {shape,x,y,size,...rest}=changes||{}; Object.assign(value.scene,rest); for(const [key,v] of Object.entries({shape,x,y,size})) if(v!==undefined)value.scene.objects[0][key]=v; return value; };
 function fixtures() {
@@ -84,7 +85,7 @@ function fixtures() {
       ['unknown-animation', JSON.stringify({...valid, animation:true})],
       ['unknown-url', JSON.stringify({...valid, url:'https://example.invalid'})],
       ['embedded-note', JSON.stringify({...valid, notes:'Synthetic note'})],
-      ['duplicate-key', JSON.stringify(valid).replace('"version":2','"version":999,"version":2')],
+      ['duplicate-key', JSON.stringify(valid).replace('"version":3','"version":999,"version":3')],
       ['nested-object-extra', JSON.stringify(scene({objects:[{...scene().scene.objects[0],url:'https://example.invalid'}]}))],
       ['invalid-object-color', JSON.stringify(scene({objects:[{...scene().scene.objects[0],color:{h:360,s:20,l:40}}]}))],
       ['duplicate-object-id', JSON.stringify(scene({objects:[scene().scene.objects[0],scene().scene.objects[0]]}))],
@@ -539,7 +540,7 @@ async function run() {
           for (let i=0;i<M.presets().length;i++) { await page.select('#preset',i); await page.hidden(); assert.equal(await page.property('#shape','value'),M.presets()[i].scene.objects[0]?.shape||''); }
           await page.fill('#scene-name','Synthetic browser scene'); await page.select('#shape','circle'); await page.fill('#position-x','25');
           await page.click('#apply-changes'); await page.hidden();
-          const got = await page.download('#export-scene','imagery-field-scene-v2.json');
+          const got = await page.download('#export-scene','imagery-field-scene-v3.json');
           assert.equal(got.json.scene.name,'Synthetic browser scene'); assert.equal(got.json.scene.objects[0].x,25); assert.equal(got.json.scene.objects[0].shape,'circle');
           await page.click('#undo'); await page.hidden(); await page.click('#redo'); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'Synthetic browser scene');
           await page.fill('#position-x','0'); await page.click('#apply-changes'); await page.hidden();
@@ -548,10 +549,10 @@ async function run() {
         });
         await runCase(page,'native disk download/reload/file-import byte roundtrip',async () => {
           await page.fill('#scene-name','Portable roundtrip'); await page.click('#apply-changes');
-          const first = await page.download('#export-scene','imagery-field-scene-v2.json');
+          const first = await page.download('#export-scene','imagery-field-scene-v3.json');
           await page.fresh(); await page.importPath(first.filePath); await page.hidden();
           assert.equal(await page.property('#scene-name','value'),'Portable roundtrip');
-          const second = await page.download('#export-scene','imagery-field-scene-v2.json');
+          const second = await page.download('#export-scene','imagery-field-scene-v3.json');
           assert.deepEqual(second.bytes,first.bytes,'actual browser-written JSON bytes differ after reload/import');
           await page.importPath(first.filePath); await page.hidden(); assert.equal(await page.property('#scene-name','value'),'Portable roundtrip');
         });
@@ -585,7 +586,7 @@ async function run() {
         });
         await runCase(page,'separate notes preview, consent, download, invalidation, and reload',async () => {
           await page.click('#notes-details > summary'); await page.fill('#notes','Synthetic private note'); await page.select('#note-category','unsure');
-          const exported = await page.download('#export-scene','imagery-field-scene-v2.json'); assert.ok(!exported.bytes.toString().includes('Synthetic private note'));
+          const exported = await page.download('#export-scene','imagery-field-scene-v3.json'); assert.ok(!exported.bytes.toString().includes('Synthetic private note'));
           await page.click('#preview-notes');
           const preview = JSON.parse(await page.property('#notes-preview','textContent'));
           assert.equal(await page.property('#export-notes','disabled'),true); assert.equal(await page.property('#include-note','checked'),false);
@@ -635,18 +636,18 @@ async function run() {
         await runCase(page,'v2 native add/select/delete, movement, sliders and exact export',async()=>{
           await page.file('empty-v2.json',scene({objects:[]}));
           await page.nativeSelect('#add-shape','pixel');await page.click('#add-object');await page.hidden();await page.click('#apply-changes');
-          const first=await page.download('#export-scene','imagery-field-scene-v2.json');assert.equal(first.json.scene.objects.length,1);assert.equal(first.json.scene.objects[0].shape,'pixel');const firstId=first.json.scene.objects[0].id;
+          const first=await page.download('#export-scene','imagery-field-scene-v3.json');assert.equal(first.json.scene.objects.length,1);assert.equal(first.json.scene.objects[0].shape,'pixel');const firstId=first.json.scene.objects[0].id;
           await page.nativeSelect('#add-shape','circle');await page.click('#add-object');await page.click('#apply-changes');
-          const second=await page.download('#export-scene','imagery-field-scene-v2.json');assert.equal(second.json.scene.objects.length,2);const secondId=second.json.scene.objects.find(o=>o.id!==firstId).id;
+          const second=await page.download('#export-scene','imagery-field-scene-v3.json');assert.equal(second.json.scene.objects.length,2);const secondId=second.json.scene.objects.find(o=>o.id!==firstId).id;
           await page.nativeSelect('#object-select',firstId);await page.fill('#position-x','35.25');await page.fill('#position-y','65');await page.fill('#size','6');await page.click('#apply-changes');
           for(const slider of ['#object-hue','#object-saturation','#object-lightness']){await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.rangeInput(slider);await page.click('#apply-changes');}
-          const changed=await page.download('#export-scene','imagery-field-scene-v2.json');const pixel=changed.json.scene.objects.find(o=>o.id===firstId);assert.equal(pixel.x,35.25);assert.equal(pixel.y,65);assert.equal(pixel.size,6);assert.equal(changed.json.version,2);assert.equal(changed.json.sampler,'static-objects-2');assert.deepEqual(M.canonicalScene(changed.json),changed.json);
-          await page.click('#delete-object');await page.hidden();await page.click('#apply-changes');const removed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(removed.json.scene.objects.map(o=>o.id),[secondId]);await page.click('#undo');const restored=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(restored.json,changed.json);
+          const changed=await page.download('#export-scene','imagery-field-scene-v3.json');const pixel=changed.json.scene.objects.find(o=>o.id===firstId);assert.equal(pixel.x,35.25);assert.equal(pixel.y,65);assert.equal(pixel.size,6);assert.equal(changed.json.version,3);assert.equal(changed.json.sampler,'styled-objects-3');assert.deepEqual(M.canonicalScene(changed.json),changed.json);
+          await page.click('#delete-object');await page.hidden();await page.click('#apply-changes');const removed=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(removed.json.scene.objects.map(o=>o.id),[secondId]);await page.click('#undo');const restored=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(restored.json,changed.json);
         });
         await runCase(page,'v5 background input updates live and empty field Hide is black',async()=>{
           await page.file('colored-empty.json',scene({objects:[],background:{h:200,s:30,l:20}}));await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
           const raster=await page.canvas();assert.equal(raster.coloredPixels,raster.width*raster.height,'background must fill full canvas');
-          for(const slider of ['#background-hue','#background-saturation','#background-lightness']){if(slider!=='#background-hue'){await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();}await page.rangeInput(slider);await page.click('#apply-changes');await page.hidden();}const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.notEqual(got.json.scene.background.l,20);assert.deepEqual(got.json.scene.objects,[]);
+          for(const slider of ['#background-hue','#background-saturation','#background-lightness']){if(slider!=='#background-hue'){await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();}await page.rangeInput(slider);await page.click('#apply-changes');await page.hidden();}const got=await page.download('#export-scene','imagery-field-scene-v3.json');assert.notEqual(got.json.scene.background.l,20);assert.deepEqual(got.json.scene.objects,[]);
           await sleep(M.REVEAL_GAP_MS+100);await page.click('#show-scene');await page.visible();await page.click('#hide-scene');await page.hidden();
         });
         await runCase(page,'v2 fullwindow square geometry and one-click placement',async()=>{
@@ -658,7 +659,7 @@ async function run() {
           assert.ok(Math.abs(bounds.width-bounds.height)<=2,'square contour is stretched');
           await page.click('#place-object');await page.visible();
           const pt=await page.evaluate(()=>{const r=document.querySelector('#scene-canvas').getBoundingClientRect();const points=[[0.65,0.65],[0.8,0.6],[0.6,0.8],[0.5,0.75]];for(const [x,y]of points){const px=r.left+r.width*x,py=r.top+r.height*y;if(document.elementFromPoint(px,py)?.id==='scene-canvas')return {x:px,y:py,px:x*100,py:y*100}}throw Error('No reachable canvas placement point')});
-          await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.visible();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v2.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
+          await page.send('Input.dispatchMouseEvent',{type:'mousePressed',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:pt.x,y:pt.y,button:'left',clickCount:1});await page.visible();await page.click('#apply-changes');const placed=await page.download('#export-scene','imagery-field-scene-v3.json');assert.ok(Math.abs(placed.json.scene.objects[0].x-pt.px)<0.2);assert.ok(Math.abs(placed.json.scene.objects[0].y-pt.py)<0.2);
         });
         await runCase(page,'v3 native fullscreen explicit Show, Exit and Escape retain synchronous concealment',async()=>{
           await page.settleInitialGuard();await page.click('#show-scene');await page.visible();
@@ -749,10 +750,11 @@ async function run() {
           await page.click('#hide-scene');await page.hidden();await page.click('#end-viewing');await page.hidden();
         });
         await runCase(page,'v1 native file input migrates to strict v2 scene export',async()=>{
-          const old=legacy({shape:'dots',dotCount:5,size:20});await page.file('legacy-v1.json',old);await page.hidden();const got=await page.download('#export-scene','imagery-field-scene-v2.json');assert.deepEqual(got.json,M.canonicalScene(old));assert.equal(got.json.scene.objects.length,5);
+          const old=legacy({shape:'dots',dotCount:5,size:20});await page.file('legacy-v1.json',old);await page.hidden();const got=await page.download('#export-scene','imagery-field-scene-v3.json');assert.deepEqual(got.json,M.canonicalScene(old));assert.equal(got.json.scene.objects.length,5);
         });
         await runIndependentScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         await runLiveScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
+        await runItemScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn)});
         await runIndependentSequenceScenarios({page,runCase:(name,fn)=>runCase(page,name,fn),out,captureLog:true});
         report.results.push({device:device.name,name:'page runtime, dialog, and remote-request log',status:page.errors.length||page.remoteRequests.length||page.dialogs.length?'FAIL':'PASS',errors:page.errors,remoteRequests:page.remoteRequests,dialogs:page.dialogs});

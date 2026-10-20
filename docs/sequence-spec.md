@@ -1,4 +1,4 @@
-# One-pass sequence editor specification
+# One-pass snapshot sequence editor specification
 
 Status: authorized implementation after independent scripted user journeys, actual screenshot review, design/coding discussion, and risk research on 2026-10-20. No claim of human-study, clinical or physiological acceptance.
 
@@ -12,7 +12,11 @@ One shared background, including existing validated nonblack backgrounds, stays 
 
 Timed playback is windowed-only with Pause and Stop kept reachable. Static/manual previews may use clean fullscreen. Fullscreen transitions conceal and cancel. Reduced-motion preference uses manual stepping; preference changes stop playback, never resume it.
 
-## Closed portable schema
+## Current migration extension
+
+Version 0.6 uses sequence version 2 to retain styled scene-version-3 objects and each step's `pulsePeriodMs`. Version 1 inputs are validated before migration with disabled effects/default item timing and a 4,000 ms period. Snapshot playback keeps its original single clock and renders items at static full opacity: per-item timing and pulse are preserved for loading a snapshot into the scene editor, not nested inside snapshot playback. See [the item specification](item-timeline.md).
+
+## Historical version 1 portable schema
 
 Root: format `imagery-field-sequence`, version `1`, sampler `ordered-crossfade-1`, sequence.
 Sequence exact keys: name, background, steps.

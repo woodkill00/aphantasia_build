@@ -1,6 +1,6 @@
-# Imagery Field 0.5
+# Imagery Field 0.6 candidate
 
-A local engineering preview for static scene editing and finite, explicitly started sequence presentation. Live actual-scene editing and responsive preview layout have scoped source, 349-check, 82-group native and 36-frame evidence. The recorded native run hit a workflow deadline after reporting success; see the current test report and PR checks for the separate clean-exit CI gate. It is not a treatment, diagnostic test, or validated way to develop mental imagery. A lingering afterimage or a reconstruction is not evidence that voluntary imagery improved. Static displays, smooth fades, and the app's restrictions do not guarantee safety.
+A local engineering preview for static live editing, finite per-item animation and separate snapshot sequences. Version 0.6 adds precise numeric controls, independent outlines/shadows and item timing; exact-artifact implementation and browser verification remain pending. Historical version 0.5 passed 349 code checks and 82 Chrome groups in its final clean-exit CI. Those results do not verify this increment. This is not a treatment, diagnostic test or validated way to develop mental imagery. Static displays, fades and engineering limits do not guarantee safety.
 
 ## Before viewing
 
@@ -25,10 +25,24 @@ Use **Scene** to open the scene controls. Choose **Live preview** once to start 
 1. Choose a preset, or select **New object** and **Add object**. You can keep up to 12 dots, pixels, or circle/square/triangle outlines. New objects start at the center.
 2. Choose **Selected object**, then change its shape, size, position, or hue/saturation/color-lightness sliders. **Remove object** deletes it from the draft; removing all objects leaves a valid background-only static scene.
 3. Type **Horizontal position** and **Vertical position**, or choose **Place on field**. Placement closes the editor; click/tap the field once to stage a position and reopen the editor. An active live preview remains visible. **Esc**, **Hide**, or **End viewing** cancels placement. Numeric inputs are the keyboard alternative; there is no dragging.
-4. Adjust the **Background field** sliders. Object/background color samples and slider tracks update immediately from draft values. During Live preview, the actual scene also updates immediately on each valid input, before releasing a slider. While hidden, only the samples update. These are external color previews, not measurements of internal vision. **Color lightness does not change screen brightness.** At 0% lightness the background is black; at 0% saturation hue has no visible effect.
+4. New presets start with background HSL **4°, 60%, 4%**; imported files retain their own background. Adjust the **Background field** sliders. Click/tap the numeric value to type a precise number, or use the adjacent minus/plus buttons for one fine step. The number, slider and buttons stay synchronized. Object/background color samples and slider tracks update immediately from draft values. During Live preview, the actual scene also updates immediately on each valid input, before releasing a slider. While hidden, only the samples update. These are external color previews, not measurements of internal vision. **Color lightness does not change screen brightness.** At 0% lightness the background is black; at 0% saturation hue has no visible effect.
 5. Choose **Apply changes** to accept the scene for history/download, or **Discard** to abandon its draft. Neither is needed while previewing. These actions hide the field; choose **Live preview** again when wanted. Invalid input stops and hides preview; correcting it does not restart it. **Undo**/**Redo** restores applied scenes within the 40-step session history. Scene history does not undo sequence edits.
 
 Positions range from 0–100% with up to two decimal places, but the entire object must fit inside the validated edge inset. Size is a whole-number percentage of the field's shorter side: 1–8 for dots/pixels and 1–28 for outlines. Dots are filled circles; pixels are filled squares. Switching an outline to a dot/pixel caps its size at 8. Object hue is 0–359°, saturation 0–70%, and lightness 10–70%; background hue is 0–359°, saturation 0–60%, and lightness 0–40%. These are engineering restrictions, not medically safe settings.
+
+## Style an item and schedule its appearance
+
+The candidate item inspector separates Appearance and Timing. Enable **Outline** and/or **Shadow**, then set each effect's own color. Outline width, shadow offset and blur are percentages of the field's shorter side. Effects may be clipped at the field edge; enabling an effect never silently moves an item. Both effects fade with their item.
+
+**Duplicate item** makes an exact appearance/timing copy with a new identifier. It initially overlaps the original. Use geometry or timing controls to separate them. **Start after previous item** copies the previous item's end into this item's start once; it does not create a continuing link between items.
+
+For each item, set **Start**, **Fade in**, **Hold**, and **Fade out**, in seconds. Hold excludes the fades. The item's end is their sum; the preview's end is the latest end among all items. Two items can overlap or start together. Select an item through its timeline track or the object selector, then use the same numeric controls to edit it.
+
+**Live preview** shows the complete static composition for appearance editing, ignoring the timing schedule. **Play items once** explicitly previews the validated draft's schedule without requiring Apply or committing history. Pause freezes the painted frame; Resume continues explicitly. Stop/Hide and natural completion conceal the entire field, including the background. There is no automatic replay. Any edit during timed playback stops and hides it; editing does not restart the timer.
+
+Optional **Pulse** smoothly varies the entire item's opacity, within its own active interval. It is off by default. The scene has one shared 2–60-second cycle (default 4 seconds); each item chooses its minimum opacity from 50–100% (default 80%). All pulsing items share the timeline clock. Pulse does not extend duration or independently animate shadows/outlines. These are supported engineering choices, not medically safe settings. Combined output still needs assessment; a warning or smooth motion is not clearance.
+
+Timed item previews remain windowed with reachable controls. Reduced-motion preference leaves static editing available and disables timed playback; it does not substitute rapid cuts. Hide, invalid fields, imports, fullscreen changes and handled lifecycle interruptions stop playback with no automatic restart. See the [full item contract](../docs/item-timeline.md) for exact bounds, migration and verification gates.
 
 ## Capture and edit a sequence
 
@@ -58,7 +72,7 @@ The example uses editable 3-second holds and 1-second outgoing fades. It is an a
 
 In **Sequence**, **Previous** and **Next** select a step while hiding the field. Choose **Show step** explicitly to display it. Selection never starts a timer or reveals the new step automatically.
 
-**Play once** requires a valid sequence and resolved scene/sequence drafts. It starts at the beginning in the ordinary window. The shared background stays fixed through all holds and adjacent crossfades. There is no automatic replay, loop, strobe, pulse oscillator, contrast inversion, or intensity escalation.
+**Play once** requires a valid sequence and resolved scene/sequence drafts. It starts at the beginning in the ordinary window. Snapshot playback shows each captured item at static full opacity, ignoring its per-item schedule and pulse. The captured timing metadata is retained for loading that step back into the scene editor. The shared background stays fixed through all holds and adjacent crossfades. There is no automatic replay, loop, strobe, pulse oscillator, contrast inversion, or intensity escalation.
 
 **Pause** freezes the exact last frame actually painted, including an in-between blend. It leaves that frame visible and does not resample the blend at click time. **Resume** explicitly continues from that painted position without catching up for paused time. **Stop / Hide** immediately conceals the scene and resets playback. Natural completion also hides the field, resets elapsed time, and never replays.
 
@@ -71,14 +85,14 @@ Edits, imports, selection/mode changes, fullscreen changes, resize, loss of focu
 - Fullscreen hides normal editor/navigation chrome. While hidden it offers **Live preview** or **Show selected step**, according to the selected section. While showing, a small upper-right **Exit** control remains available for touch and keyboard; it hides the field before exiting. Escape also leaves browser fullscreen. Failure keeps the field hidden with recovery instructions; the ordinary window remains usable.
 - Explicit reveal uses the existing temporary anti-repeat guard. If blocked, the field stays hidden; choose Show or Play again later. No reveal is queued. The guard is an engineering restriction, not a medically safe interval or suggested schedule.
 
-No broader live flash/pulse controls are implemented. Future effect-curve authoring and offscreen output analysis are separate proposals; warnings do not establish sensory safety.
+The only pulse in this candidate is the finite shared-clock opacity effect described above. Unrestricted flash/strobe, independent-frequency modulation and offscreen flash-risk analysis are not implemented; warnings do not establish sensory safety.
 
 ## Keep your work
 
 Use the matching controls for each document:
 
-- **Download scene JSON** / **Open scene JSON**: static version 2 files contain one scene's background and objects. Valid version 1 static files are migrated after validation; legacy palette colors are approximated in HSL and the full-window layout may look different. New static exports remain version 2.
-- **Download sequence JSON** / **Open sequence JSON**: sequence version 1 files contain the shared background, ordered object snapshots, names, and timing. They contain no notes, playback position/state, loop settings, URLs, or executable expressions. Static files and sequence files are distinct formats, even where version numbers coincide.
+- **Download scene JSON** / **Open scene JSON**: version 3 files contain the scene background, shared pulse period, styled objects and per-item timing. Valid version 1/2 files migrate after validation, preserving saved backgrounds and base appearance while adding disabled effects/default timing. Version 1 palette approximation remains documented. New scene exports use version 3.
+- **Download sequence JSON** / **Open sequence JSON**: sequence version 2 files contain the shared background, ordered styled snapshots, names, snapshot hold/crossfade timing and each snapshot's shared item-pulse period. Version 1 sequences migrate after validation. They contain no notes, playback position/state, loop settings, URLs, or executable expressions. Static files and sequence files are distinct formats, even where version numbers coincide.
 - Optional note files use the separate process below. They are not imported.
 
 Scene and sequence inputs are bounded to 1 MiB of UTF-8 JSON and validated before acceptance. Successful imports leave the field stopped/hidden. Invalid, canceled, or superseded reads preserve accepted data. Resolve invalid fields before exporting. Check your browser's Downloads to confirm a file was kept; the app can request a download but cannot confirm it reached disk. Saving a file does not modify the HTML.

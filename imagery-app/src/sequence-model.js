@@ -7,8 +7,8 @@
 }(typeof globalThis !== 'undefined' ? globalThis : this, function (M) {
   'use strict';
   const FORMAT = 'imagery-field-sequence';
-  const VERSION = 1;
-  const SAMPLER = 'ordered-crossfade-1';
+  const VERSION = 2;
+  const SAMPLER = 'ordered-crossfade-2';
   const MAX_IMPORT_BYTES = 1048576;
   const MAX_STEPS = 32;
   const MIN_HOLD_MS = 1000;
@@ -107,7 +107,8 @@
   function canonicalSequence(value) {
     const file = record(value, ['format', 'version', 'sampler', 'sequence'], 'Sequence file');
     if (file.format !== FORMAT) throw new Error('Unsupported sequence format.');
-    if (file.version !== VERSION || file.sampler !== SAMPLER) {
+    const legacy = file.version === 1 && file.sampler === 'ordered-crossfade-1';
+    if (!legacy && (file.version !== VERSION || file.sampler !== SAMPLER)) {
       throw new Error('Unsupported sequence version or sampler.');
     }
     const sequence = record(file.sequence, ['name', 'background', 'steps'], 'Sequence');
@@ -117,7 +118,7 @@
     let total = 0, background;
     const steps = sourceSteps.map((entry, index) => {
       const label = 'Step ' + (index + 1);
-      const step = record(entry, ['id', 'name', 'holdMs', 'transitionMs', 'objects'], label);
+      const step = record(entry, legacy ? ['id', 'name', 'holdMs', 'transitionMs', 'objects'] : ['id', 'name', 'holdMs', 'transitionMs', 'pulsePeriodMs', 'objects'], label);
       const id = name(step.id, label + ' identifier');
       if (ids.has(id)) throw new Error('Step identifiers must be unique within the sequence.');
       ids.add(id);
@@ -133,10 +134,10 @@
       // Keep every static geometry/color/object rule authoritative and unchanged.
       // Each snapshot is independently bounded; a crossfade may use 12 + 12.
       list(step.objects, 1, M.MAX_OBJECTS, label + ' objects');
-      const scene = M.canonicalScene({format: M.FORMAT, version: M.VERSION, sampler: M.SAMPLER,
-        scene: {name: stepName, background: sequence.background, objects: step.objects}}).scene;
+      const scene = M.canonicalScene({format: M.FORMAT, version: legacy ? 2 : M.VERSION, sampler: legacy ? 'static-objects-2' : M.SAMPLER,
+        scene: {name: stepName, background: sequence.background, ...(!legacy ? {pulsePeriodMs:step.pulsePeriodMs} : {}), objects: step.objects}}).scene;
       if (index === 0) background = scene.background;
-      return {id, name: scene.name, holdMs, transitionMs, objects: scene.objects};
+      return {id, name: scene.name, holdMs, transitionMs, pulsePeriodMs:scene.pulsePeriodMs, objects: scene.objects};
     });
     const result = {format: FORMAT, version: VERSION, sampler: SAMPLER,
       sequence: {name: sequenceName, background, steps}};

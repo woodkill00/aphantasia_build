@@ -10,13 +10,15 @@ const path=require('node:path');
 const crypto=require('node:crypto');
 const {setTimeout:sleep}=require('node:timers/promises');
 const clone=x=>JSON.parse(JSON.stringify(x));
+const {styledObject,scene:makeScene}=require('./fixtures.cjs');
 const referenceSequence={format:'imagery-field-sequence',version:1,sampler:'ordered-crossfade-1',sequence:{
   name:'Reference sequence: circle square triangle',background:{h:210,s:10,l:8},steps:[
     {id:'step-1',name:'Circle',holdMs:3000,transitionMs:1000,objects:[{id:'object-1',shape:'circle',x:30,y:50,size:10,color:{h:210,s:30,l:50}}]},
     {id:'step-2',name:'Square',holdMs:3000,transitionMs:1000,objects:[{id:'object-2',shape:'square',x:50,y:50,size:10,color:{h:130,s:30,l:50}}]},
     {id:'step-3',name:'Triangle',holdMs:3000,transitionMs:0,objects:[{id:'object-3',shape:'triangle',x:70,y:50,size:10,color:{h:40,s:35,l:50}}]},
 ]}};
-function referenceScene(index){const step=referenceSequence.sequence.steps[index];return {format:'imagery-static-scene',version:2,sampler:'static-objects-2',scene:{name:step.name,background:clone(referenceSequence.sequence.background),objects:clone(step.objects)}};}
+referenceSequence.version=2;referenceSequence.sampler='ordered-crossfade-2';for(const step of referenceSequence.sequence.steps){step.pulsePeriodMs=4000;step.objects=step.objects.map(o=>styledObject(o));}
+function referenceScene(index){const step=referenceSequence.sequence.steps[index];return makeScene({name:step.name,background:clone(referenceSequence.sequence.background),objects:clone(step.objects)});}
 function rgb({h,s,l}){const S=s/100,L=l/100,C=(1-Math.abs(2*L-1))*S,H=h/60,X=C*(1-Math.abs(H%2-1)),m=L-C/2;return(H<1?[C,X,0]:H<2?[X,C,0]:H<3?[0,C,X]:H<4?[0,X,C]:H<5?[X,0,C]:[C,0,X]).map(v=>Math.round((v+m)*255));}
 // Independent hard-coded reference intervals; deliberately does not call frameAt.
 function referenceWeights(ms){if(ms<0||!Number.isFinite(ms))throw Error('Invalid test time');if(ms<3000)return[1,0,0];if(ms<4000)return[1-(ms-3000)/1000,(ms-3000)/1000,0];if(ms<7000)return[0,1,0];if(ms<8000)return[0,1-(ms-7000)/1000,(ms-7000)/1000];if(ms<11000)return[0,0,1];return null;}
@@ -25,7 +27,7 @@ async function runIndependentSequenceScenarios({page,runCase,out,captureLog=fals
   async function until(check,label,timeout=8000){const end=Date.now()+timeout;do{if(await check())return;await sleep(30);}while(Date.now()<end);throw Error('Independent sequence timeout: '+label);}
   async function observe(label){const state=await page.evaluate(()=>({scroll:document.getElementById('editor-scroll').scrollTop,section:document.getElementById('workspace-sequence').getAttribute('aria-pressed')==='true'?'sequence':'scene',visibility:document.getElementById('visibility-label').textContent,progress:document.getElementById('sequence-progress').textContent,status:document.getElementById('status').textContent,selected:document.getElementById('sequence-step-select').value,focus:document.activeElement?.id,viewport:{width:innerWidth,height:innerHeight,dpr:devicePixelRatio}}));observations.push({label,...state});return state;}
   async function act(label,fn){await fn();return observe(label);}
-  async function download(){const result=await page.download('#sequence-export','imagery-field-sequence-v1.json');await page.hidden();return result;}
+  async function download(){const result=await page.download('#sequence-export','imagery-field-sequence-v2.json');await page.hidden();return result;}
   async function imported(){await page.file('independent-canonical-sequence.json',referenceSequence,true,'#sequence-import');await page.hidden();assert.equal(await page.property('#sequence-name','value'),referenceSequence.sequence.name);}
   async function nativeHue(value){
     const current=Number(await page.property('#object-hue','value'));await page.focus('#object-hue');

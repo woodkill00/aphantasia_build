@@ -10,14 +10,14 @@ function oracle(document,time){let start=0;const steps=document.sequence.steps;f
 function expectFrame(frame,expected){for(const [key,value]of Object.entries(expected)){if(key==='alpha')assert.ok(Math.abs(frame[key]-value)<1e-12,`alpha ${frame[key]} != ${value}`);else assert.equal(frame[key],value,key);}}
 
 test('SEQUENCE MODEL: independent reference is closed, copied, canonical and JSON portable',()=>{
- const value=sequence(),canonical=accept(value);assert.deepEqual(canonical,value);assert.notEqual(canonical,value);assert.notEqual(canonical.sequence.steps,value.sequence.steps);const raw=S.serializeSequence(canonical);assert.equal(typeof raw,'string');assert.deepEqual(S.parseSequence(raw),value);assert.equal(S.FORMAT,'imagery-field-sequence');assert.equal(S.VERSION,1);assert.equal(S.SAMPLER,'ordered-crossfade-1');assert.ok(Object.isFrozen(S));assert.throws(()=>M.parseScene(raw));assert.throws(()=>S.parseSequence(JSON.stringify(require('./fixtures.cjs').scene())));
+ const value=sequence(),canonical=accept(value);assert.deepEqual(canonical,value);assert.notEqual(canonical,value);assert.notEqual(canonical.sequence.steps,value.sequence.steps);const raw=S.serializeSequence(canonical);assert.equal(typeof raw,'string');assert.deepEqual(S.parseSequence(raw),value);assert.equal(S.FORMAT,'imagery-field-sequence');assert.equal(S.VERSION,2);assert.equal(S.SAMPLER,'ordered-crossfade-2');assert.ok(Object.isFrozen(S));assert.throws(()=>M.parseScene(raw));assert.throws(()=>S.parseSequence(JSON.stringify(require('./fixtures.cjs').scene())));
 });
 for(const [label,get,fields]of [['root',s=>s,['format','version','sampler','sequence']],['sequence',s=>s.sequence,['name','background','steps']],['step',s=>s.sequence.steps[0],['id','name','holdMs','transitionMs','objects']]])test(`SEQUENCE VALIDATION: ${label} missing or extra fields rejected`,()=>{
  for(const key of fields){const s=sequence();delete get(s)[key];reject(s)}
  for(const key of ['notes','url','callback','loop','easing','expression','__proto__','constructor','prototype']){const s=sequence();Object.defineProperty(get(s),key,{value:'synthetic',enumerable:true});reject(s)}
 });
 test('SEQUENCE VALIDATION: exact format, version, sampler and ordinary nested records',()=>{
- for(const [key,value]of [['format','other'],['version',2],['version','1'],['sampler','static-objects-2']]){const s=sequence();s[key]=value;reject(s)}
+ for(const [key,value]of [['format','other'],['version',3],['version','1'],['sampler','static-objects-2']]){const s=sequence();s[key]=value;reject(s)}
  for(const value of [null,true,1,'sequence',[],new Date()]){reject(value);for(const key of ['sequence','background','step']){const s=sequence();if(key==='sequence')s.sequence=value;else if(key==='background')s.sequence.background=value;else s.sequence.steps[0]=value;reject(s)}}
 });
 test('SEQUENCE VALIDATION: accessors, symbols and exotic prototypes reject without getter execution',()=>{
@@ -52,7 +52,7 @@ test('SEQUENCE VALIDATION: final transition exactly zero and one-hour total is i
  const invalid=sequence();invalid.sequence.steps[0].holdMs=Number.MAX_SAFE_INTEGER;reject(invalid);
 });
 test('SEQUENCE PARSER: decoded duplicate keys reject at all relevant depths and escaped spellings',()=>{
- const raw=JSON.stringify(sequence());for(const text of [raw.replace('"version":1','"version":1,"\\u0076ersion":1'),raw.replace('"sequence":','"sequence":null,"sequence":'),raw.replace('"holdMs":3000','"holdMs":1000,"holdMs":3000'),raw.replace('"transitionMs":1000','"transitionMs":0,"\\u0074ransitionMs":1000'),raw.replace('"h":210','"h":0,"\\u0068":210'),raw.replace('"x":30','"x":20,"x":30')])assert.throws(()=>S.parseSequence(text),/duplicate/i);
+ const raw=JSON.stringify(sequence());for(const text of [raw.replace('"version":2','"version":2,"\\u0076ersion":2'),raw.replace('"sequence":','"sequence":null,"sequence":'),raw.replace('"holdMs":3000','"holdMs":1000,"holdMs":3000'),raw.replace('"transitionMs":1000','"transitionMs":0,"\\u0074ransitionMs":1000'),raw.replace('"h":210','"h":0,"\\u0068":210'),raw.replace('"x":30','"x":20,"x":30')])assert.throws(()=>S.parseSequence(text),/duplicate/i);
 });
 test('SEQUENCE PARSER: malformed content, excessive depth and 1MiB UTF-8 limit',()=>{
  for(const text of ['', '{','null','[]','true','42','"sequence"','/*comment*/{}','{"a":1,}',undefined,null,{},Buffer.from('{}'),'['.repeat(40)+'0'+']'.repeat(40)])assert.throws(()=>S.parseSequence(text));

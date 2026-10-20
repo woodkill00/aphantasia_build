@@ -1,236 +1,94 @@
 {
   "date": "2026-10-20",
-  "status": "V05_SCOPED_TESTS_PASS_CI_PROCESS_RETRY_REQUIRED",
+  "status": "V06_NONBROWSER_PASS_NATIVE_PENDING",
   "artifact": {
     "file": "imagery-app/index.html",
-    "version": "0.5.0",
-    "bytes": 118362,
-    "sha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326"
+    "version": "0.6.0",
+    "bytes": 162947,
+    "sha256": "920e01bf5f3bf6fb306135ba35a14b7a88f1e3e5c5a9b70a461e6f278192bf97"
   },
-  "candidateCommit": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
+  "candidateCommit": null,
   "nonBrowser": {
     "status": "PASS",
-    "total": 349,
-    "passed": 349,
+    "total": 423,
+    "passed": 423,
     "failed": 0,
     "command": "node --test imagery-app/tests/*.test.cjs"
   },
   "browser": {
-    "status": "TEST_REPORT_PASS_WORKFLOW_TIMEOUT",
-    "preparedGroups": 82,
-    "expectedCaptures": 36,
-    "failedAttempts": [
-      {
-        "run": 39356071107,
-        "sourceCommit": "604eec3a4496830c46a07fde3b127d766a355bc0",
-        "passed": 78,
-        "failed": 4,
-        "repairs": "Two test-contract corrections plus a compact-layout repair after visual review found the focused slider clipped at 320x568; strengthened full-field scrollport assertions. Full exact-artifact retry required."
-      },
-      {
-        "run": 39358013657,
-        "sourceCommit": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
-        "browserReport": "82/82 PASS; cleanup passed",
-        "workflow": "FAIL: native step exceeded six minutes at approximately six minutes three seconds",
-        "repair": "Native step budget increased from six to eight minutes within the unchanged ten-minute job. Full suite still required; no assertion weakening."
-      }
-    ],
-    "passed": 82,
-    "failed": 0,
-    "runId": 39358013657,
-    "jobId": 118417249126,
-    "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39358013657",
-    "node": "22.23.3",
-    "chrome": "155.0.8059.39",
-    "cleanup": {
-      "browserClosed": true,
-      "profileRemoved": true
-    },
-    "visualCaptures": 36,
-    "visualReview": "Actual rendered frames independently inspected; compact focused controls and preview accepted.",
-    "note": "The embedded browser report passed, but GitHub marked this run failed on its step deadline. These are separate outcomes. Consult current PR checks for the exact-head CI result; no green CI claim is made for this timeout run."
+    "status": "NOT_RUN",
+    "preparedGroups": 96,
+    "expectedCaptures": 52
   },
   "limits": [
-    "Physical devices, other browser engines, OS file dialogs, full accessibility, and sensory/clinical validation are not established."
+    "Physical devices, other browser engines, ordinary OS file dialogs, full accessibility, calibrated sensory/medical safety and clinical efficacy are not established.",
+    "Pulse bounds are engineering restrictions; composite output is not certified photosensitivity-safe."
   ],
-  "historicalV04": {
+  "historicalV05": {
     "date": "2026-10-20",
-    "status": "V04_SCOPED_CHROME_CI_PASS",
+    "status": "V05_SCOPED_CHROME_CI_PASS",
     "artifact": {
       "file": "imagery-app/index.html",
-      "version": "0.4.0",
-      "bytes": 114116,
-      "sha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda"
+      "version": "0.5.0",
+      "bytes": 118362,
+      "sha256": "8eff59e156fc2ae5b631ae56eca05282e6cf8ff012f469ab2f1a8a4971d38326"
     },
-    "candidateCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
-    "localEnvironment": {
-      "node": "v24.19.0",
-      "platform": "linux"
-    },
+    "candidateCommit": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
     "nonBrowser": {
       "status": "PASS",
-      "modelTests": 113,
-      "sequenceModelTests": 25,
-      "domDoubleTests": 153,
-      "staticTests": 11,
-      "browserHarnessAndFixtureTests": 22,
-      "total": 324,
-      "passed": 324,
+      "total": 349,
+      "passed": 349,
       "failed": 0,
-      "standaloneFixtures": {
-        "staticValid": 3,
-        "staticRejected": 14,
-        "independentSequenceValid": 1,
-        "independentTemporalOracleCases": 7,
-        "browserExecuted": false
-      }
+      "command": "node --test imagery-app/tests/*.test.cjs"
     },
     "browser": {
-      "status": "PASS",
-      "preparedGroups": 74,
-      "desktopGroups": 37,
-      "mobileViewportTouchEmulationGroups": 37,
-      "localEnvironmentStatus": "BLOCKED_BASELINE_LAUNCH",
-      "newLocalLaunchAttempts": 0,
-      "securityBypassUsed": false,
-      "note": "Complete final run passed every group and previously unexecuted tail. Strict trusted native event, preference, Hidden and black-raster assertions are retained. Final harness-only repair avoids live observer.matches reads before native event delivery; causal getter/cache mechanism remains a hypothesis.",
-      "firstV04Attempt": {
-        "status": "FAIL",
-        "runId": 39350355646,
-        "jobId": 118392825118,
-        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646",
-        "sourceCommit": "6c0e73e99b67b410569261880ce42f8403354725",
-        "artifactSha256": "be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e",
-        "node": "v22.23.3",
-        "chrome": "Chrome/155.0.8059.84",
-        "total": 74,
-        "passed": 66,
-        "failed": 8,
-        "failures": [
-          {
-            "device": "desktop",
-            "group": "v4 controlled-clock native pixels at all11s boundaries and last-painted Pause"
-          },
-          {
-            "device": "desktop",
-            "group": "v4 controlled native stale RAF, mode guard and lifecycle cancellation"
-          },
-          {
-            "device": "desktop",
-            "group": "v4 reduced-motion manual route and native media-change concealment"
-          },
-          {
-            "device": "desktop",
-            "group": "v4 fixed editor actions reserve focus space and Stop stays reachable on short layouts"
-          },
-          {
-            "device": "mobile-emulation",
-            "group": "v4 controlled-clock native pixels at all11s boundaries and last-painted Pause"
-          },
-          {
-            "device": "mobile-emulation",
-            "group": "v4 controlled native stale RAF, mode guard and lifecycle cancellation"
-          },
-          {
-            "device": "mobile-emulation",
-            "group": "v4 reduced-motion manual route and native media-change concealment"
-          },
-          {
-            "device": "mobile-emulation",
-            "group": "v4 fixed editor actions reserve focus space and Stop stays reachable on short layouts"
-          }
-        ],
-        "cleanup": {
-          "browserClosed": true,
-          "profileRemoved": true
+      "status": "TEST_REPORT_PASS_WORKFLOW_TIMEOUT",
+      "preparedGroups": 82,
+      "expectedCaptures": 36,
+      "failedAttempts": [
+        {
+          "run": 39356071107,
+          "sourceCommit": "604eec3a4496830c46a07fde3b127d766a355bc0",
+          "passed": 78,
+          "failed": 4,
+          "repairs": "Two test-contract corrections plus a compact-layout repair after visual review found the focused slider clipped at 320x568; strengthened full-field scrollport assertions. Full exact-artifact retry required."
         },
-        "runtimeErrors": 0,
-        "unexpectedDialogs": 0,
-        "remoteAppRequests": 0,
-        "durationSeconds": 291.174,
-        "unexecutedTails": [
-          "Boundary groups stopped at completion-focus assertion; later pending-RAF and stale-postcompletion checks did not run.",
-          "Desktop stale/mode group stopped at Escape focus; stale callback, crossover and native fullscreen tails did not run. Mobile group stopped at initial disabled Play.",
-          "Media groups stopped before post-change concealment checks completed; later repeat checks did not run.",
-          "Tiny-layout groups stopped at Stop width; subsequent Show target and skip-link tail did not run."
-        ]
-      },
-      "total": 74,
-      "passed": 74,
+        {
+          "run": 39358013657,
+          "sourceCommit": "6bcbcc5461ba5b3464af63706495931ec67a24c2",
+          "browserReport": "82/82 PASS; cleanup passed",
+          "workflow": "FAIL: native step exceeded six minutes at approximately six minutes three seconds",
+          "repair": "Native step budget increased from six to eight minutes within the unchanged ten-minute job. Full suite still required; no assertion weakening."
+        }
+      ],
+      "passed": 82,
       "failed": 0,
-      "failures": [],
-      "runId": 39352924875,
-      "jobId": 118401068686,
-      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875",
-      "sourceCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
-      "testMergeCheckout": "7dc3a5663548e1275d34f8f611807d44fdc9f19e",
-      "node": "v22.23.3",
-      "chrome": "Chrome/155.0.8059.39",
+      "runId": 39358013657,
+      "jobId": 118417249126,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39358013657",
+      "node": "22.23.3",
+      "chrome": "155.0.8059.39",
       "cleanup": {
         "browserClosed": true,
         "profileRemoved": true
       },
-      "started": "2026-10-20T01:21:05.280Z",
-      "finished": "2026-10-20T01:25:49.285Z",
-      "secondV04Attempt": {
-        "status": "FAIL",
-        "runId": 39352036226,
-        "jobId": 118398205436,
-        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39352036226",
-        "sourceCommit": "551b9800680145ae398dda47b9bfdfec024e6938",
-        "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
-        "nonBrowserPassed": 323,
-        "total": 74,
-        "passed": 67,
-        "failed": 7,
-        "cause": "Separate native media-query observer delivery wait timeouts; app diagnostics showed motion-handler concealment. Runtime focus/target and all six independent sequence groups passed, but aggregate run failed.",
-        "cleanup": {
-          "browserClosed": true,
-          "profileRemoved": true
-        }
-      }
+      "visualCaptures": 36,
+      "visualReview": "Actual rendered frames independently inspected; compact focused controls and preview accepted.",
+      "note": "The embedded browser report passed, but GitHub marked this run failed on its step deadline. These are separate outcomes. Consult current PR checks for the exact-head CI result; no green CI claim is made for this timeout run."
     },
-    "visualReview": {
-      "status": "FINAL_RUN_CAPTURES_VERIFIED_AND_INSPECTED",
-      "captured": 28,
-      "inspected": 28,
-      "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
-      "reviewedRunId": 39352924875,
-      "finalRunId": 39352924875,
-      "fixture": "Synthetic shared circle-square-triangle static scene and independent 11-second sequence.",
-      "note": "All 28 final-run JPEG byte counts and SHA-256 values verified. Actual pixels inspected in four contact sheets plus full-size desktop circle-hold and desktop/mobile hue/pinned-action images; consistent with earlier independent inspection of all 28 exact-runtime frames. No new visual blocker. 320x180 evidence is native geometry/hit-testing, not screenshots; compressed images and automated journeys are not a human study.",
-      "totalJpegBytes": 312207
-    },
-    "sequenceCoverage": {
-      "status": "PASS",
-      "tests": 25,
-      "linesPercent": 99.1,
-      "branchesPercent": 93.37,
-      "functionsPercent": 100,
-      "scope": "Sequence engine only; not whole app, native scheduling, accessibility or clinical evidence."
-    },
-    "developmentFailures": [
-      {
-        "status": "REPAIRED_TEST_ASSUMPTIONS",
-        "note": "Initial engine test adaptation passed19/24: four tests treated player method return states as frame objects; one static regex mistook a local data variable for DOM use. Corrected to documented API without changing engine source. Current25/25 pass."
-      }
-    ],
     "limits": [
-      "Phone-sized touch emulation is not physical-device evidence.",
-      "OS dialogs, Safari/other engines, full screen-reader/zoom/manual accessibility, calibrated color/timing, qualified sensory review and efficacy remain unverified.",
-      "No hosted deployment; no live flash/pulse mode or automatic replay."
+      "Physical devices, other browser engines, OS file dialogs, full accessibility, and sensory/clinical validation are not established."
     ],
-    "historicalV03": {
+    "historicalV04": {
       "date": "2026-10-20",
-      "status": "V03_SCOPED_CHROME_CI_PASS",
+      "status": "V04_SCOPED_CHROME_CI_PASS",
       "artifact": {
         "file": "imagery-app/index.html",
-        "version": "0.3.0",
-        "bytes": 65152,
-        "sha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a"
+        "version": "0.4.0",
+        "bytes": 114116,
+        "sha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda"
       },
-      "repositoryBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
-      "candidateCommit": "57b8f2c2811dc246abca55d9630c0581551d448d",
+      "candidateCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
       "localEnvironment": {
         "node": "v24.19.0",
         "platform": "linux"
@@ -238,186 +96,197 @@
       "nonBrowser": {
         "status": "PASS",
         "modelTests": 113,
-        "domDoubleTests": 100,
+        "sequenceModelTests": 25,
+        "domDoubleTests": 153,
         "staticTests": 11,
-        "browserHarnessAndFixtureTests": 17,
-        "total": 241,
-        "passed": 241,
+        "browserHarnessAndFixtureTests": 22,
+        "total": 324,
+        "passed": 324,
         "failed": 0,
         "standaloneFixtures": {
-          "valid": 3,
-          "rejected": 14,
+          "staticValid": 3,
+          "staticRejected": 14,
+          "independentSequenceValid": 1,
+          "independentTemporalOracleCases": 7,
           "browserExecuted": false
         }
       },
       "browser": {
         "status": "PASS",
-        "preparedGroups": 54,
-        "desktopGroups": 27,
-        "mobileViewportTouchEmulationGroups": 27,
+        "preparedGroups": 74,
+        "desktopGroups": 37,
+        "mobileViewportTouchEmulationGroups": 37,
         "localEnvironmentStatus": "BLOCKED_BASELINE_LAUNCH",
         "newLocalLaunchAttempts": 0,
         "securityBypassUsed": false,
-        "note": "Complete rerun passed all 54 native groups with unchanged runtime HTML. This includes both previously unexecuted injected-Exit-denial tails. The test repair independently requires Apply/discard and Exit directions without imposing sentence order; all trusted fullscreenchange Hidden/black/focus assertions remain intact.",
-        "total": 54,
-        "passed": 54,
+        "note": "Complete final run passed every group and previously unexecuted tail. Strict trusted native event, preference, Hidden and black-raster assertions are retained. Final harness-only repair avoids live observer.matches reads before native event delivery; causal getter/cache mechanism remains a hypothesis.",
+        "firstV04Attempt": {
+          "status": "FAIL",
+          "runId": 39350355646,
+          "jobId": 118392825118,
+          "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39350355646",
+          "sourceCommit": "6c0e73e99b67b410569261880ce42f8403354725",
+          "artifactSha256": "be1be8a2aea767e966033fd9690d4d2e5138b24bdc2fd42ab9ad126deb15c20e",
+          "node": "v22.23.3",
+          "chrome": "Chrome/155.0.8059.84",
+          "total": 74,
+          "passed": 66,
+          "failed": 8,
+          "failures": [
+            {
+              "device": "desktop",
+              "group": "v4 controlled-clock native pixels at all11s boundaries and last-painted Pause"
+            },
+            {
+              "device": "desktop",
+              "group": "v4 controlled native stale RAF, mode guard and lifecycle cancellation"
+            },
+            {
+              "device": "desktop",
+              "group": "v4 reduced-motion manual route and native media-change concealment"
+            },
+            {
+              "device": "desktop",
+              "group": "v4 fixed editor actions reserve focus space and Stop stays reachable on short layouts"
+            },
+            {
+              "device": "mobile-emulation",
+              "group": "v4 controlled-clock native pixels at all11s boundaries and last-painted Pause"
+            },
+            {
+              "device": "mobile-emulation",
+              "group": "v4 controlled native stale RAF, mode guard and lifecycle cancellation"
+            },
+            {
+              "device": "mobile-emulation",
+              "group": "v4 reduced-motion manual route and native media-change concealment"
+            },
+            {
+              "device": "mobile-emulation",
+              "group": "v4 fixed editor actions reserve focus space and Stop stays reachable on short layouts"
+            }
+          ],
+          "cleanup": {
+            "browserClosed": true,
+            "profileRemoved": true
+          },
+          "runtimeErrors": 0,
+          "unexpectedDialogs": 0,
+          "remoteAppRequests": 0,
+          "durationSeconds": 291.174,
+          "unexecutedTails": [
+            "Boundary groups stopped at completion-focus assertion; later pending-RAF and stale-postcompletion checks did not run.",
+            "Desktop stale/mode group stopped at Escape focus; stale callback, crossover and native fullscreen tails did not run. Mobile group stopped at initial disabled Play.",
+            "Media groups stopped before post-change concealment checks completed; later repeat checks did not run.",
+            "Tiny-layout groups stopped at Stop width; subsequent Show target and skip-link tail did not run."
+          ]
+        },
+        "total": 74,
+        "passed": 74,
         "failed": 0,
         "failures": [],
+        "runId": 39352924875,
+        "jobId": 118401068686,
+        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39352924875",
+        "sourceCommit": "13cfac66e80b55d401b454dc99c8e6c690f09962",
+        "testMergeCheckout": "7dc3a5663548e1275d34f8f611807d44fdc9f19e",
+        "node": "v22.23.3",
+        "chrome": "Chrome/155.0.8059.39",
         "cleanup": {
           "browserClosed": true,
           "profileRemoved": true
         },
-        "runtimeErrors": 0,
-        "unexpectedDialogs": 0,
-        "remoteAppRequests": 0
+        "started": "2026-10-20T01:21:05.280Z",
+        "finished": "2026-10-20T01:25:49.285Z",
+        "secondV04Attempt": {
+          "status": "FAIL",
+          "runId": 39352036226,
+          "jobId": 118398205436,
+          "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39352036226",
+          "sourceCommit": "551b9800680145ae398dda47b9bfdfec024e6938",
+          "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+          "nonBrowserPassed": 323,
+          "total": 74,
+          "passed": 67,
+          "failed": 7,
+          "cause": "Separate native media-query observer delivery wait timeouts; app diagnostics showed motion-handler concealment. Runtime focus/target and all six independent sequence groups passed, but aggregate run failed.",
+          "cleanup": {
+            "browserClosed": true,
+            "profileRemoved": true
+          }
+        }
       },
       "visualReview": {
-        "status": "SCOPED_FRAMES_INSPECTED",
-        "preparedCaptures": 14,
-        "fixture": "Synthetic shared circle-square-triangle scene, version 2.",
-        "delivery": "Compact JPEG frame data in existing CI job logs; no new artifact upload or workflow action.",
-        "note": "Tester inspected all 14 decoded, hash-verified synthetic frames. They show readable H260/S30/L50 draft sample/gradients, purple-only square change, consistent outlines, clean fullscreen with upper-right Exit, explicit hidden Show, and black post-Exit scene. JPEGs are reduced/compressed; exact color/hidden state is separately checked from native Canvas pixels. No physical-device or human usability-study claim.",
-        "captured": 14,
-        "inspected": 14,
-        "totalJpegBytes": 154158,
-        "observedFriction": "Real scripted editor scroll positions move roughly 740 CSS px between object hue and Apply on desktop and phone emulation; this supports a future control-placement improvement, not a current correctness failure."
+        "status": "FINAL_RUN_CAPTURES_VERIFIED_AND_INSPECTED",
+        "captured": 28,
+        "inspected": 28,
+        "artifactSha256": "3b47699c7f97ffadde30aa1d766ea4ce8226096274899aaac43b0d6d4c115bda",
+        "reviewedRunId": 39352924875,
+        "finalRunId": 39352924875,
+        "fixture": "Synthetic shared circle-square-triangle static scene and independent 11-second sequence.",
+        "note": "All 28 final-run JPEG byte counts and SHA-256 values verified. Actual pixels inspected in four contact sheets plus full-size desktop circle-hold and desktop/mobile hue/pinned-action images; consistent with earlier independent inspection of all 28 exact-runtime frames. No new visual blocker. 320x180 evidence is native geometry/hit-testing, not screenshots; compressed images and automated journeys are not a human study.",
+        "totalJpegBytes": 312207
       },
-      "attempts": [
+      "sequenceCoverage": {
+        "status": "PASS",
+        "tests": 25,
+        "linesPercent": 99.1,
+        "branchesPercent": 93.37,
+        "functionsPercent": 100,
+        "scope": "Sequence engine only; not whole app, native scheduling, accessibility or clinical evidence."
+      },
+      "developmentFailures": [
         {
-          "phase": "v0.2 baseline recheck",
-          "artifactSha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43",
-          "passed": 216,
-          "failed": 0
-        },
-        {
-          "phase": "First expanded v0.3 DOM/static suite during implementation",
-          "passed": 235,
-          "failed": 1,
-          "artifactSha256": null,
-          "cause": "Test expected capitalized Apply while fullscreen message said Exit fullscreen to apply or discard. Case-insensitive assertion preserves the required actionable message; no runtime behavior assertion was removed."
-        },
-        {
-          "phase": "Frozen v0.3 candidate",
-          "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
-          "passed": 239,
-          "failed": 0,
-          "browserStatus": "NOT_RUN"
-        },
-        {
-          "phase": "Integrated independent native-user fixture and oracle",
-          "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
-          "passed": 240,
-          "failed": 0,
-          "browserStatus": "NOT_RUN"
-        },
-        {
-          "phase": "First v0.3 native Chrome CI",
-          "runId": 39347872671,
-          "sourceHead": "b16cc2683145389abe53e30ae201d978d26c99c9",
-          "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
-          "nonBrowserPassed": 240,
-          "browserPassed": 52,
-          "browserFailed": 2,
-          "cause": "Order-sensitive draft-message test rejected correct Apply/discard then Exit directions. Both failed groups stopped before injected Exit rejection.",
-          "cleanup": "PASS"
-        },
-        {
-          "phase": "Order-independent draft-message harness repair",
-          "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
-          "passed": 241,
-          "failed": 0,
-          "runtimeChanged": false,
-          "browserStatus": "RERUN_PENDING"
-        },
-        {
-          "phase": "Successful complete v0.3 native rerun",
-          "runId": 39348407905,
-          "sourceHead": "57b8f2c2811dc246abca55d9630c0581551d448d",
-          "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
-          "nonBrowserPassed": 241,
-          "browserPassed": 54,
-          "browserFailed": 0,
-          "cleanup": "PASS",
-          "runtimeChanged": false
+          "status": "REPAIRED_TEST_ASSUMPTIONS",
+          "note": "Initial engine test adaptation passed19/24: four tests treated player method return states as frame objects; one static regex mistook a local data variable for DOM use. Corrected to documented API without changing engine source. Current25/25 pass."
         }
       ],
-      "newCoverage": [
-        "Each of six native range inputs checks actual CSS HSL swatches before change and Apply, with black hidden canvas and unchanged opposite swatch.",
-        "Independent HSL-to-RGB oracle covers zero saturation and zero lightness.",
-        "Color sample synchronization across selection, staged edits, discard, apply, undo/redo, presets and imports; empty scenes clear the object sample.",
-        "Clean native fullscreen hides studio subtrees and tab stops; hidden mode retains explicit guarded Show and Exit.",
-        "Keyboard focus, pointer-idle subdued Exit, coarse/touch discoverability, first-action Exit, short viewport and injected Exit rejection.",
-        "No UI or scene timer added; stale cleanup/import and lifecycle paths cannot reveal or reactivate exited fullscreen.",
-        "Separate independently authored native-control reference construction, exact export/import comparison, draft/discard/apply, actual painted-pixel RGB oracle and fullscreen user flows."
+      "limits": [
+        "Phone-sized touch emulation is not physical-device evidence.",
+        "OS dialogs, Safari/other engines, full screen-reader/zoom/manual accessibility, calibrated color/timing, qualified sensory review and efficacy remain unverified.",
+        "No hosted deployment; no live flash/pulse mode or automatic replay."
       ],
-      "notEstablished": [
-        "Physical devices, Safari, ordinary OS open/file-picker workflows.",
-        "Full manual accessibility, screen readers, actual zoom, low-vision usability or calibrated color.",
-        "Medical safety, sensory clearance or efficacy."
-      ],
-      "privacy": "Synthetic fixtures only. Public reports exclude raw TAP/process logs, machine paths and personal observations.",
-      "previousVersionEvidence": {
-        "date": "2026-10-19",
-        "status": "V02_SCOPED_CHROME_CI_PASS",
+      "historicalV03": {
+        "date": "2026-10-20",
+        "status": "V03_SCOPED_CHROME_CI_PASS",
         "artifact": {
           "file": "imagery-app/index.html",
-          "version": "0.2.0",
-          "bytes": 57177,
-          "sha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
+          "version": "0.3.0",
+          "bytes": 65152,
+          "sha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a"
         },
-        "restoredRepositoryBase": "ece81bf045afcd3045622fdad625271b717bde3e",
-        "candidateCommit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
-        "executedEnvironment": {
-          "node": "v22.23.3",
-          "platform": "linux",
-          "os": "Ubuntu 24.04.5",
-          "browser": "Chrome 155.0.8059.39",
-          "sandbox": "Default enabled"
+        "repositoryBase": "f614c2733ac6c8df838e9dd3d7ffdf6dd746745a",
+        "candidateCommit": "57b8f2c2811dc246abca55d9630c0581551d448d",
+        "localEnvironment": {
+          "node": "v24.19.0",
+          "platform": "linux"
         },
         "nonBrowser": {
+          "status": "PASS",
           "modelTests": 113,
-          "domDoubleTests": 79,
-          "staticTests": 10,
-          "browserHarnessAndFixtureTests": 14,
-          "total": 216,
-          "passed": 216,
+          "domDoubleTests": 100,
+          "staticTests": 11,
+          "browserHarnessAndFixtureTests": 17,
+          "total": 241,
+          "passed": 241,
           "failed": 0,
-          "legacyGeometryCombinations": 7200,
-          "seededModelCommands": 10000,
-          "rapidUiDoubleSequences": 300,
           "standaloneFixtures": {
             "valid": 3,
             "rejected": 14,
             "browserExecuted": false
           }
         },
-        "isolatedModelCoverage": {
-          "source": "imagery-app/src/model.js",
-          "node": "v24.19.0",
-          "testsPassed": 113,
-          "lines": 99.46,
-          "branches": 94.91,
-          "functions": 100,
-          "scope": "Model-only; not whole-app/browser/layout/device/accessibility/medical coverage."
-        },
         "browser": {
           "status": "PASS",
-          "preparedGroups": 38,
-          "desktopGroups": 19,
-          "mobileViewportTouchEmulationGroups": 19,
+          "preparedGroups": 54,
+          "desktopGroups": 27,
+          "mobileViewportTouchEmulationGroups": 27,
           "localEnvironmentStatus": "BLOCKED_BASELINE_LAUNCH",
-          "localLaunchReason": "Sandbox-enabled Chromium timed out waiting for DevToolsActivePort before navigation; no browser cases executed.",
-          "localObservedLaunchAttempts": 2,
-          "localCleanup": {
-            "browserClosed": true,
-            "profileRemoved": true
-          },
+          "newLocalLaunchAttempts": 0,
           "securityBypassUsed": false,
-          "osFilePickerTested": false,
-          "physicalDevicesTested": false,
-          "note": "All 38 native browser groups pass on the exact recorded HTML. Fullscreen observations assert trusted event delivery plus synchronous Hidden, black canvas and correct focus. First-run failure remains historical; its exact cause is unproven.",
-          "total": 38,
-          "passed": 38,
+          "note": "Complete rerun passed all 54 native groups with unchanged runtime HTML. This includes both previously unexecuted injected-Exit-denial tails. The test repair independently requires Apply/discard and Exit directions without imposing sentence order; all trusted fullscreenchange Hidden/black/focus assertions remain intact.",
+          "total": 54,
+          "passed": 54,
           "failed": 0,
           "failures": [],
           "cleanup": {
@@ -426,239 +295,365 @@
           },
           "runtimeErrors": 0,
           "unexpectedDialogs": 0,
-          "remoteAppRequests": 0,
-          "fullscreenEventEvidence": {
-            "trustedTransitions": 12,
-            "sameEventHidden": true,
-            "sameEventColoredPixels": 0,
-            "sameEventCorrectFocus": true,
-            "propertyBeforeEventObserved": [
-              "entry",
-              "explicit Exit"
-            ],
-            "escapeAfterActionState": "Event already delivered before post-action read in both configurations",
-            "limits": "Supports event-delivery synchronization; does not prove earlier Escape failure cause or pre-event compositor behavior."
-          }
+          "remoteAppRequests": 0
+        },
+        "visualReview": {
+          "status": "SCOPED_FRAMES_INSPECTED",
+          "preparedCaptures": 14,
+          "fixture": "Synthetic shared circle-square-triangle scene, version 2.",
+          "delivery": "Compact JPEG frame data in existing CI job logs; no new artifact upload or workflow action.",
+          "note": "Tester inspected all 14 decoded, hash-verified synthetic frames. They show readable H260/S30/L50 draft sample/gradients, purple-only square change, consistent outlines, clean fullscreen with upper-right Exit, explicit hidden Show, and black post-Exit scene. JPEGs are reduced/compressed; exact color/hidden state is separately checked from native Canvas pixels. No physical-device or human usability-study claim.",
+          "captured": 14,
+          "inspected": 14,
+          "totalJpegBytes": 154158,
+          "observedFriction": "Real scripted editor scroll positions move roughly 740 CSS px between object hue and Apply on desktop and phone emulation; this supports a future control-placement improvement, not a current correctness failure."
         },
         "attempts": [
           {
-            "phase": "Restored v0.1 baseline",
-            "passed": 156,
+            "phase": "v0.2 baseline recheck",
+            "artifactSha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43",
+            "passed": 216,
+            "failed": 0
+          },
+          {
+            "phase": "First expanded v0.3 DOM/static suite during implementation",
+            "passed": 235,
+            "failed": 1,
+            "artifactSha256": null,
+            "cause": "Test expected capitalized Apply while fullscreen message said Exit fullscreen to apply or discard. Case-insensitive assertion preserves the required actionable message; no runtime behavior assertion was removed."
+          },
+          {
+            "phase": "Frozen v0.3 candidate",
+            "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
+            "passed": 239,
             "failed": 0,
-            "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
+            "browserStatus": "NOT_RUN"
           },
           {
-            "phase": "First v0.2 adapted tests",
-            "passed": 202,
-            "failed": 4,
-            "cause": "Four verified harness contract assumptions; assertions corrected, not removed."
+            "phase": "Integrated independent native-user fixture and oracle",
+            "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
+            "passed": 240,
+            "failed": 0,
+            "browserStatus": "NOT_RUN"
           },
           {
-            "phase": "Corrected v0.2 tests",
-            "passed": 206,
-            "failed": 0
-          },
-          {
-            "phase": "Frozen candidate after accessibility repairs and added regressions",
-            "passed": 214,
-            "failed": 0
-          },
-          {
-            "phase": "First v0.2 Chrome CI",
-            "runId": 39343004081,
-            "nonBrowserPassed": 214,
-            "browserPassed": 36,
+            "phase": "First v0.3 native Chrome CI",
+            "runId": 39347872671,
+            "sourceHead": "b16cc2683145389abe53e30ae201d978d26c99c9",
+            "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
+            "nonBrowserPassed": 240,
+            "browserPassed": 52,
             "browserFailed": 2,
+            "cause": "Order-sensitive draft-message test rejected correct Apply/discard then Exit directions. Both failed groups stopped before injected Exit rejection.",
             "cleanup": "PASS"
           },
           {
-            "phase": "Fullscreen event-observation harness repair",
-            "nonBrowserPassed": 216,
+            "phase": "Order-independent draft-message harness repair",
+            "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
+            "passed": 241,
             "failed": 0,
-            "browserStatus": "RERUN_PENDING",
-            "runtimeChanged": false
+            "runtimeChanged": false,
+            "browserStatus": "RERUN_PENDING"
           },
           {
-            "phase": "Successful v0.2 Chrome CI rerun",
-            "runId": 39343535180,
-            "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
-            "browser": "Chrome 155.0.8059.39",
-            "nonBrowserPassed": 216,
-            "browserPassed": 38,
+            "phase": "Successful complete v0.3 native rerun",
+            "runId": 39348407905,
+            "sourceHead": "57b8f2c2811dc246abca55d9630c0581551d448d",
+            "artifactSha256": "98cbba97fa2b55835f840295d20ffeb79b40f8fbda8725ca86930f4d67e8823a",
+            "nonBrowserPassed": 241,
+            "browserPassed": 54,
             "browserFailed": 0,
             "cleanup": "PASS",
             "runtimeChanged": false
           }
         ],
-        "alternativePlaywrightSuite": "SYNTAX_CHECKED_NOT_RUN",
-        "notEstablished": [
-          "Browser/platform/version combinations beyond the recorded scoped Chrome run",
-          "Physical phones and ordinary OS opening/file-picker workflows",
-          "Other browsers/platforms",
-          "Complete keyboard-only, screen-reader, actual zoom and assistive-technology evaluation",
-          "Physical display conditions, calibrated luminance, qualified sensory review or clinical efficacy"
+        "newCoverage": [
+          "Each of six native range inputs checks actual CSS HSL swatches before change and Apply, with black hidden canvas and unchanged opposite swatch.",
+          "Independent HSL-to-RGB oracle covers zero saturation and zero lightness.",
+          "Color sample synchronization across selection, staged edits, discard, apply, undo/redo, presets and imports; empty scenes clear the object sample.",
+          "Clean native fullscreen hides studio subtrees and tab stops; hidden mode retains explicit guarded Show and Exit.",
+          "Keyboard focus, pointer-idle subdued Exit, coarse/touch discoverability, first-action Exit, short viewport and injected Exit rejection.",
+          "No UI or scene timer added; stale cleanup/import and lifecycle paths cannot reveal or reactivate exited fullscreen.",
+          "Separate independently authored native-control reference construction, exact export/import comparison, draft/discard/apply, actual painted-pixel RGB oracle and fullscreen user flows."
         ],
+        "notEstablished": [
+          "Physical devices, Safari, ordinary OS open/file-picker workflows.",
+          "Full manual accessibility, screen readers, actual zoom, low-vision usability or calibrated color.",
+          "Medical safety, sensory clearance or efficacy."
+        ],
+        "privacy": "Synthetic fixtures only. Public reports exclude raw TAP/process logs, machine paths and personal observations.",
         "previousVersionEvidence": {
           "date": "2026-10-19",
-          "status": "SCOPED_CHROME_CI_PASS",
+          "status": "V02_SCOPED_CHROME_CI_PASS",
           "artifact": {
             "file": "imagery-app/index.html",
-            "bytes": 40716,
-            "sha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
+            "version": "0.2.0",
+            "bytes": 57177,
+            "sha256": "b4bc6fc6a6ea6d530d8a9c7da38426219716452be94d9fb39a05ef2191c2be43"
           },
-          "ci": {
-            "runId": 39333956608,
-            "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
-            "sourceHead": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
-            "testMergeCheckout": "e7a156d12d319bcad94ee17899b7bf582a4388d9",
-            "conclusion": "success",
-            "note": "The tested checkout is a GitHub PR test merge, not evidence of a merge into main."
-          },
+          "restoredRepositoryBase": "ece81bf045afcd3045622fdad625271b717bde3e",
+          "candidateCommit": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
           "executedEnvironment": {
             "node": "v22.23.3",
             "platform": "linux",
             "os": "Ubuntu 24.04.5",
-            "browser": "Headless Chrome 155.0.8059.84",
+            "browser": "Chrome 155.0.8059.39",
             "sandbox": "Default enabled"
           },
           "nonBrowser": {
-            "modelTests": 85,
-            "domDoubleTests": 50,
-            "staticTests": 9,
-            "browserHarnessAndFixtureTests": 12,
-            "total": 156,
-            "passed": 156,
+            "modelTests": 113,
+            "domDoubleTests": 79,
+            "staticTests": 10,
+            "browserHarnessAndFixtureTests": 14,
+            "total": 216,
+            "passed": 216,
             "failed": 0,
-            "geometryCombinations": 7200,
+            "legacyGeometryCombinations": 7200,
             "seededModelCommands": 10000,
             "rapidUiDoubleSequences": 300,
             "standaloneFixtures": {
-              "valid": 2,
-              "rejected": 10,
+              "valid": 3,
+              "rejected": 14,
               "browserExecuted": false
             }
-          },
-          "browser": {
-            "status": "PASS",
-            "desktopGroups": 11,
-            "mobileViewportTouchEmulationGroups": 11,
-            "total": 22,
-            "passed": 22,
-            "failed": 0,
-            "scope": "Actual headless Chrome; file URL; synthetic data; desktop and phone-sized viewport/touch emulation on Linux.",
-            "checked": [
-              "Hidden startup and black pixels",
-              "Native pointer/key display controls and rapid-action lock",
-              "Presets, edits, history and numeric validation",
-              "Actual disk download/reload/file-input byte roundtrip",
-              "Rejected and inert-markup imports",
-              "Delayed file-read races",
-              "Separate note preview/selection/download/invalidation/reload",
-              "Invalid note values",
-              "Selected responsive widths, resize hiding, target sizing and focus",
-              "Repeated actions without replayed reveal",
-              "Runtime/dialog/remote-request observations in offline mode"
-            ],
-            "runtimeErrors": 0,
-            "unexpectedDialogs": 0,
-            "remoteAppRequests": 0,
-            "cleanup": {
-              "browserClosed": true,
-              "profileRemoved": true
-            },
-            "osFilePickerTested": false,
-            "physicalDevicesTested": false
           },
           "isolatedModelCoverage": {
             "source": "imagery-app/src/model.js",
             "node": "v24.19.0",
-            "testsPassed": 85,
-            "lines": 99.25,
-            "branches": 93.29,
+            "testsPassed": 113,
+            "lines": 99.46,
+            "branches": 94.91,
             "functions": 100,
-            "scope": "Model-only JavaScript execution in a separate local rerun. Not whole-app, browser, CSS, accessibility, device, or medical coverage."
+            "scope": "Model-only; not whole-app/browser/layout/device/accessibility/medical coverage."
           },
-          "history": [
-            {
-              "phase": "Initial local baseline",
-              "htmlBytes": 40075,
-              "htmlSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
-              "originalNonBrowserPassed": 144,
-              "withInitialCdpChecksPassed": 150,
-              "browserStatus": "BLOCKED_BEFORE_NAVIGATION",
-              "reason": "Execution environment could not launch the sandbox-enabled browser."
+          "browser": {
+            "status": "PASS",
+            "preparedGroups": 38,
+            "desktopGroups": 19,
+            "mobileViewportTouchEmulationGroups": 19,
+            "localEnvironmentStatus": "BLOCKED_BASELINE_LAUNCH",
+            "localLaunchReason": "Sandbox-enabled Chromium timed out waiting for DevToolsActivePort before navigation; no browser cases executed.",
+            "localObservedLaunchAttempts": 2,
+            "localCleanup": {
+              "browserClosed": true,
+              "profileRemoved": true
             },
-            {
-              "phase": "First actual browser CI",
-              "runId": 39333164845,
-              "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
-              "sourceHead": "3a995efb185bb48777745c495fdebef40ef11f24",
-              "browser": "Headless Chrome 155.0.8059.39",
-              "nonBrowserPassed": 150,
-              "browserPassed": 20,
-              "browserFailed": 2,
-              "failures": [
-                "Desktop horizontal overflow at 320 CSS pixels",
-                "Mobile-emulation first Show assertion remained Hidden; original cause not established"
+            "securityBypassUsed": false,
+            "osFilePickerTested": false,
+            "physicalDevicesTested": false,
+            "note": "All 38 native browser groups pass on the exact recorded HTML. Fullscreen observations assert trusted event delivery plus synchronous Hidden, black canvas and correct focus. First-run failure remains historical; its exact cause is unproven.",
+            "total": 38,
+            "passed": 38,
+            "failed": 0,
+            "failures": [],
+            "cleanup": {
+              "browserClosed": true,
+              "profileRemoved": true
+            },
+            "runtimeErrors": 0,
+            "unexpectedDialogs": 0,
+            "remoteAppRequests": 0,
+            "fullscreenEventEvidence": {
+              "trustedTransitions": 12,
+              "sameEventHidden": true,
+              "sameEventColoredPixels": 0,
+              "sameEventCorrectFocus": true,
+              "propertyBeforeEventObserved": [
+                "entry",
+                "explicit Exit"
               ],
-              "cleanup": "Failed with ENOTEMPTY; run was not a pass."
+              "escapeAfterActionState": "Event already delivered before post-action read in both configurations",
+              "limits": "Supports event-delivery synchronization; does not prove earlier Escape failure cause or pre-event compositor behavior."
+            }
+          },
+          "attempts": [
+            {
+              "phase": "Restored v0.1 baseline",
+              "passed": 156,
+              "failed": 0,
+              "artifactSha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
             },
             {
-              "phase": "Reviewed repair and rerun",
-              "runtimeDelta": "CSS grid/file-input sizing and regenerated HTML only; model/UI JavaScript/shell unchanged.",
-              "harnessDelta": "Trusted-input observation, conditional lifecycle settling, and bounded process cleanup with additional synthetic regressions.",
-              "runId": 39333956608,
-              "nonBrowserPassed": 156,
-              "browserPassed": 22,
-              "browserFailed": 0,
+              "phase": "First v0.2 adapted tests",
+              "passed": 202,
+              "failed": 4,
+              "cause": "Four verified harness contract assumptions; assertions corrected, not removed."
+            },
+            {
+              "phase": "Corrected v0.2 tests",
+              "passed": 206,
+              "failed": 0
+            },
+            {
+              "phase": "Frozen candidate after accessibility repairs and added regressions",
+              "passed": 214,
+              "failed": 0
+            },
+            {
+              "phase": "First v0.2 Chrome CI",
+              "runId": 39343004081,
+              "nonBrowserPassed": 214,
+              "browserPassed": 36,
+              "browserFailed": 2,
               "cleanup": "PASS"
+            },
+            {
+              "phase": "Fullscreen event-observation harness repair",
+              "nonBrowserPassed": 216,
+              "failed": 0,
+              "browserStatus": "RERUN_PENDING",
+              "runtimeChanged": false
+            },
+            {
+              "phase": "Successful v0.2 Chrome CI rerun",
+              "runId": 39343535180,
+              "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+              "browser": "Chrome 155.0.8059.39",
+              "nonBrowserPassed": 216,
+              "browserPassed": 38,
+              "browserFailed": 0,
+              "cleanup": "PASS",
+              "runtimeChanged": false
             }
           ],
+          "alternativePlaywrightSuite": "SYNTAX_CHECKED_NOT_RUN",
           "notEstablished": [
+            "Browser/platform/version combinations beyond the recorded scoped Chrome run",
             "Physical phones and ordinary OS opening/file-picker workflows",
-            "Other browser/platform combinations",
-            "Complete manual keyboard, screen-reader and accessibility assessment",
-            "Physical display/sleep-wake behavior and calibrated luminance/timing",
-            "Qualified sensory and clinical-content review",
-            "Clinical efficacy"
+            "Other browsers/platforms",
+            "Complete keyboard-only, screen-reader, actual zoom and assistive-technology evaluation",
+            "Physical display conditions, calibrated luminance, qualified sensory review or clinical efficacy"
           ],
-          "alternativePlaywrightSuite": "NOT_RUN",
-          "privacy": "Synthetic fixtures only; this public summary excludes observations, raw process logs, machine paths and private identifiers."
-        },
-        "privacy": "Synthetic fixtures only. Raw TAP/process logs, screenshots and machine-specific reports excluded from public delivery.",
-        "artifactSourceHead": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
-        "ci": {
-          "runId": 39343535180,
-          "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180",
-          "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
-          "testMergeCheckout": "9175892d5a9872f810fa216962b3017507d96eb0",
-          "conclusion": "success",
-          "node": "v22.23.3",
-          "browser": "Chrome 155.0.8059.39",
-          "os": "Ubuntu 24.04.5",
-          "sandbox": "Default enabled",
-          "nonBrowserPassed": 216,
-          "browserPassed": 38,
-          "note": "PR test-merge checkout is not evidence of a merge to main."
-        },
-        "localEnvironment": {
-          "node": "v24.19.0",
-          "platform": "linux"
-        },
-        "ciHistory": [
-          {
-            "runId": 39343004081,
-            "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343004081",
-            "sourceHead": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
-            "testMergeCheckout": "533204ed06c83c6e548471fa30e939b3cfaf4141",
-            "conclusion": "failure",
-            "node": "v22.23.3",
-            "browser": "Chrome 155.0.8059.84",
-            "os": "Ubuntu 24.04.5",
-            "sandbox": "Default enabled",
-            "nonBrowserPassed": 214
+          "previousVersionEvidence": {
+            "date": "2026-10-19",
+            "status": "SCOPED_CHROME_CI_PASS",
+            "artifact": {
+              "file": "imagery-app/index.html",
+              "bytes": 40716,
+              "sha256": "3c825e09e145b66b8be957fd4dcb491562e70bc475343e0b3aed43b5159fd7ec"
+            },
+            "ci": {
+              "runId": 39333956608,
+              "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333956608",
+              "sourceHead": "ed57cd64482f8637ccb3230b46f34b3d976cf9fc",
+              "testMergeCheckout": "e7a156d12d319bcad94ee17899b7bf582a4388d9",
+              "conclusion": "success",
+              "note": "The tested checkout is a GitHub PR test merge, not evidence of a merge into main."
+            },
+            "executedEnvironment": {
+              "node": "v22.23.3",
+              "platform": "linux",
+              "os": "Ubuntu 24.04.5",
+              "browser": "Headless Chrome 155.0.8059.84",
+              "sandbox": "Default enabled"
+            },
+            "nonBrowser": {
+              "modelTests": 85,
+              "domDoubleTests": 50,
+              "staticTests": 9,
+              "browserHarnessAndFixtureTests": 12,
+              "total": 156,
+              "passed": 156,
+              "failed": 0,
+              "geometryCombinations": 7200,
+              "seededModelCommands": 10000,
+              "rapidUiDoubleSequences": 300,
+              "standaloneFixtures": {
+                "valid": 2,
+                "rejected": 10,
+                "browserExecuted": false
+              }
+            },
+            "browser": {
+              "status": "PASS",
+              "desktopGroups": 11,
+              "mobileViewportTouchEmulationGroups": 11,
+              "total": 22,
+              "passed": 22,
+              "failed": 0,
+              "scope": "Actual headless Chrome; file URL; synthetic data; desktop and phone-sized viewport/touch emulation on Linux.",
+              "checked": [
+                "Hidden startup and black pixels",
+                "Native pointer/key display controls and rapid-action lock",
+                "Presets, edits, history and numeric validation",
+                "Actual disk download/reload/file-input byte roundtrip",
+                "Rejected and inert-markup imports",
+                "Delayed file-read races",
+                "Separate note preview/selection/download/invalidation/reload",
+                "Invalid note values",
+                "Selected responsive widths, resize hiding, target sizing and focus",
+                "Repeated actions without replayed reveal",
+                "Runtime/dialog/remote-request observations in offline mode"
+              ],
+              "runtimeErrors": 0,
+              "unexpectedDialogs": 0,
+              "remoteAppRequests": 0,
+              "cleanup": {
+                "browserClosed": true,
+                "profileRemoved": true
+              },
+              "osFilePickerTested": false,
+              "physicalDevicesTested": false
+            },
+            "isolatedModelCoverage": {
+              "source": "imagery-app/src/model.js",
+              "node": "v24.19.0",
+              "testsPassed": 85,
+              "lines": 99.25,
+              "branches": 93.29,
+              "functions": 100,
+              "scope": "Model-only JavaScript execution in a separate local rerun. Not whole-app, browser, CSS, accessibility, device, or medical coverage."
+            },
+            "history": [
+              {
+                "phase": "Initial local baseline",
+                "htmlBytes": 40075,
+                "htmlSha256": "b7563e538a36e09235cfd4f370d6691d5b38c28231d0fcd6a80e3e9696884c88",
+                "originalNonBrowserPassed": 144,
+                "withInitialCdpChecksPassed": 150,
+                "browserStatus": "BLOCKED_BEFORE_NAVIGATION",
+                "reason": "Execution environment could not launch the sandbox-enabled browser."
+              },
+              {
+                "phase": "First actual browser CI",
+                "runId": 39333164845,
+                "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39333164845",
+                "sourceHead": "3a995efb185bb48777745c495fdebef40ef11f24",
+                "browser": "Headless Chrome 155.0.8059.39",
+                "nonBrowserPassed": 150,
+                "browserPassed": 20,
+                "browserFailed": 2,
+                "failures": [
+                  "Desktop horizontal overflow at 320 CSS pixels",
+                  "Mobile-emulation first Show assertion remained Hidden; original cause not established"
+                ],
+                "cleanup": "Failed with ENOTEMPTY; run was not a pass."
+              },
+              {
+                "phase": "Reviewed repair and rerun",
+                "runtimeDelta": "CSS grid/file-input sizing and regenerated HTML only; model/UI JavaScript/shell unchanged.",
+                "harnessDelta": "Trusted-input observation, conditional lifecycle settling, and bounded process cleanup with additional synthetic regressions.",
+                "runId": 39333956608,
+                "nonBrowserPassed": 156,
+                "browserPassed": 22,
+                "browserFailed": 0,
+                "cleanup": "PASS"
+              }
+            ],
+            "notEstablished": [
+              "Physical phones and ordinary OS opening/file-picker workflows",
+              "Other browser/platform combinations",
+              "Complete manual keyboard, screen-reader and accessibility assessment",
+              "Physical display/sleep-wake behavior and calibrated luminance/timing",
+              "Qualified sensory and clinical-content review",
+              "Clinical efficacy"
+            ],
+            "alternativePlaywrightSuite": "NOT_RUN",
+            "privacy": "Synthetic fixtures only; this public summary excludes observations, raw process logs, machine paths and private identifiers."
           },
-          {
+          "privacy": "Synthetic fixtures only. Raw TAP/process logs, screenshots and machine-specific reports excluded from public delivery.",
+          "artifactSourceHead": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
+          "ci": {
             "runId": 39343535180,
             "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180",
             "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
@@ -671,45 +666,87 @@
             "nonBrowserPassed": 216,
             "browserPassed": 38,
             "note": "PR test-merge checkout is not evidence of a merge to main."
-          }
-        ]
-      },
-      "ci": {
-        "runId": 39348407905,
-        "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905",
-        "jobId": 118386506800,
-        "sourceHead": "57b8f2c2811dc246abca55d9630c0581551d448d",
-        "testMergeCheckout": "345a041818b452f8da648d30834817e1c6a43598",
-        "conclusion": "success",
-        "node": "v22.23.3",
-        "browser": "Chrome 155.0.8059.39",
-        "sandbox": "Default enabled",
-        "nonBrowserPassed": 241,
-        "browserPassed": 54,
-        "browserFailed": 0,
-        "cleanup": "PASS"
-      },
-      "ciHistory": [
-        {
-          "runId": 39347872671,
-          "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39347872671",
-          "jobId": 118384772036,
-          "sourceHead": "b16cc2683145389abe53e30ae201d978d26c99c9",
-          "testMergeCheckout": "61570e66e0e7258af20fe9728a72e147faa58e46",
-          "conclusion": "failure",
+          },
+          "localEnvironment": {
+            "node": "v24.19.0",
+            "platform": "linux"
+          },
+          "ciHistory": [
+            {
+              "runId": 39343004081,
+              "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343004081",
+              "sourceHead": "fdb05e0e368b75bd1b62808f299a73f31ea986e4",
+              "testMergeCheckout": "533204ed06c83c6e548471fa30e939b3cfaf4141",
+              "conclusion": "failure",
+              "node": "v22.23.3",
+              "browser": "Chrome 155.0.8059.84",
+              "os": "Ubuntu 24.04.5",
+              "sandbox": "Default enabled",
+              "nonBrowserPassed": 214
+            },
+            {
+              "runId": 39343535180,
+              "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39343535180",
+              "sourceHead": "f27405d7a4a14ed24a0a95d8f5fc0f5155ff7a4b",
+              "testMergeCheckout": "9175892d5a9872f810fa216962b3017507d96eb0",
+              "conclusion": "success",
+              "node": "v22.23.3",
+              "browser": "Chrome 155.0.8059.39",
+              "os": "Ubuntu 24.04.5",
+              "sandbox": "Default enabled",
+              "nonBrowserPassed": 216,
+              "browserPassed": 38,
+              "note": "PR test-merge checkout is not evidence of a merge to main."
+            }
+          ]
+        },
+        "ci": {
+          "runId": 39348407905,
+          "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39348407905",
+          "jobId": 118386506800,
+          "sourceHead": "57b8f2c2811dc246abca55d9630c0581551d448d",
+          "testMergeCheckout": "345a041818b452f8da648d30834817e1c6a43598",
+          "conclusion": "success",
           "node": "v22.23.3",
           "browser": "Chrome 155.0.8059.39",
           "sandbox": "Default enabled",
-          "nonBrowserPassed": 240,
-          "browserPassed": 52,
-          "browserFailed": 2,
+          "nonBrowserPassed": 241,
+          "browserPassed": 54,
+          "browserFailed": 0,
           "cleanup": "PASS"
-        }
-      ]
+        },
+        "ciHistory": [
+          {
+            "runId": 39347872671,
+            "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39347872671",
+            "jobId": 118384772036,
+            "sourceHead": "b16cc2683145389abe53e30ae201d978d26c99c9",
+            "testMergeCheckout": "61570e66e0e7258af20fe9728a72e147faa58e46",
+            "conclusion": "failure",
+            "node": "v22.23.3",
+            "browser": "Chrome 155.0.8059.39",
+            "sandbox": "Default enabled",
+            "nonBrowserPassed": 240,
+            "browserPassed": 52,
+            "browserFailed": 2,
+            "cleanup": "PASS"
+          }
+        ]
+      },
+      "captureContextRegression": {
+        "status": "PASS_DOM_DOUBLE_NATIVE_PENDING",
+        "note": "Capture-source name and separate Applied/Staged state are checked against a different selected target, including edits, discard, undo/redo, empty and long names. Native authoring adds visible caption and source/target checks without relaxing focus or44px targets. Applied and staged accessible Replace names must include the full visible button label."
+      }
     },
-    "captureContextRegression": {
-      "status": "PASS_DOM_DOUBLE_NATIVE_PENDING",
-      "note": "Capture-source name and separate Applied/Staged state are checked against a different selected target, including edits, discard, undo/redo, empty and long names. Native authoring adds visible caption and source/target checks without relaxing focus or44px targets. Applied and staged accessible Replace names must include the full visible button label."
+    "finalCleanExitCI": {
+      "sourceCommit": "9e26a832bf0d7e98c46e2f1bd3f24cfe5b91b1ee",
+      "runId": 39358880818,
+      "url": "https://github.com/woodkill00/aphantasia_build/actions/runs/39358880818",
+      "status": "PASS",
+      "nonBrowserPassed": 349,
+      "browserPassed": 82,
+      "mergeCommit": "95e0483905b8aa5845127a3f9ac637720e8ad380",
+      "note": "The clean-exit run superseded the earlier deadline failure; failure history is retained."
     }
   }
 }
